@@ -1,0 +1,152 @@
+/* Animation xuất hiện từng card */
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.my-card-animated {
+  animation: cardFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card style đẹp hơn */
+.card {
+  border-radius: 18px !important;
+  box-shadow: 0 4px 24px rgba(33, 147, 176, 0.1),
+    0 1.5px 8px rgba(33, 147, 176, 0.06);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+  overflow: hidden;
+  border: none !important;
+  background: #f8fbff !important; /* Nền card sáng */
+  color: #1976d2 !important; /* Chữ xanh đậm */
+  border: 1.5px solid #cce3ff !important; /* Viền xanh nhạt */
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 8px 32px rgba(33, 147, 176, 0.18),
+    0 4px 16px rgba(33, 147, 176, 0.13);
+  border: 1.5px solid #6dd5ed;
+}
+
+.card-img-top {
+  border-radius: 18px 18px 0 0 !important;
+  object-fit: cover;
+  height: 180px;
+  transition: filter 0.3s;
+}
+
+.card:hover .card-img-top {
+  filter: brightness(0.93) blur(0.5px);
+}
+
+.card-title {
+  color: #1976d2 !important;
+  font-weight: 700;
+  text-shadow: 0 2px 8px #cce3ff55;
+  font-size: 1.18rem;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  color: #1976d2 !important;
+  font-size: 1rem;
+}
+
+.card-body {
+  padding: 18px 18px 14px 18px;
+}
+
+.card-footer,
+.dark-theme .card-footer {
+  background: transparent !important;
+  border: none !important;
+  padding-bottom: 12px;
+}
+
+/* Badge */
+.badge.bg-success,
+.dark-theme .badge.bg-success {
+  background-color: #43a047 !important;
+  color: #fff !important;
+}
+
+.badge.bg-warning,
+.dark-theme .badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #23272b !important;
+}
+
+/* Card dark mode đồng bộ với trang chủ */
+.dark-theme .card {
+  background: #23272b !important;
+  color: #e3f2fd !important;
+  border: 1.5px solid #424242 !important;
+  box-shadow: 0 8px 32px 0 #181818, 0 2px 8px #181818 inset !important;
+}
+
+.dark-theme .card-title {
+  color: #ffe082 !important;
+  text-shadow: 0 2px 8px #181818;
+}
+
+.dark-theme .card-text {
+  color: #b0bec5 !important;
+}
+
+.dark-theme .card-footer {
+  background: transparent !important;
+  border: none !important;
+}
+
+.dark-theme .badge.bg-success {
+  background-color: #388e3c !important;
+  color: #fff !important;
+}
+
+.dark-theme .badge.bg-warning {
+  background-color: #ffc107 !important;
+  color: #23272b !important;
+}
+
+/* Khung hoạt động sáng */
+.activity-card {
+  background: #f8fbff;
+  color: #1976d2;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(33, 147, 176, 0.1), 0 2px 8px #fff inset;
+  border: 1.5px solid #cce3ff;
+  padding: 18px;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Tiêu đề hoạt động */
+.activity-card-title {
+  color: #1976d2;
+  font-weight: 700;
+  font-size: 1.15rem;
+  text-shadow: 0 2px 8px #cce3ff55;
+}
+
+/* Chế độ tối */
+.dark-theme .activity-card {
+  background: #23272b !important;
+  color: #e3f2fd !important;
+  border: 1.5px solid #424242 !important;
+  box-shadow: 0 8px 32px 0 #181818, 0 2px 8px #181818 inset !important;
+}
+
+.dark-theme .activity-card-title {
+  color: #ffe082 !important;
+  text-shadow: 0 2px 8px #181818;
+}
+
+@media (max-width: 576px) {
+  .card {
+    margin-bottom: 1rem;
+  }
+}

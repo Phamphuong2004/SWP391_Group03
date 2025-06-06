@@ -1,0 +1,276 @@
+.main-footer {
+  width: 100%;
+  background: linear-gradient(135deg, #2193b0 70%, #6dd5ed 100%);
+  color: #fff;
+  padding: 0;
+  margin-top: 2rem;
+  font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+  box-shadow: 0 -2px 16px rgba(33, 147, 176, 0.12);
+}
+
+.main-footer a {
+  color: #fff;
+  text-decoration: underline;
+  transition: color 0.18s;
+}
+
+.main-footer a:hover {
+  color: #ffe082;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr;
+  gap: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 24px 24px;
+  align-items: start;
+}
+
+.footer-brand {
+  text-align: left;
+  animation: fadeInLeft 1s;
+}
+
+.footer-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  border-radius: 14px;
+  background: #fff;
+  padding: 5px;
+  box-shadow: 0 2px 12px rgba(33, 147, 176, 0.18);
+}
+
+.footer-brand h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #ffe082;
+  letter-spacing: 1px;
+}
+
+.footer-brand p {
+  font-size: 1.08rem;
+  color: #e3f6fd;
+  margin-bottom: 0;
+}
+
+.footer-highlight {
+  color: #ffe082;
+  font-weight: 600;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+  color: #ffe082;
+  font-size: 1.18rem;
+  margin-bottom: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.footer-section p,
+.footer-section ul {
+  font-size: 1.08rem;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #fbeee6;
+}
+
+.footer-links ul,
+.footer-contact ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links ul li,
+.footer-contact ul li {
+  margin-bottom: 10px;
+  font-size: 1.08rem;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+}
+
+.footer-links ul li a,
+.footer-contact ul li a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.18s;
+}
+
+.footer-links ul li a:hover,
+.footer-contact ul li a:hover {
+  color: #ffe082;
+  text-decoration: underline;
+}
+
+.footer-contact ul li i {
+  margin-right: 8px;
+  color: #ffe082;
+  font-size: 1.1rem;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.footer-socials a {
+  color: #fff;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.18s, background 0.18s, transform 0.18s;
+  box-shadow: 0 2px 8px rgba(33, 147, 176, 0.18);
+}
+
+.footer-socials a:hover {
+  color: #2193b0;
+  background: #ffe082;
+  transform: scale(1.13);
+}
+
+.footer-divider {
+  border: none;
+  border-top: 1.5px solid #b2ebf2;
+  margin: 0 8% 0 8%;
+}
+
+.footer-bottom-alt {
+  text-align: center;
+  padding: 18px 0 12px 0;
+  font-size: 1.08rem;
+  color: #ffe082;
+  letter-spacing: 0.5px;
+  background: transparent;
+}
+
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 32px 8px 16px 8px;
+    text-align: center;
+  }
+  .footer-brand {
+    text-align: center;
+  }
+}
+
+/* Animation for brand fade-in */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Ví dụ: e:\SE182721_SWP391\Front_end\src\component\Footer.css */
+.dark-theme .footer,
+.dark-theme footer {
+  background: #232323 !important; /* hoặc màu tối bạn muốn */
+  color: #f1f1f1 !important;
+}
+
+.dark-theme .footer a,
+.dark-theme footer a {
+  color: #ffd600 !important; /* hoặc màu nhấn bạn muốn */
+}
+
+.dark-theme .footer b,
+.dark-theme .footer strong,
+.dark-theme footer b,
+.dark-theme footer strong {
+  color: #ffe082 !important;
+}
+
+.dark-theme .footer-contact ul li,
+.dark-theme footer .footer-contact ul li {
+  color: #f1f1f1 !important;
+}
+
+.dark-theme .footer-contact ul li a {
+  color: #ffd600 !important;
+}
+
+@media (prefers-color-scheme: light) {
+  .footer {
+    background: #ffffff;
+    color: #222;
+    box-shadow: 0 -2px 24px rgba(33, 147, 176, 0.08);
+  }
+  .footer h2 {
+    color: #ffb300;
+    text-shadow: 0 2px 8px #ffe08244;
+  }
+  .footer-brand p {
+    color: #2193b0;
+    font-weight: 500;
+  }
+  .footer-highlight {
+    color: #ffb300;
+    font-weight: 700;
+  }
+  .footer-links h4,
+  .footer-contact h4 {
+    color: #2193b0;
+  }
+  .footer-links ul li,
+  .footer-contact ul li {
+    color: #333;
+  }
+  .footer-links ul li a,
+  .footer-contact ul li a {
+    color: #2193b0;
+    font-weight: 500;
+  }
+  .footer-links ul li a:hover,
+  .footer-contact ul li a:hover {
+    color: #ffb300;
+  }
+  .footer-contact ul li i {
+    color: #ffb300;
+  }
+  .footer-socials a {
+    color: #2193b0;
+    background: #e3f6fd;
+    box-shadow: 0 2px 8px #b2ebf2;
+  }
+  .footer-socials a:hover {
+    color: #fff;
+    background: #ffb300;
+    transform: scale(1.13);
+  }
+  .footer-divider {
+    border-top: 1.5px solid #b2ebf2;
+  }
+  .footer-bottom-alt {
+    color: #ffb300;
+    background: transparent;
+  }
+}

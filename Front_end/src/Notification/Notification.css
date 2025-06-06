@@ -1,0 +1,36 @@
+.notification-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  min-width: 340px;
+  max-width: 90vw;
+  background: linear-gradient(90deg, #2193b0 60%, #6dd5ed 100%);
+  color: #fff;
+  text-align: center;
+  padding: 14px 32px;
+  font-size: 1.08rem;
+  font-weight: 600;
+  z-index: 9999;
+  box-shadow: 0 2px 8px #2193b044;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  margin-left: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.notification-close:hover {
+  color: #176ca6;
+}
