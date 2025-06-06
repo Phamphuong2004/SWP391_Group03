@@ -46,15 +46,21 @@ export default function Login() {
   };
 
   return (
-    <div className="login-page">
+    <div
+      className="login-page"
+      style={{
+        minHeight: "100vh",
+        width: "100vw",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: `url("https://img.lovepik.com/photo/40088/2192.jpg_wh860.jpg") no-repeat center center fixed`,
+        backgroundSize: "cover",
+      }}
+    >
       <div className="login-split-bg">
         <div className="login-left">
           <div className="service-card-home">
-            <img
-              src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=800&q=80"
-              alt="Dịch vụ xét nghiệm ADN"
-              className="login-service-img"
-            />
             <h2>Dịch vụ xét nghiệm ADN</h2>
             <p>Chính xác - Bảo mật - Nhanh chóng</p>
           </div>
