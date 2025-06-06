@@ -67,6 +67,21 @@ function MyNavbar() {
             >
               Xem kết quả
             </Nav.Link>
+            {user && user.role === "admin" && (
+              <Nav.Link href="/admin" className="nav-link">
+                Quản Trị
+              </Nav.Link>
+            )}
+            {user && user.role === "staff" && (
+              <Nav.Link href="/staff-dashboard" className="nav-link">
+                Nhân Viên
+              </Nav.Link>
+            )}
+            {user && user.role === "manager" && (
+              <Nav.Link href="/manager-dashboard" className="nav-link">
+                Quản Lý
+              </Nav.Link>
+            )}
           </Nav>
           <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
             <Form.Control

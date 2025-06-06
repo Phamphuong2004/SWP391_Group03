@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { adminAccounts } from "../Admin_Staff_ManagerAccount";
+import { loginAccount } from "../LoginAccount";
 import "./Login.css";
 
 export default function Login() {
@@ -11,20 +13,40 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Giả sử thông tin user trả về từ API:
-    const userInfo = {
-      name: "Tên Người Dùng",
-      username: usernameOrEmail,
-      avatar:
-        "https://ui-avatars.com/api/?name=" +
-        encodeURIComponent(usernameOrEmail),
-    };
-    // Lưu user vào localStorage
-    localStorage.setItem("user", JSON.stringify(userInfo));
-    toast.success("Đăng nhập thành công!");
-    setTimeout(() => {
-      navigate("/");
-    }, 1500); // 1.5 giây sau về trang chủ
+
+    // Kiểm tra adminAccounts trước
+    const foundAdmin = adminAccounts.find(
+      (acc) =>
+        (acc.username === usernameOrEmail || acc.email === usernameOrEmail) &&
+        acc.password === password
+    );
+    if (foundAdmin) {
+      localStorage.setItem("user", JSON.stringify(foundAdmin));
+      toast.success("Đăng nhập thành công (Admin/Staff)!");
+      setTimeout(() => {
+        if (foundAdmin.role === "admin") navigate("/admin");
+        else navigate("/");
+      }, 1000);
+      return;
+    }
+
+    // Kiểm tra loginAccount (user thường)
+    const foundUser = loginAccount.find(
+      (user) => user.username === usernameOrEmail && user.password === password
+    );
+    if (foundUser) {
+      localStorage.setItem("user", JSON.stringify(foundUser));
+      toast.success("Đăng nhập thành công!");
+      setTimeout(() => {
+        if (foundUser.role === "staff") {
+          navigate("/staff-dashboard"); // Đường dẫn dashboard staff
+        } else {
+          navigate("/");
+        }
+      }, 1000);
+    } else {
+      toast.error("Sai tài khoản hoặc mật khẩu!");
+    }
   };
 
   const responseGoogleSuccess = (credentialResponse) => {
