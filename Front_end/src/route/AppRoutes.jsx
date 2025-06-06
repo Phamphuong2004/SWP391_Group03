@@ -30,8 +30,12 @@ import Banner from "../component/Banner";
 import Feedback from "../Feedback/Feedback";
 import RegisterNotification from "../register/RegisterNotification";
 import AuthNotification from "../AuthNotification/AuthNotification";
+import AdminDashboard from "../Dashboard/AdminDashboard"; // Thêm dòng này
+import ProtectedRoute from "./ProtectedRoute";
 
 import Profile from "../Profile/Profile";
+import StaffDashboard from "../Dashboard/StaffDashboard";
+import ManagerDashboard from "../Dashboard/ManagerDashboard";
 
 function HomePage() {
   return (
@@ -81,6 +85,33 @@ function AppContent() {
         <Route path="/booking" element={<Booking />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogDetail />} />
+        {/* Chỉ admin mới xem được dashboard */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        {/* Staff dashboard chỉ cho staff */}
+        <Route
+          path="/staff-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["staff"]}>
+              <StaffDashboard />
+            </ProtectedRoute>
+          }
+        />
+        {/* Manager dashboard chỉ cho manager */}
+        <Route
+          path="/manager-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route
           path="/services/hanh-chinh"
