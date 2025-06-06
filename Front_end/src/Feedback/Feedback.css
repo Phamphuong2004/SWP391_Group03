@@ -1,0 +1,108 @@
+.feedback-container {
+  background: #f8fbff;
+  border-radius: 22px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  padding: 48px 36px 36px 36px;
+  margin: 48px auto;
+  max-width: 480px;
+  transition: box-shadow 0.3s, transform 0.2s;
+  position: relative;
+  z-index: 2;
+}
+
+.feedback-container:hover {
+  box-shadow: 0 16px 48px 0 rgba(31, 38, 135, 0.28);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.feedback-title {
+  font-weight: 800;
+  color: #2563eb;
+  margin-bottom: 28px;
+  text-align: center;
+  letter-spacing: 1.2px;
+  font-size: 2rem;
+  text-shadow: 0 2px 8px #e0e7ff;
+}
+
+.feedback-label {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 8px;
+  display: block;
+  font-size: 1.05rem;
+}
+
+.feedback-input,
+.feedback-textarea,
+.feedback-select {
+  border-radius: 10px;
+  border: 1.5px solid #c7d2fe;
+  padding: 12px 16px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #f1f5fd;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.04);
+}
+
+.feedback-input:focus,
+.feedback-textarea:focus,
+.feedback-select:focus {
+  border-color: #2563eb;
+  outline: none;
+  background: #e0e7ff;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.1);
+}
+
+.feedback-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #2563eb 60%, #38b6ff 100%);
+  color: #fff;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 0;
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.1);
+}
+
+.feedback-btn:hover {
+  background: linear-gradient(90deg, #38b6ff 0%, #2563eb 100%);
+  box-shadow: 0 6px 24px rgba(37, 99, 235, 0.18);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.alert-success {
+  border-radius: 10px;
+  font-size: 1.15rem;
+  text-align: center;
+  padding: 22px;
+  margin-top: 28px;
+  background: linear-gradient(90deg, #e0f7fa 60%, #e0e7ff 100%);
+  color: #2563eb;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.08);
+}
+
+.modal-overlay {
+  transition: opacity 0.2s;
+}
+
+.modal-content {
+  transition: transform 0.2s;
+}
+
+@media (max-width: 600px) {
+  .feedback-container {
+    padding: 24px 8px 20px 8px;
+    max-width: 98vw;
+  }
+  .feedback-title {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,36 @@
+.admin-service-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #f7fbff;
+  border-radius: 10px;
+  padding: 32px 24px;
+  box-shadow: 0 2px 12px #e0e7ef;
+}
+
+.admin-service-container h1 {
+  color: #1565c0;
+  margin-bottom: 24px;
+  text-align: center;
+  font-size: 2.2rem;
+}
+
+.admin-service-container p {
+  font-size: 1.15rem;
+  color: #222;
+  line-height: 1.7;
+  text-align: justify;
+}
+
+.dark-theme .admin-service-container {
+  background: #23272f !important;
+  color: #f1f1f1 !important;
+  box-shadow: 0 2px 12px #181c22;
+}
+
+.dark-theme .admin-service-container h1 {
+  color: #ffd600 !important;
+}
+
+.dark-theme .admin-service-container p {
+  color: #e0e0e0 !important;
+}

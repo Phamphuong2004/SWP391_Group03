@@ -1,0 +1,369 @@
+/* Fade-in animation cho toàn trang */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.login-split-bg {
+  animation: fadeIn 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide-in animation cho form */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+.login-container {
+  animation: slideInRight 1s 0.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Hiệu ứng glow khi focus input */
+.login-form input:focus {
+  border: 2px solid #2193b0;
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 12px 2px #6dd5ed55, 0 4px 16px rgba(33, 147, 176, 0.13);
+  transition: box-shadow 0.3s;
+}
+
+/* Hiệu ứng hover cho nút đăng nhập */
+.login-btn {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.login-btn::before {
+  content: "";
+  position: absolute;
+  left: -75%;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.18);
+  transform: skewX(-20deg);
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+}
+.login-btn:hover::before {
+  left: 120%;
+}
+
+/* Hiệu ứng cho tiêu đề */
+.login-title {
+  animation: fadeIn 1.2s 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 16px #6dd5ed55;
+}
+
+.login-split-bg {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+}
+
+.login-left {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(120deg, #2193b0 0%, #6dd5ed 100%);
+  color: #fff;
+  padding: 0 2rem;
+}
+
+.login-service-img {
+  width: 340px;
+  max-width: 90%;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px 0 rgba(33, 147, 176, 0.18);
+  margin-bottom: 1.5rem;
+}
+
+.login-service-caption {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  text-shadow: 0 4px 24px #2193b0, 0 2px 8px rgba(33, 147, 176, 0.25);
+  font-family: "Montserrat", Arial, sans-serif;
+  padding: 40px 0 0 0;
+}
+
+.login-service-caption h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.login-service-caption p {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.login-right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 370px;
+  padding: 2.2rem 2rem 2rem 2rem;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(25, 118, 210, 0.1), 0 2px 8px #fff inset;
+  border: 2px solid #cce3ff;
+  background: #f6faff;
+  color: #1976d2;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.login-title {
+  color: #1976d2;
+  text-shadow: 0 2px 16px #cce3ff55;
+  font-weight: 900;
+  font-size: 1.7rem;
+  letter-spacing: 1.5px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.login-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.login-group label {
+  color: #1976d2;
+  font-weight: 700;
+}
+
+.login-group input {
+  padding: 0.85rem 1.1rem;
+  border-radius: 14px;
+  border: 2px solid #cce3ff;
+  font-size: 1.08rem;
+  background: #fafdff;
+  color: #1976d2;
+  box-shadow: 0 2px 12px 0 rgba(33, 147, 176, 0.07);
+  transition: border 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.login-group input:focus {
+  border: 2px solid #1976d2;
+  background: #fff;
+  box-shadow: 0 0 0 3px #cce3ff55;
+}
+
+.login-btn {
+  padding: 0.7rem 0;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.08rem;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.2rem;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(33, 147, 176, 0.08);
+}
+
+.login-btn:hover {
+  background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(33, 147, 176, 0.18);
+}
+
+/* Đăng nhập bằng Google */
+.google-login-wrapper {
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: center;
+}
+
+.google-login-wrapper > div {
+  width: 100% !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(33, 147, 176, 0.09);
+  border: 1.5px solid #b2dfdb !important;
+  transition: box-shadow 0.18s, border 0.18s;
+}
+
+.google-login-wrapper > div:hover {
+  box-shadow: 0 4px 24px rgba(33, 147, 176, 0.18);
+  border: 2px solid #2193b0 !important;
+}
+
+/* Khung dịch vụ xét nghiệm ADN đồng bộ với trang chủ */
+.service-card-home {
+  max-width: 420px;
+  margin: 0 auto;
+  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+  border-radius: 32px;
+  box-shadow: 0 8px 32px 0 rgba(33, 147, 176, 0.1), 0 2px 8px #fff inset;
+  padding: 48px 38px 38px 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #1976d2;
+  font-family: "Segoe UI", Arial, sans-serif;
+  text-align: center;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.service-card-home:hover {
+  box-shadow: 0 16px 48px 0 rgba(33, 147, 176, 0.18), 0 4px 16px #fff inset;
+  transform: translateY(-6px) scale(1.02);
+}
+
+.service-card-home img {
+  width: 320px;
+  max-width: 90%;
+  border-radius: 22px;
+  box-shadow: 0 8px 32px 0 rgba(33, 147, 176, 0.13);
+  margin-bottom: 1.5rem;
+}
+
+.service-card-home h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+  color: #1976d2;
+  text-shadow: 0 4px 24px #cce3ff, 0 2px 8px rgba(33, 147, 176, 0.15);
+}
+
+.service-card-home p {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.5px;
+  color: #1976d2;
+  text-shadow: 0 2px 8px #cce3ff55;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .login-split-bg {
+    flex-direction: column;
+  }
+  .login-left,
+  .login-right {
+    flex: unset;
+    width: 100%;
+    min-height: 320px;
+  }
+  .login-left {
+    padding: 2rem 1rem 1rem 1rem;
+  }
+  .login-container {
+    margin: 2rem auto;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-container {
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+    max-width: 98vw;
+  }
+  .login-title {
+    font-size: 1.2rem;
+  }
+  .login-service-img {
+    width: 90vw;
+    margin-bottom: 1rem;
+  }
+}
+
+.login-bg {
+  background: #f8fbff;
+  min-height: 100vh;
+}
+
+.dark-theme .login-bg {
+  background: #23272b !important; /* Nền tối giống trang chủ */
+}
+
+.dark-theme .login-left {
+  background: linear-gradient(120deg, #23272b 0%, #181818 100%) !important;
+  color: #f1f1f1 !important;
+}
+
+.dark-theme .login-right {
+  background: #181a20 !important;
+}
+
+.dark-theme .login-container {
+  background: #23272b !important; /* Nền card tối */
+  color: #ffe082 !important; /* Chữ vàng nhạt */
+  border: 1.5px solid #424242 !important;
+  box-shadow: 0 8px 32px 0 #181818, 0 2px 8px #181818 inset !important;
+}
+
+.dark-theme .login-title {
+  color: #ffe082 !important;
+  text-shadow: 0 6px 32px #181818, 0 2px 0 #181818 !important;
+}
+
+.dark-theme .login-group label {
+  color: #ffe082 !important;
+}
+
+.dark-theme .login-group input {
+  background: #181a20 !important;
+  color: #ffe082 !important;
+  border-color: #424242 !important;
+  box-shadow: 0 2px 8px #181818 !important;
+}
+
+.dark-theme .login-group input:focus {
+  background: #23272b !important;
+  border-color: #ffe082 !important;
+  color: #ffe082 !important;
+}
+
+.dark-theme .login-btn {
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%) !important;
+  color: #fff !important;
+  filter: drop-shadow(0 4px 16px #1976d2);
+  border: none !important;
+}
+
+.dark-theme .login-btn:hover {
+  background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%) !important;
+}
+
+.dark-theme .google-login-wrapper > div {
+  background: #181a20 !important;
+  color: #ffe082 !important;
+  border: 1.5px solid #424242 !important;
+}

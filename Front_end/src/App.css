@@ -1,0 +1,222 @@
+/* General body styles */
+body {
+  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+body.light {
+  background: #f8f9fa;
+  color: #222;
+}
+
+body.dark {
+  background: #18191a;
+  color: #f1f1f1;
+}
+
+/* Centered and styled heading */
+h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #2193b0;
+  margin-top: 2rem;
+  margin-bottom: 2.5rem;
+  letter-spacing: 1.5px;
+  text-shadow: 0 4px 24px rgba(33, 147, 176, 0.13);
+}
+
+/* Container padding */
+.container-fluid {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+@media (max-width: 576px) {
+  .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+/* Card grid spacing */
+.row.g-4 {
+  margin-left: -1rem;
+  margin-right: -1rem;
+}
+
+.row.g-4 > [class^="col-"] {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Card styles */
+.card {
+  box-shadow: 0 8px 32px 0 rgba(33, 147, 176, 0.13);
+  border-radius: 18px;
+  transition: transform 0.18s, box-shadow 0.18s;
+  background: rgba(255, 255, 255, 0.97);
+  border: none;
+  overflow: hidden;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 16px 48px rgba(33, 147, 176, 0.18);
+}
+
+body.dark .card,
+body.dark .form-control {
+  background: #23272b;
+  color: #f1f1f1;
+  border-color: #444;
+}
+
+body.light .card,
+body.light .form-control {
+  background: #fff;
+  color: #222;
+}
+
+/* Form control styles */
+.form-control {
+  background: #fff !important;
+  color: #222 !important;
+  border: 1px solid #dee2e6 !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+/* Card image */
+.card-img-top,
+.card-img {
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+  object-fit: cover;
+  filter: brightness(0.97) saturate(1.1);
+  transition: filter 0.2s;
+}
+
+.card:hover .card-img-top,
+.card:hover .card-img {
+  filter: brightness(1.07) saturate(1.2);
+}
+
+/* Card body */
+.card-body {
+  padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+  background: linear-gradient(90deg, #f8fafc 70%, #e0eafc 100%);
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+}
+
+@media (max-width: 576px) {
+  .card-body {
+    padding: 1rem 0.7rem 0.9rem 0.7rem;
+  }
+}
+
+/* Card title */
+.card-title {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #2193b0;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+/* Card text */
+.card-text {
+  font-size: 1rem;
+  color: #444;
+  margin-bottom: 0.4rem;
+}
+
+/* Badge styles */
+.badge.bg-success {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%) !important;
+  color: #fff !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(67, 233, 123, 0.12);
+}
+
+.badge.bg-warning {
+  background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%) !important;
+  color: #212529 !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 210, 0, 0.12);
+}
+
+/* Button style */
+.btn-outline-primary {
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-width: 2px;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(33, 147, 176, 0.08);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background: linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%);
+  color: #fff;
+  border-color: #2193b0;
+  box-shadow: 0 4px 16px rgba(33, 147, 176, 0.18);
+}
+
+/* Navbar styles */
+.navbar {
+  background: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%) !important;
+}
+
+/* Theme variables */
+:root {
+  --main-bg: #eaf1ff;
+  --main-text: #222;
+  --card-bg: #fff;
+  --input-bg: #fff;
+}
+
+.dark-theme {
+  --main-bg: #181818;
+  --main-text: #f1f1f1;
+  --card-bg: #232323;
+  --input-bg: #232323;
+}
+
+body,
+#root,
+.main-container {
+  background: var(--main-bg) !important;
+  color: var(--main-text) !important;
+}
+
+.card,
+.form-container,
+.register-form,
+.login-form {
+  background: var(--card-bg) !important;
+  color: var(--main-text) !important;
+}
+
+input,
+select,
+textarea {
+  background: var(--input-bg) !important;
+  color: var(--main-text) !important;
+}
+
+/* Đổi màu nền cho phần login/register khi dark mode */
+.dark-theme .login-page,
+.dark-theme .register-page {
+  background: linear-gradient(120deg, #23272b 0%, #181818 100%) !important;
+}
+
+/* Nếu bạn dùng class khác, hãy thay tên class cho đúng */
