@@ -1,3 +1,16 @@
+.booking-page {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Xóa hoặc comment dòng background bên dưới */
+  /* background: url("https://media.istockphoto.com/id/1407781732/vi/anh/dna-%C4%91%E1%BB%99t-bi%E1%BA%BFn-v%C3%A0-c%C3%A1c-ph%C3%A2n-t%E1%BB%AD-c%C3%B4ng-ngh%E1%BB%87-sinh-h%E1%BB%8Dc-khoa-h%E1%BB%8Dc-k%E1%BA%BFt-xu%E1%BA%A5t-3d.jpg?s=612x612&w=0&k=20&c=7lw-iqSNmQ25Po416wNMeH-CbY6KJBjOzSCkhBFtIzY=")
+    no-repeat center center fixed;
+  background-size: cover; */
+  background: #eaf2ff; /* hoặc màu nền bạn muốn */
+}
+
 .booking-form {
   max-width: 950px;
   margin: 48px auto;
@@ -400,6 +413,9 @@ input[name="dob"] {
 }
 
 /* --- Dark mode cho form đặt lịch --- */
+body.dark-theme .booking-page {
+  background: #181a20 !important;
+}
 body.dark-theme .booking-form {
   background: #23272f;
   border-color: #ffd600;

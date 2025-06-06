@@ -22,6 +22,7 @@ function Booking() {
     testType: "",
     time: "",
     note: "",
+    caseType: "dan-su", // Thêm trường này
   });
 
   const [districts, setDistricts] = useState([]);
@@ -31,6 +32,34 @@ function Booking() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Nếu chọn dịch vụ xét nghiệm
+    if (name === "caseType") {
+      if (value === "hanh-chinh") {
+        setForm((prev) => ({
+          ...prev,
+          caseType: value,
+          service: "Tại cơ sở", // Mặc định tại cơ sở
+        }));
+      } else {
+        setForm((prev) => ({
+          ...prev,
+          caseType: value,
+          service: "", // Bắt buộc chọn lại nơi xét nghiệm
+        }));
+      }
+      return;
+    }
+
+    // Nếu chọn nơi xét nghiệm
+    if (name === "service") {
+      setForm((prev) => ({
+        ...prev,
+        service: value,
+      }));
+      return;
+    }
+
     setForm((prev) => ({
       ...prev,
       [name]: value,
@@ -68,7 +97,7 @@ function Booking() {
   };
 
   return (
-    <>
+    <div className="booking-page">
       <form className="booking-form" onSubmit={handleSubmit}>
         <h2 className="booking-title">Đăng ký xét nghiệm ADN</h2>
         <div className="booking-row">
@@ -113,28 +142,72 @@ function Booking() {
             </label>
             <div className="booking-service">
               <span>Chọn dịch vụ xét nghiệm</span>
-              <div className="booking-service-options">
+              <div style={{ display: "flex", gap: 16, margin: "8px 0" }}>
                 <label>
                   <input
-                    type="radio"
-                    name="service"
-                    value="Tại nhà"
-                    checked={form.service === "Tại nhà"}
-                    onChange={handleChange}
-                  />{" "}
-                  Tại nhà
+                    type="checkbox"
+                    name="caseType"
+                    value="dan-su"
+                    checked={form.caseType === "dan-su"}
+                    onChange={() => {
+                      setForm((prev) => ({
+                        ...prev,
+                        caseType: prev.caseType === "dan-su" ? "" : "dan-su",
+                        service: prev.caseType === "dan-su" ? "" : prev.service,
+                      }));
+                    }}
+                  />
+                  Dân sự
                 </label>
                 <label>
                   <input
-                    type="radio"
-                    name="service"
-                    value="Tại cơ sở"
-                    checked={form.service === "Tại cơ sở"}
-                    onChange={handleChange}
-                  />{" "}
-                  Tại cơ sở
+                    type="checkbox"
+                    name="caseType"
+                    value="hanh-chinh"
+                    checked={form.caseType === "hanh-chinh"}
+                    onChange={() => {
+                      setForm((prev) => ({
+                        ...prev,
+                        caseType:
+                          prev.caseType === "hanh-chinh" ? "" : "hanh-chinh",
+                        service: "Tại cơ sở",
+                      }));
+                    }}
+                  />
+                  Hành chính
                 </label>
               </div>
+
+              {/* Chỉ hiển thị chọn nơi xét nghiệm khi đã chọn dịch vụ */}
+              {form.caseType && (
+                <>
+                  <span>Chọn nơi xét nghiệm</span>
+                  <div style={{ display: "flex", gap: 16, margin: "8px 0" }}>
+                    <label>
+                      <input
+                        type="radio"
+                        name="service"
+                        value="Tại nhà"
+                        checked={form.service === "Tại nhà"}
+                        onChange={handleChange}
+                        disabled={form.caseType === "hanh-chinh"}
+                      />
+                      Tại nhà
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="service"
+                        value="Tại cơ sở"
+                        checked={form.service === "Tại cơ sở"}
+                        onChange={handleChange}
+                      />
+                      Tại cơ sở
+                    </label>
+                  </div>
+                </>
+              )}
+
               {/* Nếu chọn "Tại cơ sở" thì hiển thị upload file */}
               {form.service === "Tại cơ sở" && (
                 <label style={{ marginTop: 12, display: "block" }}>
@@ -260,35 +333,6 @@ function Booking() {
             </label>
           </div>
         </div>
-        {/* XÓA PHẦN CHỌN DÂN SỰ/HÀNH CHÍNH Ở ĐÂY */}
-        {/* <div className="booking-row">
-        <label>
-          <input
-            type="radio"
-            name="type"
-            value="dan-su"
-            checked={type === "dan-su"}
-            onChange={() => setType("dan-su")}
-          />
-          Dân sự
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="type"
-            value="hanh-chinh"
-            checked={type === "hanh-chinh"}
-            onChange={() => setType("hanh-chinh")}
-          />
-          Hành chính
-        </label>
-        {type === "hanh-chinh" && (
-          <label style={{ marginLeft: 16 }}>
-            Đính kèm file dấu vân tay:
-            <input type="file" name="fingerprint" accept=".jpg,.png,.pdf" />
-          </label>
-        )}
-      </div> */}
         <div className="booking-submit">
           <button type="submit">Đăng ký</button>
         </div>
@@ -309,7 +353,7 @@ function Booking() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
