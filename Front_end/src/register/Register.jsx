@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
-import { registerAccount } from "../RegisterAccount";
+import { registerAccount as defaultAccounts } from "../RegisterAccount";
 import "./Register.css";
 
 export default function Register() {
@@ -15,6 +15,10 @@ export default function Register() {
     avatar: "",
     role: "user", // mặc định là user
   });
+  const [accounts, setAccounts] = useState(() => {
+    const local = localStorage.getItem("registerAccount");
+    return local ? JSON.parse(local) : defaultAccounts;
+  });
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -23,32 +27,27 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Không cho phép đăng ký tài khoản admin
-    if (
-      form.username.trim().toLowerCase() === "admin" ||
-      form.email.trim().toLowerCase() === "admin@gmail.com"
-    ) {
-      alert("Bạn không thể đăng ký tài khoản admin!");
-      return;
-    }
     // Kiểm tra trùng username/email
-    const existed = registerAccount.find(
+    const isExist = accounts.some(
       (acc) => acc.username === form.username || acc.email === form.email
     );
-    if (existed) {
+    if (isExist) {
       alert("Tên tài khoản hoặc email đã tồn tại!");
       return;
     }
     // Thêm user mới vào mảng registerAccount
-    registerAccount.push({
+    const newAccount = {
       ...form,
       avatar:
         form.avatar?.trim() !== ""
           ? form.avatar
           : "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-      id: (registerAccount.length + 1).toString(),
+      id: (accounts.length + 1).toString(),
       createdAt: new Date().toISOString(),
-    });
+    };
+    accounts.push(newAccount);
+    localStorage.setItem("registerAccount", JSON.stringify(accounts));
+    setAccounts([...accounts]);
     alert("Đăng ký thành công!");
     navigate("/login");
   };
