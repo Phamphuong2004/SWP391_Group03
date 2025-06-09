@@ -30,9 +30,12 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/api/register", form);
+      await axios.post(
+        "https://684648d47dbda7ee7aae9dc0.mockapi.io/api/register/Users",
+        form
+      );
       alert("Đăng ký thành công!");
-      navigate("/login");
+      navigate("/auth-notification", { state: { type: "register" } });
     } catch (error) {
       alert(error.response?.data?.message || "Đăng ký thất bại!");
     }

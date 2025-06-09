@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Thêm dòng này
+import axios from "axios";
 import "./Login.css";
 
 export default function Login() {
@@ -13,32 +13,30 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8080/api/login", {
-        username: usernameOrEmail,
-        password: password,
-      });
-      const data = response.data;
-      if (data.Exists) {
-        localStorage.setItem("user", JSON.stringify(data));
-        toast.success(data.message);
+      const response = await axios.get("https://684648d47dbda7ee7aae9dc0.mockapi.io/api/register/Users");
+      const users = response.data;
+      const user = users.find(
+        (user) => (user.username === usernameOrEmail || user.email === usernameOrEmail) && user.password === password
+      );
+
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+        toast.success("Đăng nhập thành công!");
         setTimeout(() => {
-          if (data.role === "admin") navigate("/admin");
-          else if (data.role === "staff") navigate("/staff-dashboard");
+          if (user.role === "admin") navigate("/admin");
+          else if (user.role === "staff") navigate("/staff-dashboard");
           else navigate("/");
         }, 1000);
       } else {
-        toast.error(data.message);
+        toast.error("Tên đăng nhập hoặc mật khẩu không đúng!");
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      toast.error(
-        error.response?.data?.message || "Đã xảy ra lỗi khi đăng nhập!"
-      );
+      toast.error("Đã xảy ra lỗi khi đăng nhập!");
     }
   };
 
   const responseGoogleSuccess = (credentialResponse) => {
-    // Parse thông tin từ Google (ví dụ, tuỳ API của bạn)
     const userInfo = {
       name: "Tên Google",
       username: "google_user",
