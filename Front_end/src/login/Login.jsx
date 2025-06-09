@@ -13,8 +13,9 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get("https://684648d47dbda7ee7aae9dc0.mockapi.io/api/register/Users");
+      const response = await axios.get("https://6846474a7dbda7ee7aae992c.mockapi.io/api/Login/Users");
       const users = response.data;
+
       const user = users.find(
         (user) => (user.username === usernameOrEmail || user.email === usernameOrEmail) && user.password === password
       );
@@ -23,9 +24,7 @@ export default function Login() {
         localStorage.setItem("user", JSON.stringify(user));
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
-          if (user.role === "admin") navigate("/admin");
-          else if (user.role === "staff") navigate("/staff-dashboard");
-          else navigate("/");
+          navigate("/");
         }, 1000);
       } else {
         toast.error("Tên đăng nhập hoặc mật khẩu không đúng!");

@@ -30,7 +30,7 @@ import Banner from "../component/Banner";
 import Feedback from "../Feedback/Feedback";
 import RegisterNotification from "../register/RegisterNotification";
 import AuthNotification from "../AuthNotification/AuthNotification";
-import AdminDashboard from "../Dashboard/AdminDashboard"; // Thêm dòng này
+import AdminDashboard from "../Dashboard/AdminDashboard";
 import ProtectedRoute from "./ProtectedRoute";
 
 import Profile from "../Profile/Profile";
@@ -87,7 +87,7 @@ function AppContent() {
         <Route path="/blog/:id" element={<BlogDetail />} />
         {/* Chỉ admin mới xem được dashboard */}
         <Route
-          path="/admin"
+          path="/admin-dashboard"
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
               <AdminDashboard />
