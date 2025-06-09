@@ -105,6 +105,8 @@ export default function Register() {
             <select name="role" value={form.role} onChange={handleChange}>
               <option value="user">Người dùng</option>
               <option value="staff">Nhân viên (Staff)</option>
+              <option value="admin">Quản trị viên (Admin)</option>
+              <option value="manager">Quản lý (Manager)</option>
             </select>
             <button className="register-btn" type="submit">
               Đăng ký

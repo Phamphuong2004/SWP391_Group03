@@ -22,7 +22,7 @@ function MyNavbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    localStorage.removeItem("userFullName"); // Xóa luôn họ tên nếu có
+    localStorage.removeItem("userFullName");
     setUser(null);
     navigate("/");
   };
@@ -68,7 +68,7 @@ function MyNavbar() {
               Xem kết quả
             </Nav.Link>
             {user && user.role === "admin" && (
-              <Nav.Link href="/admin" className="nav-link">
+              <Nav.Link href="/admin-dashboard" className="nav-link">
                 Quản Trị
               </Nav.Link>
             )}
@@ -165,8 +165,7 @@ function MyNavbar() {
               </div>
             )}
           </Form>
-          {/* Nút chuyển theme đặt ngoài Form, căn phải */}
-          <div className="theme-toggle-wrapper">
+          <div className="theme-toggle-wrapper" style={{ zIndex: 1 }}>
             <button className="theme-toggle-btn" onClick={toggleTheme}>
               <span
                 className={`theme-icon ${theme === "dark" ? "sun" : "moon"}`}
