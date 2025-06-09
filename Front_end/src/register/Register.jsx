@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
-import { registerAccount as defaultAccounts } from "../RegisterAccount";
+import axios from "axios";
 import "./Register.css";
 
 export default function Register() {
@@ -15,41 +15,27 @@ export default function Register() {
     avatar: "",
     role: "user", // mặc định là user
   });
+
   const [accounts, setAccounts] = useState(() => {
     const local = localStorage.getItem("registerAccount");
-    return local ? JSON.parse(local) : defaultAccounts;
+    return local ? JSON.parse(local) : [];
   });
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Kiểm tra trùng username/email
-    const isExist = accounts.some(
-      (acc) => acc.username === form.username || acc.email === form.email
-    );
-    if (isExist) {
-      alert("Tên tài khoản hoặc email đã tồn tại!");
-      return;
+    try {
+      await axios.post("http://localhost:8080/api/register", form);
+      alert("Đăng ký thành công!");
+      navigate("/login");
+    } catch (error) {
+      alert(error.response?.data?.message || "Đăng ký thất bại!");
     }
-    // Thêm user mới vào mảng registerAccount
-    const newAccount = {
-      ...form,
-      avatar:
-        form.avatar?.trim() !== ""
-          ? form.avatar
-          : "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-      id: (accounts.length + 1).toString(),
-      createdAt: new Date().toISOString(),
-    };
-    accounts.push(newAccount);
-    localStorage.setItem("registerAccount", JSON.stringify(accounts));
-    setAccounts([...accounts]);
-    alert("Đăng ký thành công!");
-    navigate("/login");
   };
 
   const handleLoginRedirect = () => {

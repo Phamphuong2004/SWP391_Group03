@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { adminAccounts } from "../Admin_Staff_ManagerAccount";
-import { loginAccount } from "../LoginAccount";
 import "./Login.css";
 
 export default function Login() {
@@ -11,41 +9,36 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra adminAccounts trước
-    const foundAdmin = adminAccounts.find(
-      (acc) =>
-        (acc.username === usernameOrEmail || acc.email === usernameOrEmail) &&
-        acc.password === password
-    );
-    if (foundAdmin) {
-      localStorage.setItem("user", JSON.stringify(foundAdmin));
-      toast.success("Đăng nhập thành công (Admin/Staff)!");
-      setTimeout(() => {
-        if (foundAdmin.role === "admin") navigate("/admin");
-        else navigate("/");
-      }, 1000);
-      return;
-    }
-
-    // Kiểm tra loginAccount (user thường)
-    const foundUser = loginAccount.find(
-      (user) => user.username === usernameOrEmail && user.password === password
-    );
-    if (foundUser) {
-      localStorage.setItem("user", JSON.stringify(foundUser));
-      toast.success("Đăng nhập thành công!");
-      setTimeout(() => {
-        if (foundUser.role === "staff") {
-          navigate("/staff-dashboard"); // Đường dẫn dashboard staff
-        } else {
-          navigate("/");
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: usernameOrEmail, password }),
         }
-      }, 1000);
-    } else {
-      toast.error("Sai tài khoản hoặc mật khẩu!");
+      );
+
+      const data = await response.json();
+      if (data.Exists) {
+        localStorage.setItem("user", JSON.stringify(data));
+        toast.success(data.message);
+        setTimeout(() => {
+          if (data.role === "admin") navigate("/admin");
+          else if (data.role === "staff") navigate("/staff-dashboard");
+          else navigate("/");
+        }, 1000);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      toast.error("Đã xảy ra lỗi khi đăng nhập!");
     }
   };
 
