@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Thêm dòng này
 import "./Login.css";
 
 export default function Login() {
@@ -11,20 +12,12 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username: usernameOrEmail, password }),
-        }
-      );
-
-      const data = await response.json();
+      const response = await axios.post("http://localhost:8080/api/login", {
+        username: usernameOrEmail,
+        password: password,
+      });
+      const data = response.data;
       if (data.Exists) {
         localStorage.setItem("user", JSON.stringify(data));
         toast.success(data.message);
@@ -38,7 +31,9 @@ export default function Login() {
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      toast.error("Đã xảy ra lỗi khi đăng nhập!");
+      toast.error(
+        error.response?.data?.message || "Đã xảy ra lỗi khi đăng nhập!"
+      );
     }
   };
 
