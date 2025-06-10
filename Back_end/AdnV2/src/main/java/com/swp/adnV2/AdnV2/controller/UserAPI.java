@@ -15,11 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/user")
 public class UserAPI {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/api/login")
+    @PostMapping("/login")
     public ResponseEntity<?> checkUser(@RequestBody LoginRequest loginRequest) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
@@ -37,7 +38,7 @@ public class UserAPI {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("api/register")
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
         Map<String, Object> response = new HashMap<>();
         if (userRepository.findByUsername(registerRequest.getUsername()) != null) {
@@ -63,7 +64,7 @@ public class UserAPI {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/api/reset-password")
+    @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest resetPassword) {
         Map<String, Object> response = new HashMap<>();
         User user = userRepository.findByPhone(resetPassword.getPhoneNumber());
@@ -92,7 +93,7 @@ public class UserAPI {
         }
     }
 
-    @GetMapping("/api/profile")
+    @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@RequestParam String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -110,7 +111,7 @@ public class UserAPI {
         return ResponseEntity.ok(profile);
     }
 
-    @PostMapping("/api/profile/update")
+    @PostMapping("/profile/update")
     public ResponseEntity<?> updateProfile(@RequestParam String username, @RequestBody ProfileRequest profileRequest) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
