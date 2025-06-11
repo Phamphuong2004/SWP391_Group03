@@ -45,9 +45,6 @@ public class Appointment {
     @Column(name = "note", columnDefinition = "NVARCHAR(MAX)")
     private String note;
 
-    @Column(name = "adn_test_type", columnDefinition = "NVARCHAR(100)")
-    private String adnTestType;
-
     @Column(name = "test_purpose", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String testPurpose = "Dân sự"; // Default value for test purpose
 
@@ -157,14 +154,6 @@ public class Appointment {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getAdnTestType() {
-        return adnTestType;
-    }
-
-    public void setAdnTestType(String adnTestType) {
-        this.adnTestType = adnTestType;
     }
 
     public String getTestPurpose() {

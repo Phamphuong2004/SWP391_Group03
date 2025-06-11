@@ -31,7 +31,6 @@ public class AppointmentService {
         appointment.setEmail(request.getEmail());
         appointment.setGender(request.getGender());
         appointment.setTestPurpose(request.getTestPurpose());
-        appointment.setAdnTestType(request.getAdnTestType());
         appointment.setServiceType(request.getServiceType());
 
         appointment.setCollectionSampleTime(request.getCollectionTime());

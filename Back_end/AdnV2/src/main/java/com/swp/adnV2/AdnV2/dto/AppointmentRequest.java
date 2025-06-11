@@ -11,7 +11,6 @@ public class AppointmentRequest {
     private String email;
     private String gender;
     private String testPurpose;     //dân sự, hành chính
-    private String adnTestType;     //cha-con, ông-ba
     private String serviceType;     //Huyết thông, ADN pháp lý,...
     private LocalTime collectionTime;
     private String fingerprintFile; //đường dẫn đến file vân tay
@@ -64,14 +63,6 @@ public class AppointmentRequest {
 
     public void setTestPurpose(String testPurpose) {
         this.testPurpose = testPurpose;
-    }
-
-    public String getAdnTestType() {
-        return adnTestType;
-    }
-
-    public void setAdnTestType(String adnTestType) {
-        this.adnTestType = adnTestType;
     }
 
     public String getServiceType() {
