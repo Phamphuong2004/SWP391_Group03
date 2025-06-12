@@ -22,13 +22,14 @@ export default function ADNIntro() {
       <div className="adn-intro-card">
         <div className="adn-intro-card-content">
           <h2 className="adn-intro-card-title">
-            Chào mừng đến với Website Xét nghiệm ADN của chúng tôi
+            Thông tin về trang web xét nghiệm ADN của chúng tôi
           </h2>
           <p className="adn-intro-card-text">
-            Nền tảng giúp bạn tra cứu thông tin, đăng ký xét nghiệm, theo dõi
-            tiến trình và nhận kết quả nhanh chóng, chính xác. Đội ngũ chuyên
-            gia giàu kinh nghiệm, công nghệ hiện đại và dịch vụ tận tâm sẽ mang
-            lại cho bạn trải nghiệm an toàn, bảo mật và hài lòng nhất.
+            Trang web của chúng tôi là nền tảng hỗ trợ tra cứu thông tin, đăng
+            ký xét nghiệm, theo dõi tiến trình và nhận kết quả nhanh chóng,
+            chính xác. Với đội ngũ chuyên gia giàu kinh nghiệm, công nghệ hiện
+            đại và dịch vụ tận tâm, chúng tôi cam kết mang đến trải nghiệm an
+            toàn, bảo mật và sự hài lòng tuyệt đối cho khách hàng.
           </p>
         </div>
         <img

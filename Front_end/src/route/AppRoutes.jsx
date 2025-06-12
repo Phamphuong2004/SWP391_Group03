@@ -32,10 +32,10 @@ import RegisterNotification from "../register/RegisterNotification";
 import AuthNotification from "../AuthNotification/AuthNotification";
 import AdminDashboard from "../Dashboard/AdminDashboard";
 import ProtectedRoute from "./ProtectedRoute";
-
 import Profile from "../Profile/Profile";
 import StaffDashboard from "../Dashboard/StaffDashboard";
 import ManagerDashboard from "../Dashboard/ManagerDashboard";
+import History from "../History/History"; // Import the History component
 
 function HomePage() {
   return (
@@ -109,6 +109,15 @@ function AppContent() {
           element={
             <ProtectedRoute allowedRoles={["manager"]}>
               <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        {/* Route cho trang lịch sử, chỉ cho manager */}
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <History />
             </ProtectedRoute>
           }
         />

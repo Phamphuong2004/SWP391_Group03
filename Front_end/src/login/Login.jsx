@@ -6,50 +6,73 @@ import axios from "axios";
 import "./Login.css";
 
 export default function Login() {
-  const [usernameOrEmail, setUsernameOrEmail] = useState("");
+  const [username, setUsername] = useState(""); // Đổi tên biến
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     try {
-      const response = await axios.get("https://6846474a7dbda7ee7aae992c.mockapi.io/api/Login/Users");
-      const users = response.data;
+      const response = await axios.post("/api/user/login", {
+        username, // Đúng key backend yêu cầu
+        password,
+      });
 
-      const user = users.find(
-        (user) => (user.username === usernameOrEmail || user.email === usernameOrEmail) && user.password === password
-      );
-
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
+      if (response.data && response.data.Exists) {
+        const userData = response.data;
+        localStorage.setItem("user", JSON.stringify(userData));
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
           navigate("/");
         }, 1000);
       } else {
-        toast.error("Tên đăng nhập hoặc mật khẩu không đúng!");
+        toast.error(
+          response.data.message || "Tên đăng nhập hoặc mật khẩu không đúng!"
+        );
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      toast.error("Đã xảy ra lỗi khi đăng nhập!");
+      if (error.response) {
+        console.error("Server response:", error.response.data);
+        toast.error(
+          error.response.data.message ||
+            "Tên đăng nhập hoặc mật khẩu không đúng!"
+        );
+      } else {
+        toast.error("Đã xảy ra lỗi khi đăng nhập!");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const responseGoogleSuccess = (credentialResponse) => {
-    const userInfo = {
-      name: "Tên Google",
-      username: "google_user",
-      avatar: "link_avatar_google",
-    };
-    localStorage.setItem("user", JSON.stringify(userInfo));
-    toast.success("Đăng nhập thành công!");
-    setTimeout(() => {
-      navigate("/");
-    }, 1500);
+  const responseGoogleSuccess = async (credentialResponse) => {
+    try {
+      const response = await axios.post("/api/auth/google", {
+        credential: credentialResponse.credential,
+      });
+
+      if (response.data) {
+        const userData = response.data;
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", userData.token);
+
+        toast.success("Đăng nhập thành công!");
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("Đăng nhập bằng Google thất bại!");
+    }
   };
 
   const responseGoogleFailure = () => {
-    alert("Google login thất bại!");
+    toast.error("Đăng nhập bằng Google thất bại!");
   };
 
   return (
@@ -77,13 +100,14 @@ export default function Login() {
             <h2 className="login-title">Đăng nhập</h2>
             <form className="login-form" onSubmit={handleSubmit}>
               <div className="login-group">
-                <label htmlFor="username">Tài khoản</label>
+                <label htmlFor="username">Tên đăng nhập</label>
                 <input
                   id="username"
                   type="text"
-                  value={usernameOrEmail}
-                  onChange={(e) => setUsernameOrEmail(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
+                  placeholder="Nhập tên đăng nhập"
                 />
               </div>
               <div className="login-group">
@@ -94,10 +118,11 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  placeholder="Nhập mật khẩu"
                 />
               </div>
-              <button className="login-btn" type="submit">
-                Đăng nhập
+              <button className="login-btn" type="submit" disabled={isLoading}>
+                {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
               </button>
               <div className="google-login-wrapper">
                 <GoogleLogin
