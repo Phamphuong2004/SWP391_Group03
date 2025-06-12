@@ -1,0 +1,32 @@
+.history-container {
+  padding: 20px;
+  background-color: #eaf2ff; /* Light blue background */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.history-table th,
+.history-table td {
+  border: 1px solid #cce3ff; /* Light blue border */
+  padding: 8px;
+  text-align: left;
+}
+
+.history-table th {
+  background-color: #1976d2; /* Dark blue background */
+  color: white;
+}
+
+.history-table tr:nth-child(even) {
+  background-color: #f2f2f2; /* Light gray for even rows */
+}
+
+.history-table tr:hover {
+  background-color: #ddd; /* Light gray on hover */
+}

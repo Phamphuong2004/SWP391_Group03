@@ -3,6 +3,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
 import "./Profile.css";
+import axios from "axios";
 
 function Profile() {
   const [user, setUser] = useState({
@@ -21,30 +22,62 @@ function Profile() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      setUser(JSON.parse(userData));
-      setForm(JSON.parse(userData));
-    }
+    const fetchProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get("/api/user/profile", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (response.data) {
+          console.log("PROFILE DATA:", response.data);
+          setUser({
+            ...response.data,
+            name: response.data.name || response.data.fullName || "",
+            username: response.data.username || response.data.userName || "",
+          });
+          setForm({
+            ...response.data,
+            name: response.data.name || response.data.fullName || "",
+            username: response.data.username || response.data.userName || "",
+          });
+          localStorage.setItem("user", JSON.stringify(response.data));
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin profile:", error);
+      }
+    };
+    fetchProfile();
   }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    setUser(form);
-    localStorage.setItem("user", JSON.stringify(form));
-    setSuccess(true);
-    setIsEditing(false);
-    setTimeout(() => setSuccess(false), 3000);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post("/api/user/profile/update", form, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (response.data) {
+        setUser(form);
+        localStorage.setItem("user", JSON.stringify(form));
+        setSuccess(true);
+        setIsEditing(false);
+        setTimeout(() => setSuccess(false), 3000);
+      }
+    } catch (error) {
+      alert("Cập nhật thông tin thất bại!");
+      console.error(error);
+    }
   };
 
   const handleDeleteAccount = () => {
     if (window.confirm("Bạn có chắc chắn muốn xóa tài khoản?")) {
       localStorage.removeItem("user");
       localStorage.removeItem("userFullName");
+      localStorage.removeItem("token");
       setUser({
         name: "",
         username: "",
