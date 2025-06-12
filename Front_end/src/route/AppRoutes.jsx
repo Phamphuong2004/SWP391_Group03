@@ -36,6 +36,8 @@ import Profile from "../Profile/Profile";
 import StaffDashboard from "../Dashboard/StaffDashboard";
 import ManagerDashboard from "../Dashboard/ManagerDashboard";
 import History from "../History/History"; // Import the History component
+import ForgotPassword from "../Password/ForgotPassword";
+import BookingNotification from "../Booking/BookingNotification";
 
 function HomePage() {
   return (
@@ -135,6 +137,8 @@ function AppContent() {
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/auth-notification" element={<AuthNotification />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/booking-notification" element={<BookingNotification />} />
       </Routes>
     </>
   );

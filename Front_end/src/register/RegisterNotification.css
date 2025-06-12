@@ -1,42 +1,123 @@
 .register-notification-container {
   max-width: 420px;
   margin: 80px auto;
-  background: #f8fbff;
   border-radius: 18px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
   padding: 48px 36px;
   text-align: center;
+  transition: background 0.3s, color 0.3s, border 0.3s;
 }
 
 .register-notification-title {
-  color: #2563eb;
-  font-weight: 700;
+  color: #ffe066;
+  font-weight: 800;
   margin-bottom: 18px;
-  font-size: 2rem;
-  letter-spacing: 1px;
+  font-size: 2.2rem;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px #ffe06633;
 }
 
 .register-notification-message {
-  font-size: 1.1rem;
-  color: #1e293b;
+  font-size: 1.15rem;
+  color: #f8fbff;
   line-height: 1.6;
+  margin-bottom: 10px;
 }
 
 .register-notification-home-btn {
   margin-top: 24px;
   padding: 12px 32px;
-  background: linear-gradient(90deg, #2563eb 60%, #38b6ff 100%);
-  color: #fff;
-  font-weight: 600;
+  background: linear-gradient(90deg, #ffe066 60%, #ffb347 100%);
+  color: #23272f;
+  font-weight: 700;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1.1rem;
   cursor: pointer;
   transition: background 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  box-shadow: 0 2px 8px #ffe06622;
 }
 
 .register-notification-home-btn:hover {
-  background: linear-gradient(90deg, #38b6ff 0%, #2563eb 100%);
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.18);
+  background: linear-gradient(90deg, #ffb347 0%, #ffe066 100%);
+  box-shadow: 0 4px 16px #ffe06644;
+}
+
+/* LIGHT MODE */
+body:not(.dark) .register-notification-container {
+  background: #eaf3ff;
+  border: 2px solid #1976d2;
+}
+body:not(.dark) .register-notification-title {
+  color: #1976d2;
+  font-weight: 900;
+  margin-bottom: 18px;
+  font-size: 2.2rem;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px #1976d233;
+}
+body:not(.dark) .register-notification-message {
+  font-size: 1.15rem;
+  color: #1e293b;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+body:not(.dark) .register-notification-home-btn {
+  margin-top: 24px;
+  padding: 12px 32px;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
+  font-weight: 900;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px #1976d222;
+}
+body:not(.dark) .register-notification-home-btn:hover {
+  background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%);
+  box-shadow: 0 4px 16px #1976d244;
+}
+
+/* DARK MODE */
+.dark .register-notification-container,
+body.dark .register-notification-container {
+  background: #181a20 !important;
+  border: 2px solid #ffd600 !important;
+}
+.dark .register-notification-title,
+body.dark .register-notification-title {
+  color: #ffd600 !important;
+  font-weight: 900;
+  margin-bottom: 18px;
+  font-size: 2.2rem;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px #ffd60055 !important;
+}
+.dark .register-notification-message,
+body.dark .register-notification-message {
+  font-size: 1.15rem;
+  color: #f8fbff !important;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.dark .register-notification-home-btn,
+body.dark .register-notification-home-btn {
+  margin-top: 24px;
+  padding: 12px 32px;
+  background: linear-gradient(90deg, #ffd600 60%, #ffe066 100%) !important;
+  color: #232323 !important;
+  font-weight: 900;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px #ffd60022 !important;
+}
+.dark .register-notification-home-btn:hover,
+body.dark .register-notification-home-btn:hover {
+  background: linear-gradient(90deg, #ffe066 0%, #ffd600 100%) !important;
+  box-shadow: 0 4px 16px #ffd60044 !important;
 }

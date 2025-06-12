@@ -14,6 +14,7 @@ function Profile() {
     phone: "",
     address: "",
     avatar: "",
+    gender: "",
   });
   const [form, setForm] = useState(user);
   const [success, setSuccess] = useState(false);
@@ -34,11 +35,13 @@ function Profile() {
             ...response.data,
             name: response.data.name || response.data.fullName || "",
             username: response.data.username || response.data.userName || "",
+            gender: response.data.gender || "",
           });
           setForm({
             ...response.data,
             name: response.data.name || response.data.fullName || "",
             username: response.data.username || response.data.userName || "",
+            gender: response.data.gender || "",
           });
           localStorage.setItem("user", JSON.stringify(response.data));
         }
@@ -86,6 +89,7 @@ function Profile() {
         phone: "",
         address: "",
         avatar: "",
+        gender: "",
       });
       setForm({
         name: "",
@@ -95,6 +99,7 @@ function Profile() {
         phone: "",
         address: "",
         avatar: "",
+        gender: "",
       });
       alert("Tài khoản đã được xóa.");
       navigate("/login");
@@ -193,6 +198,21 @@ function Profile() {
             required
             readOnly={!isEditing}
           />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label className="profile-form-label">Giới tính</Form.Label>
+          <Form.Select
+            className="profile-form-input"
+            name="gender"
+            value={form.gender}
+            onChange={handleChange}
+            disabled={!isEditing}
+          >
+            <option value="">Chọn giới tính</option>
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
+            <option value="other">Khác</option>
+          </Form.Select>
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label className="profile-form-label">Avatar</Form.Label>

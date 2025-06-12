@@ -124,6 +124,19 @@ export default function Login() {
               <button className="login-btn" type="submit" disabled={isLoading}>
                 {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
               </button>
+              <button
+                type="button"
+                className="login-btn"
+                style={{
+                  marginTop: "10px",
+                  background: "#fff",
+                  color: "#2193b0",
+                  border: "2px solid #2193b0",
+                }}
+                onClick={() => navigate("/forgot-password")}
+              >
+                Quên mật khẩu
+              </button>
               <div className="google-login-wrapper">
                 <GoogleLogin
                   onSuccess={responseGoogleSuccess}
