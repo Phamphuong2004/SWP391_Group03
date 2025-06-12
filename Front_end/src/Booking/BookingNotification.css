@@ -1,0 +1,83 @@
+.booking-notification-container {
+  max-width: 440px;
+  margin: 90px auto;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px 0 rgba(56, 142, 60, 0.18);
+  padding: 56px 40px;
+  text-align: center;
+  transition: background 0.3s, color 0.3s, border 0.3s;
+}
+
+/* LIGHT MODE */
+body:not(.dark) .booking-notification-container {
+  background: #eaf3ff;
+  border: 2px solid #1976d2;
+}
+body:not(.dark) .booking-notification-title {
+  color: #1976d2;
+  font-weight: 900;
+  margin-bottom: 22px;
+  font-size: 2.3rem;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px #1976d233;
+}
+body:not(.dark) .booking-notification-message {
+  font-size: 1.18rem;
+  color: #1e293b;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+body:not(.dark) .booking-notification-home-btn {
+  margin-top: 28px;
+  padding: 14px 38px;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
+  font-weight: 900;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.18rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 12px #1976d222;
+}
+body:not(.dark) .booking-notification-home-btn:hover {
+  background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%);
+  box-shadow: 0 4px 20px #1976d244;
+}
+
+/* DARK MODE */
+.dark .booking-notification-container {
+  background: #23272f !important;
+  border: 2px solid #ffd600 !important;
+}
+.dark .booking-notification-title {
+  color: #ffd600 !important;
+  font-weight: 900;
+  margin-bottom: 22px;
+  font-size: 2.3rem;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px #ffd60055 !important;
+}
+.dark .booking-notification-message {
+  font-size: 1.18rem;
+  color: #f8fbff !important;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+.dark .booking-notification-home-btn {
+  margin-top: 28px;
+  padding: 14px 38px;
+  background: linear-gradient(90deg, #ffd600 60%, #ffe066 100%) !important;
+  color: #232323 !important;
+  font-weight: 900;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.18rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 12px #ffd60022 !important;
+}
+.dark .booking-notification-home-btn:hover {
+  background: linear-gradient(90deg, #ffe066 0%, #ffd600 100%) !important;
+  box-shadow: 0 4px 20px #ffd60044 !important;
+}

@@ -1,26 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import "./Register.css";
 
 export default function Register() {
   const [form, setForm] = useState({
-    name: "",
+    fullName: "",
     username: "",
     email: "",
     password: "",
     phone: "",
     address: "",
-    avatar: "",
-    role: "user", // mặc định là user
   });
-
-  const [accounts, setAccounts] = useState(() => {
-    const local = localStorage.getItem("registerAccount");
-    return local ? JSON.parse(local) : [];
-  });
-
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -29,20 +21,19 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
-      await axios.post(
-        "https://684648d47dbda7ee7aae9dc0.mockapi.io/api/register/Users",
-        form
-      );
-      alert("Đăng ký thành công!");
-      navigate("/auth-notification", { state: { type: "register" } });
+      await axios.post("/api/user/register", form);
+      navigate("/register-notification");
     } catch (error) {
-      alert(error.response?.data?.message || "Đăng ký thất bại!");
+      const msg =
+        error.response?.data?.Message ||
+        error.response?.data?.message ||
+        "Đăng ký thất bại!";
+      alert(msg);
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const handleLoginRedirect = () => {
-    navigate("/login");
   };
 
   return (
@@ -53,7 +44,7 @@ export default function Register() {
           <form className="register-form" onSubmit={handleSubmit}>
             <label>Họ tên</label>
             <input
-              name="name"
+              name="fullName"
               placeholder="Họ tên"
               onChange={handleChange}
               required
@@ -95,34 +86,20 @@ export default function Register() {
               onChange={handleChange}
               required
             />
-            <label>Avatar (tùy chọn)</label>
-            <input
-              name="avatar"
-              placeholder="Link ảnh đại diện (nếu có)"
-              onChange={handleChange}
-            />
-            <label>Vai trò</label>
-            <select name="role" value={form.role} onChange={handleChange}>
-              <option value="user">Người dùng</option>
-              <option value="staff">Nhân viên (Staff)</option>
-              <option value="admin">Quản trị viên (Admin)</option>
-              <option value="manager">Quản lý (Manager)</option>
-            </select>
-            <button className="register-btn" type="submit">
-              Đăng ký
+            <button className="register-btn" type="submit" disabled={isLoading}>
+              {isLoading ? "Đang đăng ký..." : "Đăng ký"}
             </button>
           </form>
-
-          <div className="google-login-wrapper">
-            <GoogleLogin
-              onSuccess={(credentialResponse) =>
-                console.log(credentialResponse)
-              }
-              onError={() => console.log("Login Failed")}
-            />
-          </div>
-
-          <button className="login-btn" onClick={handleLoginRedirect}>
+          <button
+            className="login-btn"
+            onClick={() => navigate("/login")}
+            style={{
+              marginTop: "10px",
+              background: "#fff",
+              color: "#2193b0",
+              border: "2px solid #2193b0",
+            }}
+          >
             Đã có tài khoản? Đăng nhập
           </button>
         </div>
