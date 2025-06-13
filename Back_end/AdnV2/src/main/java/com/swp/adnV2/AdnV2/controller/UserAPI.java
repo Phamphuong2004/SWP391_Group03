@@ -50,6 +50,11 @@ public class UserAPI {
             response.put("Message", "Email already exists");
             return ResponseEntity.badRequest().body(response);
         }
+        if(!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+            response.put("Success", false);
+            response.put("Message", "Passwords do not match confirm password");
+            return ResponseEntity.badRequest().body(response);
+        }
         User user = new User();
         user.setFullName(registerRequest.getFullName());
         user.setUsername(registerRequest.getUsername());
