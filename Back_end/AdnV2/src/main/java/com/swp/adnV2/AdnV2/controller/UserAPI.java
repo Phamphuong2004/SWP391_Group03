@@ -62,7 +62,7 @@ public class UserAPI {
         user.setPassword(registerRequest.getPassword());
         user.setPhone(registerRequest.getPhone());
         user.setAddress(registerRequest.getAddress());
-        user.setRole(Role.CUSTOMER.getValue());
+        user.setRole(Role.Customer.name());
         userRepository.save(user);
         response.put("Success", true);
         response.put("Message", "User registered successfully");
