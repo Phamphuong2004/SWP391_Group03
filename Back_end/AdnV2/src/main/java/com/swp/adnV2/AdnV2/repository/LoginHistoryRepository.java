@@ -1,6 +1,7 @@
 package com.swp.adnV2.AdnV2.repository;
 
 import com.swp.adnV2.AdnV2.entity.LoginHistory;
+import com.swp.adnV2.AdnV2.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface LoginHistoryRepository extends JpaRepository<LoginHistory, Long> {
-    List<LoginHistory> findByUserIdOrderByLoginTimeDesc(Long userId);
+    List<LoginHistory> findByUserOrderByLoginTimeDesc(User user);
 }

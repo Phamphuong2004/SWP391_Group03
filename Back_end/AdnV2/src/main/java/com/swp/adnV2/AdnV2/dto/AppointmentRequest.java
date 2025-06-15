@@ -1,21 +1,46 @@
 package com.swp.adnV2.AdnV2.dto;
 
+import jakarta.validation.constraints.*;
+
 import java.time.LocalDate;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class AppointmentRequest {
+    @NotBlank(message = "Full name is required")
     private String fullName;
+
+    @NotNull(message = "Date of birth is required")
+    @Past(message = "Date of birth must be in the past")
     private LocalDate dob;
+
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "(84|0[3|5|7|8|9])+([0-9]{8})\\b", message = "Invalid phone number format")
     private String phone;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
+
+    @NotBlank(message = "Gender is required")
     private String gender;
+
+    @NotBlank(message = "Test purpose is required")
     private String testPurpose; // dân sự, hành chính
+
+    @NotBlank(message = "Service type is required")
     private String serviceType; // Huyết thông, ADN pháp lý,...
+
+    @NotNull(message = "Appointment date is required")
+    @Future(message = "Appointment date must be in the future")
+    private LocalDateTime appointmentDate;
+
     private LocalTime collectionTime;
     private String fingerprintFile; // đường dẫn đến file vân tay
     private String district; // quận huyện
     private String province;
+    private String testCategory; // loại xét nghiệm
 
     public String getFullName() {
         return fullName;
@@ -103,5 +128,21 @@ public class AppointmentRequest {
 
     public void setProvince(String province) {
         this.province = province;
+    }
+
+    public String getTestCategory() {
+        return testCategory;
+    }
+
+    public void setTestCategory(String testCategory) {
+        this.testCategory = testCategory;
+    }
+
+    public LocalDateTime getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(LocalDateTime appointmentDate) {
+        this.appointmentDate = appointmentDate;
     }
 }
