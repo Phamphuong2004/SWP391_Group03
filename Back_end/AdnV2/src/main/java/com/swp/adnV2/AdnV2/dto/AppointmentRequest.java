@@ -1,7 +1,7 @@
 package com.swp.adnV2.AdnV2.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.time.LocalTime;
 
 public class AppointmentRequest {
@@ -10,11 +10,11 @@ public class AppointmentRequest {
     private String phone;
     private String email;
     private String gender;
-    private String testPurpose;     //dân sự, hành chính
-    private String serviceType;     //Huyết thông, ADN pháp lý,...
+    private String testPurpose; // dân sự, hành chính
+    private String serviceType; // Huyết thông, ADN pháp lý,...
     private LocalTime collectionTime;
-    private String fingerprintFile; //đường dẫn đến file vân tay
-    private String district;        //quận huyện
+    private String fingerprintFile; // đường dẫn đến file vân tay
+    private String district; // quận huyện
     private String province;
 
     public String getFullName() {
