@@ -4,14 +4,19 @@ import com.swp.adnV2.AdnV2.dto.LoginRequest;
 import com.swp.adnV2.AdnV2.dto.PasswordResetRequest;
 import com.swp.adnV2.AdnV2.dto.ProfileRequest;
 import com.swp.adnV2.AdnV2.dto.RegisterRequest;
+import com.swp.adnV2.AdnV2.entity.LoginHistory;
 import com.swp.adnV2.AdnV2.entity.Role;
 import com.swp.adnV2.AdnV2.entity.User;
+import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,14 +25,26 @@ public class UserAPI {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private LoginHistoryRepository loginHistoryRepository;
+
     @PostMapping("/login")
-    public ResponseEntity<?> checkUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> checkUser(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
         User user = userRepository.findByUsername(username);
         Map<String, Object> response = new HashMap<>();
         if (user != null && user.getPassword() != null && user.getPassword().equals(password)) {
+            // Create login history entry
+            LoginHistory loginHistory = new LoginHistory();
+            loginHistory.setUser(user);
+            loginHistory.setLoginTime(LocalDateTime.now());
+            loginHistory.setIpAddress(getClientIp(request));
+            loginHistory.setUserAgent(request.getHeader("User-Agent"));
+            loginHistory.setLoginType("NORMAL");
+            loginHistoryRepository.save(loginHistory);
+
             response.put("Exists", true);
             response.put("message", "Login successful");
             response.put("role", user.getRole());
@@ -36,6 +53,14 @@ public class UserAPI {
             response.put("message", "Invalid username or password");
         }
         return ResponseEntity.ok(response);
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0];
+        }
+        return request.getRemoteAddr();
     }
 
     @PostMapping("/register")
@@ -50,7 +75,7 @@ public class UserAPI {
             response.put("Message", "Email already exists");
             return ResponseEntity.badRequest().body(response);
         }
-        if(!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
             response.put("Success", false);
             response.put("Message", "Passwords do not match confirm password");
             return ResponseEntity.badRequest().body(response);
@@ -152,5 +177,17 @@ public class UserAPI {
 
         userRepository.save(user);
         return ResponseEntity.ok("Profile updated successfully");
+    }
+
+    @GetMapping("/login-history")
+    public ResponseEntity<?> getLoginHistory() {
+        try {
+            List<LoginHistory> history = loginHistoryRepository.findAll();
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", "Failed to fetch login history");
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 }
