@@ -1,0 +1,94 @@
+.login-history-container {
+  padding: 24px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+}
+
+.login-history-card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.login-history-title {
+  color: #1890ff;
+  margin-bottom: 24px !important;
+}
+
+.search-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.search-input {
+  width: 300px;
+}
+
+.search-input .ant-input-prefix {
+  color: #bfbfbf;
+}
+
+.search-input:hover .ant-input-prefix {
+  color: #1890ff;
+}
+
+.date-picker {
+  margin-left: 16px;
+}
+
+.ant-table-wrapper {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.ant-table-thead > tr > th {
+  background-color: #fafafa !important;
+  font-weight: 600;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background-color: #e6f7ff !important;
+}
+
+.status-success {
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.status-failed {
+  color: #ff4d4f;
+  font-weight: 500;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 50px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.ant-pagination {
+  margin-top: 16px !important;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .search-section {
+    flex-direction: column;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .date-picker {
+    margin-left: 0;
+    width: 100%;
+  }
+}

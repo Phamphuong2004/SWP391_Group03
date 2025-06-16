@@ -11,6 +11,20 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const recordLoginHistory = async (userId, status) => {
+    try {
+      const deviceInfo = `${navigator.platform} - ${navigator.userAgent}`;
+      await axios.post("/api/auth/login-history", {
+        userId,
+        status,
+        deviceInfo,
+        loginTime: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error("Error recording login history:", error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -24,17 +38,27 @@ export default function Login() {
       if (response.data && response.data.Exists) {
         const userData = response.data;
         localStorage.setItem("user", JSON.stringify(userData));
+
+        // Record successful login
+        await recordLoginHistory(userData.id, "success");
+
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
           navigate("/");
         }, 1000);
       } else {
+        // Record failed login attempt
+        await recordLoginHistory(null, "failed");
+
         toast.error(
           response.data.message || "Tên đăng nhập hoặc mật khẩu không đúng!"
         );
       }
     } catch (error) {
       console.error("Error logging in:", error);
+      // Record failed login attempt
+      await recordLoginHistory(null, "failed");
+
       if (error.response) {
         console.error("Server response:", error.response.data);
         toast.error(
@@ -60,6 +84,9 @@ export default function Login() {
         localStorage.setItem("user", JSON.stringify(userData));
         localStorage.setItem("token", userData.token);
 
+        // Record successful Google login
+        await recordLoginHistory(userData.id, "success");
+
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
           navigate("/");
@@ -67,11 +94,15 @@ export default function Login() {
       }
     } catch (error) {
       console.error("Google login error:", error);
+      // Record failed Google login
+      await recordLoginHistory(null, "failed");
       toast.error("Đăng nhập bằng Google thất bại!");
     }
   };
 
-  const responseGoogleFailure = () => {
+  const responseGoogleFailure = async () => {
+    // Record failed Google login
+    await recordLoginHistory(null, "failed");
     toast.error("Đăng nhập bằng Google thất bại!");
   };
 
