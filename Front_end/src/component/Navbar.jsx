@@ -67,6 +67,19 @@ function MyNavbar() {
             >
               Xem kết quả
             </Nav.Link>
+            <Nav.Link
+              onClick={() => {
+                const lastServiceId = localStorage.getItem('lastServiceId');
+                if (lastServiceId) {
+                  navigate(`/service-tracking/${lastServiceId}`);
+                } else {
+                  navigate('/service-tracking');
+                }
+              }}
+              className="nav-link"
+            >
+              Theo dõi đơn
+            </Nav.Link>
             {user && user.role === "admin" && (
               <Nav.Link href="/admin-dashboard" className="nav-link">
                 Quản Trị
@@ -127,7 +140,7 @@ function MyNavbar() {
                       src={
                         user.avatar ||
                         "https://ui-avatars.com/api/?name=" +
-                          encodeURIComponent(user.name)
+                        encodeURIComponent(user.name)
                       }
                       alt="avatar"
                       className="user-avatar"

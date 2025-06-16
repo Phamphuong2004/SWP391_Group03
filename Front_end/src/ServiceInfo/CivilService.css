@@ -1,36 +1,417 @@
-.civil-service-container {
-  max-width: 800px;
-  margin: 40px auto;
-  background: #fff8f0;
-  border-radius: 10px;
-  padding: 32px 24px;
-  box-shadow: 0 2px 12px #f5e6d6;
+.civil-service-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #dbe3ef 0%, #eef3fc 100%);
 }
 
-.civil-service-container h1 {
-  color: #d2691e;
-  margin-bottom: 24px;
+/* Hero Section */
+.hero-section {
+  background: #fff;
+  color: #2c3e50;
+  padding: 6rem 2rem;
   text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-content h1 {
+  font-size: 2.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 1;
+  color: #666;
+}
+
+.cta-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #c0392b;
+}
+
+/* Main Container */
+.civil-service-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Service Header */
+.service-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.service-header h2 {
+  color: #2c3e50;
   font-size: 2.2rem;
+  margin-bottom: 1rem;
 }
 
-.civil-service-container p {
-  font-size: 1.15rem;
+.service-intro {
+  color: #424242;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Services Grid */
+.services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: flex-start;
+  margin-bottom: 40px;
+}
+
+.service-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
+    0 2px 8px rgba(30, 42, 90, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+}
+
+.service-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.service-card h3 {
+  color: #2c3e50;
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+.service-card p {
+  color: #424242;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.service-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.service-features li {
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+/* Why Choose Us Section */
+.why-choose-us {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.why-choose-us h2 {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.feature-item {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
+    0 2px 8px rgba(30, 42, 90, 0.05);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.feature-item h3 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.feature-item p {
+  color: #424242;
+  font-size: 0.95rem;
+}
+
+/* Testimonials Section */
+.testimonials-section {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.testimonials-section h2 {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.testimonial-card {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
+    0 2px 8px rgba(30, 42, 90, 0.05);
+}
+
+.testimonial-avatar {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.testimonial-content {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.testimonial-author h4 {
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.testimonial-author p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Contact Section */
+.contact-section {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 3rem;
+  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
+    0 2px 8px rgba(30, 42, 90, 0.05);
+  text-align: center;
+}
+
+.contact-section h2 {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+}
+
+.contact-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+.contact-icon {
+  font-size: 2rem;
+}
+
+.contact-item h4 {
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.contact-item p {
+  color: #424242;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+  }
+
+  .civil-service-container {
+    padding: 1rem;
+  }
+
+  .service-header h2,
+  .why-choose-us h2,
+  .testimonials-section h2,
+  .contact-section h2 {
+    font-size: 1.8rem;
+  }
+
+  .contact-section {
+    padding: 2rem 1rem;
+  }
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 24px;
+  min-width: 350px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.submit-btn {
+  margin-top: 18px;
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Registration Form Styles */
+.register-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.register-form-container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-button:hover {
   color: #333;
-  line-height: 1.7;
-  text-align: justify;
 }
 
-.dark-theme .civil-service-container {
-  background: #23272f !important;
-  color: #f1f1f1 !important;
-  box-shadow: 0 2px 12px #181c22;
+.form-group {
+  margin-bottom: 1.5rem;
 }
 
-.dark-theme .civil-service-container h1 {
-  color: #ffd600 !important;
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #333;
 }
 
-.dark-theme .civil-service-container p {
-  color: #e0e0e0 !important;
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.submit-button:hover {
+  background-color: #357abd;
+}
+
+.submit-button:active {
+  background-color: #2a5f94;
 }

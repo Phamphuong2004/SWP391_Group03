@@ -1,0 +1,430 @@
+.service-detail-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.service-detail-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.service-detail-header h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.service-category {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background-color: #3498db;
+    color: white;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.service-detail-content {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}
+
+.service-image {
+    width: 100%;
+}
+
+.service-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.service-info {
+    padding: 1rem;
+}
+
+.service-info h2 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+}
+
+.service-info p {
+    color: #34495e;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.service-features,
+.service-requirements,
+.service-process,
+.upload-requirements {
+    margin-bottom: 2rem;
+}
+
+.service-features h3,
+.service-requirements h3,
+.service-process h3,
+.upload-requirements h3 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.service-features ul,
+.service-requirements ul,
+.service-process ol {
+    list-style-position: inside;
+    padding-left: 1rem;
+}
+
+.service-features li,
+.service-requirements li,
+.service-process li {
+    color: #666;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+/* Upload section styles */
+.upload-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 6px;
+    border: 1px dashed #ced4da;
+}
+
+.upload-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.file-input {
+    display: none;
+}
+
+.upload-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.file-name {
+    color: #2c3e50;
+    font-size: 0.9rem;
+    margin-right: 1rem;
+    word-break: break-all;
+}
+
+.upload-button {
+    padding: 0.5rem 1rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.upload-button:hover {
+    background-color: #2980b9;
+}
+
+.upload-button.success {
+    background-color: #2ecc71;
+}
+
+.upload-button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+/* Processing time section */
+.processing-time {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.processing-time h3 {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.processing-time p {
+    color: #34495e;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Form styles */
+.form-section {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-section h3 {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Biometric section styles */
+.biometric-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.biometric-item {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.biometric-item h4 {
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.biometric-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.biometric-button:hover {
+    background-color: #0056b3;
+}
+
+.biometric-button.success {
+    background-color: #28a745;
+}
+
+.biometric-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Submit button styles */
+.form-submit {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.submit-button {
+    padding: 1rem 2.5rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Service process and processing time styles */
+.service-process,
+.processing-time {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.service-process h3,
+.processing-time h3 {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.service-process ol {
+    padding-left: 1.5rem;
+}
+
+.service-process li {
+    color: #34495e;
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+}
+
+.processing-time p {
+    color: #34495e;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Error Messages */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: block;
+}
+
+.form-group input.error,
+.form-group select.error,
+.form-group textarea.error {
+    border-color: #e74c3c;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .service-detail-container {
+        margin: 1rem auto;
+    }
+
+    .service-detail-header {
+        padding: 1.5rem;
+    }
+
+    .service-detail-header h1 {
+        font-size: 2rem;
+    }
+
+    .service-detail-content {
+        padding: 1.5rem;
+    }
+
+    .form-section {
+        padding: 1.5rem;
+    }
+
+    .submit-button {
+        width: 100%;
+        padding: 0.8rem;
+    }
+}
+
+/* Animation Effects */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.service-detail-container {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Hover Effects */
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+    border-color: #3498db;
+}
+
+.upload-section:hover {
+    border-color: #3498db;
+    background-color: #f8f9fa;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #2980b9;
+}
