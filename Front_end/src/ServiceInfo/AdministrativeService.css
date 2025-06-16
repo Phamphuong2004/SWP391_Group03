@@ -1,36 +1,199 @@
+body {
+  background: linear-gradient(180deg, #dbe3ef 0%, #eef3fc 100%);
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  min-height: 100vh;
+}
+
 .admin-service-container {
-  max-width: 800px;
-  margin: 40px auto;
-  background: #f7fbff;
-  border-radius: 10px;
-  padding: 32px 24px;
-  box-shadow: 0 2px 12px #e0e7ef;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
-.admin-service-container h1 {
-  color: #1565c0;
-  margin-bottom: 24px;
+.admin-service-header {
   text-align: center;
-  font-size: 2.2rem;
+  margin-bottom: 48px;
 }
 
-.admin-service-container p {
-  font-size: 1.15rem;
-  color: #222;
+.admin-service-header h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.service-intro {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+.service-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
+    0 2px 8px rgba(30, 42, 90, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(30, 42, 90, 0.12),
+    0 4px 12px rgba(30, 42, 90, 0.08);
+}
+
+.service-card:hover::before {
+  opacity: 1;
+}
+
+.service-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 4px 6px rgba(44, 62, 80, 0.1));
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover .service-icon {
+  transform: scale(1.1);
+}
+
+.service-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.service-card p {
+  color: #546e7a;
+  margin-bottom: 1.8rem;
   line-height: 1.7;
-  text-align: justify;
+  font-size: 1.1rem;
 }
 
-.dark-theme .admin-service-container {
-  background: #23272f !important;
-  color: #f1f1f1 !important;
-  box-shadow: 0 2px 12px #181c22;
+.service-button {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: #fff;
+  border: none;
+  padding: 0.9rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.dark-theme .admin-service-container h1 {
-  color: #ffd600 !important;
+.service-button:hover {
+  background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+  box-shadow: 0 6px 16px rgba(231, 76, 60, 0.2);
+  transform: translateY(-2px);
 }
 
-.dark-theme .admin-service-container p {
-  color: #e0e0e0 !important;
+.service-button:active {
+  transform: translateY(1px);
+}
+
+.contact-section {
+  background-color: #f8f9fa;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+}
+
+.contact-section h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.contact-section>p {
+  color: #666;
+  margin-bottom: 32px;
+}
+
+.contact-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.contact-item:hover {
+  transform: translateY(-5px);
+}
+
+.contact-icon {
+  font-size: 2rem;
+}
+
+.contact-item h3 {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+}
+
+.contact-item p {
+  color: #666;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .admin-service-header h1 {
+    font-size: 2rem;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-info {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-section {
+    padding: 30px 20px;
+  }
 }

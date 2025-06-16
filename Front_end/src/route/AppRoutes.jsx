@@ -38,6 +38,16 @@ import ManagerDashboard from "../Dashboard/ManagerDashboard";
 import History from "../History/History"; // Import the History component
 import ForgotPassword from "../Password/ForgotPassword";
 import BookingNotification from "../Booking/BookingNotification";
+import ServiceDetail from "../ServiceInfo/ServiceDetails/ServiceDetail";
+import { administrativeServices } from "../ServiceInfo/servicesData";
+import BirthCertificate from "../ServiceInfo/ServiceDetails/birth-certificate";
+import HouseholdRegistration from "../ServiceInfo/ServiceDetails/household-registration";
+import Adoption from "../ServiceInfo/ServiceDetails/adoption";
+import ServiceTracking from '../ServiceTracking/ServiceTracking';
+import FamilyRelationship from "../ServiceInfo/ServiceDetails/family-relationship";
+import PropertyDispute from "../ServiceInfo/ServiceDetails/property-dispute";
+import Inheritance from "../ServiceInfo/ServiceDetails/inheritance";
+import CivilContract from "../ServiceInfo/ServiceDetails/civil-contract";
 
 function HomePage() {
   return (
@@ -139,6 +149,22 @@ function AppContent() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/booking-notification" element={<BookingNotification />} />
+        <Route
+          path="/service/:id"
+          element={
+            <ServiceDetail
+              services={administrativeServices}
+            />
+          }
+        />
+        <Route path="/service/birth-certificate" element={<BirthCertificate />} />
+        <Route path="/service/household-registration" element={<HouseholdRegistration />} />
+        <Route path="/service/adoption" element={<Adoption />} />
+        <Route path="/service-tracking/:serviceId" element={<ServiceTracking />} />
+        <Route path="/service/family-relationship" element={<FamilyRelationship />} />
+        <Route path="/service/property-dispute" element={<PropertyDispute />} />
+        <Route path="/service/inheritance" element={<Inheritance />} />
+        <Route path="/service/civil-contract" element={<CivilContract />} />
       </Routes>
     </>
   );

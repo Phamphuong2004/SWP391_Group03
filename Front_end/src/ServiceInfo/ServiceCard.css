@@ -1,0 +1,110 @@
+.service-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    margin-bottom: 1.5rem;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+}
+
+.service-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.service-card h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.4rem;
+}
+
+.service-card p {
+    color: #666;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.service-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.service-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    flex: 1;
+}
+
+.service-button:hover {
+    background-color: #e0e0e0;
+}
+
+.service-button.view-more {
+    background-color: #007bff;
+    color: white;
+}
+
+.service-button.view-more:hover {
+    background-color: #0056b3;
+}
+
+.service-details {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.service-details h4 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.service-details ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+.service-details li {
+    color: #666;
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.service-details li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #007bff;
+}
+
+.process-time {
+    color: #666;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .service-buttons {
+        flex-direction: column;
+    }
+
+    .service-button {
+        width: 100%;
+    }
+}
