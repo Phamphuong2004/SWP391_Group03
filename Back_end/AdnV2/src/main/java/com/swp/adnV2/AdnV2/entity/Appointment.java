@@ -1,5 +1,7 @@
 package com.swp.adnV2.AdnV2.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,9 +16,17 @@ public class Appointment {
     @Column(name = "appointment_id")
     private Long appointmentId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "user_id", nullable = true)
+    @JsonIgnore
     private User user;
+
+    // Thêm phương thức này để vẫn hiển thị userId
+    @JsonProperty("userId")
+    public Long getUserId() {
+        return user != null ? user.getUserId() : null;
+    }
 
     @Column(name = "full_name", columnDefinition = "NVARCHAR(100)", nullable = false)
     private String fullName;
@@ -34,7 +44,7 @@ public class Appointment {
     private String gender;
 
     @Column(name = "appointment_date", nullable = false)
-    private LocalDateTime appointmentDate = LocalDateTime.now();
+    private LocalDateTime appointmentDate;
 
     @Column(name = "collection_sample_time")
     private LocalTime collectionSampleTime;
