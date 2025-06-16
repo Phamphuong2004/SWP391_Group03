@@ -83,8 +83,67 @@ function Booking() {
 
   const handleConfirm = () => {
     setShowConfirm(false);
-    // alert("Đăng ký thành công!"); // XÓA DÒNG NÀY
-    handleBookingSuccess();
+
+    // Generate a unique service ID
+    const serviceId = `SVC-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
+
+    // Save the booking data to localStorage
+    const bookingData = {
+      serviceId,
+      ...form,
+      status: "pending",
+      submittedDate: new Date().toISOString(),
+      estimatedCompletionDate: new Date(
+        Date.now() + 7 * 24 * 60 * 60 * 1000
+      ).toISOString(), // 7 days from now
+      currentStep: 0,
+      steps: [
+        {
+          title: "Tiếp nhận đơn",
+          description: "Đơn đăng ký đã được tiếp nhận",
+          completedDate: new Date().toISOString(),
+        },
+        {
+          title: "Xác nhận thông tin",
+          description: "Đang xác nhận thông tin đăng ký",
+        },
+        {
+          title: "Lấy mẫu",
+          description: "Đang sắp xếp lịch lấy mẫu",
+        },
+        {
+          title: "Xét nghiệm",
+          description: "Đang thực hiện xét nghiệm",
+        },
+        {
+          title: "Hoàn thành",
+          description: "Hoàn thành xét nghiệm và gửi kết quả",
+        },
+      ],
+      documents: [
+        {
+          name: "Đơn đăng ký xét nghiệm",
+          status: "Đã nộp",
+        },
+      ],
+      notes: [
+        {
+          date: new Date().toISOString(),
+          author: "Hệ thống",
+          content: "Đơn đăng ký đã được tiếp nhận thành công",
+        },
+      ],
+      lastUpdated: new Date().toISOString(),
+    };
+
+    // Save to localStorage
+    localStorage.setItem("lastServiceId", serviceId);
+    localStorage.setItem(`booking_${serviceId}`, JSON.stringify(bookingData));
+
+    // Navigate to tracking page
+    navigate(`/service-tracking/${serviceId}`);
   };
 
   const handleCancel = () => {
@@ -340,9 +399,9 @@ function Booking() {
       {showConfirm && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <span className="modal-icon">📝</span>
+            <div className="modal-icon">📋</div>
             <p>Bạn có chắc chắn muốn đăng ký xét nghiệm ADN không?</p>
-            <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+            <div className="modal-buttons">
               <button onClick={handleConfirm} className="modal-btn confirm">
                 Xác nhận
               </button>
