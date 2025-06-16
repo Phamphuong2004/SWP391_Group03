@@ -315,101 +315,139 @@ input[name="dob"] {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(30, 30, 30, 0.45);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
-  animation: fadeInModal 0.25s;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
 }
-@keyframes fadeInModal {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+
 .modal-content {
-  background: linear-gradient(135deg, #fff 70%, #ffeaea 100%);
-  padding: 38px 38px 30px 38px;
-  border-radius: 18px;
-  box-shadow: 0 8px 40px rgba(215, 38, 61, 0.18), 0 2px 8px #fff inset;
-  text-align: center;
-  min-width: 340px;
-  max-width: 90vw;
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
   position: relative;
-  animation: popInModal 0.25s;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+  border: 2px solid #1976d2;
 }
-@keyframes popInModal {
+
+.modal-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #1976d2;
+  animation: bounce 1s infinite;
+}
+
+.modal-content p {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.modal-btn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-btn.confirm {
+  background: #1976d2;
+  color: white;
+}
+
+.modal-btn.confirm:hover {
+  background: #1565c0;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(25, 118, 210, 0.3);
+}
+
+.modal-btn.cancel {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.modal-btn.cancel:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
   from {
-    transform: scale(0.85);
     opacity: 0;
   }
   to {
-    transform: scale(1);
     opacity: 1;
   }
 }
 
-/* --- Icon --- */
-.modal-content .modal-icon {
-  font-size: 3.2rem;
-  color: #f46036;
-  margin-bottom: 10px;
-  display: block;
-  animation: pulseIcon 1.2s infinite alternate;
-}
-@keyframes pulseIcon {
+@keyframes slideIn {
   from {
-    transform: scale(1);
+    transform: translateY(-20px);
+    opacity: 0;
   }
   to {
-    transform: scale(1.13);
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
-/* --- Modal Text --- */
-.modal-content p {
-  font-size: 1.22rem;
-  color: #d7263d;
-  font-weight: 700;
-  margin-bottom: 28px;
-  letter-spacing: 0.2px;
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-/* --- Modal Buttons --- */
-.modal-btn {
-  padding: 10px 32px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  font-size: 1.08rem;
-  margin: 0 8px;
-  transition: background 0.18s, color 0.18s, transform 0.15s;
-  box-shadow: 0 2px 12px #ffd6d6;
-  letter-spacing: 0.5px;
+/* Dark mode styles for modal */
+body.dark-theme .modal-content {
+  background: #1a1a1a;
+  border-color: #ffd600;
 }
-.modal-btn.confirm {
-  background: linear-gradient(90deg, #d7263d 60%, #f46036 100%);
+
+body.dark-theme .modal-content p {
   color: #fff;
-  filter: drop-shadow(0 2px 8px #ffd6d6);
 }
-.modal-btn.confirm:hover {
-  background: linear-gradient(90deg, #f46036 0%, #d7263d 100%);
+
+body.dark-theme .modal-icon {
+  color: #ffd600;
+}
+
+body.dark-theme .modal-btn.confirm {
+  background: #ffd600;
+  color: #000;
+}
+
+body.dark-theme .modal-btn.confirm:hover {
+  background: #ffed4a;
+}
+
+body.dark-theme .modal-btn.cancel {
+  background: #333;
   color: #fff;
-  transform: translateY(-2px) scale(1.07);
 }
-.modal-btn.cancel {
-  background: #fff;
-  color: #d7263d;
-  border: 2px solid #ffd6d6;
-}
-.modal-btn.cancel:hover {
-  background: #ffeaea;
-  color: #f46036;
-  transform: translateY(-2px) scale(1.07);
+
+body.dark-theme .modal-btn.cancel:hover {
+  background: #444;
 }
 
 /* --- Dark mode cho form đặt lịch --- */

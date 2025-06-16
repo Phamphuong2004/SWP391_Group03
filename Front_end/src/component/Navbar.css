@@ -18,6 +18,7 @@
   justify-content: space-between;
   padding: 10px 20px;
   background-color: #f8f9fa;
+  margin-top: 0;
 }
 
 /* Glassmorphism Navbar */
@@ -36,12 +37,43 @@
 
 /* Navbar brand styling */
 .navbar-brand {
-  font-weight: 800;
-  font-size: 1.7rem;
-  color: #fff !important;
-  letter-spacing: 2px;
-  text-shadow: 0 2px 8px rgba(33, 147, 176, 0.25);
-  padding-left: 2rem;
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.navbar-logo {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05);
+}
+
+.brand-text {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1976d2;
+  letter-spacing: 0.5px;
+}
+
+/* Dark mode styles */
+body.dark-theme .brand-text {
+  color: #ffd600;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .navbar-logo {
+    height: 35px;
+  }
+
+  .brand-text {
+    font-size: 1.2rem;
+  }
 }
 
 /* Hiệu ứng cho brand khi hover */
@@ -505,4 +537,94 @@
 .dark-theme h3 {
   color: #ffd600 !important;
   text-shadow: 0 0 16px #ffd60055;
+}
+
+.navbar-logo-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  position: relative;
+  margin-top: 0;
+  margin-bottom: 8px;
+  z-index: 1001;
+  pointer-events: none;
+}
+
+.navbar-logo-ontop {
+  height: 90px;
+  width: 90px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.18), 0 2px 8px #fff inset;
+  background: #eaf2ff;
+  margin-left: 0;
+  margin-top: 8px;
+  pointer-events: auto;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.navbar-logo-ontop:hover {
+  transform: scale(1.08) rotate(-2deg);
+  box-shadow: 0 16px 48px rgba(25, 118, 210, 0.22);
+}
+
+.navbar {
+  background: linear-gradient(90deg, #eaf2ff 60%, #cce3ff 100%) !important;
+  border-radius: 22px;
+  box-shadow: 0 8px 32px 0 rgba(25, 118, 210, 0.1), 0 2px 8px #fff inset;
+  margin: 0 auto;
+  padding: 0 32px;
+  min-height: 70px;
+  align-items: center;
+}
+
+.navbar-nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-link,
+.dropdown-item {
+  font-weight: 600;
+  font-size: 1.08rem;
+  color: #1976d2 !important;
+  padding: 12px 22px !important;
+  border-radius: 14px;
+  transition: background 0.18s, color 0.18s;
+}
+
+.nav-link:hover,
+.dropdown-item:hover {
+  background: #e3f0ff !important;
+  color: #1565c0 !important;
+}
+
+.navbar-collapse {
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .navbar-logo-ontop {
+    height: 60px;
+    width: 60px;
+    margin-left: 0;
+    margin-top: 4px;
+  }
+  .navbar-logo-wrapper {
+    margin-bottom: 6px;
+  }
+  .navbar {
+    padding: 0 8px;
+    border-radius: 12px;
+    min-height: 56px;
+  }
+  .navbar-nav {
+    gap: 8px;
+  }
 }
