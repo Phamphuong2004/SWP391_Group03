@@ -3,8 +3,10 @@ import Button from "react-bootstrap/Button";
 import "./MyCard.css";
 import Card from "react-bootstrap/Card";
 import ADNTestingServices from "../listOfServices";
+import { useNavigate } from "react-router-dom";
 
 export default function MyCard({ service }) {
+  const navigate = useNavigate();
   return (
     <div className="card my-card-animated">
       <Card className="h-100">
@@ -39,7 +41,11 @@ export default function MyCard({ service }) {
             </span>
           </Card.Text>
           <Card.Text className="mb-3">{service.description}</Card.Text>
-          <Button variant="outline-primary" className="mt-auto">
+          <Button
+            variant="outline-primary"
+            className="mt-auto"
+            onClick={() => navigate(`/service-detail/${service.id}`)}
+          >
             Xem chi tiết
           </Button>
         </Card.Body>
