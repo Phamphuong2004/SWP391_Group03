@@ -6,6 +6,7 @@
   margin-top: 2rem;
   font-family: "Segoe UI", "Roboto", Arial, sans-serif;
   box-shadow: 0 -2px 16px rgba(33, 147, 176, 0.12);
+  animation: footerFadeIn 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-footer a {
@@ -273,4 +274,51 @@
     color: #ffb300;
     background: transparent;
   }
+}
+
+@keyframes footerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-32px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+.my-card-animated {
+  animation: cardFadeIn 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-32px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.main-footer,
+.footer-animated {
+  animation: fadeInDown 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }

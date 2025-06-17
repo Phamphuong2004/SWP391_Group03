@@ -9,6 +9,7 @@
     no-repeat center center fixed;
   background-size: cover; */
   background: #eaf2ff; /* hoặc màu nền bạn muốn */
+  animation: bookingFadeIn 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .booking-form {
@@ -505,4 +506,17 @@ body.dark-theme .booking-form select:disabled {
 body.dark-theme .booking-service span {
   color: #ffb26b;
   text-shadow: none;
+}
+
+@keyframes bookingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-32px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
 }

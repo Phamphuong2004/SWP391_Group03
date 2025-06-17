@@ -13,24 +13,25 @@
   animation: cardFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Card style đẹp hơn */
+/* Card style dịu hơn, dùng biến màu */
 .card {
-  border-radius: 18px !important;
-  box-shadow: 0 4px 24px rgba(33, 147, 176, 0.1),
-    0 1.5px 8px rgba(33, 147, 176, 0.06);
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s;
+  background: linear-gradient(120deg, #fff 70%, #ffeaea 100%);
+  border-radius: 22px;
+  box-shadow: 0 10px 36px 0 rgba(215, 38, 61, 0.16), 0 2px 8px #fff inset;
+  border: 2.5px solid #f3bcbc;
+  width: 340px;
   overflow: hidden;
-  border: none !important;
-  background: #f8fbff !important; /* Nền card sáng */
-  color: #1976d2 !important; /* Chữ xanh đậm */
-  border: 1.5px solid #cce3ff !important; /* Viền xanh nhạt */
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s, box-shadow 0.18s;
+  position: relative;
+  color: #222;
 }
 
 .card:hover {
-  transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 8px 32px rgba(33, 147, 176, 0.18),
-    0 4px 16px rgba(33, 147, 176, 0.13);
-  border: 1.5px solid #6dd5ed;
+  transform: translateY(-12px) scale(1.06);
+  box-shadow: 0 24px 64px 0 rgba(244, 96, 54, 0.22), 0 2px 8px #fff inset;
+  border-color: #f46036;
 }
 
 .card-img-top {
@@ -38,27 +39,29 @@
   object-fit: cover;
   height: 180px;
   transition: filter 0.3s;
+  background: #e3eafc;
 }
 
-.card:hover .card-img-top {
-  filter: brightness(0.93) blur(0.5px);
+.dark-theme .card-img-top {
+  filter: brightness(0.95) contrast(1.05);
 }
 
 .card-title {
-  color: #1976d2 !important;
-  font-weight: 700;
-  text-shadow: 0 2px 8px #cce3ff55;
-  font-size: 1.18rem;
-  margin-bottom: 8px;
+  font-size: 1.22rem;
+  font-weight: 800;
+  color: #d7263d;
+  margin-bottom: 6px;
 }
 
 .card-text {
-  color: #1976d2 !important;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  color: #444;
+  margin-bottom: 8px;
 }
 
 .card-body {
   padding: 18px 18px 14px 18px;
+  background: transparent;
 }
 
 .card-footer,
@@ -68,49 +71,46 @@
   padding-bottom: 12px;
 }
 
-/* Badge */
-.badge.bg-success,
-.dark-theme .badge.bg-success {
-  background-color: #43a047 !important;
+/* Badge dịu hơn */
+.badge.bg-success {
+  background-color: #2ecc40 !important;
   color: #fff !important;
+  font-size: 1em;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.3em 1em;
+  margin-bottom: 6px;
 }
 
-.badge.bg-warning,
-.dark-theme .badge.bg-warning {
-  background-color: #ffc107 !important;
+.badge.bg-warning {
+  background-color: #ffe082 !important;
   color: #23272b !important;
+  font-size: 1em;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.3em 1em;
+  margin-bottom: 6px;
 }
 
-/* Card dark mode đồng bộ với trang chủ */
+/* Card dark mode đồng bộ với App.css */
 .dark-theme .card {
-  background: #23272b !important;
-  color: #e3f2fd !important;
-  border: 1.5px solid #424242 !important;
-  box-shadow: 0 8px 32px 0 #181818, 0 2px 8px #181818 inset !important;
+  background: #181818 !important;
+  color: #ffd600 !important;
+  border: 2.5px solid #ffd600 !important;
+  box-shadow: 0 10px 36px 0 #181818, 0 2px 8px #222 inset !important;
 }
 
 .dark-theme .card-title {
-  color: #ffe082 !important;
-  text-shadow: 0 2px 8px #181818;
+  color: #ffd600 !important;
 }
 
 .dark-theme .card-text {
-  color: #b0bec5 !important;
+  color: #ffe082 !important;
 }
 
 .dark-theme .card-footer {
   background: transparent !important;
   border: none !important;
-}
-
-.dark-theme .badge.bg-success {
-  background-color: #388e3c !important;
-  color: #fff !important;
-}
-
-.dark-theme .badge.bg-warning {
-  background-color: #ffc107 !important;
-  color: #23272b !important;
 }
 
 /* Khung hoạt động sáng */
@@ -143,6 +143,43 @@
 .dark-theme .activity-card-title {
   color: #ffe082 !important;
   text-shadow: 0 2px 8px #181818;
+}
+
+.btn-outline-primary {
+  border-radius: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-width: 2px;
+  color: #f46036;
+  border-color: #f46036;
+  background: transparent;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  margin-top: 10px;
+  padding: 10px 0;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+  background: #f46036;
+  color: #fff;
+  border-color: #f46036;
+}
+
+.dark-theme .btn-outline-primary {
+  color: #ffd600 !important;
+  border-color: #ffd600 !important;
+  background: #181818 !important;
+}
+
+.dark-theme .btn-outline-primary:hover {
+  background: #ffd600 !important;
+  color: #181818 !important;
+  border-color: #ffd600 !important;
+}
+
+.dark-theme .card-img,
+.dark-theme .card-img-top {
+  filter: brightness(0.92) contrast(1.08);
 }
 
 @media (max-width: 576px) {

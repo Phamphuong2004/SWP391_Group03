@@ -5,170 +5,121 @@ import provinces from "../Provinces";
 import ADNTestingServices from "../listOfServices";
 import "./Booking.css";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const genders = ["Nam", "Nữ", "Khác"];
+const testPurposes = ["Dân sự", "Hành chính"];
+
+const testCategories = [
+  "Xét nghiệm huyết thống cha con",
+  "Xét nghiệm huyết thống mẹ con",
+  "Xét nghiệm ADN hành chính",
+  "Xét nghiệm ADN cá nhân",
+  "Xét nghiệm ADN pháp lý",
+  "Xét nghiệm ADN trước sinh",
+  "Xét nghiệm ADN khác",
+];
+
+const serviceTypes = [
+  "Tư vấn di truyền",
+  "Lấy mẫu tại nhà",
+  "Lấy mẫu tại cơ sở",
+  "Giao kết quả tận nơi",
+  "Dịch vụ nhanh",
+  "Dịch vụ tiêu chuẩn",
+];
 
 function Booking() {
   const [form, setForm] = useState({
-    name: "",
+    fullName: "",
     dob: null,
     phone: "",
     email: "",
     gender: "",
-    service: "Tại nhà",
+    appointmentDate: null, // LocalDateTime
+    collectionSampleTime: "",
+    testPurpose: "",
+    serviceType: "",
+    testCategory: "",
     province: "",
     district: "",
-    address: "",
-    testType: "",
-    time: "",
     note: "",
-    caseType: "dan-su", // Thêm trường này
   });
 
   const [districts, setDistricts] = useState([]);
-  const [type, setType] = useState("dan-su");
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Nếu chọn dịch vụ xét nghiệm
-    if (name === "caseType") {
-      if (value === "hanh-chinh") {
-        setForm((prev) => ({
-          ...prev,
-          caseType: value,
-          service: "Tại cơ sở", // Mặc định tại cơ sở
-        }));
-      } else {
-        setForm((prev) => ({
-          ...prev,
-          caseType: value,
-          service: "", // Bắt buộc chọn lại nơi xét nghiệm
-        }));
-      }
-      return;
-    }
-
-    // Nếu chọn nơi xét nghiệm
-    if (name === "service") {
-      setForm((prev) => ({
-        ...prev,
-        service: value,
-      }));
-      return;
-    }
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
     if (name === "province") {
       const selected = provinces.find((p) => p.name === value);
       setDistricts(selected ? selected.districts : []);
-      setForm((prev) => ({
-        ...prev,
-        province: value,
-        district: "",
-      }));
+      setForm((prev) => ({ ...prev, province: value, district: "" }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleDateChange = (date) => {
+    setForm((prev) => ({ ...prev, dob: date }));
+  };
+
+  const handleAppointmentDateChange = (date) => {
+    setForm((prev) => ({ ...prev, appointmentDate: date }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowConfirm(true);
-  };
-
-  const handleConfirm = () => {
-    setShowConfirm(false);
-
-    // Generate a unique service ID
-    const serviceId = `SVC-${Date.now()}-${Math.random()
-      .toString(36)
-      .substr(2, 9)}`;
-
-    // Save the booking data to localStorage
-    const bookingData = {
-      serviceId,
-      ...form,
-      status: "pending",
-      submittedDate: new Date().toISOString(),
-      estimatedCompletionDate: new Date(
-        Date.now() + 7 * 24 * 60 * 60 * 1000
-      ).toISOString(), // 7 days from now
-      currentStep: 0,
-      steps: [
-        {
-          title: "Tiếp nhận đơn",
-          description: "Đơn đăng ký đã được tiếp nhận",
-          completedDate: new Date().toISOString(),
-        },
-        {
-          title: "Xác nhận thông tin",
-          description: "Đang xác nhận thông tin đăng ký",
-        },
-        {
-          title: "Lấy mẫu",
-          description: "Đang sắp xếp lịch lấy mẫu",
-        },
-        {
-          title: "Xét nghiệm",
-          description: "Đang thực hiện xét nghiệm",
-        },
-        {
-          title: "Hoàn thành",
-          description: "Hoàn thành xét nghiệm và gửi kết quả",
-        },
-      ],
-      documents: [
-        {
-          name: "Đơn đăng ký xét nghiệm",
-          status: "Đã nộp",
-        },
-      ],
-      notes: [
-        {
-          date: new Date().toISOString(),
-          author: "Hệ thống",
-          content: "Đơn đăng ký đã được tiếp nhận thành công",
-        },
-      ],
-      lastUpdated: new Date().toISOString(),
-    };
-
-    // Save to localStorage
-    localStorage.setItem("lastServiceId", serviceId);
-    localStorage.setItem(`booking_${serviceId}`, JSON.stringify(bookingData));
-
-    // Navigate to tracking page
-    navigate(`/service-tracking/${serviceId}`);
-  };
-
-  const handleCancel = () => {
-    setShowConfirm(false);
-  };
-
-  const handleBookingSuccess = () => {
-    // ...xử lý lưu thông tin đặt lịch...
-    navigate("/register-notification");
+    setIsLoading(true);
+    try {
+      const data = {
+        ...form,
+        dob: form.dob ? form.dob.toISOString().split("T")[0] : "",
+        appointmentDate: form.appointmentDate
+          ? form.appointmentDate.toISOString()
+          : "",
+        collectionSampleTime: form.collectionSampleTime || null,
+      };
+      await axios.post("/api/create-appointment", data);
+      toast.success("Đặt lịch hẹn thành công!");
+      navigate("/booking-notification");
+    } catch (err) {
+      toast.error("Đặt lịch hẹn thất bại. Vui lòng thử lại!");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="booking-page">
       <form className="booking-form" onSubmit={handleSubmit}>
-        <h2 className="booking-title">Đăng ký xét nghiệm ADN</h2>
+        <h2 className="booking-title">Đặt lịch hẹn xét nghiệm ADN</h2>
         <div className="booking-row">
           <div className="booking-col">
             <label>
               Họ và tên
               <input
                 type="text"
-                name="name"
-                value={form.name}
+                name="fullName"
+                value={form.fullName}
                 onChange={handleChange}
                 placeholder="Nhập họ và tên"
+                required
+              />
+            </label>
+            <label>
+              Ngày sinh
+              <DatePicker
+                selected={form.dob}
+                onChange={handleDateChange}
+                dateFormat="dd/MM/yyyy"
+                placeholderText="dd/mm/yyyy"
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                className="custom-datepicker"
                 required
               />
             </label>
@@ -181,6 +132,16 @@ function Booking() {
                 onChange={handleChange}
                 placeholder="Nhập số điện thoại"
                 required
+              />
+            </label>
+            <label>
+              Email
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Nhập email"
               />
             </label>
             <label>
@@ -199,88 +160,79 @@ function Booking() {
                 ))}
               </select>
             </label>
-            <div className="booking-service">
-              <span>Chọn dịch vụ xét nghiệm</span>
-              <div style={{ display: "flex", gap: 16, margin: "8px 0" }}>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="caseType"
-                    value="dan-su"
-                    checked={form.caseType === "dan-su"}
-                    onChange={() => {
-                      setForm((prev) => ({
-                        ...prev,
-                        caseType: prev.caseType === "dan-su" ? "" : "dan-su",
-                        service: prev.caseType === "dan-su" ? "" : prev.service,
-                      }));
-                    }}
-                  />
-                  Dân sự
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="caseType"
-                    value="hanh-chinh"
-                    checked={form.caseType === "hanh-chinh"}
-                    onChange={() => {
-                      setForm((prev) => ({
-                        ...prev,
-                        caseType:
-                          prev.caseType === "hanh-chinh" ? "" : "hanh-chinh",
-                        service: "Tại cơ sở",
-                      }));
-                    }}
-                  />
-                  Hành chính
-                </label>
-              </div>
-
-              {/* Chỉ hiển thị chọn nơi xét nghiệm khi đã chọn dịch vụ */}
-              {form.caseType && (
-                <>
-                  <span>Chọn nơi xét nghiệm</span>
-                  <div style={{ display: "flex", gap: 16, margin: "8px 0" }}>
-                    <label>
-                      <input
-                        type="radio"
-                        name="service"
-                        value="Tại nhà"
-                        checked={form.service === "Tại nhà"}
-                        onChange={handleChange}
-                        disabled={form.caseType === "hanh-chinh"}
-                      />
-                      Tại nhà
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="service"
-                        value="Tại cơ sở"
-                        checked={form.service === "Tại cơ sở"}
-                        onChange={handleChange}
-                      />
-                      Tại cơ sở
-                    </label>
-                  </div>
-                </>
-              )}
-
-              {/* Nếu chọn "Tại cơ sở" thì hiển thị upload file */}
-              {form.service === "Tại cơ sở" && (
-                <label style={{ marginTop: 12, display: "block" }}>
-                  Đính kèm file dấu vân tay:
-                  <input
-                    type="file"
-                    name="fingerprint"
-                    accept=".jpg,.png,.pdf"
-                  />
-                </label>
-              )}
-            </div>
             <label>
-              Tỉnh lấy mẫu
+              Ngày & giờ hẹn
+              <DatePicker
+                selected={form.appointmentDate}
+                onChange={handleAppointmentDateChange}
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={15}
+                dateFormat="dd/MM/yyyy HH:mm"
+                placeholderText="Chọn ngày & giờ"
+                className="custom-datepicker"
+                required
+              />
+            </label>
+            <label>
+              Giờ lấy mẫu (nếu khác giờ hẹn)
+              <input
+                type="time"
+                name="collectionSampleTime"
+                value={form.collectionSampleTime}
+                onChange={handleChange}
+              />
+            </label>
+            <label>
+              Mục đích xét nghiệm
+              <select
+                name="testPurpose"
+                value={form.testPurpose}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn mục đích</option>
+                {testPurposes.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Loại dịch vụ
+              <select
+                name="serviceType"
+                value={form.serviceType}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn loại dịch vụ</option>
+                {serviceTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Loại xét nghiệm
+              <select
+                name="testCategory"
+                value={form.testCategory}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn loại xét nghiệm</option>
+                {testCategories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Tỉnh/Thành phố
               <select
                 name="province"
                 value={form.province}
@@ -294,84 +246,6 @@ function Booking() {
                   </option>
                 ))}
               </select>
-            </label>
-            <label>
-              Địa chỉ
-              <input
-                type="text"
-                name="address"
-                value={form.address}
-                onChange={handleChange}
-                placeholder="Nhập địa chỉ"
-                required
-              />
-            </label>
-            <label>
-              Nội dung yêu cầu
-              <textarea
-                name="note"
-                value={form.note}
-                onChange={handleChange}
-                placeholder="Nhập nội dung"
-              />
-            </label>
-          </div>
-          <div className="booking-col">
-            <label>
-              Ngày tháng năm sinh
-              <DatePicker
-                selected={form.dob}
-                onChange={(date) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    dob: date,
-                  }))
-                }
-                dateFormat="dd/MM/yyyy"
-                placeholderText="dd/mm/yyyy"
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                className="custom-datepicker"
-                required
-              />
-            </label>
-            <label>
-              Email
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="Nhập email"
-                required
-              />
-            </label>
-            <label>
-              Loại xét nghiệm ADN
-              <select
-                name="testType"
-                value={form.testType}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Chọn loại xét nghiệm ADN</option>
-                {ADNTestingServices.map((s) => (
-                  <option key={s.id} value={s.testType}>
-                    {s.testType}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Giờ lấy mẫu
-              <input
-                type="time"
-                name="time"
-                value={form.time}
-                onChange={handleChange}
-                required
-              />
             </label>
             <label>
               Quận/Huyện
@@ -390,28 +264,23 @@ function Booking() {
                 ))}
               </select>
             </label>
+            <label>
+              Ghi chú
+              <textarea
+                name="note"
+                value={form.note}
+                onChange={handleChange}
+                placeholder="Nhập ghi chú (nếu có)"
+              />
+            </label>
           </div>
         </div>
         <div className="booking-submit">
-          <button type="submit">Đăng ký</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Đang gửi..." : "Đặt lịch hẹn"}
+          </button>
         </div>
       </form>
-      {showConfirm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-icon">📋</div>
-            <p>Bạn có chắc chắn muốn đăng ký xét nghiệm ADN không?</p>
-            <div className="modal-buttons">
-              <button onClick={handleConfirm} className="modal-btn confirm">
-                Xác nhận
-              </button>
-              <button onClick={handleCancel} className="modal-btn cancel">
-                Hủy
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
