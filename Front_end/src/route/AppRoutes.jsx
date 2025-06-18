@@ -49,6 +49,8 @@ import PropertyDispute from "../ServiceInfo/ServiceDetails/property-dispute";
 import Inheritance from "../ServiceInfo/ServiceDetails/inheritance";
 import CivilContract from "../ServiceInfo/ServiceDetails/civil-contract";
 import ViewDetails from "../ViewDetails/ViewDetails";
+import ReceiveBooking from "../ReceiveBooking/ReceiveBooking";
+import "../ReceiveBooking/ReceiveBooking.css";
 
 function HomePage() {
   return (
@@ -175,6 +177,15 @@ function AppContent() {
         <Route path="/service/inheritance" element={<Inheritance />} />
         <Route path="/service/civil-contract" element={<CivilContract />} />
         <Route path="/service-detail/:id" element={<ViewDetails />} />
+        {/* Route cho staff và manager tiếp nhận booking */}
+        <Route
+          path="/receive-booking"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <ReceiveBooking />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
