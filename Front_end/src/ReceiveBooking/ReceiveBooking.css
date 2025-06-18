@@ -1,0 +1,61 @@
+/* ReceiveBooking Styles */
+.receive-booking-container {
+  padding: 32px 16px;
+  background: #f7f8fa;
+  min-height: 100vh;
+}
+
+.receive-booking-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1a237e;
+  letter-spacing: 1px;
+}
+
+.ant-table {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.ant-btn {
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.ant-btn-primary {
+  background: #1976d2;
+  border-color: #1976d2;
+}
+
+.ant-btn-dangerous {
+  background: #e53935;
+  border-color: #e53935;
+}
+
+.ant-modal-content {
+  border-radius: 10px;
+}
+
+.ant-form-item-label > label {
+  font-weight: 600;
+  color: #333;
+}
+
+input,
+select {
+  border-radius: 5px;
+  border: 1px solid #bdbdbd;
+  padding: 6px 10px;
+  font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+  .receive-booking-title {
+    font-size: 1.3rem;
+  }
+  .receive-booking-container {
+    padding: 12px 2px;
+  }
+}

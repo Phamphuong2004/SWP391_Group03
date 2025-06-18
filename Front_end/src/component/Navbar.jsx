@@ -111,6 +111,11 @@ function MyNavbar() {
                   </Nav.Link>
                 </>
               )}
+              {user && (user.role === "staff" || user.role === "manager") && (
+                <Nav.Link href="/receive-booking" className="nav-link">
+                  Tiếp nhận Booking
+                </Nav.Link>
+              )}
             </Nav>
             <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
               <Form.Control
