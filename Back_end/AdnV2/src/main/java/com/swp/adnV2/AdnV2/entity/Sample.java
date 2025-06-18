@@ -34,7 +34,7 @@ public class Sample {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Users users;
 
     @ManyToOne
     @JoinColumn(name = "kit_component_id", nullable = false)
@@ -69,12 +69,12 @@ public class Sample {
         this.appointmentService = appointmentService;
     }
 
-    public User getUser() {
-        return user;
+    public Users getUser() {
+        return users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Users users) {
+        this.users = users;
     }
 
     public KitComponent getKitComponent() {
@@ -123,7 +123,7 @@ public class Sample {
                 "sampleId=" + sampleId +
                 ", participant=" + participant +
                 ", appointmentService=" + appointmentService +
-                ", user=" + user +
+                ", user=" + users +
                 ", kitComponent=" + kitComponent +
                 ", sampleType='" + sampleType + '\'' +
                 ", collectedDate=" + collectedDate +

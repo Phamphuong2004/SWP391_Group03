@@ -23,7 +23,7 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users users;
 
     // Default constructor
     public Report() {
@@ -38,12 +38,12 @@ public class Report {
         this.reportId = reportId;
     }
 
-    public User getUser() {
-        return user;
+    public Users getUser() {
+        return users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Users users) {
+        this.users = users;
     }
 
     public String getReportTitle() {
@@ -74,7 +74,7 @@ public class Report {
     public String toString() {
         return "Report{" +
                 "reportId=" + reportId +
-                ", user=" + user +
+                ", user=" + users +
                 ", reportTitle='" + reportTitle + '\'' +
                 ", reportContent='" + reportContent + '\'' +
                 ", createdAt=" + createdAt +

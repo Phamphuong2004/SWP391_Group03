@@ -3,7 +3,7 @@ package com.swp.adnV2.AdnV2.service;
 import com.swp.adnV2.AdnV2.dto.AppointmentRequest;
 import com.swp.adnV2.AdnV2.entity.Appointment;
 import com.swp.adnV2.AdnV2.entity.StatusAppointment;
-import com.swp.adnV2.AdnV2.entity.User;
+import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -30,14 +28,14 @@ public class AppointmentService {
         if(status != null && !status.isEmpty()){
             try {
                 StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
-                return appointmentRepository.findByUser_UsernameAndStatus(username, status);
+                return appointmentRepository.findByUsers_UsernameAndStatus(username, status);
             } catch (IllegalArgumentException e) {
                 // Xử lý exception khi status không hợp lệ
                 throw new RuntimeException("Invalid status: " + status);
             }
         } else {
             // Nếu status không được cung cấp hoặc rỗng, trả về tất cả appointment của user có phân trang
-            return appointmentRepository.findByUser_Username(username);
+            return appointmentRepository.findByUsers_Username(username);
         }
     }
 
@@ -78,9 +76,9 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
 
         // Xử lý user (nếu có)
         if (username != null && !username.trim().isEmpty()) {
-            User user = userRepository.findByUsername(username);
-            if (user != null) {
-                appointment.setUser(user);
+            Users users = userRepository.findByUsername(username);
+            if (users != null) {
+                appointment.setUser(users);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("User with username " + username + " not found");
@@ -104,13 +102,13 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
      */
     public ResponseEntity<?> viewAppointments(String username) {
         try {
-            User user = userRepository.findByUsername(username);
-            if (user == null) {
+            Users users = userRepository.findByUsername(username);
+            if (users == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("User with username " + username + " not found");
             }
 
-            List<Appointment> appointments = appointmentRepository.findByUser_UserId(user.getUserId());
+            List<Appointment> appointments = appointmentRepository.findByUsers_UserId(users.getUserId());
             return ResponseEntity.ok(appointments);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -173,13 +171,13 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
     //
 
     public ResponseEntity<?> createAppointment(String username, AppointmentRequest request){
-        User user = userRepository.findByUsername(username);
-        if(user == null){
+        Users users = userRepository.findByUsername(username);
+        if(users == null){
             return ResponseEntity.badRequest().body("User not found");
         }
 
         Appointment appointment = new Appointment();
-        appointment.setUser(user);//
+        appointment.setUser(users);//
         appointment.setFullName(request.getFullName());//
         appointment.setDob(request.getDob());//
         appointment.setPhone(request.getPhone());//
@@ -209,12 +207,12 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
 
     public ResponseEntity<?> viewAppointmentsV2(String username) {
         try {
-            User user = userRepository.findByUsername(username);
-            if (user == null) {
+            Users users = userRepository.findByUsername(username);
+            if (users == null) {
                 return ResponseEntity.badRequest().body("User not found");
             }
 
-            List<Appointment> appointments = appointmentRepository.findByUser_UserId(user.getUserId());
+            List<Appointment> appointments = appointmentRepository.findByUsers_UserId(users.getUserId());
             if (appointments.isEmpty()) {
                 return ResponseEntity.badRequest().body("No appointments found for this user");
             }

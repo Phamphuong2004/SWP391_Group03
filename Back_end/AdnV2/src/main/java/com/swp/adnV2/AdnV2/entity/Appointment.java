@@ -20,12 +20,12 @@ public class Appointment {
     @ManyToOne(optional = true)
     @JoinColumn(name = "user_id", nullable = true)
     @JsonIgnore
-    private User user;
+    private Users users;
 
     // Thêm phương thức này để vẫn hiển thị userId
     @JsonProperty("userId")
     public Long getUserId() {
-        return user != null ? user.getUserId() : null;
+        return users != null ? users.getUserId() : null;
     }
 
     @Column(name = "full_name", columnDefinition = "NVARCHAR(100)", nullable = false)
@@ -86,12 +86,12 @@ public class Appointment {
         this.appointmentId = appointmentId;
     }
 
-    public User getUser() {
-        return user;
+    public Users getUser() {
+        return users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Users users) {
+        this.users = users;
     }
 
     public String getFullName() {

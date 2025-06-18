@@ -13,7 +13,7 @@ public class LoginHistory {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Users users;
 
     @Column(name = "login_time", nullable = false)
     private LocalDateTime loginTime;
@@ -40,12 +40,12 @@ public class LoginHistory {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Users getUsers() {
+        return users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUsers(Users users) {
+        this.users = users;
     }
 
     public LocalDateTime getLoginTime() {

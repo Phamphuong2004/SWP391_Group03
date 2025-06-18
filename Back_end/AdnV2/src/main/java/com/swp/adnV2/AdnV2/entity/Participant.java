@@ -26,7 +26,7 @@ public class Participant {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users users;
 
     @ManyToOne
     @JoinColumn(name = "appointment_service_id")
@@ -45,12 +45,12 @@ public class Participant {
         this.participantId = participantId;
     }
 
-    public User getUser() {
-        return user;
+    public Users getUser() {
+        return users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Users users) {
+        this.users = users;
     }
 
     public String getFullName() {
@@ -97,7 +97,7 @@ public class Participant {
     public String toString() {
         return "Participant{" +
                 "participantId=" + participantId +
-                ", user=" + user +
+                ", user=" + users +
                 ", fullName='" + fullName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", relationshipToCustomer='" + relationshipToCustomer + '\'' +

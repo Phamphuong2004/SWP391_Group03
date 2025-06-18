@@ -22,7 +22,7 @@ public class Feedback {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users users;
 
     @ManyToOne
     @JoinColumn(name = "service_id")
@@ -60,12 +60,12 @@ public class Feedback {
         this.feedbackDate = feedbackDate;
     }
 
-    public User getUser() {
-        return user;
+    public Users getUser() {
+        return users;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Users users) {
+        this.users = users;
     }
 
     public Services getService() {
@@ -83,7 +83,7 @@ public class Feedback {
                 ", content='" + content + '\'' +
                 ", rating=" + rating +
                 ", feedbackDate=" + feedbackDate +
-                ", user=" + user +
+                ", user=" + users +
                 ", service=" + service +
                 '}';
     }

@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "[Users]") // Using square brackets because "User" is a reserved keyword in SQL Server
-public class User {
+public class Users {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,11 +40,11 @@ public class User {
     private String role;
 
     // Default constructor
-    public User() {}
+    public Users() {}
 
     // Parameterized constructor
-    public User(String username, String password, String email, String phone, String fullName,
-                String address, LocalDate dateOfBirth, String gender, String role) {
+    public Users(String username, String password, String email, String phone, String fullName,
+                 String address, LocalDate dateOfBirth, String gender, String role) {
         this.username = username;
         this.password = password;
         this.email = email;

@@ -6,7 +6,7 @@ import com.swp.adnV2.AdnV2.dto.ProfileRequest;
 import com.swp.adnV2.AdnV2.dto.RegisterRequest;
 import com.swp.adnV2.AdnV2.entity.LoginHistory;
 import com.swp.adnV2.AdnV2.entity.Role;
-import com.swp.adnV2.AdnV2.entity.User;
+import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +35,12 @@ public class UserController {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
-        User user = userRepository.findByUsername(username);
+        Users users = userRepository.findByUsername(username);
         Map<String, Object> response = new HashMap<>();
-        if (user != null && user.getPassword() != null && user.getPassword().equals(password)) {
+        if (users != null && users.getPassword() != null && users.getPassword().equals(password)) {
             // Create login history entry
             LoginHistory loginHistory = new LoginHistory();
-            loginHistory.setUser(user);
+            loginHistory.setUsers(users);
             loginHistory.setLoginTime(LocalDateTime.now());
             loginHistory.setIpAddress(getClientIp(request));
             loginHistory.setUserAgent(request.getHeader("User-Agent"));
@@ -49,7 +49,7 @@ public class UserController {
 
             response.put("Exists", true);
             response.put("message", "Login successful");
-            response.put("role", user.getRole());
+            response.put("role", users.getRole());
         } else {
             response.put("Exists", false);
             response.put("message", "Invalid username or password");
@@ -82,15 +82,15 @@ public class UserController {
             response.put("Message", "Passwords do not match confirm password");
             return ResponseEntity.badRequest().body(response);
         }
-        User user = new User();
-        user.setFullName(registerRequest.getFullName());
-        user.setUsername(registerRequest.getUsername());
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(registerRequest.getPassword());
-        user.setPhone(registerRequest.getPhone());
-        user.setAddress(registerRequest.getAddress());
-        user.setRole(Role.Customer.name());
-        userRepository.save(user);
+        Users users = new Users();
+        users.setFullName(registerRequest.getFullName());
+        users.setUsername(registerRequest.getUsername());
+        users.setEmail(registerRequest.getEmail());
+        users.setPassword(registerRequest.getPassword());
+        users.setPhone(registerRequest.getPhone());
+        users.setAddress(registerRequest.getAddress());
+        users.setRole(Role.Customer.name());
+        userRepository.save(users);
         response.put("Success", true);
         response.put("Message", "User registered successfully");
         return ResponseEntity.ok(response);
@@ -99,8 +99,8 @@ public class UserController {
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest resetPassword) {
         Map<String, Object> response = new HashMap<>();
-        User user = userRepository.findByPhone(resetPassword.getPhoneNumber());
-        if (user == null) {
+        Users users = userRepository.findByPhone(resetPassword.getPhoneNumber());
+        if (users == null) {
             response.put("Success", false);
             response.put("Message", "User not found with this phone number");
             return ResponseEntity.badRequest().body(response);
@@ -117,8 +117,8 @@ public class UserController {
             response.put("Message", "New password and confirm password do not match");
             return ResponseEntity.badRequest().body(response);
         } else {
-            user.setPassword(resetPassword.getNewPassword());
-            userRepository.save(user);
+            users.setPassword(resetPassword.getNewPassword());
+            userRepository.save(users);
             response.put("Success", true);
             response.put("Message", "Password reset successfully");
             return ResponseEntity.ok(response);
@@ -126,67 +126,62 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-<<<<<<< Updated upstream:src/main/java/com/swp/adnV2/AdnV2/controller/UserController.java
-    public ResponseEntity<?> getProfile(@RequestParam String username) {
-        User user = userRepository.findByUsername(username);
-=======
     public ResponseEntity<?> getProfile() {
-        // Lấy thông tin người dùng đang đăng nhập từ security context
+        // Get authenticated user information from security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        Users user = userRepository.findByUsername(username);
->>>>>>> Stashed changes:Back_end/AdnV2/src/main/java/com/swp/adnV2/AdnV2/controller/UserController.java
-        if (user == null) {
+        Users users = userRepository.findByUsername(username);
+        if (users == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
 
         Map<String, Object> profile = new HashMap<>();
-        profile.put("username", user.getUsername());
-        profile.put("email", user.getEmail());
-        profile.put("phone", user.getPhone());
-        profile.put("fullName", user.getFullName());
-        profile.put("address", user.getAddress());
-        profile.put("dateOfBirth", user.getDateOfBirth());
-        profile.put("gender", user.getGender());
+        profile.put("username", users.getUsername());
+        profile.put("email", users.getEmail());
+        profile.put("phone", users.getPhone());
+        profile.put("fullName", users.getFullName());
+        profile.put("address", users.getAddress());
+        profile.put("dateOfBirth", users.getDateOfBirth());
+        profile.put("gender", users.getGender());
         return ResponseEntity.ok(profile);
     }
 
     @PostMapping("/profile/update")
     public ResponseEntity<?> updateProfile(@RequestParam String username, @RequestBody ProfileRequest profileRequest) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
+        Users users = userRepository.findByUsername(username);
+        if (users == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
         if (profileRequest.getEmail() != null && !profileRequest.getEmail().isEmpty()
-                && !profileRequest.getEmail().equals(user.getEmail())) {
-            User existingUser = userRepository.findByEmail(profileRequest.getEmail());
-            if (existingUser != null) {
+                && !profileRequest.getEmail().equals(users.getEmail())) {
+            Users existingUsers = userRepository.findByEmail(profileRequest.getEmail());
+            if (existingUsers != null) {
                 return ResponseEntity.badRequest().body("Email already exists");
             }
-            user.setEmail(profileRequest.getEmail());
+            users.setEmail(profileRequest.getEmail());
         }
 
         if (profileRequest.getFullName() != null && !profileRequest.getFullName().isEmpty()) {
-            user.setFullName(profileRequest.getFullName());
+            users.setFullName(profileRequest.getFullName());
         }
         if (profileRequest.getAddress() != null && !profileRequest.getAddress().isEmpty()) {
-            user.setAddress(profileRequest.getAddress());
+            users.setAddress(profileRequest.getAddress());
         }
         if (profileRequest.getDateOfBirth() != null) {
-            user.setDateOfBirth(profileRequest.getDateOfBirth());
+            users.setDateOfBirth(profileRequest.getDateOfBirth());
         }
         if (profileRequest.getGender() != null && !profileRequest.getGender().isEmpty()) {
-            user.setGender(profileRequest.getGender());
+            users.setGender(profileRequest.getGender());
         }
         if (profileRequest.getPhoneNumber() != null && !profileRequest.getPhoneNumber().isEmpty()) {
-            user.setPhone(profileRequest.getPhoneNumber());
+            users.setPhone(profileRequest.getPhoneNumber());
         }
         if (profileRequest.getEmail() != null && !profileRequest.getEmail().isEmpty()) {
-            user.setEmail(profileRequest.getEmail());
+            users.setEmail(profileRequest.getEmail());
         }
 
-        userRepository.save(user);
+        userRepository.save(users);
         return ResponseEntity.ok("Profile updated successfully");
     }
 
