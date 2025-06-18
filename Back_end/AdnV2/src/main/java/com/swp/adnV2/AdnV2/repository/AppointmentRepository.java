@@ -17,4 +17,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByEmailAndPhone(String email, String phone);
 
     List<Appointment> findByUsers_UsernameAndStatus(String username, String status);
+
 }

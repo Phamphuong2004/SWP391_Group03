@@ -67,6 +67,9 @@ public class Appointment {
     @Column(name = "fingerprint_file", columnDefinition = "NVARCHAR(255)")
     private String fingerprintFile;
 
+    @Column(name = "result_file", columnDefinition = "NVARCHAR(255)")
+    private String resultFile;
+
     @Column(name = "district", columnDefinition = "NVARCHAR(100)")
     private String district;
 
@@ -212,5 +215,21 @@ public class Appointment {
 
     public void setProvince(String province) {
         this.province = province;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
+    public String getResultFile() {
+        return resultFile;
+    }
+
+    public void setResultFile(String resultFile) {
+        this.resultFile = resultFile;
     }
 }

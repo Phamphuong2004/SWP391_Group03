@@ -1,6 +1,8 @@
 package com.swp.adnV2.AdnV2.service;
 
 import com.swp.adnV2.AdnV2.dto.AppointmentRequest;
+import com.swp.adnV2.AdnV2.dto.AppointmentResponse;
+import com.swp.adnV2.AdnV2.dto.AppointmentUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Appointment;
 import com.swp.adnV2.AdnV2.entity.StatusAppointment;
 import com.swp.adnV2.AdnV2.entity.Users;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentService {
@@ -23,6 +26,49 @@ public class AppointmentService {
 
     @Autowired
     private UserRepository userRepository;
+
+    public ResponseEntity<?> deleteAppointment(Long appointmentId) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+        if (appointmentOpt.isPresent()) {
+            appointmentRepository.delete(appointmentOpt.get());
+            return ResponseEntity.ok("Appointment deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Appointment with ID " + appointmentId + " not found");
+        }
+    }
+
+    public AppointmentResponse convertToAppointmentResponse(Appointment appointment) {
+        AppointmentResponse response = new AppointmentResponse();
+        response.setAppointmentId(appointment.getAppointmentId());
+        response.setFullName(appointment.getFullName());
+        response.setDob(appointment.getDob());
+        response.setPhone(appointment.getPhone());
+        response.setEmail(appointment.getEmail());
+        response.setGender(appointment.getGender());
+        response.setTestPurpose(appointment.getTestPurpose());
+        response.setServiceType(appointment.getServiceType());
+        response.setCollectionSampleTime(appointment.getCollectionSampleTime());
+        response.setFingerprintFile(appointment.getFingerprintFile());
+        response.setDistrict(appointment.getDistrict());
+        response.setProvince(appointment.getProvince());
+        response.setStatus(appointment.getStatus());
+        response.setResultFile(appointment.getResultFile());
+
+        return response;
+    }
+
+    public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+        if (appointments.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        List<AppointmentResponse> responseList = appointments.stream()
+                .map(this::convertToAppointmentResponse) // Sử dụng method reference nếu có thể
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
+
 
     public List<Appointment> getAppointmentByUsernameAndStatus(String username, String status) {;
         if(status != null && !status.isEmpty()){
@@ -131,19 +177,24 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
         }
     }
 
-    /**
-     * Cập nhật trạng thái của cuộc hẹn
-     * @param appointmentId ID của cuộc hẹn
-     * @param status Trạng thái mới
-     * @return ResponseEntity chứa thông tin cuộc hẹn hoặc thông báo lỗi
-     */
-    public ResponseEntity<?> updateAppointmentStatus(Long appointmentId, String status) {
+
+    public ResponseEntity<?> updateAppointment(Long appointmentId, AppointmentUpdateRequest updateRequest) {
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isPresent()) {
             Appointment appointment = appointmentOpt.get();
-            appointment.setStatus(status);
+
+            // Cập nhật trạng thái nếu được cung cấp
+            if (updateRequest.getStatus() != null && !updateRequest.getStatus().isEmpty()) {
+                appointment.setStatus(updateRequest.getStatus());
+            }
+
+            // Cập nhật file kết quả nếu được cung cấp
+            if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
+                appointment.setResultFile(updateRequest.getResultFile());
+            }
+
             appointment = appointmentRepository.save(appointment);
-            return ResponseEntity.ok(appointment);
+            return ResponseEntity.ok("Appointment updated successfully");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Appointment with ID " + appointmentId + " not found");
