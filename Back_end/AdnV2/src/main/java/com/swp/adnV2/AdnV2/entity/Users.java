@@ -39,12 +39,15 @@ public class Users {
     @Column(name = "role", length = 20, nullable = false)
     private String role;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     // Default constructor
     public Users() {}
 
     // Parameterized constructor
     public Users(String username, String password, String email, String phone, String fullName,
-                 String address, LocalDate dateOfBirth, String gender, String role) {
+                 String address, LocalDate dateOfBirth, String gender, String role, String avatar) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -54,6 +57,7 @@ public class Users {
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.role = role;
+        this.avatar = avatar;
     }
 
     // Getters and Setters
@@ -137,18 +141,11 @@ public class Users {
         this.role = role;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", address='" + address + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
-                ", gender='" + gender + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

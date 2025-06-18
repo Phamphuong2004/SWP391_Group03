@@ -9,6 +9,7 @@ import com.swp.adnV2.AdnV2.entity.Role;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
+import com.swp.adnV2.AdnV2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,9 @@ public class UserController {
 
     @Autowired
     private LoginHistoryRepository loginHistoryRepository;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<?> checkUser(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
@@ -130,59 +134,15 @@ public class UserController {
         // Get authenticated user information from security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+        return userService.getUsers(username);
 
-        Users users = userRepository.findByUsername(username);
-        if (users == null) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        Map<String, Object> profile = new HashMap<>();
-        profile.put("username", users.getUsername());
-        profile.put("email", users.getEmail());
-        profile.put("phone", users.getPhone());
-        profile.put("fullName", users.getFullName());
-        profile.put("address", users.getAddress());
-        profile.put("dateOfBirth", users.getDateOfBirth());
-        profile.put("gender", users.getGender());
-        return ResponseEntity.ok(profile);
     }
 
     @PostMapping("/profile/update")
-    public ResponseEntity<?> updateProfile(@RequestParam String username, @RequestBody ProfileRequest profileRequest) {
-        Users users = userRepository.findByUsername(username);
-        if (users == null) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-        if (profileRequest.getEmail() != null && !profileRequest.getEmail().isEmpty()
-                && !profileRequest.getEmail().equals(users.getEmail())) {
-            Users existingUsers = userRepository.findByEmail(profileRequest.getEmail());
-            if (existingUsers != null) {
-                return ResponseEntity.badRequest().body("Email already exists");
-            }
-            users.setEmail(profileRequest.getEmail());
-        }
-
-        if (profileRequest.getFullName() != null && !profileRequest.getFullName().isEmpty()) {
-            users.setFullName(profileRequest.getFullName());
-        }
-        if (profileRequest.getAddress() != null && !profileRequest.getAddress().isEmpty()) {
-            users.setAddress(profileRequest.getAddress());
-        }
-        if (profileRequest.getDateOfBirth() != null) {
-            users.setDateOfBirth(profileRequest.getDateOfBirth());
-        }
-        if (profileRequest.getGender() != null && !profileRequest.getGender().isEmpty()) {
-            users.setGender(profileRequest.getGender());
-        }
-        if (profileRequest.getPhoneNumber() != null && !profileRequest.getPhoneNumber().isEmpty()) {
-            users.setPhone(profileRequest.getPhoneNumber());
-        }
-        if (profileRequest.getEmail() != null && !profileRequest.getEmail().isEmpty()) {
-            users.setEmail(profileRequest.getEmail());
-        }
-
-        userRepository.save(users);
-        return ResponseEntity.ok("Profile updated successfully");
+    public ResponseEntity<?> updateProfile(@RequestBody ProfileRequest profileRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userService.updateUsers(username, profileRequest);
     }
 
     @GetMapping("/login-history")
