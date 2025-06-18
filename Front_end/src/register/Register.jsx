@@ -12,6 +12,7 @@ export default function Register() {
     confirmPassword: "",
     phone: "",
     address: "",
+    role: "USER",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -125,6 +126,17 @@ export default function Register() {
               value={form.address}
               required
             />
+            <label>Vai trò</label>
+            <select
+              name="role"
+              value={form.role}
+              onChange={handleChange}
+              required
+            >
+              <option value="USER">Người dùng</option>
+              <option value="ADMIN">Quản trị viên</option>
+              <option value="MANAGER">Quản lý</option>
+            </select>
             {error && (
               <div style={{ color: "red", marginBottom: 8 }}>{error}</div>
             )}
