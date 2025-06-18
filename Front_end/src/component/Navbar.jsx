@@ -7,18 +7,20 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Dropdown from "react-bootstrap/Dropdown";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Navbar.css";
 
 function MyNavbar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) setUser(JSON.parse(userData));
-  }, []);
+    else setUser(null);
+  }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");

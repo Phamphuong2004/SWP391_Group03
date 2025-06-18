@@ -8,7 +8,7 @@ export default function RegisterNotification() {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigate("/login");
-    }, 3000); // 3 giây
+    }, 2000);
     return () => clearTimeout(timer);
   }, [navigate]);
 
@@ -20,12 +20,6 @@ export default function RegisterNotification() {
         <br />
         Bạn sẽ được chuyển về trang đăng nhập trong giây lát.
       </p>
-      <button
-        className="register-notification-home-btn"
-        onClick={() => navigate("/login")}
-      >
-        Về trang đăng nhập
-      </button>
     </div>
   );
 }
