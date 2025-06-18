@@ -30,7 +30,7 @@ public class Participant {
 
     @ManyToOne
     @JoinColumn(name = "appointment_service_id")
-    private AppointmentService appointmentService;
+    private AppointmentServices appointmentServices;
 
     // Default constructor
     public Participant() {
@@ -85,12 +85,12 @@ public class Participant {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public AppointmentService getAppointmentService() {
-        return appointmentService;
+    public AppointmentServices getAppointmentService() {
+        return appointmentServices;
     }
 
-    public void setAppointmentService(AppointmentService appointmentService) {
-        this.appointmentService = appointmentService;
+    public void setAppointmentService(AppointmentServices appointmentServices) {
+        this.appointmentServices = appointmentServices;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Participant {
                 ", gender='" + gender + '\'' +
                 ", relationshipToCustomer='" + relationshipToCustomer + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", appointmentService=" + appointmentService +
+                ", appointmentService=" + appointmentServices +
                 '}';
     }
 }

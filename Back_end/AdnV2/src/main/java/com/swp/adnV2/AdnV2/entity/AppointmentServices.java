@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "AppointmentService")
-public class AppointmentService {
+public class AppointmentServices {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "appointment_service_id")
@@ -19,11 +19,11 @@ public class AppointmentService {
     private Services service;
 
     // Default constructor
-    public AppointmentService() {
+    public AppointmentServices() {
     }
 
     // Parameterized constructor
-    public AppointmentService(Appointment appointment, Services service) {
+    public AppointmentServices(Appointment appointment, Services service) {
         this.appointment = appointment;
         this.service = service;
     }
