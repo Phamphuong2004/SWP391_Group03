@@ -16,6 +16,7 @@ export default function Register() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -34,14 +35,15 @@ export default function Register() {
     }
     try {
       const response = await axios.post("/api/user/register", form);
-      console.log("Register response:", response.data);
-      if (response.data && response.data.jwt) {
-        const userData = {
-          ...response.data,
-          token: response.data.jwt,
-        };
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", response.data.jwt);
+      console.log("Register API response:", response.data);
+      if (
+        response.data &&
+        (response.data.Success === true ||
+          (typeof response.data.Message === "string" &&
+            response.data.Message.toLowerCase().includes(
+              "registered successfully"
+            )))
+      ) {
         navigate("/register-notification");
       } else {
         const msg =
@@ -140,7 +142,16 @@ export default function Register() {
             {error && (
               <div style={{ color: "red", marginBottom: 8 }}>{error}</div>
             )}
-            <button className="register-btn" type="submit" disabled={isLoading}>
+            {successMessage && (
+              <div style={{ color: "green", marginBottom: 8 }}>
+                {successMessage}
+              </div>
+            )}
+            <button
+              className="register-btn"
+              type="submit"
+              disabled={isLoading || !!successMessage}
+            >
               {isLoading ? "Đang đăng ký..." : "Đăng ký"}
             </button>
           </form>
@@ -153,6 +164,7 @@ export default function Register() {
               color: "#2193b0",
               border: "2px solid #2193b0",
             }}
+            disabled={!!successMessage}
           >
             Đã có tài khoản? Đăng nhập
           </button>
