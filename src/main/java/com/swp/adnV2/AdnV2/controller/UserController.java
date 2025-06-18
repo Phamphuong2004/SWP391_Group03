@@ -11,6 +11,8 @@ import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -124,8 +126,17 @@ public class UserController {
     }
 
     @GetMapping("/profile")
+<<<<<<< Updated upstream:src/main/java/com/swp/adnV2/AdnV2/controller/UserController.java
     public ResponseEntity<?> getProfile(@RequestParam String username) {
         User user = userRepository.findByUsername(username);
+=======
+    public ResponseEntity<?> getProfile() {
+        // Lấy thông tin người dùng đang đăng nhập từ security context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        Users user = userRepository.findByUsername(username);
+>>>>>>> Stashed changes:Back_end/AdnV2/src/main/java/com/swp/adnV2/AdnV2/controller/UserController.java
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
