@@ -6,7 +6,7 @@ import com.swp.adnV2.AdnV2.dto.ProfileRequest;
 import com.swp.adnV2.AdnV2.dto.RegisterRequest;
 import com.swp.adnV2.AdnV2.entity.LoginHistory;
 import com.swp.adnV2.AdnV2.entity.Role;
-import com.swp.adnV2.AdnV2.entity.User;
+import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class UserController {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
-        User user = userRepository.findByUsername(username);
+        Users user = userRepository.findByUsername(username);
         Map<String, Object> response = new HashMap<>();
         if (user != null && user.getPassword() != null && user.getPassword().equals(password)) {
             // Create login history entry
@@ -80,7 +80,7 @@ public class UserController {
             response.put("Message", "Passwords do not match confirm password");
             return ResponseEntity.badRequest().body(response);
         }
-        User user = new User();
+        Users user = new Users();
         user.setFullName(registerRequest.getFullName());
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
@@ -97,7 +97,7 @@ public class UserController {
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest resetPassword) {
         Map<String, Object> response = new HashMap<>();
-        User user = userRepository.findByPhone(resetPassword.getPhoneNumber());
+        Users user = userRepository.findByPhone(resetPassword.getPhoneNumber());
         if (user == null) {
             response.put("Success", false);
             response.put("Message", "User not found with this phone number");
@@ -125,7 +125,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@RequestParam String username) {
-        User user = userRepository.findByUsername(username);
+        Users user = userRepository.findByUsername(username);
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
@@ -143,13 +143,13 @@ public class UserController {
 
     @PostMapping("/profile/update")
     public ResponseEntity<?> updateProfile(@RequestParam String username, @RequestBody ProfileRequest profileRequest) {
-        User user = userRepository.findByUsername(username);
+        Users user = userRepository.findByUsername(username);
         if (user == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
         if (profileRequest.getEmail() != null && !profileRequest.getEmail().isEmpty()
                 && !profileRequest.getEmail().equals(user.getEmail())) {
-            User existingUser = userRepository.findByEmail(profileRequest.getEmail());
+            Users existingUser = userRepository.findByEmail(profileRequest.getEmail());
             if (existingUser != null) {
                 return ResponseEntity.badRequest().body("Email already exists");
             }

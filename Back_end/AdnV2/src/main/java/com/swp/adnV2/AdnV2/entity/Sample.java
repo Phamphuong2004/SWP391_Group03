@@ -34,7 +34,7 @@ public class Sample {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "kit_component_id", nullable = false)
@@ -69,11 +69,11 @@ public class Sample {
         this.appointmentService = appointmentService;
     }
 
-    public User getUser() {
+    public Users getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Users user) {
         this.user = user;
     }
 

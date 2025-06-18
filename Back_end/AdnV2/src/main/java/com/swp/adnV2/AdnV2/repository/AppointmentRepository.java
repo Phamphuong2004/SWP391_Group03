@@ -1,7 +1,7 @@
 package com.swp.adnV2.AdnV2.repository;
 
 import com.swp.adnV2.AdnV2.entity.Appointment;
-import com.swp.adnV2.AdnV2.entity.User;
+import com.swp.adnV2.AdnV2.entity.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -19,5 +19,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     // Tìm theo email và phone cho người không có tài khoản
     List<Appointment> findByEmailAndPhone(String email, String phone);
 
+    Appointment findByAppointmentId(Long appointmentId);
 
+    List<Appointment> findByUser(Users user);
+
+    List<Appointment> findByUser_UsernameAndStatusAndFullNameContainingIgnoreCase(String username, String status, String keyword);
+
+    List<Appointment> findByUser_UsernameAndFullNameContainingIgnoreCase(String username, String keyword);
 }

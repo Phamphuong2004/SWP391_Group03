@@ -1,9 +1,10 @@
 package com.swp.adnV2.AdnV2.service;
 
+import com.swp.adnV2.AdnV2.dto.AppointmentResponse;
 import com.swp.adnV2.AdnV2.dto.AppointmentRequest;
 import com.swp.adnV2.AdnV2.entity.Appointment;
 import com.swp.adnV2.AdnV2.entity.StatusAppointment;
-import com.swp.adnV2.AdnV2.entity.User;
+import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentService {
@@ -26,19 +26,68 @@ public class AppointmentService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Appointment> getAppointmentByUsernameAndStatus(String username, String status) {;
+//    public ResponseEntity<?> searchAppointmentsByUsernameAndStatus(String username, String status, String keyword){
+//        Users user = userRepository.findByUsername(username);
+//        if (user == null)
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with username " + username + " not found");
+//
+//        if ((status == null || status.isEmpty()) && (keyword == null || keyword.isEmpty())) {
+//            List<Appointment> appointments = appointmentRepository.findByUser_Username(username);
+//            return ResponseEntity.ok(appointments);
+//        }
+//
+//        if (status != null && !status.isEmpty()) {
+//            try {
+//                StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
+//
+//                if(keyword == null || keyword.isEmpty()){
+//                    List<Appointment> appointments = appointmentRepository.findByUser_UsernameAndStatus(username, statusEnum.toString());
+//                    return ResponseEntity.ok(appointments);
+//                }
+//                List<Appointment> appointments = appointmentRepository.findByUser_UsernameAndStatusAndFullNameContainingIgnoreCase(username, statusEnum.toString(), keyword);
+//                return ResponseEntity.ok(appointments);
+//            } catch (IllegalArgumentException e) {
+//                // Xử lý exception khi status không hợp lệ
+//                return ResponseEntity.badRequest().body("Invalid status: " + status);
+//            }
+//        } else {
+//            // Nếu status không được cung cấp hoặc rỗng, trả về tất cả appointment của user có phân trang
+//            List<Appointment> appointments = appointmentRepository.findByUser_UsernameAndFullNameContainingIgnoreCase(username, keyword);
+//            return ResponseEntity.ok(appointments);
+//        }
+//    }
+
+    public List<AppointmentResponse> getAppointmentByUsernameAndStatus(String username, String status) {;
+        List<Appointment> appointments;
         if(status != null && !status.isEmpty()){
             try {
                 StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
-                return appointmentRepository.findByUser_UsernameAndStatus(username, status);
+                appointments = appointmentRepository.findByUser_UsernameAndStatus(username, statusEnum.toString());
             } catch (IllegalArgumentException e) {
                 // Xử lý exception khi status không hợp lệ
                 throw new RuntimeException("Invalid status: " + status);
             }
         } else {
-            // Nếu status không được cung cấp hoặc rỗng, trả về tất cả appointment của user có phân trang
-            return appointmentRepository.findByUser_Username(username);
+            appointments = appointmentRepository.findByUser_Username(username);
         }
+        // Chuyển đổi từ List<Appointment> sang List<AppointmentDTO>
+        return appointments.stream()
+                .map(this::convertToDTO)  // Hoặc AppointmentDTO::fromEntity nếu bạn sử dụng phương thức static
+                .collect(Collectors.toList());
+    }
+
+    private AppointmentResponse convertToDTO(Appointment appointment){
+        AppointmentResponse dto = new AppointmentResponse();
+        dto.setFullName(appointment.getFullName());
+        dto.setPhone(appointment.getPhone());
+        dto.setEmail(appointment.getEmail());
+        dto.setCollectionSampleTime(appointment.getCollectionSampleTime());
+        dto.setStatus(appointment.getStatus());
+        dto.setTestPurpose(appointment.getTestPurpose());
+        dto.setServiceType(appointment.getServiceType());
+        dto.setTestCategory(appointment.getTestCategory());
+        dto.setFingerprintFile(appointment.getFingerprintFile());
+        return dto;
     }
 
 
@@ -78,7 +127,7 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
 
         // Xử lý user (nếu có)
         if (username != null && !username.trim().isEmpty()) {
-            User user = userRepository.findByUsername(username);
+            Users user = userRepository.findByUsername(username);
             if (user != null) {
                 appointment.setUser(user);
             } else {
@@ -102,21 +151,22 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
      * @param username Tên người dùng
      * @return ResponseEntity chứa danh sách cuộc hẹn hoặc thông báo lỗi
      */
-    public ResponseEntity<?> viewAppointments(String username) {
-        try {
-            User user = userRepository.findByUsername(username);
-            if (user == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("User with username " + username + " not found");
-            }
+//    public ResponseEntity<?> viewAppointments(String username) {
+//        try {
+//            Users user = userRepository.findByUsername(username);
+//            if (user == null) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body("User with username " + username + " not found");
+//            }
+//
+//            List<Appointment> appointments = appointmentRepository.findByUser_UserId(user.getUserId());
+//            return ResponseEntity.ok(appointments);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest()
+//                    .body("Failed to retrieve appointments: " + e.getMessage());
+//        }
+//    }
 
-            List<Appointment> appointments = appointmentRepository.findByUser_UserId(user.getUserId());
-            return ResponseEntity.ok(appointments);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body("Failed to retrieve appointments: " + e.getMessage());
-        }
-    }
 
     /**
      * Xem thông tin chi tiết của một cuộc hẹn
@@ -139,18 +189,41 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
      * @param status Trạng thái mới
      * @return ResponseEntity chứa thông tin cuộc hẹn hoặc thông báo lỗi
      */
-    public ResponseEntity<?> updateAppointmentStatus(Long appointmentId, String status) {
-        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
-        if (appointmentOpt.isPresent()) {
-            Appointment appointment = appointmentOpt.get();
-            appointment.setStatus(status);
-            appointment = appointmentRepository.save(appointment);
-            return ResponseEntity.ok(appointment);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Appointment with ID " + appointmentId + " not found");
+
+    public ResponseEntity<?> updateAppointmentStatus(String username, Long appointmentId, String status) {
+        Users user = userRepository.findByUsername(username);
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with username " + username + " not found");
+        }
+
+        if(user.getRole().equalsIgnoreCase("Staff") || user.getRole().equalsIgnoreCase("Manager")){
+            Appointment appointment = appointmentRepository.findByAppointmentId(appointmentId);
+            if (appointment != null){
+                appointment.setStatus(status);
+                appointmentRepository.save(appointment);
+                return ResponseEntity.ok("Appointment status updated successfully");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Appointment with ID " + appointmentId + " not found");
+            }
+        }else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("User " + username + " does not have permission to update appointment status");
         }
     }
+
+//    public ResponseEntity<?> updateAppointmentStatus(Long appointmentId, String status) {
+//        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+//        if (appointmentOpt.isPresent()) {
+//            Appointment appointment = appointmentOpt.get();
+//            appointment.setStatus(status);
+//            appointment = appointmentRepository.save(appointment);
+//            return ResponseEntity.ok(appointment);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body("Appointment with ID " + appointmentId + " not found");
+//        }
+//    }
 
     /**
      * Tìm kiếm cuộc hẹn cho người dùng không có tài khoản
@@ -164,16 +237,21 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
             if (appointments.isEmpty()) {
                 return ResponseEntity.ok(Collections.emptyList());
             }
-            return ResponseEntity.ok(appointments);
+            List<AppointmentResponse> appointmentDTOs = appointments.stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(appointmentDTOs);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body("Failed to find appointments: " + e.getMessage());
         }
     }
-    //
+    //appointments.stream()
+    //                .map(this::convertToDTO)  // Hoặc AppointmentDTO::fromEntity nếu bạn sử dụng phương thức static
+    //                .collect(Collectors.toList());
 
     public ResponseEntity<?> createAppointment(String username, AppointmentRequest request){
-        User user = userRepository.findByUsername(username);
+        Users user = userRepository.findByUsername(username);
         if(user == null){
             return ResponseEntity.badRequest().body("User not found");
         }
@@ -209,7 +287,7 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
 
     public ResponseEntity<?> viewAppointmentsV2(String username) {
         try {
-            User user = userRepository.findByUsername(username);
+            Users user = userRepository.findByUsername(username);
             if (user == null) {
                 return ResponseEntity.badRequest().body("User not found");
             }

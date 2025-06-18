@@ -20,7 +20,7 @@ public class Appointment {
     @ManyToOne(optional = true)
     @JoinColumn(name = "user_id", nullable = true)
     @JsonIgnore
-    private User user;
+    private Users user;
 
     // Thêm phương thức này để vẫn hiển thị userId
     @JsonProperty("userId")
@@ -86,11 +86,11 @@ public class Appointment {
         this.appointmentId = appointmentId;
     }
 
-    public User getUser() {
+    public Users getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Users user) {
         this.user = user;
     }
 

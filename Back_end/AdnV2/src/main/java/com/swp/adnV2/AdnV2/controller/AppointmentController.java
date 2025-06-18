@@ -30,16 +30,16 @@ public class AppointmentController {
     /**
      * Xem danh sách cuộc hẹn của người dùng đăng ký
      */
-    @GetMapping("/view-appointments-user")
-    public ResponseEntity<?> viewUserAppointments(
-            @RequestParam String username) {
-        return appointmentService.viewAppointments(username);
-    }
+//    @GetMapping("{username}/view-appointments")
+//    public ResponseEntity<?> viewUserAppointments(
+//            @PathVariable("username") String username) {
+//        return appointmentService.viewAppointments(username);
+//    }
 
     /**
      * Xem thông tin chi tiết của một cuộc hẹn
      */
-    @GetMapping("/view-appointment/{id}")
+    @GetMapping("/view-appointment-detail/{id}")
     public ResponseEntity<?> getAppointmentById(
             @PathVariable("id") Long appointmentId) {
         return appointmentService.getAppointmentById(appointmentId);
@@ -48,11 +48,11 @@ public class AppointmentController {
     /**
      * Cập nhật trạng thái của cuộc hẹn
      */
-    @PutMapping("/update-status/{id}")
-    public ResponseEntity<?> updateAppointmentStatus(
-            @PathVariable("id") Long appointmentId,
+    @PutMapping("/update-status/{username}/{appointmentId}")
+
+    public ResponseEntity<?> updateAppointmentStatus(@PathVariable("username") String username, @PathVariable("appointmentId") Long appointmentId,
             @RequestParam String status) {
-        return appointmentService.updateAppointmentStatus(appointmentId, status);
+        return appointmentService.updateAppointmentStatus(username, appointmentId, status);
     }
 
 
@@ -66,11 +66,20 @@ public class AppointmentController {
         return appointmentService.findAppointmentsByEmailAndPhone(email, phone);
     }
 
-    @GetMapping("/user/{username}")
+    @GetMapping("/user/{username}/get-appointments-by-status")
     public ResponseEntity<?> getAppointmentsByUsernameAndStatus(
             @PathVariable String username,
             @RequestParam(required = false) String status) {
 
         return ResponseEntity.ok(appointmentService.getAppointmentByUsernameAndStatus(username, status));
     }
+
+//    @GetMapping("/user/{username}/search-appointments-by-status")
+//    public ResponseEntity<?> searchAppointmentsByUsernameAndStatus(
+//            @PathVariable String username,
+//            @RequestParam(required = false) String status,
+//            @RequestParam(required = false) String keyword) {
+//        ResponseEntity<?> response = appointmentService.searchAppointmentsByUsernameAndStatus(username, status, keyword);
+//        return ResponseEntity.ok(response);
+//    }
 }

@@ -17,12 +17,13 @@ public class Feedback {
 
     @Column(name = "rating")
     private int rating;
+
     @Column(name = "feedbackDate", columnDefinition = "DATETIME DEFAULT GETDATE()")
     private LocalDateTime feedbackDate = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     @ManyToOne
     @JoinColumn(name = "service_id")
@@ -60,11 +61,11 @@ public class Feedback {
         this.feedbackDate = feedbackDate;
     }
 
-    public User getUser() {
+    public Users getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Users user) {
         this.user = user;
     }
 
