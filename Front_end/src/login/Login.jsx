@@ -11,14 +11,19 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const recordLoginHistory = async (userId, status) => {
+  const recordLoginHistory = async (userId, status, token) => {
     try {
       const deviceInfo = `${navigator.platform} - ${navigator.userAgent}`;
-      await axios.post("/api/auth/login-history", {
-        userId,
+      const payload = {
         status,
         deviceInfo,
         loginTime: new Date().toISOString(),
+        userId,
+      };
+      await axios.post("/api/user/login-history", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
     } catch (error) {
       console.error("Error recording login history:", error);
@@ -30,44 +35,38 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("/api/user/login", {
-        username, // Đúng key backend yêu cầu
+      const response = await axios.post("/api/auth/login", {
+        username,
         password,
       });
 
-      if (response.data && response.data.Exists) {
-        const userData = response.data;
-        localStorage.setItem("user", JSON.stringify(userData));
+      // In ra response để kiểm tra
+      console.log("Login response:", response.data);
 
-        // Record successful login
-        await recordLoginHistory(userData.id, "success");
+      if (response.data && response.data.jwt) {
+        const userData = {
+          ...response.data,
+          token: response.data.jwt, // Để các chỗ khác dùng token vẫn hoạt động
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", response.data.jwt);
+        await recordLoginHistory(userData.userId, "success", response.data.jwt);
 
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
           navigate("/");
         }, 1000);
       } else {
-        // Record failed login attempt
-        await recordLoginHistory(null, "failed");
-
         toast.error(
           response.data.message || "Tên đăng nhập hoặc mật khẩu không đúng!"
         );
       }
     } catch (error) {
       console.error("Error logging in:", error);
-      // Record failed login attempt
-      await recordLoginHistory(null, "failed");
-
-      if (error.response) {
-        console.error("Server response:", error.response.data);
-        toast.error(
-          error.response.data.message ||
-            "Tên đăng nhập hoặc mật khẩu không đúng!"
-        );
-      } else {
-        toast.error("Đã xảy ra lỗi khi đăng nhập!");
-      }
+      toast.error(
+        error.response?.data?.message ||
+          "Tên đăng nhập hoặc mật khẩu không đúng!"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +84,7 @@ export default function Login() {
         localStorage.setItem("token", userData.token);
 
         // Record successful Google login
-        await recordLoginHistory(userData.id, "success");
+        await recordLoginHistory(userData.id, "success", userData.token);
 
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
@@ -95,14 +94,14 @@ export default function Login() {
     } catch (error) {
       console.error("Google login error:", error);
       // Record failed Google login
-      await recordLoginHistory(null, "failed");
+      await recordLoginHistory(null, "failed", null);
       toast.error("Đăng nhập bằng Google thất bại!");
     }
   };
 
   const responseGoogleFailure = async () => {
     // Record failed Google login
-    await recordLoginHistory(null, "failed");
+    await recordLoginHistory(null, "failed", null);
     toast.error("Đăng nhập bằng Google thất bại!");
   };
 
