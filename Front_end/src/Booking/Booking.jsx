@@ -33,18 +33,18 @@ const serviceTypes = [
 function Booking() {
   const [form, setForm] = useState({
     fullName: "",
-    dob: null,
+    dob: "",
     phone: "",
     email: "",
     gender: "",
-    appointmentDate: null, // LocalDateTime
-    collectionSampleTime: "",
     testPurpose: "",
     serviceType: "",
-    testCategory: "",
-    province: "",
+    appointmentDate: "",
+    collectionTime: "00:00",
+    fingerprintFile: "",
     district: "",
-    note: "",
+    province: "",
+    testCategory: "",
   });
 
   const [districts, setDistricts] = useState([]);
@@ -62,25 +62,23 @@ function Booking() {
     }
   };
 
-  const handleDateChange = (date) => {
-    setForm((prev) => ({ ...prev, dob: date }));
-  };
-
-  const handleAppointmentDateChange = (date) => {
-    setForm((prev) => ({ ...prev, appointmentDate: date }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
+      let collectionTimeObj = null;
+      if (form.collectionTime) {
+        const [hour, minute] = form.collectionTime.split(":").map(Number);
+        collectionTimeObj = {
+          hour: hour || 0,
+          minute: minute || 0,
+          second: 0,
+          nano: 0,
+        };
+      }
       const data = {
         ...form,
-        dob: form.dob ? form.dob.toISOString().split("T")[0] : "",
-        appointmentDate: form.appointmentDate
-          ? form.appointmentDate.toISOString()
-          : "",
-        collectionSampleTime: form.collectionSampleTime || null,
+        collectionTime: collectionTimeObj,
       };
       await axios.post("/api/create-appointment", data);
       toast.success("Đặt lịch hẹn thành công!");
@@ -110,23 +108,19 @@ function Booking() {
               />
             </label>
             <label>
-              Ngày sinh
-              <DatePicker
-                selected={form.dob}
-                onChange={handleDateChange}
-                dateFormat="dd/MM/yyyy"
-                placeholderText="dd/mm/yyyy"
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                className="custom-datepicker"
+              Ngày sinh (yyyy-mm-dd)
+              <input
+                type="date"
+                name="dob"
+                value={form.dob}
+                onChange={handleChange}
                 required
               />
             </label>
             <label>
               Số điện thoại
               <input
-                type="tel"
+                type="text"
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
@@ -146,90 +140,66 @@ function Booking() {
             </label>
             <label>
               Giới tính
-              <select
+              <input
+                type="text"
                 name="gender"
                 value={form.gender}
                 onChange={handleChange}
+                placeholder="Nhập giới tính"
                 required
-              >
-                <option value="">Chọn giới tính</option>
-                {genders.map((g) => (
-                  <option key={g} value={g}>
-                    {g}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Ngày & giờ hẹn
-              <DatePicker
-                selected={form.appointmentDate}
-                onChange={handleAppointmentDateChange}
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={15}
-                dateFormat="dd/MM/yyyy HH:mm"
-                placeholderText="Chọn ngày & giờ"
-                className="custom-datepicker"
-                required
-              />
-            </label>
-            <label>
-              Giờ lấy mẫu (nếu khác giờ hẹn)
-              <input
-                type="time"
-                name="collectionSampleTime"
-                value={form.collectionSampleTime}
-                onChange={handleChange}
               />
             </label>
             <label>
               Mục đích xét nghiệm
-              <select
+              <input
+                type="text"
                 name="testPurpose"
                 value={form.testPurpose}
                 onChange={handleChange}
+                placeholder="Nhập mục đích"
                 required
-              >
-                <option value="">Chọn mục đích</option>
-                {testPurposes.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
+              />
             </label>
             <label>
               Loại dịch vụ
-              <select
+              <input
+                type="text"
                 name="serviceType"
                 value={form.serviceType}
                 onChange={handleChange}
+                placeholder="Nhập loại dịch vụ"
                 required
-              >
-                <option value="">Chọn loại dịch vụ</option>
-                {serviceTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+              />
             </label>
             <label>
-              Loại xét nghiệm
-              <select
-                name="testCategory"
-                value={form.testCategory}
+              Ngày & giờ hẹn (ISO 8601)
+              <input
+                type="datetime-local"
+                name="appointmentDate"
+                value={form.appointmentDate}
                 onChange={handleChange}
                 required
-              >
-                <option value="">Chọn loại xét nghiệm</option>
-                {testCategories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+              />
+            </label>
+            <label>
+              Giờ lấy mẫu (collectionTime)
+              <input
+                type="time"
+                name="collectionTime"
+                value={form.collectionTime}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <label>
+              File vân tay (chỉ nhập tên file hoặc chuỗi)
+              <input
+                type="text"
+                name="fingerprintFile"
+                value={form.fingerprintFile}
+                onChange={handleChange}
+                placeholder="Nhập tên file hoặc chuỗi"
+              />
             </label>
             <label>
               Tỉnh/Thành phố
@@ -265,12 +235,14 @@ function Booking() {
               </select>
             </label>
             <label>
-              Ghi chú
-              <textarea
-                name="note"
-                value={form.note}
+              Loại xét nghiệm
+              <input
+                type="text"
+                name="testCategory"
+                value={form.testCategory}
                 onChange={handleChange}
-                placeholder="Nhập ghi chú (nếu có)"
+                placeholder="Nhập loại xét nghiệm"
+                required
               />
             </label>
           </div>
