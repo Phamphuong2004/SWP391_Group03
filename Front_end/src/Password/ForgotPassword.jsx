@@ -19,14 +19,22 @@ function ForgotPassword() {
     }
     setIsLoading(true);
     try {
-      const response = await axios.post("/api/user/reset-password", {
-        phoneNumber,
-        newPassword,
-        confirmPassword,
-      });
-      if (response.data) {
-        toast.success("Đặt lại mật khẩu thành công!");
+      const token = localStorage.getItem("token");
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const response = await axios.post(
+        "/api/user/reset-password",
+        {
+          phoneNumber,
+          newPassword,
+          confirmPassword,
+        },
+        { headers }
+      );
+      if (response.data && response.data.Success === true) {
+        toast.success(response.data.Message || "Đặt lại mật khẩu thành công!");
         setTimeout(() => navigate("/login"), 2000);
+      } else {
+        toast.error(response.data?.Message || "Đặt lại mật khẩu thất bại!");
       }
     } catch (error) {
       toast.error(
