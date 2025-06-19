@@ -16,33 +16,28 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const userLocal = JSON.parse(localStorage.getItem("user"));
-        const response = await axios.get(
-          "/api/user/profile",
-          {
-            username: userLocal?.username,
-            email: userLocal?.email,
-            phoneNumber: userLocal?.phoneNumber,
-            fullName: userLocal?.fullName,
-            address: userLocal?.address,
-            dateOfBirth: userLocal?.dateOfBirth,
-            gender: userLocal?.gender,
-            avatar: userLocal?.avatar,
-          },
-          {
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
-          }
-        );
-        console.log("PROFILE RESPONSE:", response.data);
-        if (response.data) {
+        const response = await axios.get("/api/user/profile", {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (response.data && Object.keys(response.data).length > 0) {
           setUser(response.data);
           setForm(response.data);
+        } else {
+          const userLocal = JSON.parse(localStorage.getItem("user"));
+          if (userLocal) {
+            setUser(userLocal);
+            setForm(userLocal);
+          } else {
+            setError("Không thể lấy thông tin người dùng!");
+          }
         }
       } catch (err) {
-        if (err.response && err.response.status === 403) {
-          setError("Bạn không có quyền truy cập trang này (403 Forbidden).");
+        const userLocal = JSON.parse(localStorage.getItem("user"));
+        if (userLocal) {
+          setUser(userLocal);
+          setForm(userLocal);
         } else {
-          setError("Không thể lấy thông tin người dùng!");
+          setError("Bạn không có quyền truy cập trang này (403 Forbidden).");
         }
       }
     };
@@ -78,7 +73,9 @@ export default function Profile() {
         gender,
         avatar,
       };
-      const url = `/api/user/profile/update=${encodeURIComponent(username)}`;
+      const url = `/api/user/profile/update?username=${encodeURIComponent(
+        username
+      )}`;
       const response = await axios.post(url, updateData, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });

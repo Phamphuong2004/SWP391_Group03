@@ -43,14 +43,26 @@ export default function Login() {
       // In ra response để kiểm tra
       console.log("Login response:", response.data);
 
-      if (response.data && response.data.jwt) {
+      if (response.data && (response.data.jwt || response.data.token)) {
+        // Lưu role và các thông tin khác
         const userData = {
           ...response.data,
-          token: response.data.jwt, // Để các chỗ khác dùng token vẫn hoạt động
+          token: response.data.jwt || response.data.token,
+          role:
+            response.data.role ||
+            response.data.roles ||
+            response.data.userRole ||
+            response.data.type ||
+            "customer",
+          username: response.data.username || username,
         };
         localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", response.data.jwt);
-        await recordLoginHistory(userData.userId, "success", response.data.jwt);
+        localStorage.setItem("token", userData.token);
+        await recordLoginHistory(
+          userData.userId || userData.id,
+          "success",
+          userData.token
+        );
 
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
