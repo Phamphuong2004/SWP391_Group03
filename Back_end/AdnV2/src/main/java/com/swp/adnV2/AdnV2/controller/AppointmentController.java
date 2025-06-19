@@ -40,8 +40,9 @@ public class AppointmentController {
      */
     @PostMapping("/create-appointment")
     public ResponseEntity<?> createAppointment(
-            @Valid @RequestBody AppointmentRequest request,
-            @RequestParam(required = false) String username) {
+            @Valid @RequestBody AppointmentRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         return appointmentService.createAppointment(request, username);
     }
 
