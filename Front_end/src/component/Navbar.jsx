@@ -31,10 +31,14 @@ function MyNavbar() {
 
   return (
     <>
-      <div className="navbar-logo-wrapper">
+      <div
+        className="navbar-logo-wrapper"
+        onClick={() => navigate("/")}
+        style={{ cursor: "pointer" }}
+      >
         <img
-          src="https://cdn-icons-png.flaticon.com/512/1995/1995577.png"
-          alt="DNA Logo"
+          src="/ADN TESTING.png"
+          alt="Logo ADN Testing"
           className="navbar-logo-ontop"
         />
       </div>
