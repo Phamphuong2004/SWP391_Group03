@@ -12,6 +12,7 @@ import com.swp.adnV2.AdnV2.repository.UserRepository;
 import com.swp.adnV2.AdnV2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -130,6 +131,7 @@ public class UserController {
     }
 
     @GetMapping("/profile")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
     public ResponseEntity<?> getProfile() {
         // Get authenticated user information from security context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -139,6 +141,7 @@ public class UserController {
     }
 
     @PostMapping("/profile/update")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
     public ResponseEntity<?> updateProfile(@RequestBody ProfileRequest profileRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();

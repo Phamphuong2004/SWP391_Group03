@@ -56,7 +56,7 @@ public class Appointment {
     private String note;
 
     @Column(name = "test_purpose", columnDefinition = "NVARCHAR(50)", nullable = false)
-    private String testPurpose = "Dân sự"; // Default value for test purpose
+    private String testPurpose = "Dân sự";
 
     @Column(name = "service_type", columnDefinition = "NVARCHAR(50)")
     private String serviceType;
