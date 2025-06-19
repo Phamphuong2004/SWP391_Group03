@@ -16,9 +16,23 @@ export default function Profile() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("/api/user/profile", {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
+        const userLocal = JSON.parse(localStorage.getItem("user"));
+        const response = await axios.get(
+          "/api/user/profile",
+          {
+            username: userLocal?.username,
+            email: userLocal?.email,
+            phoneNumber: userLocal?.phoneNumber,
+            fullName: userLocal?.fullName,
+            address: userLocal?.address,
+            dateOfBirth: userLocal?.dateOfBirth,
+            gender: userLocal?.gender,
+            avatar: userLocal?.avatar,
+          },
+          {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          }
+        );
         console.log("PROFILE RESPONSE:", response.data);
         if (response.data) {
           setUser(response.data);
@@ -64,9 +78,7 @@ export default function Profile() {
         gender,
         avatar,
       };
-      const url = `/api/user/profile/update?username=${encodeURIComponent(
-        username
-      )}`;
+      const url = `/api/user/profile/update=${encodeURIComponent(username)}`;
       const response = await axios.post(url, updateData, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
