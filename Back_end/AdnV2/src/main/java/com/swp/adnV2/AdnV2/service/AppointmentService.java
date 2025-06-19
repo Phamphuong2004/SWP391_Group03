@@ -54,7 +54,7 @@ public class AppointmentService {
         response.setProvince(appointment.getProvince());
         response.setStatus(appointment.getStatus());
         response.setResultFile(appointment.getResultFile());
-
+        response.setAppointmentDate(appointment.getAppointmentDate());
         return response;
     }
 
@@ -116,6 +116,7 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
         appointment.setFingerprintFile(request.getFingerprintFile());
         appointment.setDistrict(request.getDistrict());
         appointment.setProvince(request.getProvince());
+        appointment.setAppointmentDate(request.getAppointmentDate());
 
         // Thêm các thông tin mặc định
         appointment.setStatus("PENDING"); // Trạng thái mặc định khi tạo cuộc hẹn

@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/create-appointment").hasAnyRole("CUSTOMER", "STAFF", "MANAGER")
                         .requestMatchers("/api/user/*/get-appointments-by-status").hasAnyRole("CUSTOMER", "STAFF", "MANAGER")
                         .requestMatchers("/api/user/profile").hasAnyRole("CUSTOMER", "STAFF", "MANAGER")
+                        .requestMatchers("/api/view-appointments-user").hasAnyRole("CUSTOMER", "STAFF", "MANAGER")
 
                         // API dành cho Staff - yêu cầu role STAFF
                         .requestMatchers("/api/update-status/**").hasAnyRole("STAFF", "MANAGER")

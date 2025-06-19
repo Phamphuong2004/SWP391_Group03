@@ -47,7 +47,7 @@ public class Appointment {
     private LocalDateTime appointmentDate;
 
     @Column(name = "collection_sample_time")
-    private LocalTime collectionSampleTime;
+    private LocalDateTime collectionSampleTime;
 
     @Column(name = "status", columnDefinition = "NVARCHAR(20) DEFAULT 'Pending'")
     private String status = "Pending";
@@ -145,11 +145,11 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
     }
 
-    public LocalTime getCollectionSampleTime() {
+    public LocalDateTime getCollectionSampleTime() {
         return collectionSampleTime;
     }
 
-    public void setCollectionSampleTime(LocalTime collectionSampleTime) {
+    public void setCollectionSampleTime(LocalDateTime collectionSampleTime) {
         this.collectionSampleTime = collectionSampleTime;
     }
 

@@ -14,7 +14,8 @@ public class AppointmentResponse {
     private String gender;
     private String testPurpose;
     private String serviceType;
-    private LocalTime collectionSampleTime;
+    private LocalDateTime appointmentDate;
+    private LocalDateTime collectionSampleTime;
     private String fingerprintFile;
     private String district;
     private String province;
@@ -87,11 +88,11 @@ public class AppointmentResponse {
         this.serviceType = serviceType;
     }
 
-    public LocalTime getCollectionSampleTime() {
+    public LocalDateTime getCollectionSampleTime() {
         return collectionSampleTime;
     }
 
-    public void setCollectionSampleTime(LocalTime collectionSampleTime) {
+    public void setCollectionSampleTime(LocalDateTime collectionSampleTime) {
         this.collectionSampleTime = collectionSampleTime;
     }
 
@@ -133,5 +134,13 @@ public class AppointmentResponse {
 
     public void setResultFile(String resultFile) {
         this.resultFile = resultFile;
+    }
+
+    public LocalDateTime getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(LocalDateTime appointmentDate) {
+        this.appointmentDate = appointmentDate;
     }
 }
