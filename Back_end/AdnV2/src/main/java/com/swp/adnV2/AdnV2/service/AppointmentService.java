@@ -146,21 +146,38 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
      * @param username Tên người dùng
      * @return ResponseEntity chứa danh sách cuộc hẹn hoặc thông báo lỗi
      */
-    public ResponseEntity<?> viewAppointments(String username) {
-        try {
-            Users users = userRepository.findByUsername(username);
-            if (users == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("User with username " + username + " not found");
-            }
 
-            List<Appointment> appointments = appointmentRepository.findByUsers_UserId(users.getUserId());
-            return ResponseEntity.ok(appointments);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest()
-                    .body("Failed to retrieve appointments: " + e.getMessage());
+    public ResponseEntity<?> viewAppointments(String username){
+        Users user = userRepository.findByUsername(username);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("User with username " + username + " not found");
         }
+        List<Appointment> appointments = appointmentRepository.findByUsers_UserId(user.getUserId());
+
+        List<AppointmentResponse> responseList = appointments.stream()
+                .map(this::convertToAppointmentResponse)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
+
+
+
+//    public ResponseEntity<?> viewAppointments(String username) {
+//        try {
+//            Users users = userRepository.findByUsername(username);
+//            if (users == null) {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                        .body("User with username " + username + " not found");
+//            }
+//
+//            List<Appointment> appointments = appointmentRepository.findByUsers_UserId(users.getUserId());
+//            return ResponseEntity.ok(appointments);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest()
+//                    .body("Failed to retrieve appointments: " + e.getMessage());
+//        }
+//    }
 
     /**
      * Xem thông tin chi tiết của một cuộc hẹn
