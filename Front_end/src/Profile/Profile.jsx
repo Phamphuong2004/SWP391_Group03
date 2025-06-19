@@ -19,12 +19,17 @@ export default function Profile() {
         const response = await axios.get("/api/user/profile", {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
+        console.log("PROFILE RESPONSE:", response.data);
         if (response.data) {
           setUser(response.data);
           setForm(response.data);
         }
       } catch (err) {
-        setError("Không thể lấy thông tin người dùng!");
+        if (err.response && err.response.status === 403) {
+          setError("Bạn không có quyền truy cập trang này (403 Forbidden).");
+        } else {
+          setError("Không thể lấy thông tin người dùng!");
+        }
       }
     };
     fetchProfile();
@@ -88,6 +93,7 @@ export default function Profile() {
   };
 
   if (!user) return <div>Đang tải thông tin...</div>;
+  if (error) return <div className="profile-error">{error}</div>;
 
   return (
     <div className="profile-container">

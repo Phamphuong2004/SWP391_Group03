@@ -108,10 +108,12 @@ function MyNavbar() {
                   <Nav.Link href="/manager-dashboard" className="nav-link">
                     Quản Lý
                   </Nav.Link>
-                  <Nav.Link href="/history" className="nav-link">
-                    Lịch Sử Người Dùng
-                  </Nav.Link>
                 </>
+              )}
+              {user && user.role === "admin" && (
+                <Nav.Link href="/history" className="nav-link">
+                  Lịch Sử Người Dùng
+                </Nav.Link>
               )}
               {user && (user.role === "staff" || user.role === "manager") && (
                 <Nav.Link href="/receive-booking" className="nav-link">

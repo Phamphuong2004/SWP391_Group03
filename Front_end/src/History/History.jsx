@@ -7,6 +7,12 @@ export default function History() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Lấy user từ localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || user.role !== "admin") {
+    return <div className="error">Bạn không có quyền truy cập trang này.</div>;
+  }
+
   useEffect(() => {
     const fetchLoginHistory = async () => {
       try {
