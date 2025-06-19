@@ -40,7 +40,7 @@ function Booking() {
     testPurpose: "",
     serviceType: "",
     appointmentDate: "",
-    collectionTime: "00:00",
+    collectionTime: "",
     fingerprintFile: "",
     district: "",
     province: "",
@@ -62,23 +62,24 @@ function Booking() {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm((prev) => ({ ...prev, fingerprintFile: file.name }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      let collectionTimeObj = null;
-      if (form.collectionTime) {
-        const [hour, minute] = form.collectionTime.split(":").map(Number);
-        collectionTimeObj = {
-          hour: hour || 0,
-          minute: minute || 0,
-          second: 0,
-          nano: 0,
-        };
+      let collectionTimeStr = form.collectionTime;
+      if (collectionTimeStr && collectionTimeStr.length === 5) {
+        collectionTimeStr = collectionTimeStr + ":00";
       }
       const data = {
         ...form,
-        collectionTime: collectionTimeObj,
+        collectionTime: collectionTimeStr,
       };
       await axios.post("/api/create-appointment", data);
       toast.success("Đặt lịch hẹn thành công!");
@@ -140,14 +141,17 @@ function Booking() {
             </label>
             <label>
               Giới tính
-              <input
-                type="text"
+              <select
                 name="gender"
                 value={form.gender}
                 onChange={handleChange}
-                placeholder="Nhập giới tính"
                 required
-              />
+              >
+                <option value="">Chọn giới tính</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
+                <option value="Khác">Khác</option>
+              </select>
             </label>
             <label>
               Mục đích xét nghiệm
@@ -162,14 +166,22 @@ function Booking() {
             </label>
             <label>
               Loại dịch vụ
-              <input
-                type="text"
+              <select
                 name="serviceType"
                 value={form.serviceType}
                 onChange={handleChange}
-                placeholder="Nhập loại dịch vụ"
                 required
-              />
+              >
+                <option value="">Chọn loại dịch vụ</option>
+                <option value="Tư vấn di truyền">Tư vấn di truyền</option>
+                <option value="Lấy mẫu tại nhà">Lấy mẫu tại nhà</option>
+                <option value="Lấy mẫu tại cơ sở">Lấy mẫu tại cơ sở</option>
+                <option value="Giao kết quả tận nơi">
+                  Giao kết quả tận nơi
+                </option>
+                <option value="Dịch vụ nhanh">Dịch vụ nhanh</option>
+                <option value="Dịch vụ tiêu chuẩn">Dịch vụ tiêu chuẩn</option>
+              </select>
             </label>
             <label>
               Ngày & giờ hẹn (ISO 8601)
@@ -192,13 +204,12 @@ function Booking() {
               />
             </label>
             <label>
-              File vân tay (chỉ nhập tên file hoặc chuỗi)
+              File vân tay
               <input
-                type="text"
+                type="file"
                 name="fingerprintFile"
-                value={form.fingerprintFile}
-                onChange={handleChange}
-                placeholder="Nhập tên file hoặc chuỗi"
+                accept="image/*,.pdf"
+                onChange={handleFileChange}
               />
             </label>
             <label>
@@ -236,14 +247,33 @@ function Booking() {
             </label>
             <label>
               Loại xét nghiệm
-              <input
-                type="text"
+              <select
                 name="testCategory"
                 value={form.testCategory}
                 onChange={handleChange}
-                placeholder="Nhập loại xét nghiệm"
                 required
-              />
+              >
+                <option value="">Chọn loại xét nghiệm</option>
+                <option value="Xét nghiệm huyết thống cha con">
+                  Xét nghiệm huyết thống cha con
+                </option>
+                <option value="Xét nghiệm huyết thống mẹ con">
+                  Xét nghiệm huyết thống mẹ con
+                </option>
+                <option value="Xét nghiệm ADN hành chính">
+                  Xét nghiệm ADN hành chính
+                </option>
+                <option value="Xét nghiệm ADN cá nhân">
+                  Xét nghiệm ADN cá nhân
+                </option>
+                <option value="Xét nghiệm ADN pháp lý">
+                  Xét nghiệm ADN pháp lý
+                </option>
+                <option value="Xét nghiệm ADN trước sinh">
+                  Xét nghiệm ADN trước sinh
+                </option>
+                <option value="Xét nghiệm ADN khác">Xét nghiệm ADN khác</option>
+              </select>
             </label>
           </div>
         </div>

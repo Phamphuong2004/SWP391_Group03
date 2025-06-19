@@ -127,11 +127,11 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-        {/* Route cho trang lịch sử, chỉ cho manager */}
+        {/* Route cho trang lịch sử, chỉ cho admin */}
         <Route
           path="/history"
           element={
-            <ProtectedRoute allowedRoles={["manager"]}>
+            <ProtectedRoute allowedRoles={["admin"]}>
               <History />
             </ProtectedRoute>
           }
