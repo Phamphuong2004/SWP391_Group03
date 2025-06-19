@@ -109,14 +109,59 @@ function Booking() {
               />
             </label>
             <label>
-              Ngày sinh (yyyy-mm-dd)
-              <input
-                type="date"
-                name="dob"
-                value={form.dob}
-                onChange={handleChange}
-                required
-              />
+              Ngày sinh
+              <div style={{ position: "relative" }}>
+                <DatePicker
+                  selected={form.dob ? new Date(form.dob) : null}
+                  onChange={(date) => {
+                    setForm((prev) => ({
+                      ...prev,
+                      dob: date ? date.toISOString().slice(0, 10) : "",
+                    }));
+                  }}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="Chọn ngày sinh"
+                  className="booking-datepicker-input"
+                  maxDate={new Date()}
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  customInput={
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                      <input
+                        type="text"
+                        value={
+                          form.dob
+                            ? form.dob.split("-").reverse().join("/")
+                            : ""
+                        }
+                        readOnly
+                        placeholder="Chọn ngày sinh"
+                        style={{ width: "100%", paddingRight: 32 }}
+                        className="booking-datepicker-input"
+                      />
+                      <span
+                        style={{
+                          position: "absolute",
+                          right: 8,
+                          cursor: "pointer",
+                          fontSize: 20,
+                        }}
+                        onClick={(e) => {
+                          e.target.previousSibling &&
+                            e.target.previousSibling.focus &&
+                            e.target.previousSibling.focus();
+                        }}
+                        title="Chọn ngày sinh"
+                        role="button"
+                        tabIndex={0}
+                      >
+                        📅
+                      </span>
+                    </div>
+                  }
+                />
+              </div>
             </label>
             <label>
               Số điện thoại
