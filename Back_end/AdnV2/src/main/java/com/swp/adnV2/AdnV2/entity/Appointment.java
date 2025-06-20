@@ -20,12 +20,12 @@ public class Appointment {
     @ManyToOne(optional = true)
     @JoinColumn(name = "user_id", nullable = true)
     @JsonIgnore
-    private Users user;
+    private Users users;
 
     // Thêm phương thức này để vẫn hiển thị userId
     @JsonProperty("userId")
     public Long getUserId() {
-        return user != null ? user.getUserId() : null;
+        return users != null ? users.getUserId() : null;
     }
 
     @Column(name = "full_name", columnDefinition = "NVARCHAR(100)", nullable = false)
@@ -47,7 +47,7 @@ public class Appointment {
     private LocalDateTime appointmentDate;
 
     @Column(name = "collection_sample_time")
-    private LocalTime collectionSampleTime;
+    private LocalDateTime collectionSampleTime;
 
     @Column(name = "status", columnDefinition = "NVARCHAR(20) DEFAULT 'Pending'")
     private String status = "Pending";
@@ -56,7 +56,7 @@ public class Appointment {
     private String note;
 
     @Column(name = "test_purpose", columnDefinition = "NVARCHAR(50)", nullable = false)
-    private String testPurpose = "Dân sự"; // Default value for test purpose
+    private String testPurpose = "Dân sự";
 
     @Column(name = "service_type", columnDefinition = "NVARCHAR(50)")
     private String serviceType;
@@ -66,6 +66,9 @@ public class Appointment {
 
     @Column(name = "fingerprint_file", columnDefinition = "NVARCHAR(255)")
     private String fingerprintFile;
+
+    @Column(name = "result_file", columnDefinition = "NVARCHAR(255)")
+    private String resultFile;
 
     @Column(name = "district", columnDefinition = "NVARCHAR(100)")
     private String district;
@@ -87,11 +90,11 @@ public class Appointment {
     }
 
     public Users getUser() {
-        return user;
+        return users;
     }
 
-    public void setUser(Users user) {
-        this.user = user;
+    public void setUser(Users users) {
+        this.users = users;
     }
 
     public String getFullName() {
@@ -142,11 +145,11 @@ public class Appointment {
         this.appointmentDate = appointmentDate;
     }
 
-    public LocalTime getCollectionSampleTime() {
+    public LocalDateTime getCollectionSampleTime() {
         return collectionSampleTime;
     }
 
-    public void setCollectionSampleTime(LocalTime collectionSampleTime) {
+    public void setCollectionSampleTime(LocalDateTime collectionSampleTime) {
         this.collectionSampleTime = collectionSampleTime;
     }
 
@@ -212,5 +215,21 @@ public class Appointment {
 
     public void setProvince(String province) {
         this.province = province;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
+    public String getResultFile() {
+        return resultFile;
+    }
+
+    public void setResultFile(String resultFile) {
+        this.resultFile = resultFile;
     }
 }

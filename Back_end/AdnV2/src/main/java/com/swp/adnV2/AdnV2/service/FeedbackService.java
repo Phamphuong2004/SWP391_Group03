@@ -1,72 +1,125 @@
 package com.swp.adnV2.AdnV2.service;
 
 import com.swp.adnV2.AdnV2.dto.FeedbackRequest;
+import com.swp.adnV2.AdnV2.dto.FeedbackResponse;
 import com.swp.adnV2.AdnV2.entity.Feedback;
-import com.swp.adnV2.AdnV2.entity.Services;
 import com.swp.adnV2.AdnV2.entity.Users;
-import com.swp.adnV2.AdnV2.repository.FeedbackRepository;
-import com.swp.adnV2.AdnV2.repository.ServiceRepository;
+import com.swp.adnV2.AdnV2.repository.FeedbackRepsitory;
+import com.swp.adnV2.AdnV2.repository.ServicesRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FeedbackService {
     @Autowired
-    private FeedbackRepository feedbackRepository;
-
-    @Autowired
-    private ServiceRepository serviceRepository;
+    private FeedbackRepsitory feedbackRepsitory;
 
     @Autowired
     private UserRepository userRepository;
 
-    public ResponseEntity<?> createFeedback(String username, String serviceId, FeedbackRequest feedbackRequest) {
-        if(username == null || username.isEmpty()){
-            return ResponseEntity.badRequest().body("Username is required");
-        }
-        if(serviceId == null || serviceId.isEmpty()) {
-            return ResponseEntity.badRequest().body("Service ID is required");
-        }
-        if(feedbackRequest.getContent() == null || feedbackRequest.getContent().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Content cannot be empty");
-        }
+    @Autowired
+    private ServicesRepository servicesRepository;
 
-        // Kiểm tra giới hạn rating
-        if(feedbackRequest.getRating() < 1 || feedbackRequest.getRating() > 5) {
-            return ResponseEntity.badRequest().body("Rating must be between 1 and 5");
-        }
-
-        Users user = userRepository.findByUsername(username);
-        if(user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("User not found with username: " + username);
-        }
-
-        // Find service
-        Long serviceIdLong;
+    public ResponseEntity<?> updateFeedback(String username, Long feedbackId, FeedbackRequest feedbackRequest) {
         try {
-            serviceIdLong = Long.parseLong(serviceId);
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body("Invalid service ID format");
+            // Tìm feedback cần cập nhật
+            Feedback feedback = feedbackRepsitory.findById(feedbackId)
+                    .orElseThrow(() -> new RuntimeException("Feedback not found with ID: " + feedbackId));
+
+            // Kiểm tra xem người dùng hiện tại có phải là người tạo feedback này không
+            Users currentUser = userRepository.findByUsername(username);
+            if (currentUser == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("User not found");
+            }
+
+            // Kiểm tra quyền sở hữu feedback (nếu cần)
+            if (!feedback.getUser().getUsername().equals(username)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("You don't have permission to update this feedback");
+            }
+
+            // Cập nhật thông tin feedback
+            feedback.setContent(feedbackRequest.getContent());
+            feedback.setRating(feedbackRequest.getRating());
+
+            // Không cần cập nhật user vì chúng ta đang kiểm tra quyền sở hữu
+            // feedback.setUser(currentUser);
+
+            feedbackRepsitory.save(feedback);
+            return ResponseEntity.ok("Feedback updated successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating feedback: " + e.getMessage());
         }
-        Services services = serviceRepository.findServicesByServiceId(Long.parseLong(serviceId));
-        if (services == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Service not found with ID: " + serviceId);
+    }
+
+    public ResponseEntity<?> deleteFeedback(Long feedbackId) {
+        try {
+            if (!feedbackRepsitory.existsById(feedbackId)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Feedback with ID " + feedbackId + " not found.");
+            }
+            feedbackRepsitory.deleteById(feedbackId);
+            return ResponseEntity.ok("Feedback deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error deleting feedback: " + e.getMessage());
         }
+    }
+
+    public ResponseEntity<?> searchFeedback(String serviceName, String keyword) {
+        try {
+            List<Feedback> feedbacks;
+            if(serviceName != null && !serviceName.isEmpty() && keyword != null && !keyword.isEmpty()) {
+                feedbacks = feedbackRepsitory.findByServiceNameAndKeyword(serviceName, keyword);
+            } else if(serviceName != null && !serviceName.isEmpty()) {
+                feedbacks = feedbackRepsitory.findByServiceName(serviceName);
+            } else if(keyword != null && !keyword.isEmpty()) {
+                feedbacks = feedbackRepsitory.findByKeyword(keyword);
+            } else {
+                feedbacks = feedbackRepsitory.findAll();
+            }
+
+            if (feedbacks.isEmpty()) {
+                return ResponseEntity.ok(Collections.emptyList());
+            }
+
+            // Chuyển đổi kết quả sang DTO để trả về
+            List<FeedbackResponse> response = feedbacks.stream()
+                    .map(this::convertToDto)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Đã xảy ra lỗi khi tìm kiếm feedback: " + e.getMessage());
+        }
+    }
+
+    public ResponseEntity<?> createFeedback(String username, Long serviceId,FeedbackRequest feedbackRequest) {
         Feedback feedback = new Feedback();
+        feedback.setUser(userRepository.findByUsername(username));
         feedback.setContent(feedbackRequest.getContent());
         feedback.setRating(feedbackRequest.getRating());
-        feedback.setUser(user);
-        feedback.setService(services);
-        feedback.setFeedbackDate(LocalDateTime.now());
-        feedbackRepository.save(feedback);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body("Feedback created successfully");
+        feedback.setService(servicesRepository.getReferenceById(serviceId));
+        feedbackRepsitory.save(feedback);
+        return ResponseEntity.ok("Create feedback successfully.");
+    }
+
+    public FeedbackResponse convertToDto(Feedback feedback) {
+        FeedbackResponse feedbackResponse = new FeedbackResponse();
+        feedbackResponse.setFullName(feedback.getUser().getFullName());
+        feedbackResponse.setContent(feedback.getContent());
+        feedbackResponse.setRating(feedback.getRating());
+        feedbackResponse.setFeedbackDate(feedback.getFeedbackDate());
+        feedbackResponse.setServiceName(feedback.getService().getServiceName());
+        return feedbackResponse;
     }
 }

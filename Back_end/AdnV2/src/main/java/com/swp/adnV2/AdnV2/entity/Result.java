@@ -30,7 +30,7 @@ public class Result {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private Users users;
 
     // Default constructor
     public Result() {
@@ -78,11 +78,11 @@ public class Result {
     }
 
     public Users getUser() {
-        return user;
+        return users;
     }
 
-    public void setUser(Users user) {
-        this.user = user;
+    public void setUser(Users users) {
+        this.users = users;
     }
 
     public String getStatus() {
@@ -101,7 +101,7 @@ public class Result {
                 ", resultData='" + resultData + '\'' +
                 ", interpretation='" + interpretation + '\'' +
                 ", sample=" + sample +
-                ", user=" + user +
+                ", user=" + users +
                 ", status='" + status + '\'' +
                 '}';
     }

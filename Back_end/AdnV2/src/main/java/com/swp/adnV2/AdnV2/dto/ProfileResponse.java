@@ -1,15 +1,22 @@
 package com.swp.adnV2.AdnV2.dto;
 
-import java.time.LocalDate;
-
-public class ProfileRequest {
+public class ProfileResponse {
+    private String username;
     private String email;
     private String phoneNumber;
     private String fullName;
     private String address;
-    private LocalDate dateOfBirth;
+    private String dateOfBirth;
     private String gender;
     private String avatar;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getEmail() {
         return email;
@@ -43,11 +50,11 @@ public class ProfileRequest {
         this.address = address;
     }
 
-    public LocalDate getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 

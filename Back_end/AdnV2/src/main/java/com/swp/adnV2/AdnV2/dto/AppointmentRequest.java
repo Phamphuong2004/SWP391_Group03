@@ -36,7 +36,7 @@ public class AppointmentRequest {
     @Future(message = "Appointment date must be in the future")
     private LocalDateTime appointmentDate;
 
-    private LocalTime collectionTime;
+    private LocalDateTime collectionTime;
     private String fingerprintFile; // đường dẫn đến file vân tay
     private String district; // quận huyện
     private String province;
@@ -98,11 +98,11 @@ public class AppointmentRequest {
         this.serviceType = serviceType;
     }
 
-    public LocalTime getCollectionTime() {
+    public LocalDateTime getCollectionTime() {
         return collectionTime;
     }
 
-    public void setCollectionTime(LocalTime collectionTime) {
+    public void setCollectionTime(LocalDateTime collectionTime) {
         this.collectionTime = collectionTime;
     }
 

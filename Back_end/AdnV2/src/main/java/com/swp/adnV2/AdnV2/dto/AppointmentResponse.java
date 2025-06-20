@@ -1,18 +1,46 @@
 package com.swp.adnV2.AdnV2.dto;
 
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class AppointmentResponse {
+    private Long appointmentId;
     private String fullName;
+    private LocalDate dob;
     private String phone;
     private String email;
-    private LocalTime collectionSampleTime;
-    private String status;
-    private String note;
+    private String gender;
     private String testPurpose;
-    private String serviceType;
     private String testCategory;
+    private String serviceType;
+    private LocalDateTime appointmentDate;
+    private LocalDateTime collectionSampleTime;
     private String fingerprintFile;
+    private String district;
+    private String province;
+    private String status;
+    private String resultFile;
+//    private Long userId;
+//    private String username;  // Optional: include if you want to show which user the appointment belongs to
+
+
+    public String getTestCategory() {
+        return testCategory;
+    }
+
+    public void setTestCategory(String testCategory) {
+        this.testCategory = testCategory;
+    }
+
+    public Long getAppointmentId() {
+        return appointmentId;
+    }
+
+    public void setAppointmentId(Long appointmentId) {
+        this.appointmentId = appointmentId;
+    }
 
     public String getFullName() {
         return fullName;
@@ -20,6 +48,14 @@ public class AppointmentResponse {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public LocalDate getDob() {
+        return dob;
+    }
+
+    public void setDob(LocalDate dob) {
+        this.dob = dob;
     }
 
     public String getPhone() {
@@ -38,28 +74,12 @@ public class AppointmentResponse {
         this.email = email;
     }
 
-    public LocalTime getCollectionSampleTime() {
-        return collectionSampleTime;
+    public String getGender() {
+        return gender;
     }
 
-    public void setCollectionSampleTime(LocalTime collectionSampleTime) {
-        this.collectionSampleTime = collectionSampleTime;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getTestPurpose() {
@@ -78,12 +98,12 @@ public class AppointmentResponse {
         this.serviceType = serviceType;
     }
 
-    public String getTestCategory() {
-        return testCategory;
+    public LocalDateTime getCollectionSampleTime() {
+        return collectionSampleTime;
     }
 
-    public void setTestCategory(String testCategory) {
-        this.testCategory = testCategory;
+    public void setCollectionSampleTime(LocalDateTime collectionSampleTime) {
+        this.collectionSampleTime = collectionSampleTime;
     }
 
     public String getFingerprintFile() {
@@ -92,5 +112,45 @@ public class AppointmentResponse {
 
     public void setFingerprintFile(String fingerprintFile) {
         this.fingerprintFile = fingerprintFile;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getResultFile() {
+        return resultFile;
+    }
+
+    public void setResultFile(String resultFile) {
+        this.resultFile = resultFile;
+    }
+
+    public LocalDateTime getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(LocalDateTime appointmentDate) {
+        this.appointmentDate = appointmentDate;
     }
 }

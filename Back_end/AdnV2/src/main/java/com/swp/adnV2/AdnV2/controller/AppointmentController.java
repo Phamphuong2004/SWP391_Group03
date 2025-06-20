@@ -1,12 +1,17 @@
 package com.swp.adnV2.AdnV2.controller;
 
 import com.swp.adnV2.AdnV2.dto.AppointmentRequest;
+import com.swp.adnV2.AdnV2.dto.AppointmentResponse;
+import com.swp.adnV2.AdnV2.dto.AppointmentUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Appointment;
 import com.swp.adnV2.AdnV2.service.AppointmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,29 +22,44 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+
+    @DeleteMapping("/delete-appointment/{id}")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
+    public ResponseEntity<?> deleteAppointment(@PathVariable("id") Long appointmentId) {
+        return appointmentService.deleteAppointment(appointmentId);
+    }
+
+    @GetMapping("/get-all-appointments")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
+    public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
+        return appointmentService.getAllAppointments();
+    }
+
     /**
      * Tạo cuộc hẹn mới (cho cả người dùng đăng ký và khách vãng lai)
      */
     @PostMapping("/create-appointment")
     public ResponseEntity<?> createAppointment(
-            @Valid @RequestBody AppointmentRequest request,
-            @RequestParam(required = false) String username) {
+            @Valid @RequestBody AppointmentRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         return appointmentService.createAppointment(request, username);
     }
 
     /**
      * Xem danh sách cuộc hẹn của người dùng đăng ký
      */
-//    @GetMapping("{username}/view-appointments")
-//    public ResponseEntity<?> viewUserAppointments(
-//            @PathVariable("username") String username) {
-//        return appointmentService.viewAppointments(username);
-//    }
+    @GetMapping("/view-appointments-user")
+    public ResponseEntity<?> viewUserAppointments() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return appointmentService.viewAppointments(username);
+    }
 
     /**
      * Xem thông tin chi tiết của một cuộc hẹn
      */
-    @GetMapping("/view-appointment-detail/{id}")
+    @GetMapping("/view-appointment/{id}")
     public ResponseEntity<?> getAppointmentById(
             @PathVariable("id") Long appointmentId) {
         return appointmentService.getAppointmentById(appointmentId);
@@ -48,11 +68,12 @@ public class AppointmentController {
     /**
      * Cập nhật trạng thái của cuộc hẹn
      */
-    @PutMapping("/update-status/{username}/{appointmentId}")
-
-    public ResponseEntity<?> updateAppointmentStatus(@PathVariable("username") String username, @PathVariable("appointmentId") Long appointmentId,
-            @RequestParam String status) {
-        return appointmentService.updateAppointmentStatus(username, appointmentId, status);
+    @PutMapping("/update-appointment/{id}")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
+    public ResponseEntity<?> updateAppointment(
+            @PathVariable("id") Long appointmentId,
+            @RequestBody AppointmentUpdateRequest updateRequest) {
+        return appointmentService.updateAppointment(appointmentId, updateRequest);
     }
 
 
@@ -66,20 +87,12 @@ public class AppointmentController {
         return appointmentService.findAppointmentsByEmailAndPhone(email, phone);
     }
 
-    @GetMapping("/user/{username}/get-appointments-by-status")
+    @GetMapping("/user/{username}")
     public ResponseEntity<?> getAppointmentsByUsernameAndStatus(
-            @PathVariable String username,
             @RequestParam(required = false) String status) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
         return ResponseEntity.ok(appointmentService.getAppointmentByUsernameAndStatus(username, status));
     }
-
-//    @GetMapping("/user/{username}/search-appointments-by-status")
-//    public ResponseEntity<?> searchAppointmentsByUsernameAndStatus(
-//            @PathVariable String username,
-//            @RequestParam(required = false) String status,
-//            @RequestParam(required = false) String keyword) {
-//        ResponseEntity<?> response = appointmentService.searchAppointmentsByUsernameAndStatus(username, status, keyword);
-//        return ResponseEntity.ok(response);
-//    }
 }
