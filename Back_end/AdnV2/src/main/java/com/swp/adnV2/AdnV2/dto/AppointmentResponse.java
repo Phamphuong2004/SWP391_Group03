@@ -13,6 +13,7 @@ public class AppointmentResponse {
     private String email;
     private String gender;
     private String testPurpose;
+    private String testCategory;
     private String serviceType;
     private LocalDateTime appointmentDate;
     private LocalDateTime collectionSampleTime;
@@ -23,6 +24,15 @@ public class AppointmentResponse {
     private String resultFile;
 //    private Long userId;
 //    private String username;  // Optional: include if you want to show which user the appointment belongs to
+
+
+    public String getTestCategory() {
+        return testCategory;
+    }
+
+    public void setTestCategory(String testCategory) {
+        this.testCategory = testCategory;
+    }
 
     public Long getAppointmentId() {
         return appointmentId;

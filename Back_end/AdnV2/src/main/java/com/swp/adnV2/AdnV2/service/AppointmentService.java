@@ -47,6 +47,7 @@ public class AppointmentService {
         response.setEmail(appointment.getEmail());
         response.setGender(appointment.getGender());
         response.setTestPurpose(appointment.getTestPurpose());
+        response.setTestCategory(appointment.getTestCategory());
         response.setServiceType(appointment.getServiceType());
         response.setCollectionSampleTime(appointment.getCollectionSampleTime());
         response.setFingerprintFile(appointment.getFingerprintFile());

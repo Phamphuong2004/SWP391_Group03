@@ -17,6 +17,7 @@ public class Feedback {
 
     @Column(name = "rating")
     private int rating;
+
     @Column(name = "feedbackDate", columnDefinition = "DATETIME DEFAULT GETDATE()")
     private LocalDateTime feedbackDate = LocalDateTime.now();
 
