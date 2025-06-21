@@ -76,10 +76,24 @@ public class Appointment {
     @Column(name = "province", columnDefinition = "NVARCHAR(100)")
     private String province;
 
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    private Services service;
+
     // Default constructor
     public Appointment() {}
 
+
+
     // Getters and Setters
+
+    public Services getService() {
+        return service;
+    }
+
+    public void setService(Services service) {
+        this.service = service;
+    }
 
     public Long getAppointmentId() {
         return appointmentId;

@@ -16,8 +16,8 @@ public class KitComponent {
     @Column(name = "quantity", columnDefinition = "INT DEFAULT 1")
     private int quantity;
 
-    @Column(name = "intrustions", columnDefinition = "NVARCHAR(255)")
-    private String intrustions;
+    @Column(name = "instruction", columnDefinition = "NVARCHAR(255)")
+    private String instruction;
 
     @OneToOne
     @JoinColumn(name = "service_id", unique = true)
@@ -30,7 +30,7 @@ public class KitComponent {
         this.kitComponentId = kitComponentId;
         this.componentName = componentName;
         this.quantity = quantity;
-        this.intrustions = intrustions;
+        this.instruction = intrustions;
         this.service = service;
     }
 
@@ -59,11 +59,11 @@ public class KitComponent {
     }
 
     public String getIntrustions() {
-        return intrustions;
+        return instruction;
     }
 
     public void setIntrustions(String intrustions) {
-        this.intrustions = intrustions;
+        this.instruction = intrustions;
     }
 
     public Services getService() {
@@ -80,7 +80,7 @@ public class KitComponent {
                 "kitComponentId=" + kitComponentId +
                 ", componentName='" + componentName + '\'' +
                 ", quantity=" + quantity +
-                ", intrustions='" + intrustions + '\'' +
+                ", intrustions='" + instruction + '\'' +
                 ", service=" + service +
                 '}';
     }

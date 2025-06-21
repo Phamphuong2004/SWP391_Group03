@@ -38,12 +38,13 @@ public class AppointmentController {
     /**
      * Tạo cuộc hẹn mới (cho cả người dùng đăng ký và khách vãng lai)
      */
-    @PostMapping("/create-appointment")
+    @PostMapping("/create-appointment/{serviceId}")
     public ResponseEntity<?> createAppointment(
+            @PathVariable ("serviceId") Long serviceId,
             @Valid @RequestBody AppointmentRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return appointmentService.createAppointment(request, username);
+        return appointmentService.createAppointment(serviceId ,request, username);
     }
 
     /**

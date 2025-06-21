@@ -29,10 +29,6 @@ public class Sample {
     private Participant participant;
 
     @ManyToOne
-    @JoinColumn(name = "appointment_service_id", nullable = false)
-    private AppointmentServices appointmentServices;
-
-    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
@@ -61,13 +57,6 @@ public class Sample {
         this.participant = participant;
     }
 
-    public AppointmentServices getAppointmentService() {
-        return appointmentServices;
-    }
-
-    public void setAppointmentService(AppointmentServices appointmentServices) {
-        this.appointmentServices = appointmentServices;
-    }
 
     public Users getUser() {
         return users;
@@ -122,7 +111,6 @@ public class Sample {
         return "Sample{" +
                 "sampleId=" + sampleId +
                 ", participant=" + participant +
-                ", appointmentService=" + appointmentServices +
                 ", user=" + users +
                 ", kitComponent=" + kitComponent +
                 ", sampleType='" + sampleType + '\'' +

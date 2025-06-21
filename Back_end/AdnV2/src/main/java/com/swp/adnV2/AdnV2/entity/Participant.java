@@ -25,12 +25,8 @@ public class Participant {
     private LocalDate dateOfBirth;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Users users;
-
-    @ManyToOne
-    @JoinColumn(name = "appointment_service_id")
-    private AppointmentServices appointmentServices;
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
 
     // Default constructor
     public Participant() {
@@ -45,13 +41,6 @@ public class Participant {
         this.participantId = participantId;
     }
 
-    public Users getUser() {
-        return users;
-    }
-
-    public void setUser(Users users) {
-        this.users = users;
-    }
 
     public String getFullName() {
         return fullName;
@@ -85,24 +74,16 @@ public class Participant {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public AppointmentServices getAppointmentService() {
-        return appointmentServices;
-    }
 
-    public void setAppointmentService(AppointmentServices appointmentServices) {
-        this.appointmentServices = appointmentServices;
-    }
 
     @Override
     public String toString() {
         return "Participant{" +
                 "participantId=" + participantId +
-                ", user=" + users +
                 ", fullName='" + fullName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", relationshipToCustomer='" + relationshipToCustomer + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", appointmentService=" + appointmentServices +
                 '}';
     }
 }

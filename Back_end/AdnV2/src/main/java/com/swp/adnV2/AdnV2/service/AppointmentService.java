@@ -4,9 +4,11 @@ import com.swp.adnV2.AdnV2.dto.AppointmentRequest;
 import com.swp.adnV2.AdnV2.dto.AppointmentResponse;
 import com.swp.adnV2.AdnV2.dto.AppointmentUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Appointment;
+import com.swp.adnV2.AdnV2.entity.Services;
 import com.swp.adnV2.AdnV2.entity.StatusAppointment;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
+import com.swp.adnV2.AdnV2.repository.ServiceRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,9 @@ public class AppointmentService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     public ResponseEntity<?> deleteAppointment(Long appointmentId) {
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
@@ -94,7 +99,7 @@ public class AppointmentService {
      * @param username Tên người dùng (nếu có)
      * @return ResponseEntity chứa thông tin cuộc hẹn hoặc thông báo lỗi
      */
-public ResponseEntity<?> createAppointment(AppointmentRequest request, String username) {
+public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest request, String username) {
     try {
         Appointment appointment = new Appointment();
 
@@ -118,6 +123,9 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
         appointment.setDistrict(request.getDistrict());
         appointment.setProvince(request.getProvince());
         appointment.setAppointmentDate(request.getAppointmentDate());
+        Services services = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
+        appointment.setService(services);
 
         // Thêm các thông tin mặc định
         appointment.setStatus("PENDING"); // Trạng thái mặc định khi tạo cuộc hẹn
@@ -164,22 +172,6 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
     }
 
 
-
-//    public ResponseEntity<?> viewAppointments(String username) {
-//        try {
-//            Users users = userRepository.findByUsername(username);
-//            if (users == null) {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                        .body("User with username " + username + " not found");
-//            }
-//
-//            List<Appointment> appointments = appointmentRepository.findByUsers_UserId(users.getUserId());
-//            return ResponseEntity.ok(appointments);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest()
-//                    .body("Failed to retrieve appointments: " + e.getMessage());
-//        }
-//    }
 
     /**
      * Xem thông tin chi tiết của một cuộc hẹn
@@ -240,40 +232,39 @@ public ResponseEntity<?> createAppointment(AppointmentRequest request, String us
     }
     //
 
-    public ResponseEntity<?> createAppointment(String username, AppointmentRequest request){
-        Users users = userRepository.findByUsername(username);
-        if(users == null){
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        Appointment appointment = new Appointment();
-        appointment.setUser(users);//
-        appointment.setFullName(request.getFullName());//
-        appointment.setDob(request.getDob());//
-        appointment.setPhone(request.getPhone());//
-        appointment.setEmail(request.getEmail());
-        appointment.setGender(request.getGender());
-        appointment.setTestPurpose(request.getTestPurpose());
-        appointment.setServiceType(request.getServiceType());
-
-        appointment.setCollectionSampleTime(request.getCollectionTime());
-
-//        appointment.setFingerprintFile(request.getFingerprintFile());
-
-        if (request.getFingerprintFile() == null || request.getFingerprintFile().trim().isEmpty()) {
-            appointment.setFingerprintFile(null);
-        } else {
-            appointment.setFingerprintFile(request.getFingerprintFile());
-        }
-
-        appointment.setDistrict(request.getDistrict());
-        appointment.setProvince(request.getProvince());
-
-        appointmentRepository.save(appointment);
-
-        return ResponseEntity.ok("Appointment created successfully");
-
-    }
+//    public ResponseEntity<?> createAppointment(String username, AppointmentRequest request){
+//        Users users = userRepository.findByUsername(username);
+//        if(users == null){
+//            return ResponseEntity.badRequest().body("User not found");
+//        }
+//
+//        Appointment appointment = new Appointment();
+//        appointment.setUser(users);//
+//        appointment.setFullName(request.getFullName());//
+//        appointment.setDob(request.getDob());//
+//        appointment.setPhone(request.getPhone());//
+//        appointment.setEmail(request.getEmail());
+//        appointment.setGender(request.getGender());
+//        appointment.setTestPurpose(request.getTestPurpose());
+//        appointment.setServiceType(request.getServiceType());
+//
+//        appointment.setCollectionSampleTime(request.getCollectionTime());
+//
+//
+//        if (request.getFingerprintFile() == null || request.getFingerprintFile().trim().isEmpty()) {
+//            appointment.setFingerprintFile(null);
+//        } else {
+//            appointment.setFingerprintFile(request.getFingerprintFile());
+//        }
+//
+//        appointment.setDistrict(request.getDistrict());
+//        appointment.setProvince(request.getProvince());
+//
+//        appointmentRepository.save(appointment);
+//
+//        return ResponseEntity.ok("Appointment created successfully");
+//
+//    }
 
     public ResponseEntity<?> viewAppointmentsV2(String username) {
         try {
