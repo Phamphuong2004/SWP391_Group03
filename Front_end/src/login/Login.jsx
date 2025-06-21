@@ -3,6 +3,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import "./Login.css";
 
 export default function Login() {
@@ -35,44 +36,50 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("/api/auth/login", {
+      // Step 1: Get the token from the auth endpoint
+      const authResponse = await axios.post("/api/auth/login", {
         username,
         password,
       });
 
-      // In ra response để kiểm tra
-      console.log("Login response:", response.data);
+      const token = authResponse.data.jwt || authResponse.data.token;
 
-      if (response.data && (response.data.jwt || response.data.token)) {
-        // Lưu role và các thông tin khác
-        const userData = {
-          ...response.data,
-          token: response.data.jwt || response.data.token,
-          role:
-            response.data.role ||
-            response.data.roles ||
-            response.data.userRole ||
-            response.data.type ||
-            "customer",
-          username: response.data.username || username,
-        };
-        localStorage.setItem("user", JSON.stringify(userData));
-        localStorage.setItem("token", userData.token);
-        await recordLoginHistory(
-          userData.userId || userData.id,
-          "success",
-          userData.token
-        );
-
-        toast.success("Đăng nhập thành công!");
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-      } else {
-        toast.error(
-          response.data.message || "Tên đăng nhập hoặc mật khẩu không đúng!"
-        );
+      if (!token) {
+        toast.error("Không nhận được token xác thực.");
+        setIsLoading(false);
+        return;
       }
+
+      // Step 2: Use the token to get the user's role from the user endpoint
+      const userResponse = await axios.post(
+        "/api/user/login",
+        { username, password }, // The endpoint might still need credentials
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const userRole = userResponse.data.role;
+
+      if (!userRole) {
+        toast.error("Không thể lấy được vai trò người dùng.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Step 3: Decode token for user info and combine everything
+      const decodedToken = jwtDecode(token);
+      const userToStore = {
+        id: decodedToken.id,
+        username: decodedToken.sub,
+        name: decodedToken.name,
+        role: userRole,
+        token: token,
+      };
+
+      localStorage.setItem("user", JSON.stringify(userToStore));
+      await recordLoginHistory(userToStore.id, "success", userToStore.token);
+
+      toast.success("Đăng nhập thành công!");
+      navigate("/");
     } catch (error) {
       console.error("Error logging in:", error);
       toast.error(

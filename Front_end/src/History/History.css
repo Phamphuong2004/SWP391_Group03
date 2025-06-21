@@ -79,3 +79,35 @@
   background-color: #fff3e0;
   color: #f57c00;
 }
+
+.history-table tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.history-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.history-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.history-table tbody tr.active-row {
+  font-weight: bold;
+  color: #009879;
+}
+
+/* Add this to ensure text is visible in dark mode */
+.history-table tbody td {
+  color: #333; /* Or a color that works for your themes */
+}
+
+.dark .history-table tbody td {
+  color: #333; /* A readable color on a light background */
+}
+
+.error {
+  color: red;
+  text-align: center;
+  margin-top: 20px;
+}

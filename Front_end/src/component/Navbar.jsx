@@ -84,46 +84,24 @@ function MyNavbar() {
               >
                 Xem kết quả
               </Nav.Link>
-              <Nav.Link
-                onClick={() => {
-                  const lastServiceId = localStorage.getItem("lastServiceId");
-                  if (lastServiceId) {
-                    navigate(`/service-tracking/${lastServiceId}`);
-                  } else {
-                    navigate("/service-tracking");
-                  }
-                }}
-                className="nav-link"
-              >
+              <Nav.Link href="/history" className="nav-link">
                 Theo dõi đơn
               </Nav.Link>
-              {user && user.role === "admin" && (
-                <Nav.Link href="/admin-dashboard" className="nav-link">
-                  Quản Trị
-                </Nav.Link>
-              )}
-              {user && user.role === "staff" && (
-                <Nav.Link href="/staff-dashboard" className="nav-link">
-                  Nhân Viên
-                </Nav.Link>
-              )}
-              {user && user.role === "manager" && (
-                <>
-                  <Nav.Link href="/manager-dashboard" className="nav-link">
-                    Quản Lý
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link href="/receive-booking" className="nav-link">
+                    Dashboard
                   </Nav.Link>
-                </>
-              )}
-              {user && user.role === "admin" && (
-                <Nav.Link href="/history" className="nav-link">
-                  Lịch Sử Người Dùng
-                </Nav.Link>
-              )}
-              {user && (user.role === "staff" || user.role === "manager") && (
-                <Nav.Link href="/receive-booking" className="nav-link">
-                  Tiếp nhận Booking
-                </Nav.Link>
-              )}
+                )}
+              {user &&
+                ["admin", "manager", "staff", "customer"].includes(
+                  user.role.toLowerCase()
+                ) && (
+                  <Nav.Link href="/login-history" className="nav-link">
+                    Lịch Sử Người Dùng
+                  </Nav.Link>
+                )}
             </Nav>
             <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
               <Form.Control

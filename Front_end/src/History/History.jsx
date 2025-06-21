@@ -9,27 +9,41 @@ export default function History() {
 
   // Lấy user từ localStorage
   const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || user.role !== "admin") {
+  const allowedRoles = ["admin", "manager", "staff", "customer"];
+  if (!user || !allowedRoles.includes(user.role.toLowerCase())) {
     return <div className="error">Bạn không có quyền truy cập trang này.</div>;
   }
 
   useEffect(() => {
     const fetchLoginHistory = async () => {
       try {
-        const response = await axios.get("/api/user/login-history");
+        // Lấy token từ user object trong localStorage
+        const token = user.token;
+        const response = await axios.get("/api/user/login-history", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setLoginHistory(response.data);
         setLoading(false);
       } catch (err) {
+        console.error("Error fetching login history:", err); // Log the actual error
         setError("Failed to fetch login history");
         setLoading(false);
       }
     };
 
-    fetchLoginHistory();
-  }, []);
+    if (user && user.token) {
+      fetchLoginHistory();
+    }
+  }, [user]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div className="error">{error}</div>;
+
+  if (!user) {
+    return <div>Please log in to view history.</div>;
+  }
 
   return (
     <div className="history-container">
@@ -49,7 +63,7 @@ export default function History() {
           {loginHistory.map((history) => (
             <tr key={history.id}>
               <td>{history.id}</td>
-              <td>{history.user.username}</td>
+              <td>{history.user?.username || "Không có"}</td>
               <td>{new Date(history.loginTime).toLocaleString()}</td>
               <td>{history.ipAddress}</td>
               <td>{history.userAgent}</td>
