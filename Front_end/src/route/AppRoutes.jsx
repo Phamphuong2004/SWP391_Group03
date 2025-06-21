@@ -6,36 +6,22 @@ import {
   useLocation,
 } from "react-router-dom";
 import MyNavbar from "../component/Navbar";
-import ADNIntro from "../Intro/ADNIntro";
-import MyCard from "../component/MyCard";
-import ADNTestingServices from "../listOfServices";
-import Footer from "../component/Footer";
 import Login from "../login/Login";
-import "../component/Navbar.css";
-import "../component/Banner.css";
-import "../component/MyCard.css";
-import "../component/Footer.css";
 import "../App.css";
 import Register from "../register/Register";
-import "../register/Register.css";
 import Booking from "../Booking/Booking";
-import "../Booking/Booking.css";
 import Blog from "../Blog/Blog";
 import BlogDetail from "../Blog/BlogDetail";
 import AdministrativeService from "../ServiceInfo/AdministrativeService";
 import CivilService from "../ServiceInfo/CivilService";
 import Dashboard from "../Dashboard/Dashboard";
-import ADNTestingActivities from "../Activities/ADNTestingActivities";
-import Banner from "../component/Banner";
 import Feedback from "../Feedback/Feedback";
 import RegisterNotification from "../register/RegisterNotification";
 import AuthNotification from "../AuthNotification/AuthNotification";
-import AdminDashboard from "../Dashboard/AdminDashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import Profile from "../Profile/Profile";
-import StaffDashboard from "../Dashboard/StaffDashboard";
-import ManagerDashboard from "../Dashboard/ManagerDashboard";
-import History from "../History/History"; // Import the History component
+import AppointmentHistory from "../History/AppointmentHistory";
+import History from "../History/History";
 import ForgotPassword from "../Password/ForgotPassword";
 import BookingNotification from "../Booking/BookingNotification";
 import ServiceDetail from "../ServiceInfo/ServiceDetails/ServiceDetail";
@@ -50,37 +36,7 @@ import Inheritance from "../ServiceInfo/ServiceDetails/inheritance";
 import CivilContract from "../ServiceInfo/ServiceDetails/civil-contract";
 import ViewDetails from "../ViewDetails/ViewDetails";
 import ReceiveBooking from "../ReceiveBooking/ReceiveBooking";
-import "../ReceiveBooking/ReceiveBooking.css";
-
-function HomePage() {
-  return (
-    <>
-      <ADNIntro />
-      <Banner />
-      <h1
-        className="text-center mt-4"
-        style={{ color: "#c0392b", fontWeight: "bold" }}
-      >
-        Dịch vụ xét nghiệm khách hàng có thể tìm hiểu
-      </h1>
-      <div className="container-fluid py-4">
-        <div className="row g-4 justify-content-center">
-          {ADNTestingServices.map((service) => (
-            <div
-              key={service.id}
-              className="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch"
-              style={{ maxWidth: "400px", marginBottom: "24px" }}
-            >
-              <MyCard service={service} />
-            </div>
-          ))}
-        </div>
-      </div>
-      <ADNTestingActivities />
-      <Footer />
-    </>
-  );
-}
+import HomePage from "../Home/HomePage";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -100,48 +56,23 @@ function AppContent() {
         <Route path="/booking" element={<Booking />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogDetail />} />
-        {/* Chỉ admin mới xem được dashboard */}
-        <Route
-          path="/admin-dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["admin"]}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        {/* Staff dashboard chỉ cho staff */}
-        <Route
-          path="/staff-dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["staff"]}>
-              <StaffDashboard />
-            </ProtectedRoute>
-          }
-        />
-        {/* Manager dashboard chỉ cho manager */}
-        <Route
-          path="/manager-dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["manager"]}>
-              <ManagerDashboard />
-            </ProtectedRoute>
-          }
-        />
-        {/* Route cho trang lịch sử, chỉ cho admin */}
         <Route
           path="/history"
           element={
-            <ProtectedRoute allowedRoles={["admin"]}>
+            <ProtectedRoute allowedRoles={["manager", "staff", "customer"]}>
+              <AppointmentHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/login-history"
+          element={
+            <ProtectedRoute allowedRoles={["manager", "staff", "customer"]}>
               <History />
             </ProtectedRoute>
           }
         />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route
-          path="/services/hanh-chinh"
-          element={<AdministrativeService />}
-        />
-        <Route path="/services/dan-su" element={<CivilService />} />
         <Route
           path="/administrative-service"
           element={<AdministrativeService />}
@@ -166,7 +97,7 @@ function AppContent() {
         />
         <Route path="/service/adoption" element={<Adoption />} />
         <Route
-          path="/service-tracking/:serviceId"
+          path="/service-tracking/:appointmentId"
           element={<ServiceTracking />}
         />
         <Route

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Button, Modal, Form, message } from "antd";
+import { Table, Button, Modal, Form, message, Input, Select } from "antd";
 import { useNavigate } from "react-router-dom";
+
+const { Option } = Select;
 
 const ReceiveBooking = () => {
   const [bookings, setBookings] = useState([]);
@@ -10,15 +12,43 @@ const ReceiveBooking = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  // Fetch bookings
+  // Fetch bookings based on user role
   const fetchBookings = async () => {
+    if (!user || !user.token) {
+      message.error("Bạn phải đăng nhập để xem các đơn đặt lịch.");
+      return;
+    }
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8080/api/bookings");
-      setBookings(response.data);
+      let apiUrl = "";
+      const userRole = user.role.toLowerCase();
+      if (userRole === "staff" || userRole === "manager") {
+        apiUrl = "/api/get-all-appointments";
+      } else if (userRole === "customer") {
+        apiUrl = "/api/view-appointments-user";
+      } else {
+        message.error("Vai trò của bạn không được hỗ trợ.");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(apiUrl, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+
+      // The response data might be the array itself, or it might be nested.
+      const appointments = Array.isArray(response.data)
+        ? response.data
+        : response.data.data && Array.isArray(response.data.data)
+        ? response.data.data
+        : [];
+
+      setBookings(appointments);
     } catch (error) {
-      message.error("Failed to fetch bookings");
+      message.error("Không thể tải danh sách đơn đặt lịch.");
+      console.error("Fetch bookings error:", error);
     } finally {
       setLoading(false);
     }
@@ -32,68 +62,104 @@ const ReceiveBooking = () => {
   const handleStatusUpdate = async (bookingId, newStatus) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/bookings/${bookingId}/status`,
-        {
-          status: newStatus,
-        }
+        `/api/update-appointment/${bookingId}`,
+        { status: newStatus }, // Send status in the body
+        { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      message.success("Booking status updated successfully");
+      message.success("Cập nhật trạng thái thành công");
       fetchBookings();
     } catch (error) {
-      message.error("Failed to update booking status");
+      message.error("Không thể cập nhật trạng thái");
+      console.error(
+        "Status update error:",
+        error.response?.data || error.message
+      );
     }
+  };
+
+  // Handle delete booking
+  const handleDelete = (bookingId) => {
+    Modal.confirm({
+      title: "Bạn có chắc chắn muốn xóa đơn này?",
+      content: "Hành động này không thể hoàn tác.",
+      okText: "Có",
+      okType: "danger",
+      cancelText: "Không",
+      onOk: async () => {
+        try {
+          await axios.delete(
+            `http://localhost:8080/api/delete-appointment/${bookingId}`,
+            { headers: { Authorization: `Bearer ${user.token}` } }
+          );
+          message.success("Xóa đơn thành công");
+          fetchBookings();
+        } catch (error) {
+          message.error("Không thể xóa đơn");
+        }
+      },
+    });
   };
 
   // Show booking details modal
   const showBookingDetails = (booking) => {
     setSelectedBooking(booking);
-    form.setFieldsValue(booking);
+    // Ensure date and time are formatted correctly for the form
+    const bookingDetails = {
+      ...booking,
+      bookingDate: booking.bookingDate
+        ? new Date(booking.bookingDate).toISOString().split("T")[0]
+        : "",
+      bookingTime: booking.bookingTime || "",
+    };
+    form.setFieldsValue(bookingDetails);
     setIsModalVisible(true);
   };
 
-  // Handle form submission
+  // Handle form submission for update
   const handleSubmit = async (values) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/bookings/${selectedBooking.id}`,
-        values
+        `http://localhost:8080/api/update-appointment/${selectedBooking.id}`,
+        values,
+        { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      message.success("Booking updated successfully");
+      message.success("Cập nhật đơn thành công");
       setIsModalVisible(false);
       fetchBookings();
     } catch (error) {
-      message.error("Failed to update booking");
+      message.error("Không thể cập nhật đơn");
     }
   };
 
   const columns = [
     {
-      title: "Booking ID",
+      title: "ID",
       dataIndex: "id",
       key: "id",
     },
     {
-      title: "Customer Name",
-      dataIndex: "customerName",
-      key: "customerName",
+      title: "Tên khách hàng",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: "Date",
+      title: "Ngày đặt",
       dataIndex: "bookingDate",
       key: "bookingDate",
+      render: (text) => new Date(text).toLocaleDateString(),
     },
     {
-      title: "Time",
+      title: "Giờ đặt",
       dataIndex: "bookingTime",
       key: "bookingTime",
     },
     {
-      title: "Status",
+      title: "Trạng thái",
       dataIndex: "status",
       key: "status",
     },
     {
-      title: "Actions",
+      title: "Hành động",
       key: "actions",
       render: (_, record) => (
         <>
@@ -102,21 +168,38 @@ const ReceiveBooking = () => {
             onClick={() => showBookingDetails(record)}
             style={{ marginRight: 8 }}
           >
-            View Details
+            Xem chi tiết
           </Button>
-          <Button
-            type="primary"
-            onClick={() => handleStatusUpdate(record.id, "CONFIRMED")}
-            style={{ marginRight: 8 }}
-          >
-            Confirm
-          </Button>
-          <Button
-            danger
-            onClick={() => handleStatusUpdate(record.id, "CANCELLED")}
-          >
-            Cancel
-          </Button>
+          {(user.role.toLowerCase() === "staff" ||
+            user.role.toLowerCase() === "manager") && (
+            <>
+              <Button
+                type="primary"
+                onClick={() => handleStatusUpdate(record.id, "CONFIRMED")}
+                style={{
+                  marginRight: 8,
+                  background: "#52c41a",
+                  borderColor: "#52c41a",
+                }}
+              >
+                Xác nhận
+              </Button>
+              <Button
+                danger
+                onClick={() => handleStatusUpdate(record.id, "CANCELLED")}
+                style={{ marginRight: 8 }}
+              >
+                Hủy
+              </Button>
+              <Button
+                danger
+                type="primary"
+                onClick={() => handleDelete(record.id)}
+              >
+                Xóa
+              </Button>
+            </>
+          )}
         </>
       ),
     },
@@ -124,7 +207,11 @@ const ReceiveBooking = () => {
 
   return (
     <div style={{ padding: "24px" }}>
-      <h1>Receive Bookings</h1>
+      <h1>
+        {user.role === "customer"
+          ? "Các đơn đã đặt của bạn"
+          : "Quản lý đơn đặt lịch"}
+      </h1>
       <Table
         columns={columns}
         dataSource={bookings}
@@ -133,44 +220,79 @@ const ReceiveBooking = () => {
       />
 
       <Modal
-        title="Booking Details"
+        title="Chi tiết đơn đặt lịch"
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        footer={null}
+        footer={
+          user.role.toLowerCase() === "staff" ||
+          user.role.toLowerCase() === "manager"
+            ? [
+                <Button key="back" onClick={() => setIsModalVisible(false)}>
+                  Hủy
+                </Button>,
+                <Button
+                  key="submit"
+                  type="primary"
+                  onClick={() => form.submit()}
+                >
+                  Cập nhật
+                </Button>,
+              ]
+            : null
+        }
       >
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          disabled={user.role.toLowerCase() === "customer"}
+        >
           <Form.Item
-            name="customerName"
-            label="Customer Name"
+            name="name"
+            label="Tên khách hàng"
             rules={[{ required: true }]}
           >
-            <input />
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, type: "email" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="phone"
+            label="Số điện thoại"
+            rules={[{ required: true }]}
+          >
+            <Input />
           </Form.Item>
           <Form.Item
             name="bookingDate"
-            label="Booking Date"
+            label="Ngày đặt"
             rules={[{ required: true }]}
           >
-            <input type="date" />
+            <Input type="date" />
           </Form.Item>
           <Form.Item
             name="bookingTime"
-            label="Booking Time"
+            label="Giờ đặt"
             rules={[{ required: true }]}
           >
-            <input type="time" />
+            <Input type="time" />
           </Form.Item>
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
-            <select>
-              <option value="PENDING">Pending</option>
-              <option value="CONFIRMED">Confirmed</option>
-              <option value="CANCELLED">Cancelled</option>
-            </select>
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Update Booking
-            </Button>
+          <Form.Item
+            name="status"
+            label="Trạng thái"
+            rules={[{ required: true }]}
+          >
+            <Select>
+              <Option value="PENDING">Pending</Option>
+              <Option value="CONFIRMED">Confirmed</Option>
+              <Option value="CANCELLED">Cancelled</Option>
+              <Option value="COMPLETED">Completed</Option>
+            </Select>
           </Form.Item>
         </Form>
       </Modal>

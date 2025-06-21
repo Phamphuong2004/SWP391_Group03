@@ -1,10 +1,26 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
-export default function ProtectedRoute({ allowedRoles, children }) {
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const location = useLocation();
   const user = JSON.parse(localStorage.getItem("user"));
-  if (!user || !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />;
+
+  if (!user) {
+    // Nếu không có user, chuyển hướng về trang đăng nhập
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
-  return children;
-}
+
+  const userRole = user.role.toLowerCase(); // Chuyển vai trò về chữ thường
+
+  // Kiểm tra xem vai trò của user có nằm trong danh sách được phép hay không
+  if (allowedRoles && allowedRoles.includes(userRole)) {
+    return children;
+  }
+
+  // Nếu vai trò không được phép, có thể chuyển hướng về trang lỗi hoặc trang chủ
+  return (
+    <Navigate to="/auth-notification" state={{ from: location }} replace />
+  );
+};
+
+export default ProtectedRoute;
