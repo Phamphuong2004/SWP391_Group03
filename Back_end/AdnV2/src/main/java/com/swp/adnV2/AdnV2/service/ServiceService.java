@@ -16,24 +16,24 @@ public class ServiceService {
 
     public Services createRequest(ServiceCreationRequest request){
         // Create a new Service entity from the request
-        Services service1 = new Services();
-        service1.setServiceName(request.getServiceName());
-        service1.setDescription(request.getDescription());
-        service1.setPrice(request.getPrice());
+        Services services = new Services();
+        services.setServiceName(request.getServiceName());
+        services.setDescription(request.getDescription());
+        services.setPrice(request.getPrice());
 
         // Save the service entity to the repository
-        return serviceRepository.save(service1);
+        return serviceRepository.save(services);
 
     }
 
-    public Service1 updateService( Long service_id, ServiceUpdateRequest request){
-          Services service1 = getServiceById(service_id);
+    public Services updateService( Long service_id, ServiceUpdateRequest request){
+          Services services = getServiceById(service_id);
         // Update the service entity with the new values from the request
-          service1.setServiceName(request.getServiceName());
-          service1.setDescription(request.getDescription());
-          service1.setPrice(request.getPrice());
+        services.setServiceName(request.getServiceName());
+        services.setDescription(request.getDescription());
+        services.setPrice(request.getPrice());
 
-          return serviceRepository.save(service1);
+          return serviceRepository.save(services);
     }
 
     public void deleteService(Long serviceId) {
