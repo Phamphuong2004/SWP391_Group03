@@ -1,6 +1,15 @@
 package com.swp.adnV2.AdnV2.controller;
 
-@PreAuthorize("hasRole('MANAGER')")
+import com.swp.adnV2.AdnV2.dto.ServiceCreationRequest;
+import com.swp.adnV2.AdnV2.dto.ServiceUpdateRequest;
+import com.swp.adnV2.AdnV2.entity.Service1;
+import com.swp.adnV2.AdnV2.service.ServiceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+
+
+
 @RestController
 @RequestMapping("/api/services")
 public class ServiceAPI {
@@ -20,12 +29,12 @@ public class ServiceAPI {
     Service1 getServiceById(@PathVariable("service_id") Long serviceId) {
         return serviceService.getServiceById(serviceId);
     }
-
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/{service_id}")
     Service1 updateService(@PathVariable Long service_id, @RequestBody ServiceUpdateRequest request){
         return serviceService.updateService(service_id, request);
     }
-
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/{service_id}")
     String deleteService(@PathVariable Long service_id) {
         serviceService.deleteService(service_id);
