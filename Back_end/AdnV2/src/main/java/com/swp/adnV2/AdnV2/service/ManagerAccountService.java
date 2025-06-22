@@ -1,8 +1,11 @@
-import com.swp.adnV2.AdnV2.entity.User;
-import com.swp.adnV2.AdnV2.repository.ManagerRepository;
+package com.swp.adnV2.AdnV2.service;
+
+import com.swp.adnV2.AdnV2.entity.Users;
+import com.swp.adnV2.AdnV2.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 @Service
 public class ManagerAccountService {
@@ -13,20 +16,19 @@ public class ManagerAccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<User> getAllAccounts() {
+    public List<Users> getAllAccounts() {
         return accountRepo.findAll();
     }
 
-    public User getAccountById(Long id) {
+    public Users getAccountById(Long id) {
         return accountRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
     }
 
-    public User updateAccount(Long id, User updated) {
-        User acc = getAccountById(id);
+    public Users updateAccount(Long id, Users updated) {
+        Users acc = getAccountById(id);
 
         acc.setEmail(updated.getEmail());
-        acc.setActive(updated.isActive());
         acc.setRole(updated.getRole());
 
         if (updated.getPassword() != null && !updated.getPassword().isEmpty()) {
