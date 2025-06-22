@@ -18,18 +18,48 @@ public class Participant {
     @Column(name = "gender", columnDefinition = "NVARCHAR(10)")
     private String gender;
 
-    @Column(name = "relationship_to_customer", columnDefinition = "NVARCHAR(50)")
-    private String relationshipToCustomer;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
+
+    @Column(name = "phone", columnDefinition = "NVARCHAR(20)", nullable = false)
+    private String phone;
+
+    @Column(name = "email", columnDefinition = "NVARCHAR(100)")
+    private String email;
 
     @ManyToOne
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
+
+
     // Default constructor
     public Participant() {
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 
     // Getters and setters
@@ -58,13 +88,6 @@ public class Participant {
         this.gender = gender;
     }
 
-    public String getRelationshipToCustomer() {
-        return relationshipToCustomer;
-    }
-
-    public void setRelationshipToCustomer(String relationshipToCustomer) {
-        this.relationshipToCustomer = relationshipToCustomer;
-    }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
@@ -82,7 +105,6 @@ public class Participant {
                 "participantId=" + participantId +
                 ", fullName='" + fullName + '\'' +
                 ", gender='" + gender + '\'' +
-                ", relationshipToCustomer='" + relationshipToCustomer + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 '}';
     }

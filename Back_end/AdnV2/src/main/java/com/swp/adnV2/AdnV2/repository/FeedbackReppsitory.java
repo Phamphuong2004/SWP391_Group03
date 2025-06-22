@@ -1,14 +1,13 @@
 package com.swp.adnV2.AdnV2.repository;
 
 import com.swp.adnV2.AdnV2.entity.Feedback;
-import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface FeedbackRepsitory extends JpaRepository<Feedback, Long> {
+public interface FeedbackReppsitory extends JpaRepository<Feedback, Long> {
     @Query("SELECT f FROM Feedback f JOIN f.service s WHERE s.serviceName = :serviceName")
     List<Feedback> findByServiceName(@Param("serviceName") String serviceName);
 

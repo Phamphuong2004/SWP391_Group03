@@ -1,4 +1,7 @@
 package com.swp.adnV2.AdnV2.repository;
 
-public interface ParticipantRepsitory {
+import com.swp.adnV2.AdnV2.entity.Participant;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ParticipantRepsitory extends JpaRepository<Participant, Long> {
 }

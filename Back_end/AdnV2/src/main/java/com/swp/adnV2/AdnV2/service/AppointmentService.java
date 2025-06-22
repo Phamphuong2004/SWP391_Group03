@@ -3,11 +3,9 @@ package com.swp.adnV2.AdnV2.service;
 import com.swp.adnV2.AdnV2.dto.AppointmentRequest;
 import com.swp.adnV2.AdnV2.dto.AppointmentResponse;
 import com.swp.adnV2.AdnV2.dto.AppointmentUpdateRequest;
-import com.swp.adnV2.AdnV2.entity.Appointment;
-import com.swp.adnV2.AdnV2.entity.Services;
-import com.swp.adnV2.AdnV2.entity.StatusAppointment;
-import com.swp.adnV2.AdnV2.entity.Users;
+import com.swp.adnV2.AdnV2.entity.*;
 import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
+import com.swp.adnV2.AdnV2.repository.ParticipantRepsitory;
 import com.swp.adnV2.AdnV2.repository.ServiceRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,62 @@ public class AppointmentService {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private ParticipantRepsitory participantRepository;
+
+
+    public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request ){
+        try {
+            Appointment appointment = new Appointment();
+            LocalDateTime appointmentDateTime = request.getAppointmentDate();
+            if(appointmentDateTime != null){
+                appointment.setAppointmentDate(appointmentDateTime);
+        } else {
+                throw new IllegalArgumentException("Appointment date is required");
+            }
+
+            appointment.setFullName(request.getFullName());
+            appointment.setDob(request.getDob());
+            appointment.setPhone(request.getPhone());
+            appointment.setEmail(request.getEmail());
+            appointment.setGender(request.getGender());
+            appointment.setTestPurpose(request.getTestPurpose());
+            appointment.setServiceType(request.getServiceType());
+            appointment.setCollectionSampleTime(request.getCollectionTime());
+            appointment.setTestCategory(request.getTestCategory());
+            appointment.setFingerprintFile(request.getFingerprintFile());
+            appointment.setDistrict(request.getDistrict());
+            appointment.setProvince(request.getProvince());
+
+            appointment.setStatus("PENDING");
+
+            Services services = serviceRepository.findServicesByServiceId(serviceId);
+            if (services == null) {
+                throw new IllegalArgumentException("Service not found with ID: " + serviceId);
+            }
+            appointment.setService(services);
+
+            appointment = appointmentRepository.save(appointment);
+
+            //Tạo participant và liên kết với appointment
+            Participant participant = new Participant();
+            participant.setAppointment(appointment);
+            participant.setFullName(request.getFullName());
+            participant.setDateOfBirth(request.getDob());
+            participant.setPhone(request.getPhone());
+            participant.setEmail(request.getEmail());
+            participant.setGender(request.getGender());
+            participantRepository.save(participant);
+
+            AppointmentResponse response = convertToAppointmentResponse(appointment);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e){
+            return ResponseEntity.badRequest()
+                    .body("Failed to create appointment: " + e.getMessage());
+        }
+    }
+
 
     public ResponseEntity<?> deleteAppointment(Long appointmentId) {
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
@@ -61,6 +115,7 @@ public class AppointmentService {
         response.setStatus(appointment.getStatus());
         response.setResultFile(appointment.getResultFile());
         response.setAppointmentDate(appointment.getAppointmentDate());
+        response.setUserId(appointment.getUserId());
         return response;
     }
 
@@ -224,13 +279,15 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             if (appointments.isEmpty()) {
                 return ResponseEntity.ok(Collections.emptyList());
             }
-            return ResponseEntity.ok(appointments);
+            List<AppointmentResponse> responseList = appointments.stream()
+                    .map(this::convertToAppointmentResponse)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(responseList);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body("Failed to find appointments: " + e.getMessage());
         }
     }
-    //
 
 //    public ResponseEntity<?> createAppointment(String username, AppointmentRequest request){
 //        Users users = userRepository.findByUsername(username);

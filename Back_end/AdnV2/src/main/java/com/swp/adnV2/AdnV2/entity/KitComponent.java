@@ -19,8 +19,10 @@ public class KitComponent {
     @Column(name = "instruction", columnDefinition = "NVARCHAR(255)")
     private String instruction;
 
-    @OneToOne
-    @JoinColumn(name = "service_id", unique = true)
+    // Thay đổi từ @OneToOne sang @ManyToOne
+    // Xóa bỏ unique=true để cho phép nhiều KitComponent liên kết với cùng một Service
+    @ManyToOne
+    @JoinColumn(name = "service_id")
     private Services service;
 
     public KitComponent() {
@@ -58,11 +60,11 @@ public class KitComponent {
         this.quantity = quantity;
     }
 
-    public String getIntrustions() {
+    public String getIntructions() {
         return instruction;
     }
 
-    public void setIntrustions(String intrustions) {
+    public void setIntructions(String intrustions) {
         this.instruction = intrustions;
     }
 

@@ -45,6 +45,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Cho phép truy cập Swagger UI và API Docs
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/create/guest-appointment/**").permitAll()
 
                         // Đường dẫn công khai - ai cũng có thể truy cập
                         .requestMatchers("/api/auth/**", "/api/auth/register", "/api/auth/signup").permitAll()
