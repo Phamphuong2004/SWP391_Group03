@@ -163,7 +163,7 @@ public class UserController {
     @PostMapping("/api/manager/updaterole")
     public ResponseEntity<?> managerUpdateRole(@RequestParam String username, @RequestParam String newRole) {
         Map<String, Object> response = new HashMap<>();
-        User user = userRepository.findByUsername(username);
+        Users user = userRepository.findByUsername(username);
         if (user == null) {
             response.put("Success", false);
             response.put("Message", "User not found");
@@ -171,7 +171,7 @@ public class UserController {
         }
         try {
             Role role = Role.valueOf(newRole.toUpperCase());
-            user.setRole(role.getValue());
+            user.setRole(role.name());
             userRepository.save(user);
             response.put("Success", true);
             response.put("Message", "User role updated successfully");
