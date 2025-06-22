@@ -26,7 +26,7 @@ public class ServiceService {
 
     }
 
-    public Service1 updateService( Long service_id, ServiceUpdateRequest request){
+    public Services updateService( Long service_id, ServiceUpdateRequest request){
           Services services = getServiceById(service_id);
         // Update the service entity with the new values from the request
         services.setServiceName(request.getServiceName());
