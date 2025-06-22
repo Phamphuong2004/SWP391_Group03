@@ -32,8 +32,6 @@ public class Participant {
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
-
-
     // Default constructor
     public Participant() {
     }
