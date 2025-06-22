@@ -1,6 +1,5 @@
 package com.swp.adnV2.AdnV2.service;
 
-import com.fasterxml.jackson.databind.annotation.JsonAppend;
 import com.swp.adnV2.AdnV2.dto.KitComponentRequest;
 import com.swp.adnV2.AdnV2.entity.KitComponent;
 import com.swp.adnV2.AdnV2.entity.Services;
@@ -58,7 +57,7 @@ public class KitService {
             KitComponent kitComponent = new KitComponent();
             kitComponent.setComponentName(kitComponentRequest.getComponentName());
             kitComponent.setQuantity(kitComponentRequest.getQuantity());
-            kitComponent.setIntructions(kitComponentRequest.getIntruction());
+            kitComponent.setIntroduction(kitComponentRequest.getIntruction());
             kitComponent.setService(serviceOptional.get());
 
             kitRepository.save(kitComponent);
@@ -104,7 +103,7 @@ public class KitService {
                 }
 
                 if (request.getIntruction() != null) {
-                    kitComponent.setIntructions(request.getIntruction());
+                    kitComponent.setIntroduction(request.getIntruction());
                 }
             }
 

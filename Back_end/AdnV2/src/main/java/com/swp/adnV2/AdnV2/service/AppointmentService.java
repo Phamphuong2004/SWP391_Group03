@@ -4,10 +4,7 @@ import com.swp.adnV2.AdnV2.dto.AppointmentRequest;
 import com.swp.adnV2.AdnV2.dto.AppointmentResponse;
 import com.swp.adnV2.AdnV2.dto.AppointmentUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.*;
-import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
-import com.swp.adnV2.AdnV2.repository.ParticipantRepsitory;
-import com.swp.adnV2.AdnV2.repository.ServiceRepository;
-import com.swp.adnV2.AdnV2.repository.UserRepository;
+import com.swp.adnV2.AdnV2.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +29,9 @@ public class AppointmentService {
 
     @Autowired
     private ParticipantRepsitory participantRepository;
+
+    @Autowired
+    private KitRepository kitRepository;
 
 
     public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request ){
@@ -116,6 +116,7 @@ public class AppointmentService {
         response.setResultFile(appointment.getResultFile());
         response.setAppointmentDate(appointment.getAppointmentDate());
         response.setUserId(appointment.getUserId());
+        response.setKitComponentName(appointment.getKitComponentName());
         return response;
     }
 
@@ -258,8 +259,36 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
                 appointment.setResultFile(updateRequest.getResultFile());
             }
+            // Kiểm tra và cập nhật kit_component_name nếu được cung cấp
+            if (updateRequest.getKit_component_name() != null && !updateRequest.getKit_component_name().isEmpty()) {
+                // Lấy service từ appointment
+                Services service = appointment.getService();
+                if (service == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Appointment does not have an associated service");
+                }
 
-            appointment = appointmentRepository.save(appointment);
+                Long serviceId = service.getServiceId();
+
+                // Tìm kiếm KitComponent trong service này với tên đã cho
+                List<KitComponent> matchingComponents = kitRepository.findByService_ServiceIdAndComponentNameContainingIgnoreCase(
+                        serviceId, updateRequest.getKit_component_name());
+
+                if (matchingComponents.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("No kit component with name '" + updateRequest.getKit_component_name() +
+                                    "' found for the service ID " + serviceId);
+                }
+
+                // Lấy KitComponent đầu tiên khớp (hoặc có thể thêm logic để chọn cái phù hợp nhất)
+                KitComponent kitComponent = matchingComponents.get(0);
+
+                // Cập nhật kitComponentName trong appointment
+                appointment.setKitComponentName(kitComponent.getComponentName());
+
+            }
+
+            appointmentRepository.save(appointment);
             return ResponseEntity.ok("Appointment updated successfully");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

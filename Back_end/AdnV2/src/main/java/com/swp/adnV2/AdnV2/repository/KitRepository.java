@@ -9,4 +9,6 @@ import java.util.Optional;
 
 public interface KitRepository extends JpaRepository<KitComponent, Long> {
     List<KitComponent> findByService(Services service);
+
+    List<KitComponent> findByService_ServiceIdAndComponentNameContainingIgnoreCase(Long serviceId, String componentName);
 }

@@ -16,8 +16,8 @@ public class KitComponent {
     @Column(name = "quantity", columnDefinition = "INT DEFAULT 1")
     private int quantity;
 
-    @Column(name = "instruction", columnDefinition = "NVARCHAR(255)")
-    private String instruction;
+    @Column(name = "introduction", columnDefinition = "NVARCHAR(255)")
+    private String introduction;
 
     // Thay đổi từ @OneToOne sang @ManyToOne
     // Xóa bỏ unique=true để cho phép nhiều KitComponent liên kết với cùng một Service
@@ -32,7 +32,7 @@ public class KitComponent {
         this.kitComponentId = kitComponentId;
         this.componentName = componentName;
         this.quantity = quantity;
-        this.instruction = intrustions;
+        this.introduction = introduction;
         this.service = service;
     }
 
@@ -60,12 +60,12 @@ public class KitComponent {
         this.quantity = quantity;
     }
 
-    public String getIntructions() {
-        return instruction;
+    public String getIntroduction() {
+        return introduction;
     }
 
-    public void setIntructions(String intrustions) {
-        this.instruction = intrustions;
+    public void setIntroduction(String introduction) {
+        this.introduction = introduction;
     }
 
     public Services getService() {
@@ -74,16 +74,5 @@ public class KitComponent {
 
     public void setService(Services service) {
         this.service = service;
-    }
-
-    @Override
-    public String toString() {
-        return "KitComponent{" +
-                "kitComponentId=" + kitComponentId +
-                ", componentName='" + componentName + '\'' +
-                ", quantity=" + quantity +
-                ", intrustions='" + instruction + '\'' +
-                ", service=" + service +
-                '}';
     }
 }
