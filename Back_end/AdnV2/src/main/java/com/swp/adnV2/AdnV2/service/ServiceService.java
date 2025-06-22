@@ -41,11 +41,11 @@ public class ServiceService {
         serviceRepository.deleteById(serviceId);
     }
 
-    public List<Service1> getAllServices() {
+    public List<Services> getAllServices() {
         // Retrieve all services from the repository
         return serviceRepository.findAll();
     }
-    public Service1 getServiceById(Long serviceId) {
+    public Services getServiceById(Long serviceId) {
         // Find a service by its ID
         return serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new RuntimeException("Service not found with id: " + serviceId));
