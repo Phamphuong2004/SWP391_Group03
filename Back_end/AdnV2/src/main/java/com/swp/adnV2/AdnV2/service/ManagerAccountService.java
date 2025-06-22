@@ -8,7 +8,7 @@ import java.util.List;
 public class ManagerAccountService {
 
     @Autowired
-    private ManagerRepository accountRepo;
+    private AccountRepository accountRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -17,13 +17,13 @@ public class ManagerAccountService {
         return accountRepo.findAll();
     }
 
-    public ManageAccount getAccountById(Long id) {
+    public User getAccountById(Long id) {
         return accountRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
     }
 
-    public ManageAccount updateAccount(Long id, ManageAccount updated) {
-        ManageAccount acc = getAccountById(id);
+    public User updateAccount(Long id, User updated) {
+        User acc = getAccountById(id);
 
         acc.setEmail(updated.getEmail());
         acc.setActive(updated.isActive());
