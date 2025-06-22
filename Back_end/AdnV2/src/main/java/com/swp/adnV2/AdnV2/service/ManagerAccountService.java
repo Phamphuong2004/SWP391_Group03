@@ -1,4 +1,4 @@
-import com.swp.adnV2.AdnV2.entity.ManageAccount;
+import com.swp.adnV2.AdnV2.entity.User;
 import com.swp.adnV2.AdnV2.repository.ManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,7 @@ public class ManagerAccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<ManageAccount> getAllAccounts() {
+    public List<User> getAllAccounts() {
         return accountRepo.findAll();
     }
 
