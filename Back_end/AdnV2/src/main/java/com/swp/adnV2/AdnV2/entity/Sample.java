@@ -25,14 +25,6 @@ public class Sample {
     private String status = "In Transit";
 
     @ManyToOne
-    @JoinColumn(name = "participant_id")
-    private Participant participant;
-
-    @ManyToOne
-    @JoinColumn(name = "appointment_service_id", nullable = false)
-    private AppointmentServices appointmentServices;
-
-    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
@@ -40,11 +32,33 @@ public class Sample {
     @JoinColumn(name = "kit_component_id", nullable = false)
     private KitComponent kitComponent;
 
+    @ManyToOne
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
+
     // Default constructor
     public Sample() {
     }
 
     // Getters and setters
+
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
+    }
+
     public Long getSampleId() {
         return sampleId;
     }
@@ -53,21 +67,6 @@ public class Sample {
         this.sampleId = sampleId;
     }
 
-    public Participant getParticipant() {
-        return participant;
-    }
-
-    public void setParticipant(Participant participant) {
-        this.participant = participant;
-    }
-
-    public AppointmentServices getAppointmentService() {
-        return appointmentServices;
-    }
-
-    public void setAppointmentService(AppointmentServices appointmentServices) {
-        this.appointmentServices = appointmentServices;
-    }
 
     public Users getUser() {
         return users;
@@ -121,8 +120,6 @@ public class Sample {
     public String toString() {
         return "Sample{" +
                 "sampleId=" + sampleId +
-                ", participant=" + participant +
-                ", appointmentService=" + appointmentServices +
                 ", user=" + users +
                 ", kitComponent=" + kitComponent +
                 ", sampleType='" + sampleType + '\'' +

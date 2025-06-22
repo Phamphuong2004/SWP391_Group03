@@ -22,9 +22,27 @@ public class AppointmentResponse {
     private String province;
     private String status;
     private String resultFile;
+    private Long userId;
+    private String kitComponentName;
 //    private Long userId;
 //    private String username;  // Optional: include if you want to show which user the appointment belongs to
 
+
+    public String getKitComponentName() {
+        return kitComponentName;
+    }
+
+    public void setKitComponentName(String kitComponentName) {
+        this.kitComponentName = kitComponentName;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public String getTestCategory() {
         return testCategory;

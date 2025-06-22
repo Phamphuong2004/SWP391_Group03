@@ -18,22 +18,46 @@ public class Participant {
     @Column(name = "gender", columnDefinition = "NVARCHAR(10)")
     private String gender;
 
-    @Column(name = "relationship_to_customer", columnDefinition = "NVARCHAR(50)")
-    private String relationshipToCustomer;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Users users;
+    @Column(name = "phone", columnDefinition = "NVARCHAR(20)", nullable = false)
+    private String phone;
+
+    @Column(name = "email", columnDefinition = "NVARCHAR(100)")
+    private String email;
 
     @ManyToOne
-    @JoinColumn(name = "appointment_service_id")
-    private AppointmentServices appointmentServices;
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
 
     // Default constructor
     public Participant() {
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 
     // Getters and setters
@@ -45,13 +69,6 @@ public class Participant {
         this.participantId = participantId;
     }
 
-    public Users getUser() {
-        return users;
-    }
-
-    public void setUser(Users users) {
-        this.users = users;
-    }
 
     public String getFullName() {
         return fullName;
@@ -69,13 +86,6 @@ public class Participant {
         this.gender = gender;
     }
 
-    public String getRelationshipToCustomer() {
-        return relationshipToCustomer;
-    }
-
-    public void setRelationshipToCustomer(String relationshipToCustomer) {
-        this.relationshipToCustomer = relationshipToCustomer;
-    }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
@@ -85,24 +95,15 @@ public class Participant {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public AppointmentServices getAppointmentService() {
-        return appointmentServices;
-    }
 
-    public void setAppointmentService(AppointmentServices appointmentServices) {
-        this.appointmentServices = appointmentServices;
-    }
 
     @Override
     public String toString() {
         return "Participant{" +
                 "participantId=" + participantId +
-                ", user=" + users +
                 ", fullName='" + fullName + '\'' +
                 ", gender='" + gender + '\'' +
-                ", relationshipToCustomer='" + relationshipToCustomer + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", appointmentService=" + appointmentServices +
                 '}';
     }
 }

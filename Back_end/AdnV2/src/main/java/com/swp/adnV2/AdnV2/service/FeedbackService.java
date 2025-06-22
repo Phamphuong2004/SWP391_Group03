@@ -4,7 +4,7 @@ import com.swp.adnV2.AdnV2.dto.FeedbackRequest;
 import com.swp.adnV2.AdnV2.dto.FeedbackResponse;
 import com.swp.adnV2.AdnV2.entity.Feedback;
 import com.swp.adnV2.AdnV2.entity.Users;
-import com.swp.adnV2.AdnV2.repository.FeedbackRepsitory;
+import com.swp.adnV2.AdnV2.repository.FeedbackReppsitory;
 import com.swp.adnV2.AdnV2.repository.ServicesRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class FeedbackService {
     @Autowired
-    private FeedbackRepsitory feedbackRepsitory;
+    private FeedbackReppsitory feedbackReppsitory;
 
     @Autowired
     private UserRepository userRepository;
@@ -30,7 +30,7 @@ public class FeedbackService {
     public ResponseEntity<?> updateFeedback(String username, Long feedbackId, FeedbackRequest feedbackRequest) {
         try {
             // Tìm feedback cần cập nhật
-            Feedback feedback = feedbackRepsitory.findById(feedbackId)
+            Feedback feedback = feedbackReppsitory.findById(feedbackId)
                     .orElseThrow(() -> new RuntimeException("Feedback not found with ID: " + feedbackId));
 
             // Kiểm tra xem người dùng hiện tại có phải là người tạo feedback này không
@@ -53,7 +53,7 @@ public class FeedbackService {
             // Không cần cập nhật user vì chúng ta đang kiểm tra quyền sở hữu
             // feedback.setUser(currentUser);
 
-            feedbackRepsitory.save(feedback);
+            feedbackReppsitory.save(feedback);
             return ResponseEntity.ok("Feedback updated successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -63,11 +63,11 @@ public class FeedbackService {
 
     public ResponseEntity<?> deleteFeedback(Long feedbackId) {
         try {
-            if (!feedbackRepsitory.existsById(feedbackId)) {
+            if (!feedbackReppsitory.existsById(feedbackId)) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Feedback with ID " + feedbackId + " not found.");
             }
-            feedbackRepsitory.deleteById(feedbackId);
+            feedbackReppsitory.deleteById(feedbackId);
             return ResponseEntity.ok("Feedback deleted successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -79,13 +79,13 @@ public class FeedbackService {
         try {
             List<Feedback> feedbacks;
             if(serviceName != null && !serviceName.isEmpty() && keyword != null && !keyword.isEmpty()) {
-                feedbacks = feedbackRepsitory.findByServiceNameAndKeyword(serviceName, keyword);
+                feedbacks = feedbackReppsitory.findByServiceNameAndKeyword(serviceName, keyword);
             } else if(serviceName != null && !serviceName.isEmpty()) {
-                feedbacks = feedbackRepsitory.findByServiceName(serviceName);
+                feedbacks = feedbackReppsitory.findByServiceName(serviceName);
             } else if(keyword != null && !keyword.isEmpty()) {
-                feedbacks = feedbackRepsitory.findByKeyword(keyword);
+                feedbacks = feedbackReppsitory.findByKeyword(keyword);
             } else {
-                feedbacks = feedbackRepsitory.findAll();
+                feedbacks = feedbackReppsitory.findAll();
             }
 
             if (feedbacks.isEmpty()) {
@@ -109,7 +109,7 @@ public class FeedbackService {
         feedback.setContent(feedbackRequest.getContent());
         feedback.setRating(feedbackRequest.getRating());
         feedback.setService(servicesRepository.getReferenceById(serviceId));
-        feedbackRepsitory.save(feedback);
+        feedbackReppsitory.save(feedback);
         return ResponseEntity.ok("Create feedback successfully.");
     }
 

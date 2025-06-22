@@ -76,10 +76,27 @@ public class Appointment {
     @Column(name = "province", columnDefinition = "NVARCHAR(100)")
     private String province;
 
+    @Column(name = "kit_component_name", columnDefinition = "NVARCHAR(100)")
+    private String kitComponentName;
+
+    @ManyToOne
+    @JoinColumn(name = "service_id")
+    private Services service;
+
     // Default constructor
     public Appointment() {}
 
+
+
     // Getters and Setters
+
+    public Services getService() {
+        return service;
+    }
+
+    public void setService(Services service) {
+        this.service = service;
+    }
 
     public Long getAppointmentId() {
         return appointmentId;
@@ -231,5 +248,13 @@ public class Appointment {
 
     public void setResultFile(String resultFile) {
         this.resultFile = resultFile;
+    }
+
+    public String getKitComponentName() {
+        return kitComponentName;
+    }
+
+    public void setKitComponentName(String kitComponentName) {
+        this.kitComponentName = kitComponentName;
     }
 }

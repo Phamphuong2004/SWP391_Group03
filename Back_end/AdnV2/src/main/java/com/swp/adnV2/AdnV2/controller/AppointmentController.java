@@ -22,6 +22,14 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+    //Tạo cuộc hẹn mới cho khách vãng lai
+    @PostMapping("/create/guest-appointment/{serviceId}")
+    public ResponseEntity<?> createGuestAppointment(
+            @PathVariable("serviceId") Long serviceId,
+            @Valid @RequestBody AppointmentRequest request) {
+        return appointmentService.createGuestAppointment(serviceId, request);
+    }
+
 
     @DeleteMapping("/delete-appointment/{id}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
@@ -38,18 +46,21 @@ public class AppointmentController {
     /**
      * Tạo cuộc hẹn mới (cho cả người dùng đăng ký và khách vãng lai)
      */
-    @PostMapping("/create-appointment")
+    @PostMapping("/create-appointment/{serviceId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
     public ResponseEntity<?> createAppointment(
+            @PathVariable ("serviceId") Long serviceId,
             @Valid @RequestBody AppointmentRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return appointmentService.createAppointment(request, username);
+        return appointmentService.createAppointment(serviceId ,request, username);
     }
 
     /**
      * Xem danh sách cuộc hẹn của người dùng đăng ký
      */
     @GetMapping("/view-appointments-user")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
     public ResponseEntity<?> viewUserAppointments() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -60,6 +71,7 @@ public class AppointmentController {
      * Xem thông tin chi tiết của một cuộc hẹn
      */
     @GetMapping("/view-appointment/{id}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
     public ResponseEntity<?> getAppointmentById(
             @PathVariable("id") Long appointmentId) {
         return appointmentService.getAppointmentById(appointmentId);
@@ -76,10 +88,6 @@ public class AppointmentController {
         return appointmentService.updateAppointment(appointmentId, updateRequest);
     }
 
-
-    /**
-     * Tìm kiếm cuộc hẹn cho người dùng không có tài khoản
-     */
     @GetMapping("/view-appointment-guest")
     public ResponseEntity<?> findGuestAppointments(
             @RequestParam String email,
@@ -87,7 +95,8 @@ public class AppointmentController {
         return appointmentService.findAppointmentsByEmailAndPhone(email, phone);
     }
 
-    @GetMapping("/user/{username}")
+    @GetMapping("/get/appointment-by-status")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
     public ResponseEntity<?> getAppointmentsByUsernameAndStatus(
             @RequestParam(required = false) String status) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
