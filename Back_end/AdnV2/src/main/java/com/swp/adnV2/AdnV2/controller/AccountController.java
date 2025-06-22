@@ -29,7 +29,7 @@ public class AccountController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Users> updateAccount(@PathVariable Long id,
-                                                       @RequestBody Users account) {
+                                               @RequestBody Users account) {
         return ResponseEntity.ok(accountService.updateAccount(id, account));
     }
 
