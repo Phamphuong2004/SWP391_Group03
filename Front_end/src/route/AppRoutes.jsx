@@ -38,7 +38,6 @@ import ViewDetails from "../ViewDetails/ViewDetails";
 import ReceiveBooking from "../ReceiveBooking/ReceiveBooking";
 import HomePage from "../Home/HomePage";
 import Payment from "../Payment/Payment";
-import BookingHistory from "../BookingHistory/BookingHistory";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -124,14 +123,6 @@ function AppContent() {
           element={
             <ProtectedRoute allowedRoles={["customer"]}>
               <Payment />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/booking-history"
-          element={
-            <ProtectedRoute allowedRoles={["customer"]}>
-              <BookingHistory />
             </ProtectedRoute>
           }
         />

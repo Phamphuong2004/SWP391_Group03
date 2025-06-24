@@ -1,61 +1,216 @@
-/* ReceiveBooking Styles */
+/* Light mode (mặc định) */
 .receive-booking-container {
-  padding: 32px 16px;
-  background: #f7f8fa;
+  padding: 48px 10vw 48px 10vw;
+  background: linear-gradient(120deg, #e3f0ff 0%, #f7f8fa 100%);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: bgMove 12s linear infinite alternate;
+}
+@keyframes bgMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
 }
 
 .receive-booking-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 24px;
-  color: #1a237e;
-  letter-spacing: 1px;
+  font-size: 2.7rem;
+  font-weight: 900;
+  margin-bottom: 36px;
+  color: #1565c0;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 24px rgba(21, 101, 192, 0.13);
+  text-align: center;
+  background: linear-gradient(90deg, #1976d2 40%, #42a5f5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .ant-table {
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  color: #222;
+  box-shadow: 0 8px 32px rgba(21, 101, 192, 0.13);
+  border-radius: 18px;
+  border: 1.5px solid #e3f0ff;
+  overflow: hidden;
+}
+.ant-table-thead > tr > th {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 800;
+  font-size: 1.12rem;
+  letter-spacing: 0.7px;
+  border-bottom: 1.5px solid #e3f0ff;
+}
+.ant-table-tbody > tr > td {
+  font-size: 1.05rem;
+  color: #222;
+  background: #fff;
+  padding: 14px 10px;
+  transition: background 0.2s;
+  border-bottom: 1px solid #e3f0ff;
+}
+.ant-table-tbody > tr:hover > td {
+  background: #e3f0ff !important;
+  cursor: pointer;
 }
 
 .ant-btn {
-  border-radius: 6px;
-  font-weight: 500;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-
 .ant-btn-primary {
-  background: #1976d2;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
   border-color: #1976d2;
 }
-
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background: linear-gradient(90deg, #1565c0 60%, #1976d2 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.18);
+  transform: translateY(-2px) scale(1.04);
+}
 .ant-btn-dangerous {
-  background: #e53935;
-  border-color: #e53935;
+  background: linear-gradient(90deg, #e53935 60%, #ff7043 100%);
+  color: #fff;
+  border-color: #ff7043;
+}
+.ant-btn-dangerous:hover,
+.ant-btn-dangerous:focus {
+  background: linear-gradient(90deg, #b71c1c 60%, #e53935 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.18);
+  transform: translateY(-2px) scale(1.04);
 }
 
 .ant-modal-content {
-  border-radius: 10px;
+  border-radius: 20px;
+  box-shadow: 0 12px 48px rgba(21, 101, 192, 0.18);
+  padding: 40px 32px 32px 32px;
+  border: 2px solid #90caf9;
+  background: #fff;
+  color: #222;
 }
 
 .ant-form-item-label > label {
-  font-weight: 600;
-  color: #333;
+  font-weight: 800;
+  color: #1976d2;
+  letter-spacing: 0.7px;
 }
 
 input,
-select {
-  border-radius: 5px;
-  border: 1px solid #bdbdbd;
-  padding: 6px 10px;
-  font-size: 1rem;
+select,
+textarea {
+  border-radius: 9px;
+  border: 2px solid #90caf9;
+  padding: 10px 14px;
+  font-size: 1.12rem;
+  background: #f7fbff;
+  color: #222;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #42a5f5;
+  box-shadow: 0 0 0 2px #42a5f5;
+  outline: none;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   .receive-booking-title {
     font-size: 1.3rem;
   }
   .receive-booking-container {
     padding: 12px 2px;
   }
+  .ant-modal-content {
+    padding: 16px 4px 12px 4px;
+  }
+}
+
+/* Dark mode: đồng bộ màu với form booking */
+.dark-theme .receive-booking-container {
+  background: #181c2a;
+}
+.dark-theme .receive-booking-title {
+  color: #ffe066;
+  text-shadow: 0 0 16px #ffe066, 0 2px 8px #181c2a;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+}
+.dark-theme .ant-table {
+  background: #232946;
+  color: #fff;
+  box-shadow: 0 8px 32px rgba(255, 224, 102, 0.1);
+  border-radius: 18px;
+  border: 1.5px solid #ffe066;
+}
+.dark-theme .ant-table-thead > tr > th {
+  background: #181c2a;
+  color: #ffe066;
+  border-bottom: 1.5px solid #ffe066;
+}
+.dark-theme .ant-table-tbody > tr > td {
+  color: #fff;
+  background: #232946;
+  border-bottom: 1px solid #ffe066;
+}
+.dark-theme .ant-table-tbody > tr:hover > td {
+  background: #181c2a !important;
+}
+.dark-theme .ant-modal-content {
+  background: #232946;
+  border: 2px solid #ffe066;
+  color: #fff;
+  box-shadow: 0 12px 48px rgba(255, 224, 102, 0.13);
+}
+.dark-theme .ant-form-item-label > label {
+  color: #ffe066;
+}
+.dark-theme input,
+.dark-theme select,
+.dark-theme textarea {
+  background: #181c2a;
+  color: #fff;
+  border: 2px solid #ffe066;
+}
+.dark-theme input:focus,
+.dark-theme select:focus,
+.dark-theme textarea:focus {
+  border-color: #ffe066;
+  box-shadow: 0 0 0 2px #ffe066;
+}
+.dark-theme .ant-btn-primary {
+  background: linear-gradient(90deg, #ffe066 60%, #ffd600 100%);
+  color: #181c2a;
+  border-color: #ffe066;
+}
+.dark-theme .ant-btn-primary:hover,
+.dark-theme .ant-btn-primary:focus {
+  background: linear-gradient(90deg, #ffd600 60%, #ffe066 100%);
+  color: #181c2a;
+  box-shadow: 0 4px 16px rgba(255, 224, 102, 0.18);
+}
+.dark-theme .ant-btn-dangerous {
+  background: linear-gradient(90deg, #e53935 60%, #ff7043 100%);
+  color: #fff;
+  border-color: #ff7043;
+}
+.dark-theme .ant-btn-dangerous:hover,
+.dark-theme .ant-btn-dangerous:focus {
+  background: linear-gradient(90deg, #b71c1c 60%, #e53935 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.18);
 }

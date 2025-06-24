@@ -33,8 +33,15 @@ export default function Register() {
       setIsLoading(false);
       return;
     }
+    // Map role về đúng giá trị cần lưu trong SQL
+    const roleMap = {
+      USER: "customer",
+      STAFF: "staff",
+      MANAGER: "manager",
+    };
+    const dataToSend = { ...form, role: roleMap[form.role] || "customer" };
     try {
-      const response = await axios.post("/api/user/register", form);
+      const response = await axios.post("/api/user/register", dataToSend);
       console.log("Register API response:", response.data);
       if (
         response.data &&
@@ -136,7 +143,7 @@ export default function Register() {
               required
             >
               <option value="USER">Người dùng</option>
-              <option value="ADMIN">Quản trị viên</option>
+              <option value="STAFF">Nhân viên</option>
               <option value="MANAGER">Quản lý</option>
             </select>
             {error && (
