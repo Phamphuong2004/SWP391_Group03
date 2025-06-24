@@ -102,6 +102,16 @@ function MyNavbar() {
                     Lịch Sử Người Dùng
                   </Nav.Link>
                 )}
+              {user && user.role.toLowerCase() === "customer" && (
+                <Nav.Link href="/payment" className="nav-link">
+                  Thanh toán
+                </Nav.Link>
+              )}
+              {user && user.role.toLowerCase() === "customer" && (
+                <Nav.Link href="/booking-history" className="nav-link">
+                  Lịch sử đặt lịch
+                </Nav.Link>
+              )}
             </Nav>
             <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
               <Form.Control
@@ -142,7 +152,7 @@ function MyNavbar() {
                         src={
                           user.avatar ||
                           "https://ui-avatars.com/api/?name=" +
-                            encodeURIComponent(user.name)
+                          encodeURIComponent(user.name)
                         }
                         alt="avatar"
                         className="user-avatar"

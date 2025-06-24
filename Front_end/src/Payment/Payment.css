@@ -1,0 +1,248 @@
+.payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f4f7f9;
+    min-height: 80vh;
+}
+
+.payment-card {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+.payment-title {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.appointment-details,
+.service-details,
+.payment-methods {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 1.5rem;
+}
+
+.appointment-details h2,
+.service-details h2,
+.payment-methods h2 {
+    color: #34495e;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.appointment-details p,
+.service-details p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    color: #555;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.payment-methods .method-option {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.payment-methods .method-option:hover {
+    background-color: #f9f9f9;
+}
+
+.payment-methods input[type="radio"] {
+    margin-right: 1rem;
+    transform: scale(1.2);
+}
+
+.payment-methods label {
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+}
+
+.btn-submit-payment {
+    display: block;
+    width: 100%;
+    padding: 0.9rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-submit-payment:hover {
+    background-color: #218838;
+}
+
+.btn.btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+/* Success screen styles */
+.success-card {
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0 auto 1.5rem;
+    animation: successPulse 0.6s ease-in-out;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success-title {
+    color: #28a745 !important;
+    margin-bottom: 1rem;
+}
+
+.success-message {
+    margin-bottom: 2rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+.success-message p {
+    margin: 0.5rem 0;
+}
+
+.appointment-summary {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    text-align: left;
+    border-left: 4px solid #28a745;
+}
+
+.appointment-summary h3 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.appointment-summary p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.success-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-home,
+.btn-history {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-home {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-home:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.btn-history {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-history:hover {
+    background-color: #545b62;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Responsive design for success screen */
+@media (max-width: 768px) {
+    .success-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-home,
+    .btn-history {
+        width: 100%;
+        max-width: 250px;
+    }
+
+    .success-card {
+        padding: 2rem 1rem;
+    }
+
+    .success-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+}
