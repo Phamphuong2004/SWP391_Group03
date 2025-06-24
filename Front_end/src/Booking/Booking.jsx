@@ -134,9 +134,10 @@ function Booking() {
         delete appointmentDataForState.collectionTime; // Clean up the old property
 
         // Pass the complete, corrected object
-        navigate(`/service-tracking/${response.data.appointmentId}`, {
-          state: { appointment: appointmentDataForState },
-        });
+        // navigate(`/service-tracking/${response.data.appointmentId}`, {
+        //   state: { appointment: appointmentDataForState },
+        // });
+        navigate('/payment', { state: { appointment: appointmentDataForState } });
       } else {
         toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
         navigate("/history");
@@ -144,7 +145,7 @@ function Booking() {
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
-          "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
+        "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
       );
     } finally {
       setIsLoading(false);
