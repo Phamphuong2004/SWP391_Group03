@@ -86,10 +86,6 @@ public class Appointment {
     // Default constructor
     public Appointment() {}
 
-
-
-    // Getters and Setters
-
     public Services getService() {
         return service;
     }
