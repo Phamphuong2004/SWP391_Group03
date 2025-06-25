@@ -4,6 +4,7 @@ package com.swp.adnV2.AdnV2.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 public class AppointmentResponse {
     private Long appointmentId;
@@ -24,9 +25,18 @@ public class AppointmentResponse {
     private String resultFile;
     private Long userId;
     private String kitComponentName;
+    private List<String> samples;
 //    private Long userId;
 //    private String username;  // Optional: include if you want to show which user the appointment belongs to
 
+
+    public List<String> getSamples() {
+        return samples;
+    }
+
+    public void setSamples(List<String> samples) {
+        this.samples = samples;
+    }
 
     public String getKitComponentName() {
         return kitComponentName;

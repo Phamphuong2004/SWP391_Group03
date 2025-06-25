@@ -2,6 +2,8 @@ package com.swp.adnV2.AdnV2.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Services")
 public class Services {
@@ -18,6 +20,9 @@ public class Services {
 
     @Column(name = "price", nullable = false)
     private double price;
+
+//    @OneToMany(mappedBy = "service")
+//    private List<Appointment> appointments;
 
     public Services() {
     }
