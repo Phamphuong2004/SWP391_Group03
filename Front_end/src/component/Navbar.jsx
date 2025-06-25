@@ -91,11 +91,11 @@ function MyNavbar() {
                 (user.role.toLowerCase() === "staff" ||
                   user.role.toLowerCase() === "manager") && (
                   <Nav.Link href="/receive-booking" className="nav-link">
-                    Dashboard
+                    Quản lý đơn
                   </Nav.Link>
                 )}
               {user &&
-                ["admin", "manager", "staff", "customer"].includes(
+                ["manager", "staff", "customer"].includes(
                   user.role.toLowerCase()
                 ) && (
                   <Nav.Link href="/login-history" className="nav-link">
@@ -105,11 +105,6 @@ function MyNavbar() {
               {user && user.role.toLowerCase() === "customer" && (
                 <Nav.Link href="/payment" className="nav-link">
                   Thanh toán
-                </Nav.Link>
-              )}
-              {user && user.role.toLowerCase() === "customer" && (
-                <Nav.Link href="/booking-history" className="nav-link">
-                  Lịch sử đặt lịch
                 </Nav.Link>
               )}
             </Nav>
@@ -152,7 +147,7 @@ function MyNavbar() {
                         src={
                           user.avatar ||
                           "https://ui-avatars.com/api/?name=" +
-                          encodeURIComponent(user.name)
+                            encodeURIComponent(user.name)
                         }
                         alt="avatar"
                         className="user-avatar"

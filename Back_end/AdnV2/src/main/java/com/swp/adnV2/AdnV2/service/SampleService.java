@@ -243,6 +243,8 @@ public class SampleService {
                 return ResponseEntity.badRequest().body("No suitable KitComponent found for this appointment");
             }
 
+            appointmentRepository.save(appointment);
+
             Sample savedSample = sampleRepository.save(sample);
             return ResponseEntity.ok("Sample created successfully with ID: " + savedSample.getSampleId());
         } catch (Exception e){

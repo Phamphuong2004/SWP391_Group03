@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
@@ -7,6 +7,7 @@ import "./Booking.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import serviceTypes from "../serviceTypes";
 
 const genders = ["Nam", "Nữ", "Khác"];
 const testPurposes = ["Hành chính", "Dân sự"];
@@ -27,19 +28,6 @@ const testCategories = [
   "Bác - Cháu",
   "Cháu nội",
   "Cháu ngoại",
-];
-
-const serviceTypes = [
-  "Xét nghiệm huyết thống",
-  "Xét nghiệm hài cốt",
-  "Xét nghiệm ADN cá nhân",
-  "Xét nghiệm ADN pháp lý",
-  "Xét nghiệm ADN trước sinh",
-  "Xét nghiệm ADN khác",
-  "Xét nghiệm ADN thai nhi",
-  "Xét nghiệm ADN di truyền",
-  "Xét nghiệm ADN hành chính",
-  "Xét nghiệm ADN dân sự",
 ];
 
 function Booking() {
@@ -87,19 +75,20 @@ function Booking() {
     console.log("Giá trị gửi lên:", form);
     setIsLoading(true);
     try {
-      // Lấy ngày từ appointmentDate
       const datePart = form.appointmentDate
         ? form.appointmentDate.split("T")[0]
         : "";
-      // Lấy giờ từ collectionTime (dạng "HH:mm" hoặc "HH:mm:ss")
       let timePart = form.collectionTime;
       if (timePart && timePart.length === 5) timePart += ":00";
-      // Ghép lại thành chuỗi ISO
       const collectionTimeStr =
         datePart && timePart ? `${datePart}T${timePart}` : null;
 
+      const selectedService = serviceTypes.find(
+        (s) => s.service_id.toString() === form.serviceType
+      );
       const data = {
         ...form,
+        serviceType: selectedService ? selectedService.service_name : "",
         collectionTime: collectionTimeStr,
       };
 
@@ -113,31 +102,37 @@ function Booking() {
       const user = JSON.parse(userString);
       const token = user.token;
 
-      const response = await axios.post("/api/create-appointment", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const serviceId = form.serviceType;
+      if (!serviceId) {
+        toast.error("Vui lòng chọn loại dịch vụ!");
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await axios.post(
+        `/api/create-appointment/${serviceId}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.status === 201 && response.data?.appointmentId) {
         toast.success("Đặt lịch hẹn thành công!");
         localStorage.setItem("lastServiceId", response.data.appointmentId);
-
-        // Construct the full appointment object to pass in state
         const appointmentDataForState = {
-          ...form, // Start with the original form data
-          appointmentId: response.data.appointmentId, // Add the ID from the response
-          status: "PENDING", // Set initial status
+          ...form,
+          appointmentId: response.data.appointmentId,
+          status: "PENDING",
           collectionSampleTime: data.collectionTime,
-          user: { username: user.username }, // SECURE: Attach user info
+          user: { username: user.username },
         };
-        delete appointmentDataForState.collectionTime; // Clean up the old property
-
-        // Pass the complete, corrected object
-        // navigate(`/service-tracking/${response.data.appointmentId}`, {
-        //   state: { appointment: appointmentDataForState },
-        // });
-        navigate('/payment', { state: { appointment: appointmentDataForState } });
+        delete appointmentDataForState.collectionTime;
+        navigate("/payment", {
+          state: { appointment: appointmentDataForState },
+        });
       } else {
         toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
         navigate("/history");
@@ -145,7 +140,7 @@ function Booking() {
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
-        "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
+          "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
       );
     } finally {
       setIsLoading(false);
@@ -285,8 +280,8 @@ function Booking() {
               >
                 <option value="">Chọn loại dịch vụ</option>
                 {serviceTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.service_id} value={type.service_id}>
+                    {type.service_name}
                   </option>
                 ))}
               </select>
