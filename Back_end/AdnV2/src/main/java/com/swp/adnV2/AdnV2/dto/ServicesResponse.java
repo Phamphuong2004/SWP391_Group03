@@ -1,9 +1,18 @@
 package com.swp.adnV2.AdnV2.dto;
 
 public class ServicesResponse {
+    private Long serviceId;
     private String servicesName ;
     private String description;
     private double price;
+
+    public Long getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
+    }
 
     public String getServicesName() {
         return servicesName;

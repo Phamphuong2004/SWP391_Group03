@@ -83,6 +83,7 @@ public class ADNService {
 
     public ServicesResponse convetToServicesResponse(Services services) {
         ServicesResponse servicesResponse = new ServicesResponse();
+        servicesResponse.setServiceId(services.getServiceId());
         servicesResponse.setServicesName(services.getServiceName());
         servicesResponse.setDescription(services.getDescription());
         servicesResponse.setPrice(services.getPrice());
