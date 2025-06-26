@@ -1,15 +1,25 @@
 .civil-service-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #dbe3ef 0%, #eef3fc 100%);
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: #eaf2ff;
+  animation: bookingFadeIn 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
 /* Hero Section */
 .hero-section {
-  background: #fff;
-  color: #2c3e50;
-  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #eaf2ff 0%, #cce3ff 100%);
+  color: #1976d2;
+  padding: 6rem 2rem 4rem 2rem;
   text-align: center;
   margin-bottom: 3rem;
+  border-radius: 32px;
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.1), 0 2px 8px #fff inset;
+  border: 2.5px solid #1976d2;
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-content {
@@ -20,30 +30,37 @@
 .hero-content h1 {
   font-size: 2.8rem;
   margin-bottom: 1.5rem;
-  font-weight: 700;
-  color: #2c3e50;
+  font-weight: 900;
+  color: #1976d2;
+  letter-spacing: 2.5px;
+  text-shadow: 0 6px 32px #1976d222, 0 2px 0 #fff;
+  filter: drop-shadow(0 4px 16px #cce3ff);
 }
 
 .hero-content p {
   font-size: 1.2rem;
   margin-bottom: 2rem;
-  opacity: 1;
-  color: #666;
+  color: #34495e;
 }
 
 .cta-button {
-  background-color: #e74c3c;
-  color: white;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  color: #fff;
   border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  border-radius: 5px;
+  padding: 1rem 2.5rem;
+  font-size: 1.15rem;
+  border-radius: 16px;
+  font-weight: 900;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 8px 32px 0 rgba(25, 118, 210, 0.22), 0 2px 0 #fff inset;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  letter-spacing: 1.5px;
+  filter: drop-shadow(0 4px 16px #cce3ff);
 }
 
 .cta-button:hover {
-  background-color: #c0392b;
+  background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%);
+  transform: scale(1.06);
 }
 
 /* Main Container */
@@ -60,13 +77,14 @@
 }
 
 .service-header h2 {
-  color: #2c3e50;
+  color: #1976d2;
   font-size: 2.2rem;
   margin-bottom: 1rem;
+  font-weight: 800;
 }
 
 .service-intro {
-  color: #424242;
+  color: #34495e;
   font-size: 1.1rem;
   line-height: 1.6;
   max-width: 800px;
@@ -77,38 +95,46 @@
 .services-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 32px;
+  gap: 36px;
   justify-content: flex-start;
   margin-bottom: 40px;
 }
 
 .service-card {
-  background: #ffffff;
-  border-radius: 10px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
-    0 2px 8px rgba(30, 42, 90, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  transition: transform 0.3s ease;
+  background: linear-gradient(120deg, #fff 70%, #ffeaea 100%);
+  border-radius: 22px;
+  box-shadow: 0 10px 36px 0 rgba(215, 38, 61, 0.16), 0 2px 8px #fff inset;
+  border: 2.5px solid #f3bcbc;
+  width: 340px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.18s, box-shadow 0.18s;
+  position: relative;
+  animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .service-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-12px) scale(1.06);
+  box-shadow: 0 24px 64px 0 rgba(244, 96, 54, 0.22), 0 2px 8px #fff inset;
+  border-color: #f46036;
 }
 
 .service-icon {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  color: #f46036;
 }
 
 .service-card h3 {
-  color: #2c3e50;
+  color: #1976d2;
   font-size: 1.3rem;
   margin-bottom: 1rem;
+  font-weight: 800;
 }
 
 .service-card p {
-  color: #424242;
+  color: #444;
   line-height: 1.6;
   margin-bottom: 1.5rem;
 }
@@ -122,7 +148,7 @@
 .service-features li {
   color: #666;
   margin-bottom: 0.5rem;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
 }
 
 /* Why Choose Us Section */
@@ -132,9 +158,10 @@
 }
 
 .why-choose-us h2 {
-  color: #2c3e50;
+  color: #1976d2;
   font-size: 2.2rem;
   margin-bottom: 2rem;
+  font-weight: 800;
 }
 
 .features-grid {
@@ -144,21 +171,27 @@
 }
 
 .feature-item {
-  background: #ffffff;
+  background: #fff;
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
-    0 2px 8px rgba(30, 42, 90, 0.05);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08), 0 2px 8px #fff inset;
+  transition: transform 0.18s, box-shadow 0.18s;
+  animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-item:hover {
+  transform: scale(1.04);
+  box-shadow: 0 16px 48px 0 rgba(25, 118, 210, 0.12), 0 2px 8px #fff inset;
 }
 
 .feature-icon {
   font-size: 2rem;
   margin-bottom: 1rem;
-  display: block;
+  color: #1976d2;
 }
 
 .feature-item h3 {
-  color: #2c3e50;
+  color: #1976d2;
   margin-bottom: 0.5rem;
 }
 
@@ -174,9 +207,10 @@
 }
 
 .testimonials-section h2 {
-  color: #2c3e50;
+  color: #1976d2;
   font-size: 2.2rem;
   margin-bottom: 2rem;
+  font-weight: 800;
 }
 
 .testimonials-grid {
@@ -186,16 +220,18 @@
 }
 
 .testimonial-card {
-  background: #ffffff;
+  background: #fff;
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
-    0 2px 8px rgba(30, 42, 90, 0.05);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08), 0 2px 8px #fff inset;
+  animation: fadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .testimonial-avatar {
   font-size: 3rem;
   margin-bottom: 1rem;
+  color: #ffd600;
+  animation: bounce 1.2s infinite;
 }
 
 .testimonial-content {
@@ -206,7 +242,7 @@
 }
 
 .testimonial-author h4 {
-  color: #2c3e50;
+  color: #1976d2;
   margin-bottom: 0.25rem;
 }
 
@@ -217,18 +253,18 @@
 
 /* Contact Section */
 .contact-section {
-  background: #ffffff;
-  border-radius: 10px;
+  background: #fff;
+  border-radius: 18px;
   padding: 3rem;
-  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08),
-    0 2px 8px rgba(30, 42, 90, 0.05);
+  box-shadow: 0 10px 30px rgba(30, 42, 90, 0.08), 0 2px 8px #fff inset;
   text-align: center;
 }
 
 .contact-section h2 {
-  color: #2c3e50;
+  color: #1976d2;
   font-size: 2.2rem;
   margin-bottom: 1rem;
+  font-weight: 800;
 }
 
 .contact-info {
@@ -247,10 +283,11 @@
 
 .contact-icon {
   font-size: 2rem;
+  color: #1976d2;
 }
 
 .contact-item h4 {
-  color: #2c3e50;
+  color: #1976d2;
   margin-bottom: 0.25rem;
 }
 
@@ -260,28 +297,23 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .hero-content h1 {
-    font-size: 2rem;
-  }
-
-  .hero-content p {
-    font-size: 1rem;
-  }
-
+@media (max-width: 900px) {
   .civil-service-container {
     padding: 1rem;
   }
-
+  .hero-content h1,
   .service-header h2,
   .why-choose-us h2,
   .testimonials-section h2,
   .contact-section h2 {
     font-size: 1.8rem;
   }
-
   .contact-section {
     padding: 2rem 1rem;
+  }
+  .service-card {
+    width: 98vw;
+    min-width: 0;
   }
 }
 
@@ -291,20 +323,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .modal-content {
-  background: #fff;
-  border-radius: 12px;
-  padding: 32px 24px;
-  min-width: 350px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
   position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+  border: 2px solid #1976d2;
 }
 
 .close-btn {
@@ -315,19 +352,42 @@
   border: none;
   font-size: 28px;
   cursor: pointer;
+  color: #1976d2;
+  transition: color 0.2s;
 }
 
-.submit-btn {
+.close-btn:hover {
+  color: #f46036;
+}
+
+.submit-btn,
+.submit-button {
   margin-top: 18px;
-  background: #e53935;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 12px 0;
+  border-radius: 16px;
+  padding: 16px 0;
   width: 100%;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 900;
   cursor: pointer;
+  box-shadow: 0 8px 32px 0 rgba(25, 118, 210, 0.22), 0 2px 0 #fff inset;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  letter-spacing: 1.5px;
+  filter: drop-shadow(0 4px 16px #cce3ff);
+}
+
+.submit-btn:hover,
+.submit-button:hover {
+  background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%);
+  transform: scale(1.06);
+}
+
+.submit-btn:active,
+.submit-button:active {
+  background: #1976d2;
+  transform: scale(0.98);
 }
 
 /* Registration Form Styles */
@@ -374,44 +434,158 @@
 }
 
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: #333;
+  font-weight: 700;
+  color: #1976d2;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  font-size: 1.18rem;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1.5px 0 #fff;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
+  box-sizing: border-box;
+  padding: 16px 18px;
+  border: 2.5px solid #1976d2;
+  border-radius: 14px;
+  font-size: 1.15rem;
+  margin-top: 8px;
+  background: #e3f0ff;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  color: #1976d2;
+  box-shadow: 0 4px 18px 0 rgba(25, 118, 210, 0.13), 0 1.5px 0 #fff inset;
+  outline: none;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-  outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  border-color: #42a5f5;
+  background: #f0f7ff;
+  box-shadow: 0 8px 32px 0 rgba(66, 165, 245, 0.18), 0 1.5px 0 #fff inset;
 }
 
-.submit-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes bookingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-32px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
 }
 
-.submit-button:hover {
-  background-color: #357abd;
+/* Dark mode */
+body.dark-theme .civil-service-page {
+  background: #181a20 !important;
 }
-
-.submit-button:active {
-  background-color: #2a5f94;
+body.dark-theme .hero-section {
+  background: linear-gradient(135deg, #23272f 0%, #181a20 100%);
+  border-color: #ffd600;
+}
+body.dark-theme .hero-content h1 {
+  color: #ffd600 !important;
+  text-shadow: 0 0 16px #ffd60055;
+  filter: drop-shadow(0 4px 16px #ffd600);
+}
+body.dark-theme .service-header h2,
+body.dark-theme .why-choose-us h2,
+body.dark-theme .testimonials-section h2,
+body.dark-theme .contact-section h2 {
+  color: #ffd600 !important;
+}
+body.dark-theme .service-card,
+body.dark-theme .feature-item,
+body.dark-theme .testimonial-card,
+body.dark-theme .contact-section {
+  background: #23272f;
+  border-color: #ffd600;
+  box-shadow: 0 16px 48px 0 rgba(25, 118, 210, 0.18), 0 2px 8px #222 inset;
+}
+body.dark-theme .service-card h3,
+body.dark-theme .feature-item h3,
+body.dark-theme .testimonial-author h4 {
+  color: #ffd600;
+}
+body.dark-theme .service-card p,
+body.dark-theme .feature-item p,
+body.dark-theme .testimonial-content,
+body.dark-theme .contact-item p {
+  color: #fff;
+}
+body.dark-theme .service-icon,
+body.dark-theme .feature-icon,
+body.dark-theme .contact-icon {
+  color: #ffd600;
+}
+body.dark-theme .cta-button,
+body.dark-theme .submit-btn,
+body.dark-theme .submit-button {
+  background: linear-gradient(90deg, #ffd600 60%, #ffe066 100%);
+  color: #232323;
+  filter: drop-shadow(0 4px 16px #ffd600);
+}
+body.dark-theme .cta-button:hover,
+body.dark-theme .submit-btn:hover,
+body.dark-theme .submit-button:hover {
+  background: linear-gradient(90deg, #ffe066 0%, #ffd600 100%);
+  color: #232323;
+}
+body.dark-theme .form-group label {
+  color: #ffd600;
+}
+body.dark-theme .form-group input,
+body.dark-theme .form-group select {
+  border-color: #ffd600;
+  background: #23272f;
+  color: #fff;
+}
+body.dark-theme .form-group input:focus,
+body.dark-theme .form-group select:focus {
+  background: #23272f;
+  border-color: #ffd600;
+  color: #fff;
+}
+body.dark-theme .modal-content {
+  background: #1a1a1a;
+  border-color: #ffd600;
+}
+body.dark-theme .close-btn {
+  color: #ffd600;
+}
+body.dark-theme .close-btn:hover {
+  color: #f46036;
 }

@@ -40,6 +40,7 @@ import HomePage from "../Home/HomePage";
 import Payment from "../Payment/Payment";
 import ServiceManagement from "../ServiceManagement/ServiceManagement";
 import AccountManagement from "../AccountManagement/AccountManagement";
+import UpdateRolePage from "../rolePage/UpdateRolePage";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -142,6 +143,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route path="/update-role" element={<UpdateRolePage />} />
       </Routes>
     </>
   );
