@@ -214,3 +214,18 @@ textarea:focus {
   color: #fff;
   box-shadow: 0 4px 16px rgba(229, 57, 53, 0.18);
 }
+
+/* Đảm bảo màu chữ trong Select luôn rõ ràng */
+.ant-select-selector,
+.ant-select-selection-item,
+.ant-select-selection-placeholder {
+  color: #222 !important;
+  font-weight: 500;
+  background: #fff !important;
+}
+
+/* Nếu muốn chỉ áp dụng cho trường kit_component_name */
+.ant-form-item-control-input-content .ant-select-selector {
+  color: #222 !important;
+  background: #fff !important;
+}

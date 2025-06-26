@@ -30,6 +30,26 @@ const ReceiveBooking = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [guestBookings, setGuestBookings] = useState([]);
 
+  const kitComponentOptions = [
+    "Sample Tube",
+    "Barcode Sticker",
+    "Instruction Manual",
+    "Consent Form",
+    "Bone Collection Kit",
+    "Sterile Container",
+    "DNA Card",
+    "Desiccant Packet",
+    "Legal Consent Form",
+    "Evidence Seal Sticker",
+    "Fetal Sample Tube",
+    "Mother Consent Form",
+    "Multi-Purpose Swab",
+    "Non-Invasive Kit",
+    "Genetic Risk Form",
+    "Application Form",
+    "Civil Dispute Envelope",
+  ];
+
   // Fetch bookings based on user role
   const fetchBookings = async () => {
     if (!user || !user.token) {
@@ -149,7 +169,7 @@ const ReceiveBooking = () => {
   const handleSubmit = async (values) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/update-appointment/${selectedBooking.appointmentId}`,
+        `/api/update-appointment/${selectedBooking.appointmentId}`,
         values,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -430,6 +450,26 @@ const ReceiveBooking = () => {
               <Option value="CANCELLED">Cancelled</Option>
               <Option value="COMPLETED">Completed</Option>
             </Select>
+          </Form.Item>
+          <Form.Item
+            name="kit_component_name"
+            label="Kit Component Name"
+            rules={[{ required: false }]}
+          >
+            <Select allowClear showSearch placeholder="Chọn kit component">
+              {kitComponentOptions.map((name) => (
+                <Option key={name} value={name}>
+                  {name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="resultFile"
+            label="Result File"
+            rules={[{ required: false }]}
+          >
+            <Input />
           </Form.Item>
           <Form.Item name="serviceType" label="Loại dịch vụ">
             <Input disabled />

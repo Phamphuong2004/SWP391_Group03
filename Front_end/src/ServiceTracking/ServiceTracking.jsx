@@ -1,5 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import GuestServiceTracking from "./GuestServiceTracking";
 import axios from "axios";
 import "./ServiceTracking.css";
@@ -95,8 +94,6 @@ const DetailItem = ({ icon, label, value }) => (
 );
 
 const ServiceTracking = () => {
-  const { appointmentId } = useParams();
-  const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user || !user.role || user.role.toLowerCase() !== "customer") {
@@ -108,28 +105,9 @@ const ServiceTracking = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Lấy danh sách lịch sử
   useEffect(() => {
-    if (appointmentId) {
-      setLoading(true);
-      setError(null);
-      setSelected(null);
-      axios
-        .get(`/api/view-appointment/${appointmentId}`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        })
-        .then((res) => {
-          setSelected(res.data);
-        })
-        .catch(() =>
-          setError("Không tìm thấy đơn này hoặc bạn không có quyền xem!")
-        )
-        .finally(() => setLoading(false));
-    }
-    // eslint-disable-next-line
-  }, [appointmentId]);
-
-  useEffect(() => {
-    if (!appointmentId) {
+    if (!selected) {
       setLoading(true);
       setError(null);
       axios
@@ -151,10 +129,30 @@ const ServiceTracking = () => {
         .finally(() => setLoading(false));
     }
     // eslint-disable-next-line
-  }, [appointmentId]);
+  }, [selected]);
 
-  // Render cho customer
-  if (appointmentId) {
+  // Lấy chi tiết khi chọn
+  const handleViewDetail = (item) => {
+    setLoading(true);
+    setError(null);
+    axios
+      .get(`/api/view-appointment/${item.appointmentId}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      })
+      .then((res) => setSelected(res.data))
+      .catch(() =>
+        setError("Không tìm thấy đơn này hoặc bạn không có quyền xem!")
+      )
+      .finally(() => setLoading(false));
+  };
+
+  const handleBackToList = () => {
+    setSelected(null);
+    setError(null);
+  };
+
+  // Render chi tiết
+  if (selected) {
     if (loading)
       return (
         <div style={{ textAlign: "center", marginTop: 40 }}>
@@ -167,20 +165,13 @@ const ServiceTracking = () => {
           {error}
         </div>
       );
-    if (!selected)
-      return (
-        <div style={{ textAlign: "center", marginTop: 40, color: "gray" }}>
-          Không tìm thấy đơn này hoặc bạn không có quyền xem!
-        </div>
-      );
-    // RENDER FORM THEO DÕI LỊCH HẸN ĐẸP
     return (
       <div className="tracking-container">
         <div className="tracking-header">
           <h1>Theo dõi lịch hẹn</h1>
           <p>Kiểm tra trạng thái và thông tin chi tiết cho lịch hẹn của bạn.</p>
         </div>
-        <button onClick={() => navigate(-1)} style={{ marginBottom: 24 }}>
+        <button onClick={handleBackToList} style={{ marginBottom: 24 }}>
           Quay lại
         </button>
         <div className="tracking-card status-card">
@@ -266,6 +257,7 @@ const ServiceTracking = () => {
     );
   }
 
+  // Render danh sách
   if (loading)
     return (
       <div style={{ textAlign: "center", marginTop: 40 }}>
@@ -347,9 +339,7 @@ const ServiceTracking = () => {
                   fontWeight: "bold",
                   cursor: "pointer",
                 }}
-                onClick={() =>
-                  navigate(`/service-tracking/${item.appointmentId}`)
-                }
+                onClick={() => handleViewDetail(item)}
               >
                 Xem chi tiết
               </button>
