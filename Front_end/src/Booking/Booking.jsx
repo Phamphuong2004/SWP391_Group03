@@ -50,6 +50,8 @@ function Booking() {
   const [districts, setDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [guestSuccess, setGuestSuccess] = useState(false);
+  const [guestInfo, setGuestInfo] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -108,9 +110,14 @@ function Booking() {
           data
         );
         if (response.status === 201 && response.data?.appointmentId) {
-          toast.success("Đặt lịch hẹn (guest) thành công!");
+          setGuestSuccess(true);
+          setGuestInfo({
+            appointmentId: response.data.appointmentId,
+            email: form.email,
+            phone: form.phone,
+          });
           localStorage.setItem("lastServiceId", response.data.appointmentId);
-          navigate("/", { replace: true });
+          // Không chuyển hướng về trang chủ nữa!
         } else {
           toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
         }
@@ -157,6 +164,40 @@ function Booking() {
       setIsLoading(false);
     }
   };
+
+  if (guestSuccess) {
+    return (
+      <div className="booking-success-container">
+        <h2>Đặt lịch thành công!</h2>
+        <p>
+          Mã đơn của bạn: <b>{guestInfo.appointmentId}</b>
+        </p>
+        <p>
+          Email: <b>{guestInfo.email}</b>
+        </p>
+        <p>
+          Số điện thoại: <b>{guestInfo.phone}</b>
+        </p>
+        <p>
+          Vui lòng lưu lại mã đơn, email và số điện thoại để tra cứu hoặc theo
+          dõi đơn.
+        </p>
+        <button
+          onClick={() => {
+            navigate("/history", {
+              state: {
+                guestEmail: guestInfo.email,
+                guestPhone: guestInfo.phone,
+                appointmentId: guestInfo.appointmentId,
+              },
+            });
+          }}
+        >
+          Theo dõi đơn
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="booking-page">

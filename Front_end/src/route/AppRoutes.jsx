@@ -97,10 +97,7 @@ function AppContent() {
           element={<HouseholdRegistration />}
         />
         <Route path="/service/adoption" element={<Adoption />} />
-        <Route
-          path="/service-tracking/:appointmentId"
-          element={<ServiceTracking />}
-        />
+        <Route path="/service-tracking" element={<ServiceTracking />} />
         <Route
           path="/service/family-relationship"
           element={<FamilyRelationship />}
