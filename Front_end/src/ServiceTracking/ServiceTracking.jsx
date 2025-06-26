@@ -100,118 +100,370 @@ const DetailItem = ({ icon, label, value }) => (
 
 const ServiceTracking = () => {
   const { appointmentId } = useParams();
-  const [appointment, setAppointment] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { state } = useLocation();
 
+  // Lấy user hiện tại
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  // Nếu user đăng nhập, xóa localStorage guest để tránh nhầm lẫn
   useEffect(() => {
-    console.log("--- SERVICE TRACKING RENDER ---");
-    console.log("1. ID từ URL (useParams):", appointmentId);
-    console.log("2. Dữ liệu từ trang trước (useLocation state):", state);
+    if (user && localStorage.getItem("lastGuestAppointment")) {
+      localStorage.removeItem("lastGuestAppointment");
+    }
+  }, [user]);
 
-    const fetchAppointment = async () => {
-      // PATH 1: Data passed from Booking page (first navigation)
-      if (state?.appointment) {
-        console.log("PATH 1: Dữ liệu state có tồn tại. Đang dùng dữ liệu này.");
-        setAppointment(state.appointment);
-        if (appointmentId) {
-          console.log(
-            `PATH 1: Bắt đầu lưu vào sessionStorage với key: 'appointment_${appointmentId}'`
-          );
-          sessionStorage.setItem(
-            `appointment_${appointmentId}`,
-            JSON.stringify(state.appointment)
-          );
-          console.log(
-            "PATH 1: ĐÃ LƯU XONG. Bạn có thể kiểm tra trong tab Application -> Session Storage."
-          );
-        } else {
-          console.warn(
-            "PATH 1: CẢNH BÁO - Không có ID trên URL để dùng làm key khi lưu cache."
-          );
-        }
-        setLoading(false);
-        return;
-      }
+  // State cho guest
+  const [guestEmail, setGuestEmail] = useState(state?.guestEmail || "");
+  const [guestPhone, setGuestPhone] = useState(state?.guestPhone || "");
+  const [guestAppointmentId, setGuestAppointmentId] = useState(
+    state?.appointmentId || ""
+  );
+  const [guestList, setGuestList] = useState([]);
+  const [guestError, setGuestError] = useState(null);
+  const [appointment, setAppointment] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [guestMode, setGuestMode] = useState(
+    !!(state?.guestEmail && state?.guestPhone)
+  );
 
-      // PATH 2: Page refresh or direct navigation - try cache first
-      if (appointmentId) {
-        const cachedDataString = sessionStorage.getItem(
-          `appointment_${appointmentId}`
-        );
-        if (cachedDataString) {
-          const cachedAppointment = JSON.parse(cachedDataString);
-          const currentUser = JSON.parse(localStorage.getItem("user"));
+  // Debug state ở đầu component
+  console.log(
+    "guestMode:",
+    guestMode,
+    "guestList:",
+    guestList,
+    "appointment:",
+    appointment,
+    "loading:",
+    loading,
+    "guestError:",
+    guestError
+  );
 
-          // SECURITY CHECK: Verify that the cached appointment belongs to the current user.
-          if (
-            currentUser &&
-            cachedAppointment.user?.username === currentUser.username
-          ) {
-            setAppointment(cachedAppointment);
-            setLoading(false);
-            return;
-          } else {
-            // If ownership fails, clear the stale cache and fall back to API call.
-            sessionStorage.removeItem(`appointment_${appointmentId}`);
-          }
-        }
-      }
-
-      // PATH 3: Fallback to API if no state and no cache
-      console.log(
-        "PATH 3: Bắt đầu gọi API '/api/view-appointments-user' để tìm thủ công."
+  // Khi guest tra cứu, gọi API và lưu localStorage
+  const handleGuestSearch = async () => {
+    setLoading(true);
+    setGuestError(null);
+    setAppointment(null);
+    setGuestList([]);
+    try {
+      const res = await axios.get(
+        `/api/view-appointment-guest?email=${encodeURIComponent(
+          guestEmail
+        )}&phone=${encodeURIComponent(guestPhone)}`
       );
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user?.token) {
-        setError("Bạn cần đăng nhập để xem thông tin này.");
-        setLoading(false);
-        return;
-      }
-      try {
-        // Since fetching by specific ID is problematic, fetch all and find.
-        const res = await axios.get(`/api/view-appointments-user`, {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-
-        if (!res.data || !Array.isArray(res.data)) {
-          throw new Error("Dữ liệu trả về không hợp lệ.");
-        }
-
-        // Match by the long ID if possible, otherwise by the numeric one
-        const foundAppointment = res.data.find(
-          (item) => String(item.appointmentId) === appointmentId
+      console.log("API guest trả về:", res.data);
+      let arr = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
+      console.log("Mảng arr sau khi xử lý:", arr);
+      if (arr && arr.length > 0) {
+        setGuestList(arr);
+        // Lưu vào localStorage
+        localStorage.setItem(
+          "lastGuestAppointment",
+          JSON.stringify({
+            email: guestEmail,
+            phone: guestPhone,
+            appointmentId: arr[0]?.appointmentId || "",
+          })
         );
-
-        if (!foundAppointment) {
-          throw new Error(
-            "Không thể tải thông tin mới nhất cho lịch hẹn này. Vui lòng quay lại trang Lịch sử và thử lại."
-          );
-        }
-        setAppointment(foundAppointment);
-        // Also cache this result
-        sessionStorage.setItem(
-          `appointment_${appointmentId}`,
-          JSON.stringify(foundAppointment)
-        );
-      } catch (err) {
-        setError(err.message || "Lỗi không xác định khi tải dữ liệu.");
-      } finally {
-        setLoading(false);
+        setGuestMode(true);
+      } else {
+        // Không có đơn, reset về form và show lỗi
+        setGuestList([]);
+        setGuestMode(false);
+        setGuestError("Không tìm thấy đơn nào cho thông tin này.");
+        localStorage.removeItem("lastGuestAppointment");
       }
-    };
-    if (appointmentId) {
-      fetchAppointment();
-    } else {
-      setError("Không có mã lịch hẹn nào được cung cấp.");
-      console.error("LỖI: Không có appointmentId trên URL.");
+    } catch (err) {
+      setGuestList([]);
+      setGuestMode(false);
+      setGuestError("Không tìm thấy đơn nào cho thông tin này.");
+      localStorage.removeItem("lastGuestAppointment");
+      console.error("Lỗi khi tra cứu guest:", err);
+    } finally {
       setLoading(false);
     }
-  }, [appointmentId, state]);
+  };
 
+  // Khi chọn chi tiết đơn
+  const handleSelectAppointment = (item) => {
+    setAppointment(item);
+    setGuestAppointmentId(item.appointmentId);
+    // Cập nhật localStorage để ưu tiên đơn này
+    localStorage.setItem(
+      "lastGuestAppointment",
+      JSON.stringify({
+        email: guestEmail,
+        phone: guestPhone,
+        appointmentId: item.appointmentId,
+      })
+    );
+  };
+
+  // Khi bấm quay lại tra cứu
+  const handleBackToSearch = () => {
+    setAppointment(null);
+    setGuestAppointmentId("");
+    setGuestList([]);
+    setGuestError(null);
+    setGuestMode(false);
+  };
+
+  // Nếu user đăng nhập, chỉ cho xem lịch sử user
+  if (user && user.token) {
+    // ... giữ nguyên logic cho user ...
+    // ... existing code ...
+  }
+
+  // Guest: Nếu chưa nhập email/phone hoặc chưa tra cứu, hiển thị form
+  if (!guestMode) {
+    console.log("Render: guest form");
+    return (
+      <div className="guest-tracking-form">
+        <h2>Tra cứu đơn cho khách</h2>
+        <input
+          type="email"
+          placeholder="Email"
+          value={guestEmail}
+          onChange={(e) => setGuestEmail(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Số điện thoại"
+          value={guestPhone}
+          onChange={(e) => setGuestPhone(e.target.value)}
+        />
+        <button
+          onClick={handleGuestSearch}
+          disabled={!guestEmail || !guestPhone || loading}
+        >
+          {loading ? "Đang tra cứu..." : "Tra cứu"}
+        </button>
+        {guestError && (
+          <div style={{ color: "#e74c3c", marginTop: 12, fontWeight: 600 }}>
+            {guestError}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Guest: Nếu có danh sách đơn, chưa chọn chi tiết
+  if (guestList.length > 0 && !appointment) {
+    console.log("Render: guest list");
+    return (
+      <div className="guest-tracking-list">
+        <h2 style={{ textAlign: "center", margin: "24px 0" }}>
+          Lịch sử Đặt lịch của bạn
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            gap: 32,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
+          {guestList.map((item) => (
+            <div
+              key={item.appointmentId}
+              style={{
+                background: "#fff",
+                borderRadius: 16,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                padding: 24,
+                minWidth: 300,
+                maxWidth: 340,
+                marginBottom: 24,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              }}
+            >
+              <div
+                style={{ fontWeight: "bold", fontSize: 18, marginBottom: 8 }}
+              >
+                {item.serviceType || "Dịch vụ ADN"}
+                <span
+                  style={{
+                    background: "#f7e7b7",
+                    color: "#bfa100",
+                    borderRadius: 8,
+                    padding: "2px 10px",
+                    fontSize: 14,
+                    marginLeft: 12,
+                  }}
+                >
+                  {item.status}
+                </span>
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <b>Mã đơn:</b> {item.appointmentId}
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <b>Ngày hẹn:</b> {formatDate(item.appointmentDate)}
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <b>Khách hàng:</b> {item.fullName}
+              </div>
+              <button
+                style={{
+                  background: "#3b82f6",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "10px 0",
+                  width: "100%",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleSelectAppointment(item)}
+              >
+                Theo dõi chi tiết
+              </button>
+            </div>
+          ))}
+        </div>
+        <button onClick={handleBackToSearch} style={{ marginTop: 24 }}>
+          Quay lại tra cứu
+        </button>
+      </div>
+    );
+  }
+
+  // Guest: Nếu đang xem chi tiết đơn
+  if (appointment) {
+    console.log("Render: guest detail");
+    return (
+      <div className="tracking-container">
+        <div className="tracking-header">
+          <h1>Theo dõi lịch hẹn</h1>
+          <p>Kiểm tra trạng thái và thông tin chi tiết cho lịch hẹn của bạn.</p>
+        </div>
+        <button onClick={handleBackToSearch} style={{ marginBottom: 24 }}>
+          Quay lại tra cứu
+        </button>
+        <div className="tracking-card status-card">
+          <h3>Trạng thái đơn hàng</h3>
+          <StatusTimeline status={appointment.status} />
+        </div>
+        <div className="tracking-card details-card">
+          <h3>Thông tin chi tiết</h3>
+          <div className="detail-grid">
+            <DetailItem
+              icon="fa-user"
+              label="Họ tên"
+              value={appointment.fullName}
+            />
+            <DetailItem
+              icon="fa-envelope"
+              label="Email"
+              value={appointment.email}
+            />
+            <DetailItem
+              icon="fa-phone"
+              label="Số điện thoại"
+              value={appointment.phone}
+            />
+            <DetailItem
+              icon="fa-cake-candles"
+              label="Ngày sinh"
+              value={formatDate(appointment.dob)}
+            />
+            <DetailItem
+              icon="fa-venus-mars"
+              label="Giới tính"
+              value={appointment.gender}
+            />
+            <DetailItem
+              icon="fa-map-marker-alt"
+              label="Địa chỉ lấy mẫu"
+              value={`${appointment.district}, ${appointment.province}`}
+            />
+            <DetailItem
+              icon="fa-calendar-days"
+              label="Ngày hẹn"
+              value={formatDate(appointment.appointmentDate)}
+            />
+            <DetailItem
+              icon="fa-clock"
+              label="Giờ hẹn"
+              value={formatTime(appointment.appointmentDate)}
+            />
+            <DetailItem
+              icon="fa-calendar-check"
+              label="Ngày lấy mẫu"
+              value={formatDate(appointment.collectionSampleTime)}
+            />
+            <DetailItem
+              icon="fa-hourglass-half"
+              label="Giờ lấy mẫu"
+              value={formatTime(appointment.collectionSampleTime)}
+            />
+            <DetailItem
+              icon="fa-dna"
+              label="Loại dịch vụ"
+              value={appointment.serviceType}
+            />
+            <DetailItem
+              icon="fa-bullseye"
+              label="Mục đích"
+              value={appointment.testPurpose}
+            />
+            <DetailItem
+              icon="fa-tags"
+              label="Phân loại"
+              value={appointment.testCategory}
+            />
+            <DetailItem
+              icon="fa-sticky-note"
+              label="Ghi chú"
+              value={appointment.note}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Guest: Nếu guestMode=true nhưng guestList rỗng, render lại form tra cứu
+  if (guestMode && guestList.length === 0 && !loading) {
+    console.log("Render: guest form (guestMode=true, guestList rỗng)");
+    return (
+      <div className="guest-tracking-form">
+        <h2>Tra cứu đơn cho khách</h2>
+        <input
+          type="email"
+          placeholder="Email"
+          value={guestEmail}
+          onChange={(e) => setGuestEmail(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Số điện thoại"
+          value={guestPhone}
+          onChange={(e) => setGuestPhone(e.target.value)}
+        />
+        <button
+          onClick={handleGuestSearch}
+          disabled={!guestEmail || !guestPhone || loading}
+        >
+          {loading ? "Đang tra cứu..." : "Tra cứu"}
+        </button>
+        {guestError && (
+          <div style={{ color: "#e74c3c", marginTop: 12, fontWeight: 600 }}>
+            {guestError}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Loading
   if (loading) {
+    console.log("Render: loading");
     return (
       <div className="tracking-container">
         <div className="loading-spinner">
@@ -222,7 +474,9 @@ const ServiceTracking = () => {
     );
   }
 
+  // Lỗi chung
   if (error) {
+    console.log("Render: error");
     return (
       <div className="tracking-container">
         <div className="error-message">
@@ -236,107 +490,18 @@ const ServiceTracking = () => {
     );
   }
 
-  if (!appointment) {
-    return (
-      <div className="tracking-container">
-        <div className="error-message">
-          <h3>Không có dữ liệu</h3>
-          <p>Không thể tải thông tin cho lịch hẹn này.</p>
-          <button onClick={() => navigate("/history")} className="btn-back">
-            Quay về Lịch sử
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // Fallback render nếu không khớp bất kỳ điều kiện nào
+  console.log("Render: fallback - không khớp điều kiện nào!");
   return (
-    <div className="tracking-container">
-      <div className="tracking-header">
-        <h1>Theo dõi lịch hẹn</h1>
-        <p>Kiểm tra trạng thái và thông tin chi tiết cho lịch hẹn của bạn.</p>
-      </div>
-
-      <div className="tracking-card status-card">
-        <h3>Trạng thái đơn hàng</h3>
-        <StatusTimeline status={appointment.status} />
-      </div>
-
-      <div className="tracking-card details-card">
-        <h3>Thông tin chi tiết</h3>
-        <div className="detail-grid">
-          <DetailItem
-            icon="fa-user"
-            label="Họ tên"
-            value={appointment.fullName}
-          />
-          <DetailItem
-            icon="fa-envelope"
-            label="Email"
-            value={appointment.email}
-          />
-          <DetailItem
-            icon="fa-phone"
-            label="Số điện thoại"
-            value={appointment.phone}
-          />
-          <DetailItem
-            icon="fa-cake-candles"
-            label="Ngày sinh"
-            value={formatDate(appointment.dob)}
-          />
-          <DetailItem
-            icon="fa-venus-mars"
-            label="Giới tính"
-            value={appointment.gender}
-          />
-          <DetailItem
-            icon="fa-map-marker-alt"
-            label="Địa chỉ lấy mẫu"
-            value={`${appointment.district}, ${appointment.province}`}
-          />
-          <DetailItem
-            icon="fa-calendar-days"
-            label="Ngày hẹn"
-            value={formatDate(appointment.appointmentDate)}
-          />
-          <DetailItem
-            icon="fa-clock"
-            label="Giờ hẹn"
-            value={formatTime(appointment.appointmentDate)}
-          />
-          <DetailItem
-            icon="fa-calendar-check"
-            label="Ngày lấy mẫu"
-            value={formatDate(appointment.collectionSampleTime)}
-          />
-          <DetailItem
-            icon="fa-hourglass-half"
-            label="Giờ lấy mẫu"
-            value={formatTime(appointment.collectionSampleTime)}
-          />
-          <DetailItem
-            icon="fa-dna"
-            label="Loại dịch vụ"
-            value={appointment.serviceType}
-          />
-          <DetailItem
-            icon="fa-bullseye"
-            label="Mục đích"
-            value={appointment.testPurpose}
-          />
-          <DetailItem
-            icon="fa-tags"
-            label="Phân loại"
-            value={appointment.testCategory}
-          />
-          <DetailItem
-            icon="fa-sticky-note"
-            label="Ghi chú"
-            value={appointment.note}
-          />
-        </div>
-      </div>
+    <div
+      style={{
+        textAlign: "center",
+        marginTop: 60,
+        color: "#e74c3c",
+        fontWeight: 700,
+      }}
+    >
+      Đã xảy ra lỗi không xác định. Vui lòng thử lại hoặc liên hệ hỗ trợ!
     </div>
   );
 };
