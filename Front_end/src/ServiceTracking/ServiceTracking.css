@@ -628,3 +628,271 @@ body.dark {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
   }
 }
+
+/* Guest Tracking Form */
+.guest-tracking-form {
+  max-width: 400px;
+  margin: 48px auto 0 auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+}
+.guest-tracking-form h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--primary-color, #2563eb);
+}
+.guest-tracking-form input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  background: #f9fafb;
+  transition: border 0.2s;
+}
+.guest-tracking-form input:focus {
+  border: 1.5px solid var(--primary-color, #2563eb);
+  outline: none;
+  background: #fff;
+}
+.guest-tracking-form button {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: var(--primary-color, #2563eb);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+.guest-tracking-form button:disabled {
+  background: #b6c3e6;
+  cursor: not-allowed;
+}
+.guest-tracking-form button:hover:not(:disabled) {
+  background: #1746a2;
+}
+
+/* Guest Tracking List */
+.guest-tracking-list {
+  max-width: 1000px;
+  margin: 48px auto 0 auto;
+  padding: 2rem 1rem 3rem 1rem;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+.guest-tracking-list h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color, #2563eb);
+  margin-bottom: 2rem;
+}
+.guest-tracking-list button,
+.btn-back-guest {
+  display: block;
+  margin: 32px auto 0 auto;
+  padding: 0.85rem 2.5rem;
+  border-radius: 10px;
+  background: var(--primary-color, #2563eb);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+.guest-tracking-list button:hover,
+.btn-back-guest:hover {
+  background: #1746a2;
+}
+
+/* Guest Card Styling */
+.guest-tracking-list > div[style*="display: flex"] > div {
+  transition: box-shadow 0.2s, transform 0.2s;
+  border: 1.5px solid #e5e7eb;
+}
+.guest-tracking-list > div[style*="display: flex"] > div:hover {
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+  transform: translateY(-4px) scale(1.03);
+  border: 1.5px solid var(--primary-color, #2563eb);
+}
+.guest-tracking-list .no-result,
+.guest-tracking-list .error-message {
+  text-align: center;
+  color: #e74c3c;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .guest-tracking-form,
+  .guest-tracking-list {
+    padding: 1rem 0.5rem 2rem 0.5rem;
+    border-radius: 10px;
+  }
+  .guest-tracking-form input,
+  .guest-tracking-form button {
+    font-size: 1rem;
+    padding: 0.7rem 0.8rem;
+    border-radius: 8px;
+  }
+  .guest-tracking-list h2 {
+    font-size: 1.1rem;
+  }
+}
+
+body.dark .guest-tracking-form,
+body.dark .guest-tracking-list {
+  background: #181c24;
+  color: #f3f4f6;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.32);
+}
+
+body.dark .guest-tracking-form h2,
+body.dark .guest-tracking-list h2 {
+  color: #4f9cff !important;
+}
+
+body.dark .guest-tracking-form input {
+  background: #23272f;
+  color: #f3f4f6;
+  border: 1.5px solid #2d3748;
+}
+body.dark .guest-tracking-form input:focus {
+  background: #23272f;
+  border: 1.5px solid #4f9cff;
+}
+
+body.dark .guest-tracking-form button,
+body.dark .guest-tracking-list button,
+body.dark .btn-back-guest {
+  background: #4f9cff;
+  color: #fff;
+}
+body.dark .guest-tracking-form button:hover,
+body.dark .guest-tracking-list button:hover,
+body.dark .btn-back-guest:hover {
+  background: #2563eb;
+}
+
+body.dark .guest-tracking-list > div[style*="display: flex"] > div {
+  background: #23272f;
+  border: 1.5px solid #2d3748;
+  color: #f3f4f6;
+}
+body.dark .guest-tracking-list > div[style*="display: flex"] > div:hover {
+  border: 1.5px solid #4f9cff;
+}
+
+/* --- Guest Tracking CSS Fix --- */
+.guest-tracking-form h2,
+.guest-tracking-list h2 {
+  color: #2563eb !important;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+body.dark .guest-tracking-form h2,
+body.dark .guest-tracking-list h2 {
+  color: #4f9cff !important;
+}
+.guest-tracking-form input {
+  border: 2px solid #e5e7eb;
+  background: #f9fafb;
+  color: #222;
+  font-size: 1.08rem;
+  margin-bottom: 0.7rem;
+  transition: border 0.2s, background 0.2s;
+}
+.guest-tracking-form input:focus {
+  border: 2px solid #2563eb;
+  background: #fff;
+}
+body.dark .guest-tracking-form input {
+  background: #23272f;
+  color: #f3f4f6;
+  border: 2px solid #2d3748;
+}
+body.dark .guest-tracking-form input:focus {
+  background: #23272f;
+  border: 2px solid #4f9cff;
+}
+.guest-tracking-form,
+.guest-tracking-list {
+  box-shadow: 0 6px 32px rgba(37, 99, 235, 0.1);
+  border-radius: 18px;
+  padding: 2.5rem 2rem 2rem 2rem;
+}
+body.dark .guest-tracking-form,
+body.dark .guest-tracking-list {
+  background: #181c24;
+  color: #f3f4f6;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.32);
+}
+.guest-tracking-form button,
+.guest-tracking-list button,
+.btn-back-guest {
+  background: #4f9cff;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  border: none;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  padding: 0.85rem 1rem;
+}
+.guest-tracking-form button:hover,
+.guest-tracking-list button:hover,
+.btn-back-guest:hover {
+  background: #2563eb;
+}
+body.dark .guest-tracking-form button,
+body.dark .guest-tracking-list button,
+body.dark .btn-back-guest {
+  background: #4f9cff;
+  color: #fff;
+}
+body.dark .guest-tracking-form button:hover,
+body.dark .guest-tracking-list button:hover,
+body.dark .btn-back-guest:hover {
+  background: #2563eb;
+}
+.guest-tracking-list > div[style*="display: flex"] > div {
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  color: #222;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.guest-tracking-list > div[style*="display: flex"] > div:hover {
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+  transform: translateY(-4px) scale(1.03);
+  border: 1.5px solid #2563eb;
+}
+body.dark .guest-tracking-list > div[style*="display: flex"] > div {
+  background: #23272f;
+  border: 1.5px solid #2d3748;
+  color: #f3f4f6;
+}
+body.dark .guest-tracking-list > div[style*="display: flex"] > div:hover {
+  border: 1.5px solid #4f9cff;
+}

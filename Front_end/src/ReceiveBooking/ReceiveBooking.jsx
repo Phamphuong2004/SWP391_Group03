@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Table, Button, Modal, Form, message, Input, Select } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  message,
+  Input,
+  Select,
+  Row,
+  Col,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import "./ReceiveBooking.css";
 
@@ -15,6 +25,10 @@ const ReceiveBooking = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const [isEditing, setIsEditing] = useState(false);
+  const [guestModalVisible, setGuestModalVisible] = useState(false);
+  const [guestIdentifier, setGuestIdentifier] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [guestBookings, setGuestBookings] = useState([]);
 
   // Fetch bookings based on user role
   const fetchBookings = async () => {
@@ -162,6 +176,39 @@ const ReceiveBooking = () => {
     }
   };
 
+  // Hàm lấy lịch hẹn guest
+  const fetchGuestAppointments = async () => {
+    try {
+      setLoading(true);
+      // Ví dụ: dùng phone làm định danh guest, có thể thay đổi theo backend
+      const response = await axios.get(
+        `/api/view-appointment-guest?phone=${guestIdentifier}`
+      );
+      setGuestBookings(Array.isArray(response.data) ? response.data : []);
+      setGuestModalVisible(true);
+    } catch (error) {
+      message.error("Không thể lấy lịch hẹn guest");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Hàm lọc theo trạng thái
+  const fetchByStatus = async (status) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `/api/get/appointment-by-status?status=${status}`,
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      setBookings(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      message.error("Không thể lọc theo trạng thái");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   console.log("Bookings render:", bookings);
   const columns = [
     {
@@ -260,6 +307,31 @@ const ReceiveBooking = () => {
           ? "Các đơn đã đặt của bạn"
           : "Quản lý đơn đặt lịch"}
       </h1>
+      <Row gutter={16} style={{ marginBottom: 16 }}>
+        <Col>
+          <Button onClick={() => setGuestModalVisible(true)}>
+            Xem lịch hẹn guest
+          </Button>
+        </Col>
+        <Col>
+          <Select
+            placeholder="Lọc theo trạng thái"
+            style={{ width: 180 }}
+            allowClear
+            onChange={(value) => {
+              setStatusFilter(value);
+              if (value) fetchByStatus(value);
+              else fetchBookings();
+            }}
+            value={statusFilter}
+          >
+            <Option value="PENDING">Pending</Option>
+            <Option value="CONFIRMED">Confirmed</Option>
+            <Option value="CANCELLED">Cancelled</Option>
+            <Option value="COMPLETED">Completed</Option>
+          </Select>
+        </Col>
+      </Row>
       <Table
         columns={columns}
         dataSource={bookings}
@@ -372,6 +444,35 @@ const ReceiveBooking = () => {
             <Input.TextArea disabled />
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title="Xem lịch hẹn guest"
+        open={guestModalVisible}
+        onCancel={() => setGuestModalVisible(false)}
+        footer={null}
+      >
+        <Input
+          placeholder="Nhập số điện thoại guest"
+          value={guestIdentifier}
+          onChange={(e) => setGuestIdentifier(e.target.value)}
+          style={{ marginBottom: 8 }}
+        />
+        <Button
+          type="primary"
+          onClick={fetchGuestAppointments}
+          disabled={!guestIdentifier}
+          style={{ marginBottom: 16 }}
+        >
+          Tìm kiếm
+        </Button>
+        <Table
+          columns={columns}
+          dataSource={guestBookings}
+          rowKey="appointmentId"
+          pagination={false}
+          size="small"
+        />
       </Modal>
     </div>
   );

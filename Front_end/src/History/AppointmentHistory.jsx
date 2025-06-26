@@ -7,10 +7,17 @@ const AppointmentHistory = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isGuest, setIsGuest] = useState(false);
+  const [guestPhone, setGuestPhone] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
+  const [guestAppointments, setGuestAppointments] = useState([]);
+  const [guestError, setGuestError] = useState(null);
+  const [guestLoading, setGuestLoading] = useState(false);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
+    if (isGuest) return; // Không fetch cho user khi đang ở chế độ guest
     if (!user || !user.token) {
       setError("Bạn cần đăng nhập để xem lịch sử đặt lịch.");
       setLoading(false);
@@ -50,7 +57,26 @@ const AppointmentHistory = () => {
     };
 
     fetchAppointments();
-  }, [user.token]);
+  }, [user?.token, isGuest]);
+
+  // Hàm lấy lịch sử cho guest
+  const fetchGuestAppointments = async () => {
+    setGuestLoading(true);
+    setGuestError(null);
+    try {
+      const res = await axios.get(
+        `/api/view-appointment-guest?email=${encodeURIComponent(
+          guestEmail
+        )}&phone=${encodeURIComponent(guestPhone)}`
+      );
+      setGuestAppointments(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      setGuestError("Không tìm thấy lịch sử cho thông tin này.");
+      setGuestAppointments([]);
+    } finally {
+      setGuestLoading(false);
+    }
+  };
 
   const handleTrackClick = (appointment) => {
     // We must pass the appointment data in state to avoid refetching issues
@@ -69,55 +95,132 @@ const AppointmentHistory = () => {
     });
   };
 
-  if (loading) {
+  if (!isGuest && loading) {
     return <div className="history-loading">Đang tải lịch sử đặt lịch...</div>;
   }
 
-  if (error) {
+  if (!isGuest && error) {
     return <div className="history-error">Lỗi: {error}</div>;
   }
 
   return (
     <div className="appointment-history-container">
       <h1>Lịch sử Đặt lịch</h1>
-      <p>
-        Đây là danh sách tất cả các lịch hẹn bạn đã đặt. Nhấp vào "Theo dõi" để
-        xem chi tiết.
-      </p>
-      <div className="appointment-list">
-        {appointments.length > 0 ? (
-          appointments.map((app) => (
-            <div
-              key={app.appointmentId}
-              className="appointment-card"
-              onClick={() => handleTrackClick(app)}
-            >
-              <div className="card-header">
-                <span className="service-type">{app.serviceType}</span>
-                <span className={`status status-${app.status?.toLowerCase()}`}>
-                  {app.status}
-                </span>
-              </div>
-              <div className="card-body">
-                <p>
-                  <strong>Mã đơn:</strong> {app.appointmentId}
-                </p>
-                <p>
-                  <strong>Ngày hẹn:</strong> {formatDate(app.appointmentDate)}
-                </p>
-                <p>
-                  <strong>Khách hàng:</strong> {app.fullName}
-                </p>
-              </div>
-              <div className="card-footer">
-                <button className="track-button">Theo dõi chi tiết</button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>Bạn chưa có lịch hẹn nào.</p>
+      <div style={{ marginBottom: 16 }}>
+        <button onClick={() => setIsGuest(false)} disabled={!isGuest}>
+          Lịch sử của tôi (user)
+        </button>
+        {!user && (
+          <button
+            onClick={() => setIsGuest(true)}
+            disabled={isGuest}
+            style={{ marginLeft: 8 }}
+          >
+            Lịch sử cho khách (guest)
+          </button>
         )}
       </div>
+      {isGuest && !user ? (
+        <div>
+          <p>Nhập email và số điện thoại để xem lịch sử đặt lịch của guest:</p>
+          <input
+            type="email"
+            placeholder="Nhập email guest"
+            value={guestEmail}
+            onChange={(e) => setGuestEmail(e.target.value)}
+            style={{ marginRight: 8 }}
+          />
+          <input
+            type="text"
+            placeholder="Nhập số điện thoại guest"
+            value={guestPhone}
+            onChange={(e) => setGuestPhone(e.target.value)}
+            style={{ marginRight: 8 }}
+          />
+          <button
+            onClick={fetchGuestAppointments}
+            disabled={!guestEmail || !guestPhone || guestLoading}
+          >
+            Xem lịch sử
+          </button>
+          {guestLoading && <div>Đang tải...</div>}
+          {guestError && <div style={{ color: "red" }}>{guestError}</div>}
+          <div className="appointment-list">
+            {guestAppointments.length > 0 ? (
+              guestAppointments.map((app) => (
+                <div key={app.appointmentId} className="appointment-card">
+                  <div className="card-header">
+                    <span className="service-type">{app.serviceType}</span>
+                    <span
+                      className={`status status-${app.status?.toLowerCase()}`}
+                    >
+                      {app.status}
+                    </span>
+                  </div>
+                  <div className="card-body">
+                    <p>
+                      <strong>Mã đơn:</strong> {app.appointmentId}
+                    </p>
+                    <p>
+                      <strong>Ngày hẹn:</strong>{" "}
+                      {formatDate(app.appointmentDate)}
+                    </p>
+                    <p>
+                      <strong>Khách hàng:</strong> {app.fullName}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>Không có lịch sử nào cho guest này.</p>
+            )}
+          </div>
+        </div>
+      ) : (
+        <>
+          <p>
+            Đây là danh sách tất cả các lịch hẹn bạn đã đặt. Nhấp vào "Theo dõi"
+            để xem chi tiết.
+          </p>
+          <div className="appointment-list">
+            {appointments.length > 0 ? (
+              appointments.map((app) => (
+                <div
+                  key={app.appointmentId}
+                  className="appointment-card"
+                  onClick={() => handleTrackClick(app)}
+                >
+                  <div className="card-header">
+                    <span className="service-type">{app.serviceType}</span>
+                    <span
+                      className={`status status-${app.status?.toLowerCase()}`}
+                    >
+                      {app.status}
+                    </span>
+                  </div>
+                  <div className="card-body">
+                    <p>
+                      <strong>Mã đơn:</strong> {app.appointmentId}
+                    </p>
+                    <p>
+                      <strong>Ngày hẹn:</strong>{" "}
+                      {formatDate(app.appointmentDate)}
+                    </p>
+                    <p>
+                      <strong>Khách hàng:</strong> {app.fullName}
+                    </p>
+                  </div>
+                  <div className="card-footer">
+                    <button className="track-button">Theo dõi chi tiết</button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>Bạn chưa có lịch hẹn nào.</p>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

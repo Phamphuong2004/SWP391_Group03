@@ -38,7 +38,7 @@ public class ReportController {
         return reportService.updateReport(reportId, request);
     }
 
-    @PostMapping("/{report_id}")
+    @DeleteMapping("/{report_id}")
     public void deleteReport(Long reportId) {
         // Logic to delete a report
         reportService.deleteReport(reportId);

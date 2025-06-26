@@ -50,6 +50,8 @@ function Booking() {
   const [districts, setDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [guestSuccess, setGuestSuccess] = useState(false);
+  const [guestInfo, setGuestInfo] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,15 +95,6 @@ function Booking() {
       };
 
       const userString = localStorage.getItem("user");
-      if (!userString) {
-        toast.error("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại.");
-        setIsLoading(false);
-        navigate("/login");
-        return;
-      }
-      const user = JSON.parse(userString);
-      const token = user.token;
-
       const serviceId = form.serviceType;
       if (!serviceId) {
         toast.error("Vui lòng chọn loại dịch vụ!");
@@ -109,7 +102,32 @@ function Booking() {
         return;
       }
 
-      const response = await axios.post(
+      let response;
+      if (!userString) {
+        // Nếu chưa đăng nhập, gọi API guest
+        response = await axios.post(
+          `/api/create/guest-appointment/${serviceId}`,
+          data
+        );
+        if (response.status === 201 && response.data?.appointmentId) {
+          setGuestSuccess(true);
+          setGuestInfo({
+            appointmentId: response.data.appointmentId,
+            email: form.email,
+            phone: form.phone,
+          });
+          localStorage.setItem("lastServiceId", response.data.appointmentId);
+          // Không chuyển hướng về trang chủ nữa!
+        } else {
+          toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
+        }
+        setIsLoading(false);
+        return;
+      }
+      // Đã đăng nhập, giữ nguyên logic cũ
+      const user = JSON.parse(userString);
+      const token = user.token;
+      response = await axios.post(
         `/api/create-appointment/${serviceId}`,
         data,
         {
@@ -146,6 +164,40 @@ function Booking() {
       setIsLoading(false);
     }
   };
+
+  if (guestSuccess) {
+    return (
+      <div className="booking-success-container">
+        <h2>Đặt lịch thành công!</h2>
+        <p>
+          Mã đơn của bạn: <b>{guestInfo.appointmentId}</b>
+        </p>
+        <p>
+          Email: <b>{guestInfo.email}</b>
+        </p>
+        <p>
+          Số điện thoại: <b>{guestInfo.phone}</b>
+        </p>
+        <p>
+          Vui lòng lưu lại mã đơn, email và số điện thoại để tra cứu hoặc theo
+          dõi đơn.
+        </p>
+        <button
+          onClick={() => {
+            navigate("/history", {
+              state: {
+                guestEmail: guestInfo.email,
+                guestPhone: guestInfo.phone,
+                appointmentId: guestInfo.appointmentId,
+              },
+            });
+          }}
+        >
+          Theo dõi đơn
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="booking-page">

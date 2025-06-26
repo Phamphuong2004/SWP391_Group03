@@ -31,15 +31,15 @@ public class ServicesController {
         return adnService.createService(servicesRequest);
     }
 
-    @PutMapping("/update-service/{id}")
+    @PutMapping("/update-service/{serviceId}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
-    public ResponseEntity<?> updateService(@PathVariable String id, @RequestBody ServicesRequest servicesRequest) {
-        return adnService.updateService(id, servicesRequest);
+    public ResponseEntity<?> updateService(@PathVariable String serviceId, @RequestBody ServicesRequest servicesRequest) {
+        return adnService.updateService(serviceId, servicesRequest);
     }
 
-    @DeleteMapping("/delete-service/{id}")
+    @DeleteMapping("/delete-service/{serviceId}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
-    public ResponseEntity<?> deleteService(@PathVariable String id) {
-        return adnService.deleteService(id);
+    public ResponseEntity<?> deleteService(@PathVariable String serviceId) {
+        return adnService.deleteService(serviceId);
     }
 }

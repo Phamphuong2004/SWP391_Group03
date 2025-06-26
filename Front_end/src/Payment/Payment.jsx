@@ -1,18 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ADNTestingServices from "../listOfServices";
 import "./Payment.css";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { appointment } = location.state || {};
+  const { appointment: appointmentFromState } = location.state || {};
 
+  const [appointment, setAppointment] = useState(appointmentFromState || null);
+  const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [editForm, setEditForm] = useState(null);
 
-  if (!appointment) {
+  // Lấy lại thông tin lịch hẹn nếu không có trong state
+  useEffect(() => {
+    if (!appointment) {
+      const appointmentId = localStorage.getItem("lastServiceId");
+      if (appointmentId) {
+        setLoading(true);
+        axios
+          .get(`/api/view-appointment/${appointmentId}`)
+          .then((res) => {
+            setAppointment(res.data);
+            setEditForm({
+              fullName: res.data.fullName,
+              appointmentDate: res.data.appointmentDate,
+              collectionTime: res.data.collectionTime,
+              serviceType: res.data.serviceType,
+            });
+          })
+          .catch(() => {
+            toast.error("Không tìm thấy thông tin lịch hẹn");
+          })
+          .finally(() => setLoading(false));
+      }
+    } else {
+      setEditForm({
+        fullName: appointment.fullName,
+        appointmentDate: appointment.appointmentDate,
+        collectionTime: appointment.collectionTime,
+        serviceType: appointment.serviceType,
+      });
+    }
+  }, [appointment]);
+
+  if (loading) return <div>Đang tải thông tin lịch hẹn...</div>;
+
+  if (!appointment || !editForm) {
     return (
       <div className="payment-container">
         <div className="payment-card" style={{ textAlign: "center" }}>
@@ -34,25 +72,8 @@ const Payment = () => {
   const user =
     appointment.user || JSON.parse(localStorage.getItem("user") || "{}");
 
-  if (!user || !user.username) {
-    return (
-      <div className="payment-container">
-        <div className="payment-card" style={{ textAlign: "center" }}>
-          <h1 className="payment-title">Không tìm thấy thông tin người dùng</h1>
-          <p style={{ margin: "1.5rem 0" }}>Vui lòng đăng nhập lại.</p>
-          <button
-            onClick={() => navigate("/login")}
-            className="btn btn-primary"
-          >
-            Đăng nhập
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   const serviceDetails = ADNTestingServices.find(
-    (service) => service.testType === appointment.serviceType
+    (service) => service.testType === editForm.serviceType
   );
 
   const getTime = (str) => {
@@ -60,29 +81,40 @@ const Payment = () => {
     return str.substring(11, 16);
   };
 
-  const handlePayment = () => {
+  // Xử lý thay đổi form chỉnh sửa
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Xử lý thanh toán
+  const handlePayment = async () => {
     if (!paymentMethod) {
       toast.warn("Vui lòng chọn phương thức thanh toán.");
       return;
     }
-
-    console.log("Xử lý thanh toán cho lịch hẹn:", appointment.appointmentId);
-    console.log("Phương thức thanh toán:", paymentMethod);
-    console.log("Số tiền:", serviceDetails?.price);
-
-    // Giả lập xử lý thanh toán
-    toast.success("Thanh toán thành công! Lịch hẹn của bạn đã được xác nhận.");
-
-    const newHistoryItem = {
-      id: appointment.appointmentId,
-      serviceName: appointment.serviceType,
-      appointmentDate: appointment.appointmentDate,
-      status: "Đang xử lý",
-      price: serviceDetails?.price || "N/A",
-    };
-
-    // Đặt trạng thái thanh toán thành công
-    setPaymentSuccess(true);
+    setLoading(true);
+    try {
+      // Cập nhật thông tin chỉnh sửa trước khi thanh toán (nếu có thay đổi)
+      await axios.put(`/api/update-appointment/${appointment.appointmentId}`, {
+        ...editForm,
+        paymentStatus: "PAID",
+      });
+      toast.success(
+        "Thanh toán thành công! Lịch hẹn của bạn đã được xác nhận."
+      );
+      setPaymentSuccess(true);
+      // Cập nhật lại appointment để hiển thị thông tin mới
+      setAppointment((prev) => ({
+        ...prev,
+        ...editForm,
+        paymentStatus: "PAID",
+      }));
+    } catch (err) {
+      toast.error("Thanh toán thất bại. Vui lòng thử lại!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBackToHome = () => {
@@ -108,18 +140,17 @@ const Payment = () => {
           <div className="appointment-summary">
             <h3>Thông tin lịch hẹn:</h3>
             <p>
-              <strong>Họ và tên:</strong> {appointment.fullName}
+              <strong>Họ và tên:</strong> {editForm.fullName}
             </p>
             <p>
               <strong>Ngày hẹn:</strong>{" "}
-              {new Date(appointment.appointmentDate).toLocaleDateString()}
+              {new Date(editForm.appointmentDate).toLocaleDateString()}
             </p>
             <p>
-              <strong>Giờ lấy mẫu:</strong>{" "}
-              {getTime(appointment.collectionTime)}
+              <strong>Giờ lấy mẫu:</strong> {getTime(editForm.collectionTime)}
             </p>
             <p>
-              <strong>Loại dịch vụ:</strong> {appointment.serviceType}
+              <strong>Loại dịch vụ:</strong> {editForm.serviceType}
             </p>
             <p>
               <strong>Số tiền:</strong> {serviceDetails?.price}
@@ -148,19 +179,52 @@ const Payment = () => {
 
         <div className="appointment-details">
           <h2>Chi tiết lịch hẹn</h2>
-          <p>
-            <strong>Họ và tên:</strong> {appointment.fullName}
-          </p>
-          <p>
-            <strong>Ngày hẹn:</strong>{" "}
-            {new Date(appointment.appointmentDate).toLocaleDateString()}
-          </p>
-          <p>
-            <strong>Giờ lấy mẫu:</strong> {getTime(appointment.collectionTime)}
-          </p>
-          <p>
-            <strong>Loại dịch vụ:</strong> {appointment.serviceType}
-          </p>
+          <label>
+            <strong>Họ và tên:</strong>
+            <input
+              type="text"
+              name="fullName"
+              value={editForm.fullName}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            <strong>Ngày hẹn:</strong>
+            <input
+              type="date"
+              name="appointmentDate"
+              value={editForm.appointmentDate?.slice(0, 10) || ""}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            <strong>Giờ lấy mẫu:</strong>
+            <input
+              type="time"
+              name="collectionTime"
+              value={getTime(editForm.collectionTime)}
+              onChange={(e) => {
+                // Cập nhật lại collectionTime theo ISO
+                const date = editForm.appointmentDate?.slice(0, 10) || "";
+                setEditForm((prev) => ({
+                  ...prev,
+                  collectionTime:
+                    date && e.target.value
+                      ? `${date}T${e.target.value}:00`
+                      : "",
+                }));
+              }}
+            />
+          </label>
+          <label>
+            <strong>Loại dịch vụ:</strong>
+            <input
+              type="text"
+              name="serviceType"
+              value={editForm.serviceType}
+              onChange={handleEditChange}
+            />
+          </label>
         </div>
 
         {serviceDetails && (
@@ -183,6 +247,7 @@ const Payment = () => {
               id="cod"
               name="paymentMethod"
               value="cod"
+              checked={paymentMethod === "cod"}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
             <label htmlFor="cod">Thanh toán khi đến lấy mẫu (COD)</label>
@@ -193,6 +258,7 @@ const Payment = () => {
               id="online"
               name="paymentMethod"
               value="online"
+              checked={paymentMethod === "online"}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
             <label htmlFor="online">
@@ -201,8 +267,12 @@ const Payment = () => {
           </div>
         </div>
 
-        <button onClick={handlePayment} className="btn-submit-payment">
-          Xác nhận và Thanh toán
+        <button
+          className="btn btn-primary"
+          onClick={handlePayment}
+          disabled={loading}
+        >
+          Xác nhận & Thanh toán
         </button>
       </div>
     </div>

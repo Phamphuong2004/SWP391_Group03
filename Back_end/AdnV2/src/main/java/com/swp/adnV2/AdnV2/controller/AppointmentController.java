@@ -80,7 +80,7 @@ public class AppointmentController {
     /**
      * Cập nhật trạng thái của cuộc hẹn
      */
-    @PutMapping("/update-appointment/{id}")
+    @PutMapping("/update-appointment/{appointmentId}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ResponseEntity<?> updateAppointment(
             @PathVariable("id") Long appointmentId,
