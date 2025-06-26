@@ -1,51 +1,127 @@
+/* Animation effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in {
+  animation: fadeIn 0.7s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+.btn-animate {
+  transition: transform 0.15s cubic-bezier(0.39, 0.575, 0.565, 1),
+    box-shadow 0.2s;
+}
+.btn-animate:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(255, 214, 0, 0.18);
+}
+.card-animate {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.card-animate:hover {
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.18);
+  transform: translateY(-8px) scale(1.03);
+}
+
 .account-mgmt-container {
   max-width: 900px;
   margin: 40px auto;
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px #0001;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(25, 118, 210, 0.1);
   padding: 32px;
+  color: #1976d2;
+}
+.account-mgmt-container h2 {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #1976d2;
+  margin-bottom: 24px;
 }
 .account-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 24px;
+  background: #e3f0ff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(25, 118, 210, 0.1);
+  overflow: hidden;
 }
 .account-table th,
 .account-table td {
-  border: 1px solid #eee;
+  border: 1.5px solid #90caf9;
   padding: 10px 8px;
   text-align: left;
+  color: #1976d2;
+  background: #e3f0ff;
 }
 .account-table th {
-  background: #f5f7fa;
+  background: #1976d2;
+  color: #fff;
+  font-weight: 800;
+}
+.account-table tr:nth-child(even) {
+  background: #f9fafb;
 }
 .add-btn {
-  background: #28a745;
+  background: #22c55e;
   color: #fff;
   border: none;
   padding: 8px 18px;
-  border-radius: 5px;
-  font-weight: bold;
+  border-radius: 10px;
+  font-weight: 800;
   margin-bottom: 16px;
   cursor: pointer;
+  box-shadow: 0 2px 4px #1976d222;
+  transition: background 0.2s;
+}
+.add-btn:hover {
+  background: #15803d;
 }
 .edit-btn {
-  background: #007bff;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
   color: #fff;
   border: none;
   padding: 4px 12px;
-  border-radius: 4px;
+  border-radius: 8px;
   margin-right: 8px;
   cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+.edit-btn:hover {
+  background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%);
 }
 .delete-btn {
-  background: #dc3545;
+  background: #e74c3c;
   color: #fff;
   border: none;
   padding: 4px 12px;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 700;
+  transition: background 0.2s;
+}
+.delete-btn:hover {
+  background: #c0392b;
 }
 .modal-bg {
   position: fixed;
@@ -53,7 +129,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.25);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -61,27 +137,44 @@
 }
 .modal {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 18px;
   padding: 32px 28px 24px 28px;
   min-width: 320px;
   min-height: 120px;
-  box-shadow: 0 2px 16px #0002;
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.18);
   position: relative;
   max-width: 95vw;
+  color: #1976d2;
+}
+.modal h2 {
+  color: #1976d2;
+  font-weight: 800;
+  margin-bottom: 18px;
+  text-align: center;
 }
 .account-form label {
   display: block;
   margin-top: 12px;
-  font-weight: 500;
+  font-weight: 700;
+  color: #1976d2;
 }
 .account-form input,
 .account-form select {
   width: 100%;
-  padding: 7px 10px;
+  padding: 10px 12px;
   margin-top: 4px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 2px solid #1976d2;
+  background: #e3f0ff;
+  color: #1976d2;
+  border-radius: 10px;
   margin-bottom: 8px;
+  font-size: 1rem;
+  transition: border 0.2s, background 0.2s;
+}
+.account-form input:focus,
+.account-form select:focus {
+  border: 2px solid #42a5f5;
+  background: #f0f7ff;
 }
 .form-actions {
   display: flex;
@@ -90,26 +183,136 @@
   justify-content: flex-end;
 }
 .form-actions button {
-  padding: 6px 18px;
-  border-radius: 5px;
+  padding: 8px 18px;
+  border-radius: 10px;
   border: none;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
 }
 .form-actions button[type="submit"] {
-  background: #007bff;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
   color: #fff;
+}
+.form-actions button[type="submit"]:hover {
+  background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%);
 }
 .form-actions button[type="button"] {
   background: #eee;
-  color: #333;
+  color: #1976d2;
+}
+.form-actions button[type="button"]:hover {
+  background: #e3f0ff;
 }
 .success-msg {
   background: #d4edda;
   color: #155724;
   padding: 8px 16px;
-  border-radius: 5px;
+  border-radius: 8px;
   margin-bottom: 16px;
   font-weight: 500;
   text-align: center;
+  border: 1.5px solid #22c55e;
+}
+@media (max-width: 700px) {
+  .account-mgmt-container {
+    padding: 12px 2px;
+  }
+  .modal {
+    padding: 16px 4px 12px 4px;
+    min-width: 90vw;
+  }
+  .account-table th,
+  .account-table td {
+    font-size: 0.95rem;
+    padding: 8px 4px;
+  }
+}
+.dark-theme .account-mgmt-container {
+  background: #23272f;
+  color: #ffd600;
+  box-shadow: 0 4px 24px rgba(255, 224, 102, 0.1);
+}
+.dark-theme .account-mgmt-container h2 {
+  color: #ffd600;
+}
+.dark-theme .account-table {
+  background: #181a20;
+  box-shadow: 0 1px 3px rgba(255, 224, 102, 0.1);
+}
+.dark-theme .account-table th,
+.dark-theme .account-table td {
+  border: 1.5px solid #ffd600;
+  color: #ffd600;
+  background: #181a20;
+}
+.dark-theme .account-table th {
+  background: #ffd600;
+  color: #232323;
+}
+.dark-theme .add-btn {
+  background: #2ecc71;
+  box-shadow: 0 2px 4px #ffd60022;
+}
+.dark-theme .add-btn:hover {
+  background: #27ae60;
+}
+.dark-theme .edit-btn {
+  background: linear-gradient(90deg, #ffd600 60%, #ffe066 100%);
+  color: #232323;
+}
+.dark-theme .edit-btn:hover {
+  background: linear-gradient(90deg, #ffe066 0%, #ffd600 100%);
+  color: #232323;
+}
+.dark-theme .delete-btn {
+  background: #e74c3c;
+  color: #fff;
+}
+.dark-theme .delete-btn:hover {
+  background: #c0392b;
+}
+.dark-theme .modal-bg {
+  background: rgba(24, 26, 32, 0.85);
+}
+.dark-theme .modal {
+  background: #181a20;
+  color: #ffd600;
+  box-shadow: 0 8px 32px rgba(255, 224, 102, 0.18);
+}
+.dark-theme .modal h2 {
+  color: #ffd600;
+}
+.dark-theme .account-form label {
+  color: #ffd600;
+}
+.dark-theme .account-form input,
+.dark-theme .account-form select {
+  background: #23272f;
+  color: #ffd600;
+  border: 2px solid #ffd600;
+}
+.dark-theme .account-form input:focus,
+.dark-theme .account-form select:focus {
+  background: #181a20;
+  border: 2px solid #ffd600;
+}
+.dark-theme .form-actions button[type="submit"] {
+  background: linear-gradient(90deg, #ffd600 60%, #ffe066 100%);
+  color: #232323;
+}
+.dark-theme .form-actions button[type="submit"]:hover {
+  background: linear-gradient(90deg, #ffe066 0%, #ffd600 100%);
+  color: #232323;
+}
+.dark-theme .form-actions button[type="button"] {
+  background: #444;
+  color: #ffd600;
+}
+.dark-theme .form-actions button[type="button"]:hover {
+  background: #23272f;
+}
+.dark-theme .success-msg {
+  background: #223a1a;
+  color: #b6ffb6;
+  border: 1.5px solid #2ecc71;
 }

@@ -6,6 +6,7 @@ import {
   deleteAccount,
   updateRole,
 } from "./AccountApi";
+import { useNavigate } from "react-router-dom";
 
 export default function AccountManagement() {
   const [accounts, setAccounts] = useState([]);
@@ -16,6 +17,7 @@ export default function AccountManagement() {
   const [showRole, setShowRole] = useState(false);
   const [roleData, setRoleData] = useState(null);
   const [successMsg, setSuccessMsg] = useState("");
+  const navigate = useNavigate();
 
   // Lấy role từ localStorage
   let isManager = false;
@@ -42,25 +44,48 @@ export default function AccountManagement() {
       });
   };
 
-  // useEffect chỉ reload khi vào trang hoặc khi isManager thay đổi
   useEffect(() => {
     if (!isManager) return;
     reload();
   }, [isManager]);
 
-  // Khi bấm Sửa, chỉ set state, không reload
   const handleEdit = (acc) => {
     setEditData({ ...acc });
     setShowEdit(true);
   };
 
-  // Khi bấm Cập nhật role, chỉ set state, không reload
+  const handleDelete = async (id) => {
+    if (!window.confirm("Bạn có chắc muốn xóa tài khoản này?")) return;
+    try {
+      await deleteAccount(id);
+      setSuccessMsg("Xóa tài khoản thành công!");
+      reload();
+    } catch {
+      setError("Lỗi khi xóa tài khoản.");
+    }
+  };
+
   const handleRole = (acc) => {
-    setRoleData({ id: acc.userId, role: acc.role });
+    setRoleData({ username: acc.username, newRole: acc.role });
     setShowRole(true);
   };
 
-  // Chỉ reload sau khi submit form thành công
+  const handleRoleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await updateRole({
+        username: roleData.username,
+        newRole: roleData.newRole,
+      });
+      setShowRole(false);
+      setRoleData(null);
+      setSuccessMsg("Cập nhật role thành công!");
+      reload();
+    } catch {
+      setError("Lỗi khi cập nhật role.");
+    }
+  };
+
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -74,61 +99,18 @@ export default function AccountManagement() {
     }
   };
 
-  const handleRoleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await updateRole(roleData);
-      setShowRole(false);
-      setRoleData(null);
-      setSuccessMsg("Cập nhật role thành công!");
-      reload();
-    } catch {
-      setError("Lỗi khi cập nhật role.");
-    }
-  };
-
-  const handleDelete = async (userId) => {
-    if (!userId) {
-      setError("Không xác định được tài khoản cần xóa.");
-      return;
-    }
-    if (!window.confirm("Bạn có chắc chắn muốn xóa tài khoản này?")) return;
-    try {
-      await deleteAccount(userId);
-      setSuccessMsg("Xóa tài khoản thành công!");
-      reload();
-    } catch {
-      setError("Lỗi khi xóa tài khoản.");
-    }
-  };
-
-  if (!isManager) {
-    return (
-      <div className="account-mgmt-container">
-        Bạn không có quyền truy cập trang này.
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="account-mgmt-container">
-        Đang tải danh sách tài khoản...
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div className="account-mgmt-container">{error}</div>;
-  }
-
-  // Thêm log kiểm tra state trước khi render modal
-  console.log("showEdit:", showEdit, "editData:", editData);
-
   return (
     <div className="account-mgmt-container">
-      <h1>Quản lý Tài khoản</h1>
+      <h2>Quản lý Tài khoản</h2>
       {successMsg && <div className="success-msg">{successMsg}</div>}
+      {error && (
+        <div
+          className="success-msg"
+          style={{ background: "#f8d7da", color: "#721c24" }}
+        >
+          {error}
+        </div>
+      )}
       <button className="add-btn">+ Thêm tài khoản</button>
       <table className="account-table">
         <thead>
@@ -141,88 +123,45 @@ export default function AccountManagement() {
           </tr>
         </thead>
         <tbody>
-          {accounts.length === 0 ? (
-            <tr>
-              <td colSpan={5} style={{ textAlign: "center" }}>
-                Không có tài khoản nào.
+          {accounts.map((acc) => (
+            <tr key={acc.userId}>
+              <td>{acc.userId}</td>
+              <td>{acc.username}</td>
+              <td>{acc.email}</td>
+              <td>{acc.role}</td>
+              <td>
+                <button className="edit-btn" onClick={() => handleEdit(acc)}>
+                  Sửa
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(acc.userId)}
+                >
+                  Xóa
+                </button>
+                <button
+                  className="edit-btn"
+                  onClick={() => navigate("/update-role")}
+                >
+                  Cập nhật role
+                </button>
               </td>
             </tr>
-          ) : (
-            accounts.map((acc, idx) => {
-              console.log(acc); // Debug: kiểm tra object acc có userId không
-              return (
-                <tr key={acc.userId || idx}>
-                  <td>{acc.userId}</td>
-                  <td>{acc.username}</td>
-                  <td>{acc.email}</td>
-                  <td>{acc.role}</td>
-                  <td>
-                    <button
-                      className="edit-btn"
-                      onClick={() => handleEdit(acc)}
-                    >
-                      Sửa
-                    </button>
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(acc.userId)}
-                    >
-                      Xóa
-                    </button>
-                    <button
-                      className="edit-btn"
-                      onClick={() => handleRole(acc)}
-                    >
-                      Cập nhật role
-                    </button>
-                  </td>
-                </tr>
-              );
-            })
-          )}
+          ))}
         </tbody>
       </table>
-      {/* Modal sửa tài khoản */}
-      {showEdit && (
-        <div className="modal-bg" onClick={() => setShowEdit(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h2>Sửa tài khoản</h2>
-            <form onSubmit={handleEditSubmit} className="account-form">
-              <label>Tên đăng nhập</label>
-              <input
-                value={editData?.username || ""}
-                onChange={(e) =>
-                  setEditData((d) => ({ ...d, username: e.target.value }))
-                }
-              />
-              <label>Email</label>
-              <input
-                value={editData?.email || ""}
-                onChange={(e) =>
-                  setEditData((d) => ({ ...d, email: e.target.value }))
-                }
-              />
-              <div className="form-actions">
-                <button type="submit">Lưu</button>
-                <button type="button" onClick={() => setShowEdit(false)}>
-                  Hủy
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+
       {/* Modal cập nhật role */}
-      {showRole && (
+      {showRole && roleData && (
         <div className="modal-bg" onClick={() => setShowRole(false)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h2>Cập nhật role</h2>
             <form onSubmit={handleRoleSubmit} className="account-form">
               <label>Role</label>
               <select
-                value={roleData.role}
+                value={roleData.newRole}
                 onChange={(e) =>
-                  setRoleData((d) => ({ ...d, role: e.target.value }))
+                  setRoleData((d) => ({ ...d, newRole: e.target.value }))
                 }
               >
                 <option value="manager">manager</option>
@@ -232,6 +171,44 @@ export default function AccountManagement() {
               <div className="form-actions">
                 <button type="submit">Lưu</button>
                 <button type="button" onClick={() => setShowRole(false)}>
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal sửa tài khoản */}
+      {showEdit && editData && (
+        <div className="modal-bg" onClick={() => setShowEdit(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Sửa tài khoản</h2>
+            <form onSubmit={handleEditSubmit} className="account-form">
+              <label>Tên đăng nhập</label>
+              <input
+                value={editData.username}
+                onChange={(e) =>
+                  setEditData((d) => ({ ...d, username: e.target.value }))
+                }
+              />
+              <label>Email</label>
+              <input
+                value={editData.email}
+                onChange={(e) =>
+                  setEditData((d) => ({ ...d, email: e.target.value }))
+                }
+              />
+              <label>Role</label>
+              <input
+                value={editData.role}
+                onChange={(e) =>
+                  setEditData((d) => ({ ...d, role: e.target.value }))
+                }
+              />
+              <div className="form-actions">
+                <button type="submit">Lưu</button>
+                <button type="button" onClick={() => setShowEdit(false)}>
                   Hủy
                 </button>
               </div>

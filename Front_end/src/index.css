@@ -6,11 +6,20 @@
 }
 
 /* Body background */
-body {
-  background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+body,
+#root {
+  background: #f3f6fa;
   font-family: "Segoe UI", Arial, sans-serif;
   color: #212529;
   min-height: 100vh;
+  transition: background 0.3s;
+}
+
+@media (prefers-color-scheme: dark) {
+  body,
+  #root {
+    background: #181a20;
+  }
 }
 
 /* Center the form */
