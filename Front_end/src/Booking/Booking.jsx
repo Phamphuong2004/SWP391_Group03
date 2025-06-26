@@ -93,15 +93,6 @@ function Booking() {
       };
 
       const userString = localStorage.getItem("user");
-      if (!userString) {
-        toast.error("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại.");
-        setIsLoading(false);
-        navigate("/login");
-        return;
-      }
-      const user = JSON.parse(userString);
-      const token = user.token;
-
       const serviceId = form.serviceType;
       if (!serviceId) {
         toast.error("Vui lòng chọn loại dịch vụ!");
@@ -109,7 +100,27 @@ function Booking() {
         return;
       }
 
-      const response = await axios.post(
+      let response;
+      if (!userString) {
+        // Nếu chưa đăng nhập, gọi API guest
+        response = await axios.post(
+          `/api/create/guest-appointment/${serviceId}`,
+          data
+        );
+        if (response.status === 201 && response.data?.appointmentId) {
+          toast.success("Đặt lịch hẹn (guest) thành công!");
+          localStorage.setItem("lastServiceId", response.data.appointmentId);
+          navigate("/", { replace: true });
+        } else {
+          toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
+        }
+        setIsLoading(false);
+        return;
+      }
+      // Đã đăng nhập, giữ nguyên logic cũ
+      const user = JSON.parse(userString);
+      const token = user.token;
+      response = await axios.post(
         `/api/create-appointment/${serviceId}`,
         data,
         {
