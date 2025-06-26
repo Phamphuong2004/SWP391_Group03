@@ -135,6 +135,22 @@ function MyNavbar() {
                   Thanh toán
                 </Nav.Link>
               )}
+              {user && user.role && user.role.toLowerCase() === "manager" && (
+                <Nav.Link
+                  onClick={() => navigate("/service-management")}
+                  className="nav-link"
+                >
+                  Quản lý dịch vụ
+                </Nav.Link>
+              )}
+              {user && user.role && user.role.toLowerCase() === "manager" && (
+                <Nav.Link
+                  onClick={() => navigate("/account-management")}
+                  className="nav-link"
+                >
+                  Quản lý tài khoản
+                </Nav.Link>
+              )}
             </Nav>
             <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
               <Form.Control

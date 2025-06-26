@@ -1,0 +1,115 @@
+.account-mgmt-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 32px;
+}
+.account-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 24px;
+}
+.account-table th,
+.account-table td {
+  border: 1px solid #eee;
+  padding: 10px 8px;
+  text-align: left;
+}
+.account-table th {
+  background: #f5f7fa;
+}
+.add-btn {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+.edit-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-right: 8px;
+  cursor: pointer;
+}
+.delete-btn {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 32px 28px 24px 28px;
+  min-width: 320px;
+  min-height: 120px;
+  box-shadow: 0 2px 16px #0002;
+  position: relative;
+  max-width: 95vw;
+}
+.account-form label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+}
+.account-form input,
+.account-form select {
+  width: 100%;
+  padding: 7px 10px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  justify-content: flex-end;
+}
+.form-actions button {
+  padding: 6px 18px;
+  border-radius: 5px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+.form-actions button[type="submit"] {
+  background: #007bff;
+  color: #fff;
+}
+.form-actions button[type="button"] {
+  background: #eee;
+  color: #333;
+}
+.success-msg {
+  background: #d4edda;
+  color: #155724;
+  padding: 8px 16px;
+  border-radius: 5px;
+  margin-bottom: 16px;
+  font-weight: 500;
+  text-align: center;
+}

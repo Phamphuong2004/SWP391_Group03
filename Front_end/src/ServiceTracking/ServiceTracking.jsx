@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState, useRef } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import GuestServiceTracking from "./GuestServiceTracking";
 import axios from "axios";
 import "./ServiceTracking.css";
 
@@ -40,7 +41,6 @@ const statusTranslations = {
   COMPLETED: "Hoàn thành",
 };
 
-// Status Timeline Component
 const StatusTimeline = ({ status }) => {
   const mainStatuses = [
     "PENDING",
@@ -49,7 +49,6 @@ const StatusTimeline = ({ status }) => {
     "TESTING",
     "COMPLETED",
   ];
-
   if (status === "CANCELLED") {
     return (
       <div className="status-cancelled-container">
@@ -58,9 +57,7 @@ const StatusTimeline = ({ status }) => {
       </div>
     );
   }
-
   const currentStatusIndex = mainStatuses.indexOf(status);
-
   return (
     <div className="status-timeline">
       <div className="status-line-bg"></div>
@@ -85,7 +82,6 @@ const StatusTimeline = ({ status }) => {
   );
 };
 
-// Detail Item Component
 const DetailItem = ({ icon, label, value }) => (
   <div className="detail-item">
     <span className="detail-icon">
@@ -101,172 +97,204 @@ const DetailItem = ({ icon, label, value }) => (
 const ServiceTracking = () => {
   const { appointmentId } = useParams();
   const navigate = useNavigate();
-  const { state } = useLocation();
-
-  // Lấy user hiện tại
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Nếu user đăng nhập, xóa localStorage guest để tránh nhầm lẫn
-  useEffect(() => {
-    if (user && localStorage.getItem("lastGuestAppointment")) {
-      localStorage.removeItem("lastGuestAppointment");
-    }
-  }, [user]);
-
-  // State cho guest
-  const [guestEmail, setGuestEmail] = useState(state?.guestEmail || "");
-  const [guestPhone, setGuestPhone] = useState(state?.guestPhone || "");
-  const [guestAppointmentId, setGuestAppointmentId] = useState(
-    state?.appointmentId || ""
-  );
-  const [guestList, setGuestList] = useState([]);
-  const [guestError, setGuestError] = useState(null);
-  const [appointment, setAppointment] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [guestMode, setGuestMode] = useState(
-    !!(state?.guestEmail && state?.guestPhone)
-  );
-
-  // Debug state ở đầu component
-  console.log(
-    "guestMode:",
-    guestMode,
-    "guestList:",
-    guestList,
-    "appointment:",
-    appointment,
-    "loading:",
-    loading,
-    "guestError:",
-    guestError
-  );
-
-  // Khi guest tra cứu, gọi API và lưu localStorage
-  const handleGuestSearch = async () => {
-    setLoading(true);
-    setGuestError(null);
-    setAppointment(null);
-    setGuestList([]);
-    try {
-      const res = await axios.get(
-        `/api/view-appointment-guest?email=${encodeURIComponent(
-          guestEmail
-        )}&phone=${encodeURIComponent(guestPhone)}`
-      );
-      console.log("API guest trả về:", res.data);
-      let arr = Array.isArray(res.data) ? res.data : res.data ? [res.data] : [];
-      console.log("Mảng arr sau khi xử lý:", arr);
-      if (arr && arr.length > 0) {
-        setGuestList(arr);
-        // Lưu vào localStorage
-        localStorage.setItem(
-          "lastGuestAppointment",
-          JSON.stringify({
-            email: guestEmail,
-            phone: guestPhone,
-            appointmentId: arr[0]?.appointmentId || "",
-          })
-        );
-        setGuestMode(true);
-      } else {
-        // Không có đơn, reset về form và show lỗi
-        setGuestList([]);
-        setGuestMode(false);
-        setGuestError("Không tìm thấy đơn nào cho thông tin này.");
-        localStorage.removeItem("lastGuestAppointment");
-      }
-    } catch (err) {
-      setGuestList([]);
-      setGuestMode(false);
-      setGuestError("Không tìm thấy đơn nào cho thông tin này.");
-      localStorage.removeItem("lastGuestAppointment");
-      console.error("Lỗi khi tra cứu guest:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Khi chọn chi tiết đơn
-  const handleSelectAppointment = (item) => {
-    setAppointment(item);
-    setGuestAppointmentId(item.appointmentId);
-    // Cập nhật localStorage để ưu tiên đơn này
-    localStorage.setItem(
-      "lastGuestAppointment",
-      JSON.stringify({
-        email: guestEmail,
-        phone: guestPhone,
-        appointmentId: item.appointmentId,
-      })
-    );
-  };
-
-  // Khi bấm quay lại tra cứu
-  const handleBackToSearch = () => {
-    setAppointment(null);
-    setGuestAppointmentId("");
-    setGuestList([]);
-    setGuestError(null);
-    setGuestMode(false);
-  };
-
-  // Nếu user đăng nhập, chỉ cho xem lịch sử user
-  if (user && user.token) {
-    // ... giữ nguyên logic cho user ...
-    // ... existing code ...
+  if (!user || !user.role || user.role.toLowerCase() !== "customer") {
+    return <GuestServiceTracking />;
   }
 
-  // Guest: Nếu chưa nhập email/phone hoặc chưa tra cứu, hiển thị form
-  if (!guestMode) {
-    console.log("Render: guest form");
+  const [appointments, setAppointments] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (appointmentId) {
+      setLoading(true);
+      setError(null);
+      setSelected(null);
+      axios
+        .get(`/api/view-appointment/${appointmentId}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        })
+        .then((res) => {
+          setSelected(res.data);
+        })
+        .catch(() =>
+          setError("Không tìm thấy đơn này hoặc bạn không có quyền xem!")
+        )
+        .finally(() => setLoading(false));
+    }
+    // eslint-disable-next-line
+  }, [appointmentId]);
+
+  useEffect(() => {
+    if (!appointmentId) {
+      setLoading(true);
+      setError(null);
+      axios
+        .get("/api/view-appointments-user", {
+          headers: { Authorization: `Bearer ${user.token}` },
+        })
+        .then((res) => {
+          const arr = Array.isArray(res.data)
+            ? res.data
+            : res.data
+            ? [res.data]
+            : [];
+          arr.sort(
+            (a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate)
+          );
+          setAppointments(arr);
+        })
+        .catch(() => setError("Không lấy được lịch sử đặt lịch!"))
+        .finally(() => setLoading(false));
+    }
+    // eslint-disable-next-line
+  }, [appointmentId]);
+
+  // Render cho customer
+  if (appointmentId) {
+    if (loading)
+      return (
+        <div style={{ textAlign: "center", marginTop: 40 }}>
+          Đang tải chi tiết đơn...
+        </div>
+      );
+    if (error)
+      return (
+        <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>
+          {error}
+        </div>
+      );
+    if (!selected)
+      return (
+        <div style={{ textAlign: "center", marginTop: 40, color: "gray" }}>
+          Không tìm thấy đơn này hoặc bạn không có quyền xem!
+        </div>
+      );
+    // RENDER FORM THEO DÕI LỊCH HẸN ĐẸP
     return (
-      <div className="guest-tracking-form">
-        <h2>Tra cứu đơn cho khách</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={guestEmail}
-          onChange={(e) => setGuestEmail(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Số điện thoại"
-          value={guestPhone}
-          onChange={(e) => setGuestPhone(e.target.value)}
-        />
-        <button
-          onClick={handleGuestSearch}
-          disabled={!guestEmail || !guestPhone || loading}
-        >
-          {loading ? "Đang tra cứu..." : "Tra cứu"}
+      <div className="tracking-container">
+        <div className="tracking-header">
+          <h1>Theo dõi lịch hẹn</h1>
+          <p>Kiểm tra trạng thái và thông tin chi tiết cho lịch hẹn của bạn.</p>
+        </div>
+        <button onClick={() => navigate(-1)} style={{ marginBottom: 24 }}>
+          Quay lại
         </button>
-        {guestError && (
-          <div style={{ color: "#e74c3c", marginTop: 12, fontWeight: 600 }}>
-            {guestError}
+        <div className="tracking-card status-card">
+          <h3>Trạng thái đơn hàng</h3>
+          <StatusTimeline status={selected.status} />
+        </div>
+        <div className="tracking-card details-card">
+          <h3>Thông tin chi tiết</h3>
+          <div className="detail-grid">
+            <DetailItem
+              icon="fa-user"
+              label="Họ tên"
+              value={selected.fullName}
+            />
+            <DetailItem
+              icon="fa-envelope"
+              label="Email"
+              value={selected.email}
+            />
+            <DetailItem
+              icon="fa-phone"
+              label="Số điện thoại"
+              value={selected.phone}
+            />
+            <DetailItem
+              icon="fa-calendar-days"
+              label="Ngày sinh"
+              value={formatDate(selected.dob)}
+            />
+            <DetailItem
+              icon="fa-venus-mars"
+              label="Giới tính"
+              value={selected.gender}
+            />
+            <DetailItem
+              icon="fa-map-marker-alt"
+              label="Địa chỉ lấy mẫu"
+              value={`${selected.district}, ${selected.province}`}
+            />
+            <DetailItem
+              icon="fa-calendar-days"
+              label="Ngày hẹn"
+              value={formatDate(selected.appointmentDate)}
+            />
+            <DetailItem
+              icon="fa-clock"
+              label="Giờ hẹn"
+              value={formatTime(selected.appointmentDate)}
+            />
+            <DetailItem
+              icon="fa-calendar-check"
+              label="Ngày lấy mẫu"
+              value={formatDate(selected.collectionSampleTime)}
+            />
+            <DetailItem
+              icon="fa-hourglass-half"
+              label="Giờ lấy mẫu"
+              value={formatTime(selected.collectionSampleTime)}
+            />
+            <DetailItem
+              icon="fa-dna"
+              label="Loại dịch vụ"
+              value={selected.serviceType}
+            />
+            <DetailItem
+              icon="fa-bullseye"
+              label="Mục đích"
+              value={selected.testpurpose}
+            />
+            <DetailItem
+              icon="fa-tags"
+              label="Phân loại"
+              value={selected.testcategory}
+            />
+            <DetailItem
+              icon="fa-sticky-note"
+              label="Ghi chú"
+              value={selected.note}
+            />
           </div>
-        )}
+        </div>
       </div>
     );
   }
 
-  // Guest: Nếu có danh sách đơn, chưa chọn chi tiết
-  if (guestList.length > 0 && !appointment) {
-    console.log("Render: guest list");
+  if (loading)
     return (
-      <div className="guest-tracking-list">
-        <h2 style={{ textAlign: "center", margin: "24px 0" }}>
-          Lịch sử Đặt lịch của bạn
-        </h2>
+      <div style={{ textAlign: "center", marginTop: 40 }}>
+        Đang tải dữ liệu...
+      </div>
+    );
+  if (error)
+    return (
+      <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>
+        {error}
+      </div>
+    );
+  return (
+    <div style={{ maxWidth: 900, margin: "40px auto" }}>
+      <h2 style={{ textAlign: "center", marginBottom: 24 }}>
+        Lịch sử đặt lịch của bạn
+      </h2>
+      {appointments.length === 0 ? (
+        <div style={{ textAlign: "center" }}>Bạn chưa có lịch sử đặt lịch.</div>
+      ) : (
         <div
           style={{
             display: "flex",
-            gap: 32,
             flexWrap: "wrap",
+            gap: 32,
             justifyContent: "center",
           }}
         >
-          {guestList.map((item) => (
+          {appointments.map((item) => (
             <div
               key={item.appointmentId}
               style={{
@@ -319,189 +347,16 @@ const ServiceTracking = () => {
                   fontWeight: "bold",
                   cursor: "pointer",
                 }}
-                onClick={() => handleSelectAppointment(item)}
+                onClick={() =>
+                  navigate(`/service-tracking/${item.appointmentId}`)
+                }
               >
-                Theo dõi chi tiết
+                Xem chi tiết
               </button>
             </div>
           ))}
         </div>
-        <button onClick={handleBackToSearch} style={{ marginTop: 24 }}>
-          Quay lại tra cứu
-        </button>
-      </div>
-    );
-  }
-
-  // Guest: Nếu đang xem chi tiết đơn
-  if (appointment) {
-    console.log("Render: guest detail");
-    return (
-      <div className="tracking-container">
-        <div className="tracking-header">
-          <h1>Theo dõi lịch hẹn</h1>
-          <p>Kiểm tra trạng thái và thông tin chi tiết cho lịch hẹn của bạn.</p>
-        </div>
-        <button onClick={handleBackToSearch} style={{ marginBottom: 24 }}>
-          Quay lại tra cứu
-        </button>
-        <div className="tracking-card status-card">
-          <h3>Trạng thái đơn hàng</h3>
-          <StatusTimeline status={appointment.status} />
-        </div>
-        <div className="tracking-card details-card">
-          <h3>Thông tin chi tiết</h3>
-          <div className="detail-grid">
-            <DetailItem
-              icon="fa-user"
-              label="Họ tên"
-              value={appointment.fullName}
-            />
-            <DetailItem
-              icon="fa-envelope"
-              label="Email"
-              value={appointment.email}
-            />
-            <DetailItem
-              icon="fa-phone"
-              label="Số điện thoại"
-              value={appointment.phone}
-            />
-            <DetailItem
-              icon="fa-cake-candles"
-              label="Ngày sinh"
-              value={formatDate(appointment.dob)}
-            />
-            <DetailItem
-              icon="fa-venus-mars"
-              label="Giới tính"
-              value={appointment.gender}
-            />
-            <DetailItem
-              icon="fa-map-marker-alt"
-              label="Địa chỉ lấy mẫu"
-              value={`${appointment.district}, ${appointment.province}`}
-            />
-            <DetailItem
-              icon="fa-calendar-days"
-              label="Ngày hẹn"
-              value={formatDate(appointment.appointmentDate)}
-            />
-            <DetailItem
-              icon="fa-clock"
-              label="Giờ hẹn"
-              value={formatTime(appointment.appointmentDate)}
-            />
-            <DetailItem
-              icon="fa-calendar-check"
-              label="Ngày lấy mẫu"
-              value={formatDate(appointment.collectionSampleTime)}
-            />
-            <DetailItem
-              icon="fa-hourglass-half"
-              label="Giờ lấy mẫu"
-              value={formatTime(appointment.collectionSampleTime)}
-            />
-            <DetailItem
-              icon="fa-dna"
-              label="Loại dịch vụ"
-              value={appointment.serviceType}
-            />
-            <DetailItem
-              icon="fa-bullseye"
-              label="Mục đích"
-              value={appointment.testPurpose}
-            />
-            <DetailItem
-              icon="fa-tags"
-              label="Phân loại"
-              value={appointment.testCategory}
-            />
-            <DetailItem
-              icon="fa-sticky-note"
-              label="Ghi chú"
-              value={appointment.note}
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Guest: Nếu guestMode=true nhưng guestList rỗng, render lại form tra cứu
-  if (guestMode && guestList.length === 0 && !loading) {
-    console.log("Render: guest form (guestMode=true, guestList rỗng)");
-    return (
-      <div className="guest-tracking-form">
-        <h2>Tra cứu đơn cho khách</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={guestEmail}
-          onChange={(e) => setGuestEmail(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Số điện thoại"
-          value={guestPhone}
-          onChange={(e) => setGuestPhone(e.target.value)}
-        />
-        <button
-          onClick={handleGuestSearch}
-          disabled={!guestEmail || !guestPhone || loading}
-        >
-          {loading ? "Đang tra cứu..." : "Tra cứu"}
-        </button>
-        {guestError && (
-          <div style={{ color: "#e74c3c", marginTop: 12, fontWeight: 600 }}>
-            {guestError}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Loading
-  if (loading) {
-    console.log("Render: loading");
-    return (
-      <div className="tracking-container">
-        <div className="loading-spinner">
-          <div className="spinner"></div>
-          <p>Đang tải thông tin lịch hẹn...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Lỗi chung
-  if (error) {
-    console.log("Render: error");
-    return (
-      <div className="tracking-container">
-        <div className="error-message">
-          <h3>Rất tiếc, đã có lỗi xảy ra</h3>
-          <p>{error}</p>
-          <button onClick={() => navigate("/history")} className="btn-back">
-            Quay về Lịch sử
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Fallback render nếu không khớp bất kỳ điều kiện nào
-  console.log("Render: fallback - không khớp điều kiện nào!");
-  return (
-    <div
-      style={{
-        textAlign: "center",
-        marginTop: 60,
-        color: "#e74c3c",
-        fontWeight: 700,
-      }}
-    >
-      Đã xảy ra lỗi không xác định. Vui lòng thử lại hoặc liên hệ hỗ trợ!
+      )}
     </div>
   );
 };
