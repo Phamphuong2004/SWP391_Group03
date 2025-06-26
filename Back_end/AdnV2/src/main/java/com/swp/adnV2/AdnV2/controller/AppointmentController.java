@@ -83,7 +83,7 @@ public class AppointmentController {
     @PutMapping("/update-appointment/{appointmentId}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ResponseEntity<?> updateAppointment(
-            @PathVariable("id") Long appointmentId,
+            @PathVariable("appointmentId") Long appointmentId,
             @RequestBody AppointmentUpdateRequest updateRequest) {
         return appointmentService.updateAppointment(appointmentId, updateRequest);
     }
