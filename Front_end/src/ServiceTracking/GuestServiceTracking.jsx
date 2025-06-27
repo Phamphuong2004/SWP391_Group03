@@ -16,6 +16,81 @@ const formatDate = (isoString) => {
   }
 };
 
+const formatTime = (isoString) => {
+  if (!isoString) return "N/A";
+  try {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return "Invalid Time";
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+    return `${hours}:${minutes}:${seconds}`;
+  } catch (e) {
+    return "Invalid Time";
+  }
+};
+
+const statusTranslations = {
+  PENDING: "Chờ xác nhận",
+  CONFIRMED: "Đã xác nhận",
+  SAMPLING: "Đang lấy mẫu",
+  TESTING: "Đang xét nghiệm",
+  COMPLETED: "Hoàn thành",
+};
+
+const StatusTimeline = ({ status }) => {
+  const mainStatuses = [
+    "PENDING",
+    "CONFIRMED",
+    "SAMPLING",
+    "TESTING",
+    "COMPLETED",
+  ];
+  if (status === "CANCELLED") {
+    return (
+      <div className="status-cancelled-container">
+        <span className="cancelled-icon">✖</span>
+        <p className="cancelled-text">Lịch hẹn đã bị hủy</p>
+      </div>
+    );
+  }
+  const currentStatusIndex = mainStatuses.indexOf(status);
+  return (
+    <div className="status-timeline">
+      <div className="status-line-bg"></div>
+      <div
+        className="status-line-progress"
+        style={{
+          width: `${(currentStatusIndex / (mainStatuses.length - 1)) * 100}%`,
+        }}
+      ></div>
+      {mainStatuses.map((s, index) => (
+        <div
+          key={s}
+          className={`status-point ${
+            index <= currentStatusIndex ? "completed" : ""
+          } ${index === currentStatusIndex ? "current" : ""}`}
+        >
+          <div className="status-dot"></div>
+          <div className="status-label">{statusTranslations[s] || s}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const DetailItem = ({ icon, label, value }) => (
+  <div className="detail-item">
+    <span className="detail-icon">
+      <i className={`fa-solid ${icon}`}></i>
+    </span>
+    <div className="detail-text">
+      <span className="detail-label">{label}</span>
+      <span className="detail-value">{value || "N/A"}</span>
+    </div>
+  </div>
+);
+
 export default function GuestServiceTracking() {
   const [guestEmail, setGuestEmail] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
@@ -187,24 +262,81 @@ export default function GuestServiceTracking() {
         </button>
         <div className="tracking-card status-card">
           <h3>Trạng thái đơn hàng</h3>
-          {/* Có thể tái sử dụng StatusTimeline nếu cần */}
+          <StatusTimeline status={appointment.status} />
         </div>
         <div className="tracking-card details-card">
           <h3>Thông tin chi tiết</h3>
           <div className="detail-grid">
-            <div>
-              <b>Họ tên:</b> {appointment.fullName}
-            </div>
-            <div>
-              <b>Email:</b> {appointment.email}
-            </div>
-            <div>
-              <b>Số điện thoại:</b> {appointment.phone}
-            </div>
-            <div>
-              <b>Ngày hẹn:</b> {formatDate(appointment.appointmentDate)}
-            </div>
-            {/* Thêm các trường khác nếu cần */}
+            <DetailItem
+              icon="fa-user"
+              label="Họ tên"
+              value={appointment.fullName}
+            />
+            <DetailItem
+              icon="fa-envelope"
+              label="Email"
+              value={appointment.email}
+            />
+            <DetailItem
+              icon="fa-phone"
+              label="Số điện thoại"
+              value={appointment.phone}
+            />
+            <DetailItem
+              icon="fa-calendar-days"
+              label="Ngày sinh"
+              value={formatDate(appointment.dob)}
+            />
+            <DetailItem
+              icon="fa-venus-mars"
+              label="Giới tính"
+              value={appointment.gender}
+            />
+            <DetailItem
+              icon="fa-map-marker-alt"
+              label="Địa chỉ lấy mẫu"
+              value={`${appointment.district}, ${appointment.province}`}
+            />
+            <DetailItem
+              icon="fa-calendar-days"
+              label="Ngày hẹn"
+              value={formatDate(appointment.appointmentDate)}
+            />
+            <DetailItem
+              icon="fa-clock"
+              label="Giờ hẹn"
+              value={formatTime(appointment.appointmentDate)}
+            />
+            <DetailItem
+              icon="fa-calendar-check"
+              label="Ngày lấy mẫu"
+              value={formatDate(appointment.collectionSampleTime)}
+            />
+            <DetailItem
+              icon="fa-hourglass-half"
+              label="Giờ lấy mẫu"
+              value={formatTime(appointment.collectionSampleTime)}
+            />
+            <DetailItem
+              icon="fa-dna"
+              label="Loại dịch vụ"
+              value={appointment.serviceType}
+            />
+            <DetailItem
+              icon="fa-bullseye"
+              label="Mục đích"
+              value={appointment.testPurpose}
+            />
+            <DetailItem
+              icon="fa-tags"
+              label="Phân loại"
+              value={appointment.testCategory}
+            />
+            <DetailItem
+              icon="fa-sticky-note"
+              label="Ghi chú"
+              value={appointment.note}
+            />
           </div>
         </div>
       </div>

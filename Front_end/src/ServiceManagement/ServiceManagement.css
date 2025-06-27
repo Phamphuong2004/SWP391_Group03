@@ -1,15 +1,63 @@
+/* Animation effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in {
+  animation: fadeIn 0.7s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+.btn-animate {
+  transition: transform 0.15s cubic-bezier(0.39, 0.575, 0.565, 1),
+    box-shadow 0.2s;
+}
+.btn-animate:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(255, 214, 0, 0.18);
+}
+.card-animate {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.card-animate:hover {
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.18);
+  transform: translateY(-8px) scale(1.03);
+}
+
 .service-mgmt-container {
   max-width: 1100px;
   margin: 40px auto;
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 24px rgba(25, 118, 210, 0.1);
   padding: 2.5rem 2rem 2rem 2rem;
+  color: #1976d2;
 }
 .service-mgmt-container h1 {
   text-align: center;
-  color: #2563eb;
+  color: #1976d2;
   margin-bottom: 2rem;
+  font-weight: 900;
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #ffd60033;
 }
 .service-search {
   display: flex;
@@ -19,34 +67,42 @@
 }
 .service-search input {
   padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  border: 2px solid #1976d2;
   font-size: 1rem;
   min-width: 220px;
+  background: #e3f0ff;
+  color: #1976d2;
+  transition: border 0.2s, background 0.2s;
+}
+.service-search input:focus {
+  border: 2px solid #42a5f5;
+  background: #f0f7ff;
 }
 .service-search button {
-  background: #4f9cff;
+  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 0.6rem 1.2rem;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
   transition: background 0.2s;
 }
 .service-search button:hover {
-  background: #2563eb;
+  background: linear-gradient(90deg, #42a5f5 0%, #1976d2 100%);
 }
 .add-btn {
   background: #22c55e;
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 0.6rem 1.2rem;
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 18px;
   cursor: pointer;
   transition: background 0.2s;
+  box-shadow: 0 2px 4px #1976d222;
 }
 .add-btn:hover {
   background: #15803d;
@@ -55,40 +111,59 @@
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 24px;
+  background: #e3f0ff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(25, 118, 210, 0.1);
+  overflow: hidden;
 }
 .service-table th,
 .service-table td {
-  border: 1px solid #e5e7eb;
+  border: 1.5px solid #90caf9;
   padding: 0.7rem 0.5rem;
   text-align: left;
+  color: #1976d2;
+  background: #e3f0ff;
+  font-size: 1.05rem;
 }
 .service-table th {
-  background: #f3f4f6;
-  color: #2563eb;
-  font-weight: 700;
+  background: #ffd600;
+  color: #232323;
+  font-weight: 900;
+  font-size: 1.08rem;
+  letter-spacing: 0.5px;
 }
 .service-table tr:nth-child(even) {
   background: #f9fafb;
 }
-.service-table button {
-  background: #4f9cff;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0.9rem;
-  margin-right: 6px;
-  font-weight: 600;
-  cursor: pointer;
+.service-table tr {
   transition: background 0.2s;
 }
+.service-table tr:hover {
+  background: #fffbe6;
+}
+.service-table button {
+  background: #ffd600;
+  color: #232323;
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 1.1rem;
+  margin-right: 6px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-size: 1rem;
+}
 .service-table button:hover {
-  background: #2563eb;
+  background: #ffe066;
+  color: #1976d2;
 }
 .delete-btn {
-  background: #ef4444 !important;
+  background: #e74c3c !important;
+  color: #fff !important;
 }
 .delete-btn:hover {
-  background: #b91c1c !important;
+  background: #c0392b !important;
+  color: #fff !important;
 }
 .error-msg {
   color: #e74c3c;
@@ -104,7 +179,7 @@
 }
 .loading {
   text-align: center;
-  color: #2563eb;
+  color: #1976d2;
   font-weight: 600;
   margin: 24px 0;
 }
@@ -122,16 +197,18 @@
 }
 .modal {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 18px;
   padding: 2rem 2.5rem 1.5rem 2.5rem;
   min-width: 340px;
   max-width: 95vw;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.18);
+  color: #1976d2;
 }
 .modal h2 {
-  color: #2563eb;
+  color: #1976d2;
   margin-bottom: 1.2rem;
   text-align: center;
+  font-weight: 800;
 }
 .service-form {
   display: flex;
@@ -139,15 +216,23 @@
   gap: 0.7rem;
 }
 .service-form label {
-  font-weight: 600;
-  color: #222;
+  font-weight: 700;
+  color: #1976d2;
 }
 .service-form input,
 .service-form textarea {
   padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  border: 2px solid #1976d2;
   font-size: 1rem;
+  background: #e3f0ff;
+  color: #1976d2;
+  transition: border 0.2s, background 0.2s;
+}
+.service-form input:focus,
+.service-form textarea:focus {
+  border: 2px solid #42a5f5;
+  background: #f0f7ff;
 }
 .service-form textarea {
   min-height: 60px;
@@ -175,4 +260,77 @@
     font-size: 0.95rem;
     padding: 0.5rem 0.2rem;
   }
+}
+.dark-theme .service-mgmt-container {
+  background: #23272f;
+  color: #ffd600;
+  box-shadow: 0 4px 24px rgba(255, 224, 102, 0.1);
+}
+.dark-theme .service-mgmt-container h1 {
+  color: #ffd600;
+  text-shadow: 0 2px 8px #ffd60099;
+}
+.dark-theme .service-table {
+  background: #181a20;
+  box-shadow: 0 1px 3px rgba(255, 224, 102, 0.1);
+}
+.dark-theme .service-table th,
+.dark-theme .service-table td {
+  border: 1.5px solid #ffd600;
+  color: #ffd600;
+  background: #181a20;
+}
+.dark-theme .service-table th {
+  background: #ffd600;
+  color: #232323;
+}
+.dark-theme .service-table tr:hover {
+  background: #23272f;
+}
+.dark-theme .service-table button {
+  background: #ffd600;
+  color: #232323;
+}
+.dark-theme .service-table button:hover {
+  background: #ffe066;
+  color: #1976d2;
+}
+.dark-theme .delete-btn {
+  background: #e74c3c !important;
+  color: #fff !important;
+}
+.dark-theme .delete-btn:hover {
+  background: #c0392b !important;
+  color: #fff !important;
+}
+.dark-theme .modal {
+  background: #181a20;
+  color: #ffd600;
+  box-shadow: 0 8px 32px rgba(255, 224, 102, 0.18);
+}
+.dark-theme .modal h2 {
+  color: #ffd600;
+}
+.dark-theme .service-form label {
+  color: #ffd600;
+}
+.dark-theme .service-form input,
+.dark-theme .service-form textarea {
+  background: #23272f;
+  color: #ffd600;
+  border: 2px solid #ffd600;
+}
+.dark-theme .service-form input:focus,
+.dark-theme .service-form textarea:focus {
+  background: #181a20;
+  border: 2px solid #ffd600;
+}
+.dark-theme .error-msg {
+  color: #e74c3c;
+}
+.dark-theme .success-msg {
+  color: #22c55e;
+}
+.dark-theme .loading {
+  color: #ffd600;
 }
