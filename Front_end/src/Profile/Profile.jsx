@@ -122,6 +122,7 @@ export default function Profile() {
           "user",
           JSON.stringify({ ...existingUser, ...updatedUser })
         );
+        window.dispatchEvent(new Event("userUpdated"));
 
         setIsEditing(false);
         setSuccess("Cập nhật thành công!");
@@ -139,6 +140,13 @@ export default function Profile() {
     navigate("/login");
   };
 
+  function getAvatar(avatar, name, fallback = "Người dùng") {
+    const displayName = name && name.trim() ? name : fallback;
+    return avatar && avatar.trim()
+      ? avatar
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}`;
+  }
+
   if (!user)
     return (
       <div style={{ color: "var(--text-color)" }}>Đang tải thông tin...</div>
@@ -154,12 +162,7 @@ export default function Profile() {
       <form className="profile-form" onSubmit={handleSave}>
         <div className="profile-avatar-row">
           <img
-            src={
-              form.avatar ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                form.full_name || "User"
-              )}`
-            }
+            src={getAvatar(form.avatar, form.full_name)}
             alt="avatar"
             className="profile-avatar-img"
           />

@@ -10,6 +10,13 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Navbar.css";
 
+function getAvatar(avatar, name, fallback = "Người dùng") {
+  const displayName = name && name.trim() ? name : fallback;
+  return avatar && avatar.trim()
+    ? avatar
+    : `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}`;
+}
+
 function MyNavbar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
@@ -24,6 +31,28 @@ function MyNavbar() {
     if (userData) setUser(JSON.parse(userData));
     else setUser(null);
   }, [location]);
+
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === "user") {
+        const userData = localStorage.getItem("user");
+        if (userData) setUser(JSON.parse(userData));
+        else setUser(null);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  useEffect(() => {
+    const handleUserUpdated = () => {
+      const userData = localStorage.getItem("user");
+      if (userData) setUser(JSON.parse(userData));
+      else setUser(null);
+    };
+    window.addEventListener("userUpdated", handleUserUpdated);
+    return () => window.removeEventListener("userUpdated", handleUserUpdated);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -188,11 +217,10 @@ function MyNavbar() {
                       }}
                     >
                       <img
-                        src={
-                          user.avatar ||
-                          "https://ui-avatars.com/api/?name=" +
-                            encodeURIComponent(user.name)
-                        }
+                        src={getAvatar(
+                          user.avatar,
+                          user.full_name || user.name
+                        )}
                         alt="avatar"
                         className="user-avatar"
                       />
