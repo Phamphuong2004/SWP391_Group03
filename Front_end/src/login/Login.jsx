@@ -75,8 +75,21 @@ export default function Login() {
         token: token,
       };
 
-      localStorage.setItem("user", JSON.stringify(userToStore));
-      await recordLoginHistory(userToStore.id, "success", userToStore.token);
+      const profileResponse = await axios.get(
+        "http://localhost:8080/api/user/profile",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const profileData = profileResponse.data;
+      const userWithProfile = { ...userToStore, ...profileData };
+      localStorage.setItem("user", JSON.stringify(userWithProfile));
+      window.dispatchEvent(new Event("userUpdated"));
+      await recordLoginHistory(
+        userWithProfile.id,
+        "success",
+        userWithProfile.token
+      );
 
       toast.success("Đăng nhập thành công!");
       navigate("/");
@@ -99,11 +112,24 @@ export default function Login() {
 
       if (response.data) {
         const userData = response.data;
-        localStorage.setItem("user", JSON.stringify(userData));
+        const profileResponse = await axios.get(
+          "http://localhost:8080/api/user/profile",
+          {
+            headers: { Authorization: `Bearer ${userData.token}` },
+          }
+        );
+        const profileData = profileResponse.data;
+        const userWithProfile = { ...userData, ...profileData };
+        localStorage.setItem("user", JSON.stringify(userWithProfile));
         localStorage.setItem("token", userData.token);
+        window.dispatchEvent(new Event("userUpdated"));
 
         // Record successful Google login
-        await recordLoginHistory(userData.id, "success", userData.token);
+        await recordLoginHistory(
+          userWithProfile.id,
+          "success",
+          userWithProfile.token
+        );
 
         toast.success("Đăng nhập thành công!");
         setTimeout(() => {
