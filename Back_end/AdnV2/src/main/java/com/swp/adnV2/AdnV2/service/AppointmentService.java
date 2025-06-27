@@ -33,6 +33,9 @@ public class AppointmentService {
     @Autowired
     private KitRepository kitRepository;
 
+    @Autowired
+    private SampleRepository sampleRepository;
+
 
     public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request ){
         try {
@@ -117,6 +120,12 @@ public class AppointmentService {
         response.setAppointmentDate(appointment.getAppointmentDate());
         response.setUserId(appointment.getUserId());
         response.setKitComponentName(appointment.getKitComponentName());
+        List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
+        // Chuyển thành List<String>
+        List<String> sampleTypes = samples.stream()
+                .map(Sample::getSampleType) // getSampleType là getter của trường bạn muốn show ra
+                .collect(Collectors.toList());
+        response.setSamples(sampleTypes);
         return response;
     }
 
