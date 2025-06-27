@@ -94,7 +94,7 @@ public class UserController {
         users.setPassword(registerRequest.getPassword());
         users.setPhone(registerRequest.getPhone());
         users.setAddress(registerRequest.getAddress());
-        users.setRole(Role.Customer.name());
+        users.setRole(Role.CUSTOMER.name());
         userRepository.save(users);
         response.put("Success", true);
         response.put("Message", "User registered successfully");

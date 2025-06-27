@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
@@ -7,6 +7,7 @@ import "./Booking.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import serviceTypes from "../serviceTypes";
 
 const genders = ["Nam", "Nữ", "Khác"];
 const testPurposes = ["Hành chính", "Dân sự"];
@@ -29,19 +30,6 @@ const testCategories = [
   "Cháu ngoại",
 ];
 
-const serviceTypes = [
-  "Xét nghiệm huyết thống",
-  "Xét nghiệm hài cốt",
-  "Xét nghiệm ADN cá nhân",
-  "Xét nghiệm ADN pháp lý",
-  "Xét nghiệm ADN trước sinh",
-  "Xét nghiệm ADN khác",
-  "Xét nghiệm ADN thai nhi",
-  "Xét nghiệm ADN di truyền",
-  "Xét nghiệm ADN hành chính",
-  "Xét nghiệm ADN dân sự",
-];
-
 function Booking() {
   const [form, setForm] = useState({
     fullName: "",
@@ -62,6 +50,8 @@ function Booking() {
   const [districts, setDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [guestSuccess, setGuestSuccess] = useState(false);
+  const [guestInfo, setGuestInfo] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -87,57 +77,80 @@ function Booking() {
     console.log("Giá trị gửi lên:", form);
     setIsLoading(true);
     try {
-      // Lấy ngày từ appointmentDate
       const datePart = form.appointmentDate
         ? form.appointmentDate.split("T")[0]
         : "";
-      // Lấy giờ từ collectionTime (dạng "HH:mm" hoặc "HH:mm:ss")
       let timePart = form.collectionTime;
       if (timePart && timePart.length === 5) timePart += ":00";
-      // Ghép lại thành chuỗi ISO
       const collectionTimeStr =
         datePart && timePart ? `${datePart}T${timePart}` : null;
 
+      const selectedService = serviceTypes.find(
+        (s) => s.service_id.toString() === form.serviceType
+      );
       const data = {
         ...form,
+        serviceType: selectedService ? selectedService.service_name : "",
         collectionTime: collectionTimeStr,
       };
 
       const userString = localStorage.getItem("user");
-      if (!userString) {
-        toast.error("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại.");
+      const serviceId = form.serviceType;
+      if (!serviceId) {
+        toast.error("Vui lòng chọn loại dịch vụ!");
         setIsLoading(false);
-        navigate("/login");
         return;
       }
+
+      let response;
+      if (!userString) {
+        // Nếu chưa đăng nhập, gọi API guest
+        response = await axios.post(
+          `/api/create/guest-appointment/${serviceId}`,
+          data
+        );
+        if (response.status === 201 && response.data?.appointmentId) {
+          setGuestSuccess(true);
+          setGuestInfo({
+            appointmentId: response.data.appointmentId,
+            email: form.email,
+            phone: form.phone,
+          });
+          localStorage.setItem("lastServiceId", response.data.appointmentId);
+          // Không chuyển hướng về trang chủ nữa!
+        } else {
+          toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
+        }
+        setIsLoading(false);
+        return;
+      }
+      // Đã đăng nhập, giữ nguyên logic cũ
       const user = JSON.parse(userString);
       const token = user.token;
-
-      const response = await axios.post("/api/create-appointment", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      response = await axios.post(
+        `/api/create-appointment/${serviceId}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.status === 201 && response.data?.appointmentId) {
         toast.success("Đặt lịch hẹn thành công!");
         localStorage.setItem("lastServiceId", response.data.appointmentId);
-
-        // Construct the full appointment object to pass in state
         const appointmentDataForState = {
-          ...form, // Start with the original form data
-          appointmentId: response.data.appointmentId, // Add the ID from the response
-          status: "PENDING", // Set initial status
+          ...form,
+          appointmentId: response.data.appointmentId,
+          status: "PENDING",
           collectionSampleTime: data.collectionTime,
-          user: { username: user.username }, // SECURE: Attach user info
+          user: { username: user.username },
         };
-        delete appointmentDataForState.collectionTime; // Clean up the old property
-
-        // Pass the complete, corrected object
-        // navigate(`/service-tracking/${response.data.appointmentId}`, {
-        //   state: { appointment: appointmentDataForState },
-        // });
-        navigate('/payment', { state: { appointment: appointmentDataForState } });
+        delete appointmentDataForState.collectionTime;
+        navigate("/payment", {
+          state: { appointment: appointmentDataForState },
+        });
       } else {
         toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
         navigate("/history");
@@ -145,12 +158,46 @@ function Booking() {
     } catch (err) {
       toast.error(
         err.response?.data?.message ||
-        "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
+          "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
       );
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (guestSuccess) {
+    return (
+      <div className="booking-success-container">
+        <h2>Đặt lịch thành công!</h2>
+        <p>
+          Mã đơn của bạn: <b>{guestInfo.appointmentId}</b>
+        </p>
+        <p>
+          Email: <b>{guestInfo.email}</b>
+        </p>
+        <p>
+          Số điện thoại: <b>{guestInfo.phone}</b>
+        </p>
+        <p>
+          Vui lòng lưu lại mã đơn, email và số điện thoại để tra cứu hoặc theo
+          dõi đơn.
+        </p>
+        <button
+          onClick={() => {
+            navigate("/history", {
+              state: {
+                guestEmail: guestInfo.email,
+                guestPhone: guestInfo.phone,
+                appointmentId: guestInfo.appointmentId,
+              },
+            });
+          }}
+        >
+          Theo dõi đơn
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="booking-page">
@@ -285,8 +332,8 @@ function Booking() {
               >
                 <option value="">Chọn loại dịch vụ</option>
                 {serviceTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
+                  <option key={type.service_id} value={type.service_id}>
+                    {type.service_name}
                   </option>
                 ))}
               </select>

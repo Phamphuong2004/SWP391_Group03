@@ -15,6 +15,9 @@ function MyNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
+  const lastGuest = JSON.parse(
+    localStorage.getItem("lastGuestAppointment") || "null"
+  );
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -84,18 +87,43 @@ function MyNavbar() {
               >
                 Xem kết quả
               </Nav.Link>
-              <Nav.Link href="/history" className="nav-link">
+              <Nav.Link
+                onClick={() => {
+                  const lastGuest = JSON.parse(
+                    localStorage.getItem("lastGuestAppointment") || "null"
+                  );
+                  if (
+                    lastGuest &&
+                    lastGuest.appointmentId &&
+                    lastGuest.email &&
+                    lastGuest.phone
+                  ) {
+                    navigate("/service-tracking", {
+                      state: {
+                        guestEmail: lastGuest.email,
+                        guestPhone: lastGuest.phone,
+                        appointmentId: lastGuest.appointmentId,
+                      },
+                    });
+                  } else if (user) {
+                    navigate("/history");
+                  } else {
+                    navigate("/service-tracking");
+                  }
+                }}
+                className="nav-link"
+              >
                 Theo dõi đơn
               </Nav.Link>
               {user &&
                 (user.role.toLowerCase() === "staff" ||
                   user.role.toLowerCase() === "manager") && (
                   <Nav.Link href="/receive-booking" className="nav-link">
-                    Dashboard
+                    Quản lý đơn
                   </Nav.Link>
                 )}
               {user &&
-                ["admin", "manager", "staff", "customer"].includes(
+                ["manager", "staff", "customer"].includes(
                   user.role.toLowerCase()
                 ) && (
                   <Nav.Link href="/login-history" className="nav-link">
@@ -107,9 +135,20 @@ function MyNavbar() {
                   Thanh toán
                 </Nav.Link>
               )}
-              {user && user.role.toLowerCase() === "customer" && (
-                <Nav.Link href="/booking-history" className="nav-link">
-                  Lịch sử đặt lịch
+              {user && user.role && user.role.toLowerCase() === "manager" && (
+                <Nav.Link
+                  onClick={() => navigate("/service-management")}
+                  className="nav-link"
+                >
+                  Quản lý dịch vụ
+                </Nav.Link>
+              )}
+              {user && user.role && user.role.toLowerCase() === "manager" && (
+                <Nav.Link
+                  onClick={() => navigate("/account-management")}
+                  className="nav-link"
+                >
+                  Quản lý tài khoản
                 </Nav.Link>
               )}
             </Nav>
@@ -152,7 +191,7 @@ function MyNavbar() {
                         src={
                           user.avatar ||
                           "https://ui-avatars.com/api/?name=" +
-                          encodeURIComponent(user.name)
+                            encodeURIComponent(user.name)
                         }
                         alt="avatar"
                         className="user-avatar"

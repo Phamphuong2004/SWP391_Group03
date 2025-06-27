@@ -38,7 +38,8 @@ import ViewDetails from "../ViewDetails/ViewDetails";
 import ReceiveBooking from "../ReceiveBooking/ReceiveBooking";
 import HomePage from "../Home/HomePage";
 import Payment from "../Payment/Payment";
-import BookingHistory from "../BookingHistory/BookingHistory";
+import ServiceManagement from "../ServiceManagement/ServiceManagement";
+import AccountManagement from "../AccountManagement/AccountManagement";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -98,10 +99,8 @@ function AppContent() {
           element={<HouseholdRegistration />}
         />
         <Route path="/service/adoption" element={<Adoption />} />
-        <Route
-          path="/service-tracking/:appointmentId"
-          element={<ServiceTracking />}
-        />
+        <Route path="/service-tracking/:id" element={<ServiceTracking />} />
+        <Route path="/service-tracking" element={<ServiceTracking />} />
         <Route
           path="/service/family-relationship"
           element={<FamilyRelationship />}
@@ -128,10 +127,18 @@ function AppContent() {
           }
         />
         <Route
-          path="/booking-history"
+          path="/service-management"
           element={
-            <ProtectedRoute allowedRoles={["customer"]}>
-              <BookingHistory />
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <ServiceManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account-management"
+          element={
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <AccountManagement />
             </ProtectedRoute>
           }
         />
