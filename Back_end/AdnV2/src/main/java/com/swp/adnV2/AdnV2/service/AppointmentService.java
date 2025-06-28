@@ -60,7 +60,7 @@ public class AppointmentService {
             appointment.setFingerprintFile(request.getFingerprintFile());
             appointment.setDistrict(request.getDistrict());
             appointment.setProvince(request.getProvince());
-
+            appointment.setCollectionLocation(request.getCollectionLocation());
             appointment.setStatus("PENDING");
 
             Services services = serviceRepository.findServicesByServiceId(serviceId);
@@ -128,14 +128,13 @@ public class AppointmentService {
         response.setServiceType(appointment.getServiceType());
         response.setCollectionSampleTime(appointment.getCollectionSampleTime());
         response.setFingerprintFile(appointment.getFingerprintFile());
+        response.setCollectionLocation(appointment.getCollectionLocation());
         response.setDistrict(appointment.getDistrict());
         response.setProvince(appointment.getProvince());
         response.setStatus(appointment.getStatus());
         response.setResultFile(appointment.getResultFile());
         response.setAppointmentDate(appointment.getAppointmentDate());
         response.setUserId(appointment.getUserId());
-        // Lấy samples theo appointmentId
-        Sample samples = sampleRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
 
         // Lấy kitComponentName từ Sample đầu tiên (nếu có)
         String kitComponentName = null;
@@ -211,9 +210,9 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         appointment.setCollectionSampleTime(request.getCollectionTime());
         appointment.setTestCategory(request.getTestCategory());
         appointment.setFingerprintFile(request.getFingerprintFile());
+        appointment.setCollectionLocation(request.getCollectionLocation());
         appointment.setDistrict(request.getDistrict());
         appointment.setProvince(request.getProvince());
-        appointment.setAppointmentDate(request.getAppointmentDate());
         Services services = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
         appointment.setService(services);
@@ -248,7 +247,8 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         sample.setCollectedDate(LocalDate.now());
         // ... set other sample fields if needed
         sampleRepository.save(sample);
-        return ResponseEntity.status(HttpStatus.CREATED).body(appointment);
+        AppointmentResponse response = convertToAppointmentResponse(appointment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     } catch (Exception e) {
         return ResponseEntity.badRequest()
                 .body("Failed to create appointment: " + e.getMessage());
@@ -309,6 +309,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
                 appointment.setResultFile(updateRequest.getResultFile());
             }
+
             // Kiểm tra và cập nhật kit_component_name nếu được cung cấp
             if (updateRequest.getKit_component_name() != null && !updateRequest.getKit_component_name().isEmpty()) {
                 // Lấy service từ appointment
