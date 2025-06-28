@@ -17,4 +17,8 @@ public interface KitRepository extends JpaRepository<KitComponent, Long> {
     List<KitComponent> findByService_ServiceIdAndComponentNameContainingIgnoreCase(Long serviceId, String componentName);
 
     List<KitComponent> findByService_ServiceId(Long serviceId);
+
+    KitComponent findByComponentName(String componentName);
+
+    Optional<KitComponent> findByComponentNameIgnoreCase(String componentName);
 }
