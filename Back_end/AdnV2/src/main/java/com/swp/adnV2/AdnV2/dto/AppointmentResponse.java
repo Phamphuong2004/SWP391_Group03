@@ -17,6 +17,7 @@ public class AppointmentResponse {
     private String serviceType;
     private LocalDateTime appointmentDate;
     private LocalDateTime collectionSampleTime;
+    private String collectionLocation;
     private String fingerprintFile;
     private String district;
     private String province;
@@ -28,6 +29,14 @@ public class AppointmentResponse {
 //    private Long userId;
 //    private String username;  // Optional: include if you want to show which user the appointment belongs to
 
+
+    public String getCollectionLocation() {
+        return collectionLocation;
+    }
+
+    public void setCollectionLocation(String collectionLocation) {
+        this.collectionLocation = collectionLocation;
+    }
 
     public String getSampleType() {
         return sampleType;
