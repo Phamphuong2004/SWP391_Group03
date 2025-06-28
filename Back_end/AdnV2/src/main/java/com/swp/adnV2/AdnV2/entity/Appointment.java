@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Appointment")
@@ -80,8 +81,33 @@ public class Appointment {
     @JoinColumn(name = "service_id")
     private Services service;
 
+    @ManyToOne
+    @JoinColumn(name = "kit_id")
+    private KitComponent kit;
+
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+    private Sample sample;
+
+
     // Default constructor
     public Appointment() {}
+
+
+    public Sample getSample() {
+        return sample;
+    }
+
+    public void setSample(Sample sample) {
+        this.sample = sample;
+    }
+
+    public KitComponent getKit() {
+        return kit;
+    }
+
+    public void setKit(KitComponent kit) {
+        this.kit = kit;
+    }
 
     public Services getService() {
         return service;

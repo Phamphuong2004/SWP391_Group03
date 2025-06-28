@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface SampleRepository extends JpaRepository<Sample, Long> {
     // Các phương thức liên quan đến Sample
-    List<Sample> findByAppointment_AppointmentId(Long appointmentId);
+    Sample findByAppointment_AppointmentId(Long appointmentId);
 
     @Query("SELECT s FROM Sample s WHERE s.appointment.appointmentId = :appointmentId")
     List<Sample> findByAppointmentId(@Param("appointmentId") Long appointmentId);
