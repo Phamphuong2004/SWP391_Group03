@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
 @RequestMapping("/api/payments")
 public class PaymentController {
     @Autowired
@@ -44,7 +45,7 @@ public class PaymentController {
         return paymentService.getAllPayments(); // Replace with actual implementation
     }
     @GetMapping("/appointment/{appointmentId}")
-    public List<Payment> getPaymentsByAppointmentId(@PathVariable Long appointmentId) {
+    public Payment getPaymentsByAppointmentId(@PathVariable Long appointmentId) {
         // Logic to retrieve payments by appointment ID
         return paymentService.getPaymentsByAppointmentId(appointmentId); // Replace with actual implementation
     }

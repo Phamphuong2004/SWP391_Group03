@@ -47,7 +47,7 @@ public class PaymentService {
     public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
     }
-    public List<Payment> getPaymentsByAppointmentId(Long appointmentId) {
+    public Payment getPaymentsByAppointmentId(Long appointmentId) {
         return paymentRepository.findByAppointment_AppointmentId(appointmentId);
     }
 
