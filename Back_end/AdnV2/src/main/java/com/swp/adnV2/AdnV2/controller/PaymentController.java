@@ -1,0 +1,52 @@
+package com.swp.adnV2.AdnV2.controller;
+
+import com.swp.adnV2.AdnV2.dto.PaymentCreationRequest;
+import com.swp.adnV2.AdnV2.dto.PaymentUpdateRequest;
+import com.swp.adnV2.AdnV2.entity.Payment;
+import com.swp.adnV2.AdnV2.service.PaymentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RequestMapping("/api/payments")
+public class PaymentController {
+    @Autowired
+    private PaymentService paymentService;
+
+    @PostMapping("/create")
+    public Payment createPayment(@RequestBody PaymentCreationRequest request) {
+        // Logic to create a payment
+        return paymentService.createPayment(request); // Replace with actual implementation
+    }
+    @GetMapping("/{paymentId}")
+    public Payment getPaymentById(@PathVariable Long paymentId) {
+        // Logic to retrieve a payment by ID
+        return paymentService.getPaymentById(paymentId); // Replace with actual implementation
+    }
+    @DeleteMapping("/{paymentId}")
+    public ResponseEntity<?> deletePayment(@PathVariable Long paymentId) {
+        // Logic to delete a payment
+        paymentService.deletePayment(paymentId); // Replace with actual implementation
+        return ResponseEntity.ok().build();
+    }
+    @PutMapping("/{paymentId}")
+    public Payment updatePayment(@PathVariable Long paymentId, @RequestBody PaymentUpdateRequest request) {
+        // Logic to update a payment
+        return paymentService.updatePayment(paymentId, request); // Replace with actual implementation
+    }
+    @GetMapping("/all")
+    public List<Payment> getAllPayments() {
+        // Logic to retrieve all payments
+        return paymentService.getAllPayments(); // Replace with actual implementation
+    }
+    @GetMapping("/appointment/{appointmentId}")
+    public List<Payment> getPaymentsByAppointmentId(@PathVariable Long appointmentId) {
+        // Logic to retrieve payments by appointment ID
+        return paymentService.getPaymentsByAppointmentId(appointmentId); // Replace with actual implementation
+    }
+
+}
