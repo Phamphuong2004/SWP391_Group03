@@ -216,11 +216,16 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         Services services = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
         appointment.setService(services);
-        KitComponent kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
-        if (kitComponent == null) {
-            return ResponseEntity.badRequest().body("Invalid kit component name");
+
+        // Xử lý kit (nếu có)
+        KitComponent kitComponent = null;
+        if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
+            kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
+            if (kitComponent == null) {
+                return ResponseEntity.badRequest().body("Invalid kit component name");
+            }
+            appointment.setKit(kitComponent);
         }
-        appointment.setKit(kitComponent);
 
         // Thêm các thông tin mặc định
         appointment.setStatus("PENDING"); // Trạng thái mặc định khi tạo cuộc hẹn
@@ -240,12 +245,19 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         appointment = appointmentRepository.save(appointment);
         // Create Sample
         Sample sample = new Sample();
-        sample.setSampleType(request.getSampleType());
-        sample.setKitComponent(kitComponent);
         sample.setAppointment(appointment);
         sample.setUsers(appointment.getUser());
         sample.setCollectedDate(LocalDate.now());
-        // ... set other sample fields if needed
+
+        // Set kitComponent nếu có, nếu không thì sẽ là null
+        sample.setKitComponent(kitComponent);
+
+        // Set sampleType nếu có, nếu không thì sẽ là null
+        if (request.getSampleType() != null && !request.getSampleType().isEmpty()) {
+            sample.setSampleType(request.getSampleType());
+        } else {
+            sample.setSampleType(null);
+        }
         sampleRepository.save(sample);
         AppointmentResponse response = convertToAppointmentResponse(appointment);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -309,6 +321,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
                 appointment.setResultFile(updateRequest.getResultFile());
             }
+            boolean updatedSample = false;
 
             // Kiểm tra và cập nhật kit_component_name nếu được cung cấp
             if (updateRequest.getKit_component_name() != null && !updateRequest.getKit_component_name().isEmpty()) {
@@ -337,12 +350,28 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                 Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
                 if (sample != null) {
                     sample.setKitComponent(kitComponent);
+                    if (updateRequest.getSampleType() != null && !updateRequest.getSampleType().isEmpty()) {
+                        sample.setSampleType(updateRequest.getSampleType());
+                    }
                     sampleRepository.save(sample);
+                    updatedSample = true;
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("No sample found for the appointment ID " + appointmentId);
                 }
 
+            }
+
+            // Nếu chỉ muốn update sampleType mà không gửi kit_component_name
+            if (!updatedSample && updateRequest.getSampleType() != null && !updateRequest.getSampleType().isEmpty()) {
+                Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+                if (sample != null) {
+                    sample.setSampleType(updateRequest.getSampleType());
+                    sampleRepository.save(sample);
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("No sample found for the appointment ID " + appointmentId);
+                }
             }
 
             appointmentRepository.save(appointment);

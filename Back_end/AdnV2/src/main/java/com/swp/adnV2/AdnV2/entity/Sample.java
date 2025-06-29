@@ -29,7 +29,7 @@ public class Sample {
     private Users users;
 
     @ManyToOne
-    @JoinColumn(name = "kit_component_id", nullable = false)
+    @JoinColumn(name = "kit_component_id", nullable = true)
     private KitComponent kitComponent;
 
     @OneToOne
