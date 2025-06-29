@@ -12,6 +12,15 @@ public class ResultCreationRequest {
     private String status = "Pending";
     private Sample sample;
     private Users users;
+    private String resultFile;
+
+    public String getResultFile() {
+        return resultFile;
+    }
+
+    public void setResultFile(String resultFile) {
+        this.resultFile = resultFile;
+    }
 
     public LocalDate getResultDate() {
         return resultDate;

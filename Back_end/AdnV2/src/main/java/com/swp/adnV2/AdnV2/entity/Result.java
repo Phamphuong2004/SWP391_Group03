@@ -24,6 +24,9 @@ public class Result {
     @Column(name = "status", columnDefinition = "NVARCHAR(20) DEFAULT 'Pending'")
     private String status = "Pending";
 
+    @Column(name = "result_file", columnDefinition = "NVARCHAR(255)")
+    private String resultFile;
+
     @ManyToOne
     @JoinColumn(name = "sample_id")
     private Sample sample;
@@ -93,6 +96,13 @@ public class Result {
         this.status = status;
     }
 
+    public String getResultFile() {
+        return resultFile;
+    }
+    public void setResultFile(String resultFile) {
+        this.resultFile = resultFile;
+    }
+
     @Override
     public String toString() {
         return "Result{" +
@@ -103,6 +113,7 @@ public class Result {
                 ", sample=" + sample +
                 ", user=" + users +
                 ", status='" + status + '\'' +
+                ", resultFile='" + resultFile + '\'' +
                 '}';
     }
 }
