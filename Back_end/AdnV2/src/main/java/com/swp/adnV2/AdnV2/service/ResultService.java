@@ -22,6 +22,7 @@ public class ResultService {
         result.setSample(request.getSample());
         result.setStatus(request.getStatus());
         result.setUser(request.getUsers());
+        result.setResultFile(request.getResultFile());
         return resultRepository.save(result);
     }
 
@@ -34,7 +35,7 @@ public class ResultService {
         result.setSample(request.getSample());
         result.setStatus(request.getStatus());
         result.setUser(request.getUsers());
-
+        result.setResultFile(request.getResultFile());
         return resultRepository.save(result);
     }
 

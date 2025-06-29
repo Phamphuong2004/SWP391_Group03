@@ -12,6 +12,9 @@ public class ResultUpdateRequest {
     private String status = "Pending";
     private Sample sample;
     private Users users;
+    private String resultFile;
+
+
 
     public LocalDate getResultDate() {
         return resultDate;
@@ -59,5 +62,13 @@ public class ResultUpdateRequest {
 
     public void setUsers(Users users) {
         this.users = users;
+    }
+
+    public String getResultFile() {
+        return resultFile;
+    }
+
+    public void setResultFile(String resultFile) {
+        this.resultFile = resultFile;
     }
 }
