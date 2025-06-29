@@ -10,5 +10,4 @@ import java.util.List;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Payment findByAppointment_AppointmentId(Long appointmentId);
     // Additional query methods can be defined here if needed
-
 }
