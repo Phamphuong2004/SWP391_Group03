@@ -6,6 +6,7 @@ import com.swp.adnV2.AdnV2.dto.ReportUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Report;
 import com.swp.adnV2.AdnV2.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
