@@ -1,6 +1,7 @@
 package com.swp.adnV2.AdnV2.controller;
 
 import com.swp.adnV2.AdnV2.dto.ResultCreationRequest;
+import com.swp.adnV2.AdnV2.dto.ResultReponse;
 import com.swp.adnV2.AdnV2.dto.ResultUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Result;
 import com.swp.adnV2.AdnV2.service.ResultService;
@@ -8,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
-
-
 @RestController
 @RequestMapping("/api/results")
 public class ResultController {
@@ -20,25 +18,25 @@ public class ResultController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
-    Result createRequest(@RequestBody ResultCreationRequest request) {
+    ResultReponse createRequest(@RequestBody ResultCreationRequest request) {
         return resultService.createResult(request);
     }
 
     @GetMapping("/getList")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
-    public List<Result> getAllResults() {
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
+    public List<ResultReponse> getAllResults() {
         return resultService.getAllResults();
     }
 
     @GetMapping("/{result_id}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
-    public Result getResultById(@PathVariable("result_id") Long resultId) {
+    public ResultReponse getResultById(@PathVariable("result_id") Long resultId) {
         return resultService.getResultById(resultId);
     }
 
     @PutMapping("/{result_id}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
-    public Result updateResult(@PathVariable Long result_id, @RequestBody ResultUpdateRequest request) {
+    public ResultReponse updateResult(@PathVariable Long result_id, @RequestBody ResultUpdateRequest request) {
         return resultService.updateResult(result_id, request);
     }
 

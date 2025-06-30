@@ -10,7 +10,7 @@ public class ResultCreationRequest {
     private String resultData;
     private String interpretation;
     private String status = "Pending";
-    private String sampletype;
+    private Long sampleId;
     private String username;
     private String resultFile;
 
@@ -54,12 +54,12 @@ public class ResultCreationRequest {
         this.status = status;
     }
 
-    public String getSampletype() {
-        return sampletype;
+    public Long getSampleId() {
+        return sampleId;
     }
 
-    public void setSampletype(String sampletype) {
-        this.sampletype = sampletype;
+    public void setSampleId(Long sampleId) {
+        this.sampleId = sampleId;
     }
 
     public String getUsername() {

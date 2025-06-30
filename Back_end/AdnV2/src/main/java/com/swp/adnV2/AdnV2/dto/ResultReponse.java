@@ -1,11 +1,9 @@
 package com.swp.adnV2.AdnV2.dto;
 
-import com.swp.adnV2.AdnV2.entity.Sample;
-import com.swp.adnV2.AdnV2.entity.Users;
-
 import java.time.LocalDate;
 
-public class ResultUpdateRequest {
+public class ResultReponse {
+    private Long resultId;
     private LocalDate resultDate;
     private String resultData;
     private String interpretation;
@@ -14,7 +12,13 @@ public class ResultUpdateRequest {
     private String username;
     private String resultFile;
 
+    public Long getResultId() {
+        return resultId;
+    }
 
+    public void setResultId(Long resultId) {
+        this.resultId = resultId;
+    }
 
     public LocalDate getResultDate() {
         return resultDate;
@@ -51,6 +55,7 @@ public class ResultUpdateRequest {
     public Long getSampleId() {
         return sampleId;
     }
+
     public void setSampleId(Long sampleId) {
         this.sampleId = sampleId;
     }
@@ -59,15 +64,15 @@ public class ResultUpdateRequest {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getResultFile() {
         return resultFile;
     }
 
     public void setResultFile(String resultFile) {
         this.resultFile = resultFile;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }

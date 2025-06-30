@@ -1,6 +1,7 @@
 package com.swp.adnV2.AdnV2.service;
 
 import com.swp.adnV2.AdnV2.dto.ResultCreationRequest;
+import com.swp.adnV2.AdnV2.dto.ResultReponse;
 import com.swp.adnV2.AdnV2.dto.ResultUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Result;
 import com.swp.adnV2.AdnV2.entity.Sample;
@@ -17,21 +18,21 @@ import java.util.List;
 public class ResultService {
    @Autowired
     private ResultRepository resultRepository;
+   @Autowired
     private SampleRepository sampleRepository;
+    @Autowired
     private UserRepository userRepository;
 
 
-    public Result createResult(ResultCreationRequest request) {
+    public ResultReponse createResult(ResultCreationRequest request) {
         Result result = new Result();
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        Sample sample = sampleRepository.findBySampletype(request.getSampletype());
-
-        if (sample == null) {
-            throw new RuntimeException("Sample not found with sampletype: " + request.getSampletype());
-        }
+        Sample sample = sampleRepository.findById(request.getSampleId())
+                .orElseThrow(() -> new RuntimeException("Sample not found with id: " + request.getSampleId()));
         result.setSample(sample);
+
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
         if (user == null) {
@@ -39,20 +40,30 @@ public class ResultService {
         }
         result.setUser(user);
         result.setResultFile(request.getResultFile());
-        return resultRepository.save(result);
+        resultRepository.save(result);
+        ResultReponse response = new ResultReponse();
+        response.setResultId(result.getResultId());
+        response.setResultDate(result.getResultDate());
+        response.setResultData(result.getResultData());
+        response.setInterpretation(result.getInterpretation());
+        response.setStatus(result.getStatus());
+        response.setSampleId(result.getSample().getSampleId());
+        response.setUsername(result.getUser().getUsername());
+        response.setResultFile(result.getResultFile());
+        return response;
     }
 
-    public Result updateResult(Long resultId, ResultUpdateRequest request) {
-        Result result = getResultById(resultId);
+    public ResultReponse updateResult(Long resultId, ResultUpdateRequest request) {
+        Result result = resultRepository.findById(resultId)
+                .orElseThrow(() -> new RuntimeException("Result not found with id: " + resultId));
 
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        Sample sample = sampleRepository.findBySampletype(request.getSampletype());
-        if (sample == null) {
-            throw new RuntimeException("Sample not found with sampletype: " + request.getSampletype());
-        }
+        Sample sample = sampleRepository.findById(request.getSampleId())
+                .orElseThrow(() -> new RuntimeException("Sample not found with id: " + request.getSampleId()));
         result.setSample(sample);
+
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
         if (user == null) {
@@ -60,19 +71,57 @@ public class ResultService {
         }
         result.setUser(user);
         result.setResultFile(request.getResultFile());
-        return resultRepository.save(result);
+        resultRepository.save(result);
+        ResultReponse response = new ResultReponse();
+        response.setResultId(result.getResultId());
+        response.setResultDate(result.getResultDate());
+        response.setResultData(result.getResultData());
+        response.setInterpretation(result.getInterpretation());
+        response.setStatus(result.getStatus());
+        response.setSampleId(result.getSample().getSampleId());
+        response.setUsername(result.getUser().getUsername());
+        response.setResultFile(result.getResultFile());
+        return response;
     }
 
     public void deleteResult(Long resultId) {
         resultRepository.deleteById(resultId);
     }
 
-    public List<Result> getAllResults() {
-        return resultRepository.findAll();
+    public List<ResultReponse> getAllResults() {
+        List<Result> results = resultRepository.findAll();
+        if (results.isEmpty()) {
+            throw new RuntimeException("No results found");
+        }
+        return results.stream().map(result -> {
+            ResultReponse response = new ResultReponse();
+            response.setResultId(result.getResultId());
+            response.setResultDate(result.getResultDate());
+            response.setResultData(result.getResultData());
+            response.setInterpretation(result.getInterpretation());
+            response.setStatus(result.getStatus());
+            response.setSampleId(result.getSample().getSampleId());
+            response.setUsername(result.getUser().getUsername());
+            response.setResultFile(result.getResultFile());
+            return response;
+        }).toList();
     }
 
-    public Result getResultById(Long resultId) {
-        return resultRepository.findById(resultId)
+    public ResultReponse getResultById(Long resultId) {
+        Result result = resultRepository.findById(resultId)
                 .orElseThrow(() -> new RuntimeException("Result not found with id: " + resultId));
+        if (result == null) {
+            throw new RuntimeException("Result not found with id: " + resultId);
+        }
+        ResultReponse response = new ResultReponse();
+        response.setResultId(result.getResultId());
+        response.setResultDate(result.getResultDate());
+        response.setResultData(result.getResultData());
+        response.setInterpretation(result.getInterpretation());
+        response.setStatus(result.getStatus());
+        response.setSampleId(result.getSample().getSampleId());
+        response.setUsername(result.getUser().getUsername());
+        response.setResultFile(result.getResultFile());
+        return response;
     }
 }
