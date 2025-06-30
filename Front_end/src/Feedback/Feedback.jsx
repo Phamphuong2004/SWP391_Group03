@@ -1,112 +1,216 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Thêm dòng này
+import React, { useState, useEffect } from "react";
 import "./Feedback.css";
-import { sendFeedback } from "../FeedbackServices";
+import {
+  createFeedback,
+  getFeedbackByServiceName,
+  deleteFeedback,
+  updateFeedback,
+} from "../FeedbackServices";
 
-// Danh sách dịch vụ mẫu, bạn có thể lấy từ DashboardResults hoặc ADNTestingServices
+// Danh sách dịch vụ mẫu có cả id và tên
 const SERVICES = [
-  "Xét nghiệm huyết thống cha-con",
-  "Xét nghiệm huyết thống mẹ-con",
-  "Xét nghiệm anh/chị/em ruột",
-  "Xét nghiệm ông/bà - cháu",
-  "Xét nghiệm song sinh",
-  "Xét nghiệm ADN trước sinh",
-  "Xét nghiệm phả hệ di truyền",
-  "Xét nghiệm gen bệnh lý di truyền",
+  { id: 1, name: "Xét nghiệm huyết thống cha-con" },
+  { id: 2, name: "Xét nghiệm huyết thống mẹ-con" },
+  { id: 3, name: "Xét nghiệm anh/chị/em ruột" },
+  { id: 4, name: "Xét nghiệm ông/bà - cháu" },
+  { id: 5, name: "Xét nghiệm song sinh" },
+  { id: 6, name: "Xét nghiệm ADN trước sinh" },
+  { id: 7, name: "Xét nghiệm phả hệ di truyền" },
+  { id: 8, name: "Xét nghiệm gen bệnh lý di truyền" },
 ];
 
 export default function Feedback() {
-  const [service, setService] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  // Thêm state để điều khiển modal
+  const [serviceId, setServiceId] = useState("");
+  const [content, setContent] = useState("");
+  const [rating, setRating] = useState(5);
   const [showSuccess, setShowSuccess] = useState(false);
-  const navigate = useNavigate(); // Thêm dòng này
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editContent, setEditContent] = useState("");
+  const [editRating, setEditRating] = useState(5);
+
+  // Lấy user info từ localStorage
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const role = user?.role;
+  const username = user?.username;
+
+  // Lấy feedback khi chọn dịch vụ (chỉ staff/manager mới được xem)
+  useEffect(() => {
+    if ((role === "manager" || role === "staff") && serviceId) {
+      setLoading(true);
+      const serviceName = SERVICES.find(
+        (s) => s.id === Number(serviceId)
+      )?.name;
+      if (!serviceName) return;
+      getFeedbackByServiceName(serviceName)
+        .then((data) => setFeedbacks(Array.isArray(data) ? data : []))
+        .finally(() => setLoading(false));
+    } else {
+      setFeedbacks([]);
+    }
+  }, [serviceId, showSuccess, role]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await sendFeedback({ name, email, service, message, phone });
-    setShowSuccess(true); // Chỉ hiện modal, không cần setSubmitted
-    // Optionally reset form fields:
-    setService("");
-    setName("");
-    setEmail("");
-    setPhone("");
-    setMessage("");
+    if (!serviceId) return;
+    await createFeedback(Number(serviceId), content, rating);
+    setShowSuccess(true);
+    setContent("");
+    setRating(5);
+  };
+
+  // Sửa feedback
+  const handleEdit = (fb) => {
+    setEditingId(fb.feedbackId);
+    setEditContent(fb.content);
+    setEditRating(fb.rating || 5);
+  };
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    await updateFeedback(editingId, editContent, editRating);
+    setEditingId(null);
+    setEditContent("");
+    setEditRating(5);
+    setShowSuccess(true);
+  };
+  const handleDelete = async (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa feedback này?")) {
+      await deleteFeedback(id);
+      setFeedbacks((prev) => prev.filter((f) => f.feedbackId !== id));
+    }
   };
 
   return (
     <div className="feedback-container">
       <h2 className="feedback-title">Gửi phản hồi về dịch vụ xét nghiệm ADN</h2>
-      {submitted ? (
-        <></>
-      ) : (
+      {/* Chỉ customer mới thấy form gửi feedback */}
+      {role === "customer" && (
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="feedback-label">Dịch vụ đã sử dụng</label>
             <select
               className="feedback-input"
-              value={service}
-              onChange={(e) => setService(e.target.value)}
+              value={serviceId}
+              onChange={(e) => setServiceId(e.target.value)}
               required
             >
               <option value="">Chọn dịch vụ</option>
               {SERVICES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
+                <option key={s.id} value={s.id}>
+                  {s.name}
                 </option>
               ))}
             </select>
-          </div>
-          <div className="mb-3">
-            <label className="feedback-label">Họ và tên</label>
-            <input
-              type="text"
-              className="feedback-input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="feedback-label">Email</label>
-            <input
-              type="email"
-              className="feedback-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="feedback-label">Số điện thoại</label>
-            <input
-              type="tel"
-              className="feedback-input"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              pattern="[0-9]{10,15}"
-              placeholder="Nhập số điện thoại"
-            />
           </div>
           <div className="mb-3">
             <label className="feedback-label">Nội dung phản hồi</label>
             <textarea
               className="feedback-textarea"
               rows={4}
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
               required
             />
           </div>
-          <button type="submit" className="feedback-btn">
+          <div className="mb-3">
+            <label className="feedback-label">Đánh giá (1-5)</label>
+            <input
+              type="number"
+              min={1}
+              max={5}
+              value={rating}
+              onChange={(e) => setRating(Number(e.target.value))}
+              required
+              className="feedback-input"
+            />
+          </div>
+          <button type="submit" className="feedback-btn" disabled={loading}>
             Gửi phản hồi
           </button>
         </form>
+      )}
+
+      {/* Danh sách feedback chỉ staff/manager mới xem được */}
+      {(role === "manager" || role === "staff") && serviceId && (
+        <div className="feedback-list">
+          <h3>
+            Phản hồi cho dịch vụ:{" "}
+            {SERVICES.find((s) => s.id === Number(serviceId))?.name}
+          </h3>
+          {loading ? (
+            <p>Đang tải...</p>
+          ) : feedbacks.length === 0 ? (
+            <p>Chưa có phản hồi nào.</p>
+          ) : (
+            <ul>
+              {feedbacks.map((fb) => (
+                <li key={fb.feedbackId} className="feedback-item">
+                  <div>
+                    <b>{fb.username || fb.email || "Ẩn danh"}</b>:{" "}
+                    {editingId === fb.feedbackId ? (
+                      <form
+                        onSubmit={handleEditSubmit}
+                        style={{ display: "inline" }}
+                      >
+                        <input
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          required
+                        />
+                        <input
+                          type="number"
+                          min={1}
+                          max={5}
+                          value={editRating}
+                          onChange={(e) =>
+                            setEditRating(Number(e.target.value))
+                          }
+                          required
+                          style={{ width: 40, marginLeft: 8 }}
+                        />
+                        <button type="submit">Lưu</button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingId(null)}
+                        >
+                          Hủy
+                        </button>
+                      </form>
+                    ) : (
+                      <>
+                        {fb.content}{" "}
+                        <span style={{ color: "#f39c12" }}>
+                          [Đánh giá: {fb.rating || 5}]
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {(role === "manager" ||
+                    role === "staff" ||
+                    fb.username === username) && (
+                    <>
+                      <button
+                        className="feedback-delete-btn"
+                        onClick={() => handleDelete(fb.feedbackId)}
+                      >
+                        Xóa
+                      </button>
+                      {editingId !== fb.feedbackId && (
+                        <button
+                          className="feedback-edit-btn"
+                          onClick={() => handleEdit(fb)}
+                        >
+                          Sửa
+                        </button>
+                      )}
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       )}
 
       {/* Modal thông báo thành công */}
@@ -126,7 +230,6 @@ export default function Feedback() {
               style={{ background: "#2196f3", marginTop: 16 }}
               onClick={() => {
                 setShowSuccess(false);
-                navigate("/"); // Chuyển về trang chủ
               }}
             >
               Đóng

@@ -1,3 +1,5 @@
+import axios from "axios";
+
 /**
  * Lưu feedback vào localStorage (giả lập backend)
  * @param {Object} feedback
@@ -26,4 +28,55 @@ export function sendFeedback({ name, email, service, message, phone }) {
  */
 export function getFeedbacks() {
   return JSON.parse(localStorage.getItem("feedbacks") || "[]");
+}
+
+export async function createFeedback(serviceId, content, rating) {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const token = user?.token;
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await axios.post(
+    `/api/feedback/create/${serviceId}`,
+    { content, rating },
+    {
+      headers: authHeader,
+    }
+  );
+  return res.data;
+}
+
+export async function updateFeedback(feedbackId, content, rating) {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const token = user?.token;
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await axios.put(
+    `/api/feedback/update/${feedbackId}`,
+    { content, rating },
+    {
+      headers: authHeader,
+    }
+  );
+  return res.data;
+}
+
+export async function deleteFeedback(feedbackId) {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const token = user?.token;
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+  await axios.delete(`/api/feedback/delete/${feedbackId}`, {
+    headers: authHeader,
+  });
+  return true;
+}
+
+export async function getFeedbackByServiceName(serviceName) {
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const token = user?.token;
+  const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
+  const res = await axios.get(
+    `/api/feedback/search/by-service-name/${serviceName}`,
+    {
+      headers: authHeader,
+    }
+  );
+  return res.data;
 }

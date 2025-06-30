@@ -69,9 +69,6 @@ const Payment = () => {
     );
   }
 
-  const user =
-    appointment.user || JSON.parse(localStorage.getItem("user") || "{}");
-
   const serviceDetails = ADNTestingServices.find(
     (service) => service.testType === editForm.serviceType
   );
@@ -95,22 +92,34 @@ const Payment = () => {
     }
     setLoading(true);
     try {
-      // Cập nhật thông tin chỉnh sửa trước khi thanh toán (nếu có thay đổi)
-      await axios.put(`/api/update-appointment/${appointment.appointmentId}`, {
-        ...editForm,
-        paymentStatus: "PAID",
+      // Lấy token từ localStorage
+      const userString = localStorage.getItem("user");
+      const token = userString ? JSON.parse(userString).token : null;
+      if (!token) {
+        toast.error("Bạn cần đăng nhập để thực hiện thanh toán!");
+        setLoading(false);
+        return;
+      }
+      // Chuẩn bị dữ liệu payment
+      let status = "PENDING";
+      if (paymentMethod.toLowerCase() === "online") status = "PAID";
+      const paymentData = {
+        appointmentId: appointment.appointmentId,
+        amount: serviceDetails?.price || 1,
+        method: paymentMethod.toUpperCase(),
+        status,
+      };
+      console.log("Dữ liệu gửi lên POST /api/payments/create:", paymentData);
+      await axios.post("/api/payments/create", paymentData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       toast.success(
         "Thanh toán thành công! Lịch hẹn của bạn đã được xác nhận."
       );
       setPaymentSuccess(true);
-      // Cập nhật lại appointment để hiển thị thông tin mới
-      setAppointment((prev) => ({
-        ...prev,
-        ...editForm,
-        paymentStatus: "PAID",
-      }));
-    } catch (err) {
+    } catch {
       toast.error("Thanh toán thất bại. Vui lòng thử lại!");
     } finally {
       setLoading(false);
@@ -266,6 +275,37 @@ const Payment = () => {
             </label>
           </div>
         </div>
+
+        {/* Hiển thị mã QR khi chọn thanh toán trực tuyến */}
+        {paymentMethod === "online" && (
+          <div className="qr-payment-section">
+            <h3>Quét mã QR để thanh toán</h3>
+            <div className="qr-container">
+              <img
+                src="/z6747527619716_88085c5bdad6c2700ec8923daaf73e09.jpg"
+                alt="Mã QR thanh toán"
+                className="qr-code"
+              />
+            </div>
+            <div className="payment-instructions">
+              <p>
+                <strong>Hướng dẫn thanh toán:</strong>
+              </p>
+              <ol>
+                <li>Mở ứng dụng ngân hàng hoặc ví điện tử trên điện thoại</li>
+                <li>Chọn tính năng quét mã QR</li>
+                <li>Quét mã QR bên trên</li>
+                <li>
+                  Nhập số tiền: <strong>{serviceDetails?.price}</strong>
+                </li>
+                <li>Xác nhận thanh toán</li>
+                <li>
+                  Nhấn nút "Xác nhận & Thanh toán" bên dưới sau khi hoàn tất
+                </li>
+              </ol>
+            </div>
+          </div>
+        )}
 
         <button
           className="btn btn-primary"

@@ -350,3 +350,93 @@
   background: #23272f;
   color: #ffd600;
 }
+
+/* QR Payment Section Styles */
+.qr-payment-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+  border-radius: 16px;
+  border: 2px solid #e3f2fd;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.qr-payment-section h3 {
+  color: #1976d2;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.1);
+}
+
+.qr-code {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 2px solid #e3f2fd;
+  transition: transform 0.2s ease;
+}
+
+.qr-code:hover {
+  transform: scale(1.05);
+}
+
+.payment-instructions {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.payment-instructions p {
+  color: #1976d2;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.payment-instructions ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.payment-instructions li {
+  color: #424242;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+.payment-instructions strong {
+  color: #e74c3c;
+  font-weight: 700;
+}
+
+/* Dark theme support for QR section */
+.dark-theme .qr-payment-section {
+  background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+  border-color: #42a5f5;
+}
+
+.dark-theme .qr-container {
+  background: #263238;
+}
+
+.dark-theme .payment-instructions {
+  background: #263238;
+  color: #e3f2fd;
+}
+
+.dark-theme .payment-instructions li {
+  color: #e3f2fd;
+}

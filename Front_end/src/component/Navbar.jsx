@@ -180,6 +180,16 @@ function MyNavbar() {
                   Quản lý tài khoản
                 </Nav.Link>
               )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/view-feedback")}
+                    className="nav-link"
+                  >
+                    Xem đơn feedback
+                  </Nav.Link>
+                )}
             </Nav>
             <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
               <Form.Control
