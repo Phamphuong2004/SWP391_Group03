@@ -1,6 +1,7 @@
 package com.swp.adnV2.AdnV2.controller;
 
 import com.swp.adnV2.AdnV2.dto.PaymentCreationRequest;
+import com.swp.adnV2.AdnV2.dto.PaymentReponse;
 import com.swp.adnV2.AdnV2.dto.PaymentUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Payment;
 import com.swp.adnV2.AdnV2.service.PaymentService;
@@ -20,12 +21,12 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping("/create")
-    public Payment createPayment(@RequestBody PaymentCreationRequest request) {
+    public PaymentReponse createPayment(@RequestBody PaymentCreationRequest request) {
         // Logic to create a payment
         return paymentService.createPayment(request); // Replace with actual implementation
     }
     @GetMapping("/{paymentId}")
-    public Payment getPaymentById(@PathVariable Long paymentId) {
+    public PaymentReponse getPaymentById(@PathVariable Long paymentId) {
         // Logic to retrieve a payment by ID
         return paymentService.getPaymentById(paymentId); // Replace with actual implementation
     }
@@ -36,17 +37,17 @@ public class PaymentController {
         return ResponseEntity.ok().build();
     }
     @PutMapping("/{paymentId}")
-    public Payment updatePayment(@PathVariable Long paymentId, @RequestBody PaymentUpdateRequest request) {
+    public PaymentReponse updatePayment(@PathVariable Long paymentId, @RequestBody PaymentUpdateRequest request) {
         // Logic to update a payment
         return paymentService.updatePayment(paymentId, request); // Replace with actual implementation
     }
     @GetMapping("/all")
-    public List<Payment> getAllPayments() {
+    public List<PaymentReponse> getAllPayments() {
         // Logic to retrieve all payments
         return paymentService.getAllPayments(); // Replace with actual implementation
     }
     @GetMapping("/appointment/{appointmentId}")
-    public Payment getPaymentsByAppointmentId(@PathVariable Long appointmentId) {
+    public PaymentReponse getPaymentsByAppointmentId(@PathVariable Long appointmentId) {
         // Logic to retrieve payments by appointment ID
         return paymentService.getPaymentsByAppointmentId(appointmentId); // Replace with actual implementation
     }

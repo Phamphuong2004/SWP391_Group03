@@ -1,6 +1,7 @@
 package com.swp.adnV2.AdnV2.controller;
 
 import com.swp.adnV2.AdnV2.dto.ResultCreationRequest;
+import com.swp.adnV2.AdnV2.dto.ResultReponse;
 import com.swp.adnV2.AdnV2.dto.ResultUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Result;
 import com.swp.adnV2.AdnV2.service.ResultService;
@@ -15,22 +16,22 @@ public class ResultController {
     private ResultService resultService;
 
     @PostMapping("/create")
-    Result createRequest(@RequestBody ResultCreationRequest request) {
+    ResultReponse createRequest(@RequestBody ResultCreationRequest request) {
         return resultService.createResult(request);
     }
 
     @GetMapping("/getList")
-    public List<Result> getAllResults() {
+    public List<ResultReponse> getAllResults() {
         return resultService.getAllResults();
     }
 
     @GetMapping("/{result_id}")
-    public Result getResultById(@PathVariable("result_id") Long resultId) {
+    public ResultReponse getResultById(@PathVariable("result_id") Long resultId) {
         return resultService.getResultById(resultId);
     }
 
     @PutMapping("/{result_id}")
-    public Result updateResult(@PathVariable Long result_id, @RequestBody ResultUpdateRequest request) {
+    public ResultReponse updateResult(@PathVariable Long result_id, @RequestBody ResultUpdateRequest request) {
         return resultService.updateResult(result_id, request);
     }
 

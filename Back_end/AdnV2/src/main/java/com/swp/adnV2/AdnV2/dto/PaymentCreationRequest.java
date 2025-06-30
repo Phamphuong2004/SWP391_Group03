@@ -1,14 +1,8 @@
 package com.swp.adnV2.AdnV2.dto;
 
-import com.swp.adnV2.AdnV2.entity.Appointment;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-
 import java.time.LocalDateTime;
 
 public class PaymentCreationRequest {
-    private Long paymentId;
 
     private double amount;
 
@@ -19,14 +13,6 @@ public class PaymentCreationRequest {
     private String status = "Pending";
 
     private Long appointmentId;
-
-    public Long getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(Long paymentId) {
-        this.paymentId = paymentId;
-    }
 
     public double getAmount() {
         return amount;
