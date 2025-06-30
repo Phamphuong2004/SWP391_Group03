@@ -26,12 +26,7 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        Sample sample = sampleRepository.findBySampletype(request.getSampletype());
-
-        if (sample == null) {
-            throw new RuntimeException("Sample not found with sampletype: " + request.getSampletype());
-        }
-        result.setSample(sample);
+        
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
         if (user == null) {
@@ -48,11 +43,7 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        Sample sample = sampleRepository.findBySampletype(request.getSampletype());
-        if (sample == null) {
-            throw new RuntimeException("Sample not found with sampletype: " + request.getSampletype());
-        }
-        result.setSample(sample);
+
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
         if (user == null) {
