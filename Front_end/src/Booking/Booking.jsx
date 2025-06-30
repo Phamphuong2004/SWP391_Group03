@@ -30,6 +30,29 @@ const testCategories = [
   "Cháu ngoại",
 ];
 
+// Dropdown options for collectionLocation
+const collectionLocations = ["Tại nhà", "Tại cơ sở y tế"];
+// Dropdown options for kitComponentName (sample from your DB)
+const kitComponentNames = [
+  "Sample Tube",
+  "Barcode Sticker",
+  "Instruction Manual",
+  "Consent Form",
+  "Bone Collection Kit",
+  "Sterile Container",
+  "DNA Card",
+  "Desiccant Packet",
+  "Legal Consent Form",
+  "Evidence Seal Sticker",
+  "Fetal Sample Tube",
+  "Mother Consent Form",
+  "Multi-Purpose Swab",
+  "Non-Invasive Kit",
+  "Genetic Risk Form",
+  "Application Form",
+  "Child Consent Envelope",
+];
+
 function Booking() {
   const [form, setForm] = useState({
     fullName: "",
@@ -45,6 +68,9 @@ function Booking() {
     district: "",
     province: "",
     testCategory: "",
+    collectionLocation: "",
+    kitComponentName: "",
+    sampleType: "",
   });
 
   const [districts, setDistricts] = useState([]);
@@ -89,9 +115,22 @@ function Booking() {
         (s) => s.service_id.toString() === form.serviceType
       );
       const data = {
-        ...form,
+        fullName: form.fullName,
+        dob: form.dob,
+        phone: form.phone,
+        email: form.email,
+        gender: form.gender,
+        testPurpose: form.testPurpose,
         serviceType: selectedService ? selectedService.service_name : "",
+        appointmentDate: form.appointmentDate,
         collectionTime: collectionTimeStr,
+        fingerprintFile: form.fingerprintFile,
+        district: form.district,
+        province: form.province,
+        testCategory: form.testCategory,
+        collectionLocation: form.collectionLocation,
+        kitComponentName: form.kitComponentName,
+        sampleType: form.sampleType,
       };
 
       const userString = localStorage.getItem("user");
@@ -415,6 +454,49 @@ function Booking() {
                   </option>
                 ))}
               </select>
+            </label>
+            <label>
+              Địa điểm lấy mẫu (collectionLocation)
+              <select
+                name="collectionLocation"
+                value={form.collectionLocation}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn địa điểm lấy mẫu</option>
+                {collectionLocations.map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Bộ kit sử dụng (kitComponentName)
+              <select
+                name="kitComponentName"
+                value={form.kitComponentName}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn bộ kit</option>
+                {kitComponentNames.map((kit) => (
+                  <option key={kit} value={kit}>
+                    {kit}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Loại mẫu (sampleType)
+              <input
+                type="text"
+                name="sampleType"
+                value={form.sampleType}
+                onChange={handleChange}
+                placeholder="Nhập loại mẫu (máu, niêm mạc, ... )"
+                required
+              />
             </label>
           </div>
         </div>

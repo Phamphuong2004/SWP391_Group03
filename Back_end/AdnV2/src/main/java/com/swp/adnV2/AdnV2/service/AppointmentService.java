@@ -37,6 +37,12 @@ public class AppointmentService {
     @Autowired
     private SampleRepository sampleRepository;
 
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
+    private ResultRepository resultRepository;
+
 
     public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request ){
         try {
@@ -132,7 +138,6 @@ public class AppointmentService {
         response.setDistrict(appointment.getDistrict());
         response.setProvince(appointment.getProvince());
         response.setStatus(appointment.getStatus());
-        response.setResultFile(appointment.getResultFile());
         response.setAppointmentDate(appointment.getAppointmentDate());
         response.setUserId(appointment.getUserId());
 
@@ -150,7 +155,26 @@ public class AppointmentService {
                     sample.getKitComponent() != null ? sample.getKitComponent().getComponentName() : null
             );
             response.setSampleType(sample.getSampleType());
+
+            // Lấy result từ sample
+            Result result = resultRepository.findBySample_SampleId(sample.getSampleId());
+            if (result != null) {
+                response.setResultFile(result.getResultData()); // Hoặc getResultFile() nếu đặt tên khác
+            } else {
+                response.setResultFile(null);
+            }
+        }else {
+            response.setResultFile(null);
         }
+
+        // Lấy paymentStatus từ Payment (nếu có)
+        Payment payment = paymentRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
+        if (payment != null) {
+            response.setPaymentStatus(payment.getStatus());
+        } else {
+            response.setPaymentStatus(null); // hoặc "Pending" tùy nghiệp vụ
+        }
+
         return response;
     }
 
@@ -316,11 +340,6 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             if (updateRequest.getStatus() != null && !updateRequest.getStatus().isEmpty()) {
                 appointment.setStatus(updateRequest.getStatus());
             }
-
-            // Cập nhật file kết quả nếu được cung cấp
-            if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
-                appointment.setResultFile(updateRequest.getResultFile());
-            }
             boolean updatedSample = false;
 
             // Kiểm tra và cập nhật kit_component_name nếu được cung cấp
@@ -362,12 +381,16 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
             }
 
-            // Nếu chỉ muốn update sampleType mà không gửi kit_component_name
-            if (!updatedSample && updateRequest.getSampleType() != null && !updateRequest.getSampleType().isEmpty()) {
+            // Cập nhật file kết quả nếu được cung cấp (giờ sẽ cập nhật vào Result)
+            if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
                 Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
                 if (sample != null) {
-                    sample.setSampleType(updateRequest.getSampleType());
-                    sampleRepository.save(sample);
+                    Result result = resultRepository.findBySample_SampleId(sample.getSampleId());
+                    if (result != null) {
+                        result.setResultData(updateRequest.getResultFile());
+                        resultRepository.save(result);
+                    }
+                    // Nếu chưa có result, bạn có thể tạo mới ở đây nếu nghiệp vụ yêu cầu
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("No sample found for the appointment ID " + appointmentId);

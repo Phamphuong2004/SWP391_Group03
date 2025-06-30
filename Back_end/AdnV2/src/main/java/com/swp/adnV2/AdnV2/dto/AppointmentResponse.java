@@ -26,9 +26,18 @@ public class AppointmentResponse {
     private Long userId;
     private String kitComponentName;
     private String sampleType;
+    private String paymentStatus;
 //    private Long userId;
 //    private String username;  // Optional: include if you want to show which user the appointment belongs to
 
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
 
     public String getCollectionLocation() {
         return collectionLocation;
