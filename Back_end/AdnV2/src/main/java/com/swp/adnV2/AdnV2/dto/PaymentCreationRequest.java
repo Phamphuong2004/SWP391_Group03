@@ -18,7 +18,7 @@ public class PaymentCreationRequest {
 
     private String status = "Pending";
 
-    private Appointment appointment;
+    private Long appointmentId;
 
     public Long getPaymentId() {
         return paymentId;
@@ -60,11 +60,11 @@ public class PaymentCreationRequest {
         this.status = status;
     }
 
-    public Appointment getAppointment() {
-        return appointment;
+    public Long getAppointmentId() {
+        return appointmentId;
     }
 
-    public void setAppointment(Appointment appointment) {
-        this.appointment = appointment;
+    public void setAppointmentId(Long appointmentId) {
+        this.appointmentId = appointmentId;
     }
 }

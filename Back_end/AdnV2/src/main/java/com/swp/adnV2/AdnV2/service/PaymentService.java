@@ -3,6 +3,7 @@ package com.swp.adnV2.AdnV2.service;
 import com.swp.adnV2.AdnV2.dto.PaymentCreationRequest;
 import com.swp.adnV2.AdnV2.dto.PaymentUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Payment;
+import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
 import com.swp.adnV2.AdnV2.repository.PaymentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 public class PaymentService {
     @Autowired
     public PaymentRepository paymentRepository;
+    public AppointmentRepository appointmentRepository;
 
     // Add methods to handle payment creation, retrieval, updating, and deletion
     public Payment createPayment(PaymentCreationRequest payment) {
@@ -22,7 +24,8 @@ public class PaymentService {
         newPayment.setPaymentDate(payment.getPaymentDate());
         newPayment.setPaymentMethod(payment.getPaymentMethod());
         newPayment.setStatus(payment.getStatus());
-        newPayment.setAppointment(payment.getAppointment());
+        newPayment.setAppointment(appointmentRepository.findById(payment.getAppointmentId())
+                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + payment.getAppointmentId())));
         // Assuming Appointment is already set in the PaymentCreationRequest
         return paymentRepository.save(newPayment);
     }
@@ -41,7 +44,8 @@ public class PaymentService {
         existingPayment.setPaymentDate(payment.getPaymentDate());
         existingPayment.setPaymentMethod(payment.getPaymentMethod());
         existingPayment.setStatus(payment.getStatus());
-        existingPayment.setAppointment(payment.getAppointment());
+        existingPayment.setAppointment(appointmentRepository.findById(payment.getAppointmentId())
+                .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + payment.getAppointmentId())));
         return paymentRepository.save(existingPayment);
     }
     public List<Payment> getAllPayments() {
