@@ -50,6 +50,4 @@ public class PaymentService {
     public Payment getPaymentsByAppointmentId(Long appointmentId) {
         return paymentRepository.findByAppointment_AppointmentId(appointmentId);
     }
-
-
 }

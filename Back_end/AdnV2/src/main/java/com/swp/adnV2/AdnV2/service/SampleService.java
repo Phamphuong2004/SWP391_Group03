@@ -241,7 +241,6 @@ public class SampleService {
                 }
                 KitComponent kitComponent = kitOpt.get();
                 sample.setKitComponent(kitComponent);
-                appointment.setKit(kitComponent); // hoặc appointment.setKitComponent(kitComponent) tuỳ tên field
                 appointmentRepository.save(appointment);
             }
 

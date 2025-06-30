@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 public class AppointmentRequest {
     @NotBlank(message = "Full name is required")
@@ -44,7 +45,8 @@ public class AppointmentRequest {
     private String collectionLocation;
 
     private String kitComponentName;
-    private String sampleType;
+    private List<String> sampleTypes;
+
 
     public String getCollectionLocation() {
         return collectionLocation;
@@ -62,12 +64,12 @@ public class AppointmentRequest {
         this.kitComponentName = kitComponentName;
     }
 
-    public String getSampleType() {
-        return sampleType;
+    public List<String> getSampleTypes() {
+        return sampleTypes;
     }
 
-    public void setSampleType(String sampleType) {
-        this.sampleType = sampleType;
+    public void setSampleTypes(List<String> sampleTypes) {
+        this.sampleTypes = sampleTypes;
     }
 
     public String getFullName() {
