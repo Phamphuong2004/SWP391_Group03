@@ -43,6 +43,12 @@ public class AppointmentService {
     @Autowired
     private ResultRepository resultRepository;
 
+    @Autowired
+    private GuestRepository guestRepository;
+
+    @Autowired
+    private GuestAppointmentRepository guestAppointmentRepository;
+
 
     public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request ){
         try {
@@ -91,15 +97,19 @@ public class AppointmentService {
             appointment.setSample(sample);
             appointment = appointmentRepository.save(appointment);
 
-            //Tạo participant và liên kết với appointment
-            Participant participant = new Participant();
-            participant.setAppointment(appointment);
-            participant.setFullName(request.getFullName());
-            participant.setDateOfBirth(request.getDob());
-            participant.setPhone(request.getPhone());
-            participant.setEmail(request.getEmail());
-            participant.setGender(request.getGender());
-            participantRepository.save(participant);
+            Guest guest = new Guest();
+            guest.setFullName(request.getFullName());
+            guest.setGender(request.getGender());
+            guest.setDateOfBirth(request.getDob());
+            guest.setPhone(request.getPhone());
+            guest.setEmail(request.getEmail());
+            guestRepository.save(guest);
+
+            GuestAppointment guestAppointment = new GuestAppointment();
+            guestAppointment.setGuest(guest);
+            guestAppointment.setAppointment(appointment);
+            guestAppointmentRepository.save(guestAppointment);
+
 
             AppointmentResponse response = convertToAppointmentResponse(appointment);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
