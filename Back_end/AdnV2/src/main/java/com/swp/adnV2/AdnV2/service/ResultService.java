@@ -3,7 +3,11 @@ package com.swp.adnV2.AdnV2.service;
 import com.swp.adnV2.AdnV2.dto.ResultCreationRequest;
 import com.swp.adnV2.AdnV2.dto.ResultUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Result;
+import com.swp.adnV2.AdnV2.entity.Sample;
+import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.ResultRepository;
+import com.swp.adnV2.AdnV2.repository.SampleRepository;
+import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,15 +17,27 @@ import java.util.List;
 public class ResultService {
    @Autowired
     private ResultRepository resultRepository;
+    private SampleRepository sampleRepository;
+    private UserRepository userRepository;
+
 
     public Result createResult(ResultCreationRequest request) {
         Result result = new Result();
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        result.setSample(request.getSample());
+        Sample sample = sampleRepository.findBySampletype(request.getSampletype());
+
+        if (sample == null) {
+            throw new RuntimeException("Sample not found with sampletype: " + request.getSampletype());
+        }
+        result.setSample(sample);
         result.setStatus(request.getStatus());
-        result.setUser(request.getUsers());
+        Users user = userRepository.findByUsername(request.getUsername());
+        if (user == null) {
+            throw new RuntimeException("User not found with username: " + request.getUsername());
+        }
+        result.setUser(user);
         result.setResultFile(request.getResultFile());
         return resultRepository.save(result);
     }
@@ -32,9 +48,17 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        result.setSample(request.getSample());
+        Sample sample = sampleRepository.findBySampletype(request.getSampletype());
+        if (sample == null) {
+            throw new RuntimeException("Sample not found with sampletype: " + request.getSampletype());
+        }
+        result.setSample(sample);
         result.setStatus(request.getStatus());
-        result.setUser(request.getUsers());
+        Users user = userRepository.findByUsername(request.getUsername());
+        if (user == null) {
+            throw new RuntimeException("User not found with username: " + request.getUsername());
+        }
+        result.setUser(user);
         result.setResultFile(request.getResultFile());
         return resultRepository.save(result);
     }

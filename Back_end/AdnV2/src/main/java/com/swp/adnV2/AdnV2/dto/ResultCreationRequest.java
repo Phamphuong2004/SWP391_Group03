@@ -10,8 +10,8 @@ public class ResultCreationRequest {
     private String resultData;
     private String interpretation;
     private String status = "Pending";
-    private Sample sample;
-    private Users users;
+    private String sampletype;
+    private String username;
     private String resultFile;
 
     public String getResultFile() {
@@ -54,19 +54,19 @@ public class ResultCreationRequest {
         this.status = status;
     }
 
-    public Sample getSample() {
-        return sample;
+    public String getSampletype() {
+        return sampletype;
     }
 
-    public void setSample(Sample sample) {
-        this.sample = sample;
+    public void setSampletype(String sampletype) {
+        this.sampletype = sampletype;
     }
 
-    public Users getUsers() {
-        return users;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUsers(Users users) {
-        this.users = users;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
