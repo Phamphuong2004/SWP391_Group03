@@ -40,6 +40,17 @@ public class Sample {
     public Sample() {
     }
 
+    public Sample(Long sampleId, String sampleType, LocalDate collectedDate, LocalDate receivedDate, String status, Users users, KitComponent kitComponent, Appointment appointment) {
+        this.sampleId = sampleId;
+        this.sampleType = sampleType;
+        this.collectedDate = collectedDate;
+        this.receivedDate = receivedDate;
+        this.status = status;
+        this.users = users;
+        this.kitComponent = kitComponent;
+        this.appointment = appointment;
+    }
+
     // Getters and setters
 
 

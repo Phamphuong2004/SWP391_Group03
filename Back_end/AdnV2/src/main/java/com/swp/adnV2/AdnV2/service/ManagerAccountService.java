@@ -1,5 +1,6 @@
 package com.swp.adnV2.AdnV2.service;
 
+import com.swp.adnV2.AdnV2.dto.RegisterRequest;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,20 @@ public class ManagerAccountService {
     public Users getAccountById(Long id) {
         return accountRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
+    }
+
+    public Users createAccount(RegisterRequest newAccount) {
+
+        if (accountRepo.existsByEmail(newAccount.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        Users user = new Users();
+        user.setEmail(newAccount.getEmail());
+        user.setPassword(passwordEncoder.encode(newAccount.getPassword()));
+        user.setRole("MANAGER");
+
+        return accountRepo.save(user);
     }
 
     public Users updateAccount(Long id, Users updated) {

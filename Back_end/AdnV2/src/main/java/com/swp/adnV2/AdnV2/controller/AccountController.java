@@ -1,5 +1,6 @@
 package com.swp.adnV2.AdnV2.controller;
 
+import com.swp.adnV2.AdnV2.dto.RegisterRequest;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.service.ManagerAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/manager/accounts")
-@PreAuthorize("hasRole('MANAGER')")
+
 public class AccountController {
     @Autowired
     private ManagerAccountService accountService;
@@ -37,5 +38,10 @@ public class AccountController {
     public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
         accountService.deleteAccount(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<Users> createAccount(@RequestBody RegisterRequest newAccount) {
+        return ResponseEntity.status(201).body(accountService.createAccount(newAccount));
     }
 }
