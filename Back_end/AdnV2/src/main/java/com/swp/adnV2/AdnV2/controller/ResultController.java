@@ -5,13 +5,9 @@ import com.swp.adnV2.AdnV2.dto.ResultUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Result;
 import com.swp.adnV2.AdnV2.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-
 import java.util.List;
-
-
 @RestController
 @RequestMapping("/api/results")
 public class ResultController {
@@ -19,31 +15,26 @@ public class ResultController {
     private ResultService resultService;
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     Result createRequest(@RequestBody ResultCreationRequest request) {
         return resultService.createResult(request);
     }
 
     @GetMapping("/getList")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
     public List<Result> getAllResults() {
         return resultService.getAllResults();
     }
 
     @GetMapping("/{result_id}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
     public Result getResultById(@PathVariable("result_id") Long resultId) {
         return resultService.getResultById(resultId);
     }
 
     @PutMapping("/{result_id}")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public Result updateResult(@PathVariable Long result_id, @RequestBody ResultUpdateRequest request) {
         return resultService.updateResult(result_id, request);
     }
 
     @DeleteMapping("/{result_id}")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public String deleteResult(@PathVariable Long result_id) {
         resultService.deleteResult(result_id);
         return "Result has been deleted successfully";
