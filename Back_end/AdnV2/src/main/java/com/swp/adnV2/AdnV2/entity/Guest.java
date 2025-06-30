@@ -5,19 +5,18 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Participant")
-public class Participant {
+@Table(name = "Guest")
+public class Guest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "participant_id")
-    private Long participantId;
+    @Column(name = "guest_id")
+    private Long guestId;
 
     @Column(name = "full_name", nullable = false, columnDefinition = "NVARCHAR(100)")
     private String fullName;
 
     @Column(name = "gender", columnDefinition = "NVARCHAR(10)")
     private String gender;
-
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
@@ -28,35 +27,16 @@ public class Participant {
     @Column(name = "email", columnDefinition = "NVARCHAR(100)")
     private String email;
 
-    // Default constructor
-    public Participant() {
+    public Guest() {
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
+    public Guest(String fullName, String gender, LocalDate dateOfBirth, String phone, String email) {
+        this.fullName = fullName;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+        this.phone = phone;
         this.email = email;
     }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    // Getters and setters
-    public Long getParticipantId() {
-        return participantId;
-    }
-
-    public void setParticipantId(Long participantId) {
-        this.participantId = participantId;
-    }
-
 
     public String getFullName() {
         return fullName;
@@ -74,7 +54,6 @@ public class Participant {
         this.gender = gender;
     }
 
-
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
@@ -83,15 +62,19 @@ public class Participant {
         this.dateOfBirth = dateOfBirth;
     }
 
+    public String getPhone() {
+        return phone;
+    }
 
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-    @Override
-    public String toString() {
-        return "Participant{" +
-                "participantId=" + participantId +
-                ", fullName='" + fullName + '\'' +
-                ", gender='" + gender + '\'' +
-                ", dateOfBirth=" + dateOfBirth +
-                '}';
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

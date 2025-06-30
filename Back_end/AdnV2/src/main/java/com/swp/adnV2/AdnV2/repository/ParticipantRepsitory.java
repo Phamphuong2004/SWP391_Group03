@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ParticipantRepsitory extends JpaRepository<Participant, Long> {
-    List<Participant> findByAppointment_AppointmentId(Long appointmentId);
 }
