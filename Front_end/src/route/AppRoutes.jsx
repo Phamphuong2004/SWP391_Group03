@@ -41,6 +41,7 @@ import Payment from "../Payment/Payment";
 import ServiceManagement from "../ServiceManagement/ServiceManagement";
 import AccountManagement from "../AccountManagement/AccountManagement";
 import UpdateRolePage from "../rolePage/UpdateRolePage";
+import ViewFeedback from "../Feedback/ViewFeedback";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -144,6 +145,14 @@ function AppContent() {
           }
         />
         <Route path="/update-role" element={<UpdateRolePage />} />
+        <Route
+          path="/view-feedback"
+          element={
+            <ProtectedRoute allowedRoles={["manager", "staff"]}>
+              <ViewFeedback />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
