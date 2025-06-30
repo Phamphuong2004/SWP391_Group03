@@ -14,5 +14,5 @@ public interface SampleRepository extends JpaRepository<Sample, Long> {
     @Query("SELECT s FROM Sample s WHERE s.appointment.appointmentId = :appointmentId")
     List<Sample> findByAppointmentId(@Param("appointmentId") Long appointmentId);
 
-
+    List<Sample> findAllByAppointment_AppointmentId(Long appointmentId);
 }

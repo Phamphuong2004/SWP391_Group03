@@ -113,6 +113,4 @@ public class PaymentService {
         response.setAppointmentId(payment.getAppointment().getAppointmentId());
         return response;
     }
-
-
 }

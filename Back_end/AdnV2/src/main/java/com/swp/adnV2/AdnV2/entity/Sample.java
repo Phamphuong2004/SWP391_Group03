@@ -32,8 +32,8 @@ public class Sample {
     @JoinColumn(name = "kit_component_id", nullable = true)
     private KitComponent kitComponent;
 
-    @OneToOne
-    @JoinColumn(name = "appointment_id", unique = true)
+    @ManyToOne
+    @JoinColumn(name = "appointment_id", nullable = true)
     private Appointment appointment;
 
     // Default constructor

@@ -25,7 +25,7 @@ public class AppointmentResponse {
     private String resultFile;
     private Long userId;
     private String kitComponentName;
-    private String sampleType;
+    private List<String> sampleTypes;
     private String paymentStatus;
 //    private Long userId;
 //    private String username;  // Optional: include if you want to show which user the appointment belongs to
@@ -47,12 +47,12 @@ public class AppointmentResponse {
         this.collectionLocation = collectionLocation;
     }
 
-    public String getSampleType() {
-        return sampleType;
+    public List<String> getSampleTypes() {
+        return sampleTypes;
     }
 
-    public void setSampleType(String sampleType) {
-        this.sampleType = sampleType;
+    public void setSampleTypes(List<String> sampleTypes) {
+        this.sampleTypes = sampleTypes;
     }
 
     public String getKitComponentName() {
