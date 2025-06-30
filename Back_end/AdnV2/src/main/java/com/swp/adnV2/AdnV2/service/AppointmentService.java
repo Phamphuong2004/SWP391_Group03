@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +60,7 @@ public class AppointmentService {
             appointment.setFingerprintFile(request.getFingerprintFile());
             appointment.setDistrict(request.getDistrict());
             appointment.setProvince(request.getProvince());
-
+            appointment.setCollectionLocation(request.getCollectionLocation());
             appointment.setStatus("PENDING");
 
             Services services = serviceRepository.findServicesByServiceId(serviceId);
@@ -68,6 +69,20 @@ public class AppointmentService {
             }
             appointment.setService(services);
 
+            KitComponent kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
+            if (kitComponent == null) {
+                return ResponseEntity.badRequest().body("Invalid kit component name");
+            }
+            appointment.setKit(kitComponent);
+
+
+
+            Sample sample = new Sample();
+            sample.setSampleType(request.getSampleType());
+            sample.setKitComponent(kitComponent);
+            sample.setAppointment(appointment);
+
+            appointment.setSample(sample);
             appointment = appointmentRepository.save(appointment);
 
             //Tạo participant và liên kết với appointment
@@ -113,28 +128,29 @@ public class AppointmentService {
         response.setServiceType(appointment.getServiceType());
         response.setCollectionSampleTime(appointment.getCollectionSampleTime());
         response.setFingerprintFile(appointment.getFingerprintFile());
+        response.setCollectionLocation(appointment.getCollectionLocation());
         response.setDistrict(appointment.getDistrict());
         response.setProvince(appointment.getProvince());
         response.setStatus(appointment.getStatus());
         response.setResultFile(appointment.getResultFile());
         response.setAppointmentDate(appointment.getAppointmentDate());
         response.setUserId(appointment.getUserId());
-        // Lấy samples theo appointmentId
-        List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
 
         // Lấy kitComponentName từ Sample đầu tiên (nếu có)
         String kitComponentName = null;
-        if (!samples.isEmpty() && samples.get(0).getKitComponent() != null) {
-            kitComponentName = samples.get(0).getKitComponent().getComponentName();
+        if (appointment.getKit() != null) {
+            kitComponentName = appointment.getKit().getComponentName();
         }
 
         response.setKitComponentName(kitComponentName);
 
-        // Chuyển thành List<String> sampleTypes
-        List<String> sampleTypes = samples.stream()
-                .map(Sample::getSampleType)
-                .collect(Collectors.toList());
-        response.setSamples(sampleTypes);
+        Sample sample = sampleRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
+        if (sample != null) {
+            response.setKitComponentName(
+                    sample.getKitComponent() != null ? sample.getKitComponent().getComponentName() : null
+            );
+            response.setSampleType(sample.getSampleType());
+        }
         return response;
     }
 
@@ -194,12 +210,22 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         appointment.setCollectionSampleTime(request.getCollectionTime());
         appointment.setTestCategory(request.getTestCategory());
         appointment.setFingerprintFile(request.getFingerprintFile());
+        appointment.setCollectionLocation(request.getCollectionLocation());
         appointment.setDistrict(request.getDistrict());
         appointment.setProvince(request.getProvince());
-        appointment.setAppointmentDate(request.getAppointmentDate());
         Services services = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
         appointment.setService(services);
+
+        // Xử lý kit (nếu có)
+        KitComponent kitComponent = null;
+        if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
+            kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
+            if (kitComponent == null) {
+                return ResponseEntity.badRequest().body("Invalid kit component name");
+            }
+            appointment.setKit(kitComponent);
+        }
 
         // Thêm các thông tin mặc định
         appointment.setStatus("PENDING"); // Trạng thái mặc định khi tạo cuộc hẹn
@@ -217,7 +243,24 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
         // Lưu appointment
         appointment = appointmentRepository.save(appointment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(appointment);
+        // Create Sample
+        Sample sample = new Sample();
+        sample.setAppointment(appointment);
+        sample.setUsers(appointment.getUser());
+        sample.setCollectedDate(LocalDate.now());
+
+        // Set kitComponent nếu có, nếu không thì sẽ là null
+        sample.setKitComponent(kitComponent);
+
+        // Set sampleType nếu có, nếu không thì sẽ là null
+        if (request.getSampleType() != null && !request.getSampleType().isEmpty()) {
+            sample.setSampleType(request.getSampleType());
+        } else {
+            sample.setSampleType(null);
+        }
+        sampleRepository.save(sample);
+        AppointmentResponse response = convertToAppointmentResponse(appointment);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     } catch (Exception e) {
         return ResponseEntity.badRequest()
                 .body("Failed to create appointment: " + e.getMessage());
@@ -278,6 +321,8 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
                 appointment.setResultFile(updateRequest.getResultFile());
             }
+            boolean updatedSample = false;
+
             // Kiểm tra và cập nhật kit_component_name nếu được cung cấp
             if (updateRequest.getKit_component_name() != null && !updateRequest.getKit_component_name().isEmpty()) {
                 // Lấy service từ appointment
@@ -302,13 +347,31 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                 // Lấy KitComponent đầu tiên khớp (hoặc có thể thêm logic để chọn cái phù hợp nhất)
                 KitComponent kitComponent = matchingComponents.get(0);
 
-                // Lấy tất cả các Sample của Appointment này và cập nhật KitComponent
-                List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
-                for (Sample sample : samples) {
+                Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+                if (sample != null) {
                     sample.setKitComponent(kitComponent);
+                    if (updateRequest.getSampleType() != null && !updateRequest.getSampleType().isEmpty()) {
+                        sample.setSampleType(updateRequest.getSampleType());
+                    }
+                    sampleRepository.save(sample);
+                    updatedSample = true;
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("No sample found for the appointment ID " + appointmentId);
                 }
-                sampleRepository.saveAll(samples);
 
+            }
+
+            // Nếu chỉ muốn update sampleType mà không gửi kit_component_name
+            if (!updatedSample && updateRequest.getSampleType() != null && !updateRequest.getSampleType().isEmpty()) {
+                Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+                if (sample != null) {
+                    sample.setSampleType(updateRequest.getSampleType());
+                    sampleRepository.save(sample);
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("No sample found for the appointment ID " + appointmentId);
+                }
             }
 
             appointmentRepository.save(appointment);

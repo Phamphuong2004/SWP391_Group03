@@ -25,15 +25,15 @@ public class Sample {
     private String status = "In Transit";
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private Users users;
 
     @ManyToOne
-    @JoinColumn(name = "kit_component_id", nullable = false)
+    @JoinColumn(name = "kit_component_id", nullable = true)
     private KitComponent kitComponent;
 
-    @ManyToOne
-    @JoinColumn(name = "appointment_id")
+    @OneToOne
+    @JoinColumn(name = "appointment_id", unique = true)
     private Appointment appointment;
 
     // Default constructor

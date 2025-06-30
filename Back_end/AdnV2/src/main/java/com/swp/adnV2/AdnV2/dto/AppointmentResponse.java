@@ -3,7 +3,6 @@ package com.swp.adnV2.AdnV2.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 public class AppointmentResponse {
@@ -18,6 +17,7 @@ public class AppointmentResponse {
     private String serviceType;
     private LocalDateTime appointmentDate;
     private LocalDateTime collectionSampleTime;
+    private String collectionLocation;
     private String fingerprintFile;
     private String district;
     private String province;
@@ -25,17 +25,25 @@ public class AppointmentResponse {
     private String resultFile;
     private Long userId;
     private String kitComponentName;
-    private List<String> samples;
+    private String sampleType;
 //    private Long userId;
 //    private String username;  // Optional: include if you want to show which user the appointment belongs to
 
 
-    public List<String> getSamples() {
-        return samples;
+    public String getCollectionLocation() {
+        return collectionLocation;
     }
 
-    public void setSamples(List<String> samples) {
-        this.samples = samples;
+    public void setCollectionLocation(String collectionLocation) {
+        this.collectionLocation = collectionLocation;
+    }
+
+    public String getSampleType() {
+        return sampleType;
+    }
+
+    public void setSampleType(String sampleType) {
+        this.sampleType = sampleType;
     }
 
     public String getKitComponentName() {

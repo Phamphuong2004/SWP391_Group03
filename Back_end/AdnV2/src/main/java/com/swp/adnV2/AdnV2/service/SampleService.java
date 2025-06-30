@@ -140,17 +140,14 @@ public class SampleService {
                         .body("Appointment with ID " + appointmentId + " not found");
             }
 
-            //lấy danh sách mẫu theo appointmentId
-            List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
-            if (samples.isEmpty()) {
+            Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+            if (sample == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("No samples found for appointment ID " + appointmentId);
+                        .body("No sample found for appointment ID " + appointmentId);
             }
-            List<SampleResponse> responseList = samples.stream()
-                    .map(this::convertToSampleResponse)
-                    .collect(java.util.stream.Collectors.toList());
 
-            return ResponseEntity.ok(responseList);
+            SampleResponse response = convertToSampleResponse(sample);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             System.err.println("Error getting samples for appointment ID " + appointmentId + ": " + e.getMessage());
             e.printStackTrace();
@@ -195,7 +192,7 @@ public class SampleService {
         return response;
     }
 
-    public ResponseEntity<?> createSampleByAppointmentId(Long appointmentId, SampleRequest request, String username) {
+    public ResponseEntity<?> updateSampleByAppointmentId(Long appointmentId, SampleRequest request, String username) {
         try{
             Users currentUser = userRepository.findByUsername(username);
             if(currentUser == null) {
@@ -214,69 +211,70 @@ public class SampleService {
                 return ResponseEntity.badRequest().body("Sample type is required");
             }
 
-
-            Sample sample = new Sample();
-            sample.setSampleType(request.getSampleType());
-            if( request.getCollectedDate() != null) {
-                sample.setCollectedDate(request.getCollectedDate());
-            }else if (appointment.getCollectionSampleTime() != null) {
-                sample.setCollectedDate(appointment.getCollectionSampleTime().toLocalDate());
-            } else {
-                sample.setCollectedDate(LocalDate.now());
+            // Lấy sample duy nhất của appointment này
+            Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+            if (sample == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("No sample found for appointment ID " + appointmentId);
             }
 
-            sample.setReceivedDate(request.getReceivedDate());
-
-            // Thiết lập trạng thái
+            // Cập nhật thông tin sample từ request
+            if (request.getSampleType() != null && !request.getSampleType().trim().isEmpty()) {
+                sample.setSampleType(request.getSampleType());
+            }
+            if (request.getCollectedDate() != null) {
+                sample.setCollectedDate(request.getCollectedDate());
+            }
+            if (request.getReceivedDate() != null) {
+                sample.setReceivedDate(request.getReceivedDate());
+            }
             if (request.getStatus() != null && !request.getStatus().isEmpty()) {
                 sample.setStatus(request.getStatus());
-            } else {
-                // Thêm trạng thái mặc định
-                sample.setStatus("Created");
             }
             sample.setUsers(currentUser);
-            sample.setAppointment(appointment);
-            KitComponent kitComponent = findKitComponentFromAppointment(appointment);
-            if (kitComponent != null) {
+
+            if (request.getKitComponentName() != null && !request.getKitComponentName().trim().isEmpty()) {
+                // Tìm KitComponent theo tên (có thể cần điều chỉnh hàm repo cho phù hợp)
+                Optional<KitComponent> kitOpt = kitComponentRepository.findByComponentNameIgnoreCase(request.getKitComponentName().trim());
+                if (!kitOpt.isPresent()) {
+                    return ResponseEntity.badRequest().body("KitComponent not found with name: " + request.getKitComponentName());
+                }
+                KitComponent kitComponent = kitOpt.get();
                 sample.setKitComponent(kitComponent);
-            } else {
-                return ResponseEntity.badRequest().body("No suitable KitComponent found for this appointment");
+                appointment.setKit(kitComponent); // hoặc appointment.setKitComponent(kitComponent) tuỳ tên field
+                appointmentRepository.save(appointment);
             }
 
-            appointmentRepository.save(appointment);
-
-            Sample savedSample = sampleRepository.save(sample);
-            return ResponseEntity.ok("Sample created successfully with ID: " + savedSample.getSampleId());
+            sampleRepository.save(sample);
+            return ResponseEntity.ok("Sample updated successfully for appointment ID: " + appointmentId);
         } catch (Exception e){
-            // Ghi log lỗi
-            System.err.println("Error creating sample for appointment ID " + appointmentId + ": " + e.getMessage());
+            System.err.println("Error updating sample for appointment ID " + appointmentId + ": " + e.getMessage());
             e.printStackTrace();
-
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error creating sample: " + e.getMessage());
+                    .body("Error updating sample: " + e.getMessage());
         }
     }
 
-    private KitComponent findKitComponentFromAppointment(Appointment appointment) {
-        // Nếu appointment có liên kết với service, tìm kit component từ service
-        if (appointment.getService() != null) {
-            List<KitComponent> serviceKitComponents = kitComponentRepository.findByService_ServiceId(
-                    appointment.getService().getServiceId());
-
-            if (!serviceKitComponents.isEmpty()) {
-                return serviceKitComponents.get(0); // Lấy KitComponent đầu tiên
-            }
-        }
-
-        // Kiểm tra xem có KitComponent nào đã được dùng cho appointment này chưa
-        List<Sample> existingSamples = sampleRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
-        if (!existingSamples.isEmpty() && existingSamples.get(0).getKitComponent() != null) {
-            return existingSamples.get(0).getKitComponent();
-        }
-
-        // Không tìm thấy KitComponent phù hợp
-        return null;
-    }
+//    private KitComponent findKitComponentFromAppointment(Appointment appointment) {
+//        // Nếu appointment có liên kết với service, tìm kit component từ service
+//        if (appointment.getService() != null) {
+//            List<KitComponent> serviceKitComponents = kitComponentRepository.findByService_ServiceId(
+//                    appointment.getService().getServiceId());
+//
+//            if (!serviceKitComponents.isEmpty()) {
+//                return serviceKitComponents.get(0); // Lấy KitComponent đầu tiên
+//            }
+//        }
+//
+//        // Kiểm tra xem có KitComponent nào đã được dùng cho appointment này chưa
+//        List<Sample> existingSamples = sampleRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
+//        if (!existingSamples.isEmpty() && existingSamples.get(0).getKitComponent() != null) {
+//            return existingSamples.get(0).getKitComponent();
+//        }
+//
+//        // Không tìm thấy KitComponent phù hợp
+//        return null;
+//    }
 
 
 }

@@ -41,6 +41,34 @@ public class AppointmentRequest {
     private String district; // quận huyện
     private String province;
     private String testCategory; // loại xét nghiệm
+    private String collectionLocation;
+
+    private String kitComponentName;
+    private String sampleType;
+
+    public String getCollectionLocation() {
+        return collectionLocation;
+    }
+
+    public void setCollectionLocation(String collectionLocation) {
+        this.collectionLocation = collectionLocation;
+    }
+
+    public String getKitComponentName() {
+        return kitComponentName;
+    }
+
+    public void setKitComponentName(String kitComponentName) {
+        this.kitComponentName = kitComponentName;
+    }
+
+    public String getSampleType() {
+        return sampleType;
+    }
+
+    public void setSampleType(String sampleType) {
+        this.sampleType = sampleType;
+    }
 
     public String getFullName() {
         return fullName;
