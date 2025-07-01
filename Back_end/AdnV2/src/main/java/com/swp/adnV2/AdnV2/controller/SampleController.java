@@ -60,6 +60,11 @@ public class SampleController {
         return sampleService.deleteSample(sampleId, username);
     }
 
+    @GetMapping("/appointments/{appointmentId}/participants")
+    public ResponseEntity<?> getParticipantsByAppointment(@PathVariable Long appointmentId) {
+        return sampleService.getParticipantsByAppointmentId(appointmentId);
+    }
+
 
     /**
      * Xóa mềm mẫu (đổi trạng thái)
