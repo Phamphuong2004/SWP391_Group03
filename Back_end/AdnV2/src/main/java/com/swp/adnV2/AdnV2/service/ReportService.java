@@ -30,6 +30,16 @@ public class ReportService {
         if (user == null) {
             throw new RuntimeException("User not found with username: " + request.getUsername());
         }
+        //if (reportRepository.existsByReportTitleAndUsers_UserId(request.getReportTitle(), user.getUserId())) {
+        //    throw new RuntimeException("Report with title '" + request.getReportTitle() + "' already exists for user: " + user.getUsername());
+        //}
+        if( report.getReportTitle() == null || report.getReportTitle().isEmpty()) {
+            throw new RuntimeException("Report title cannot be null or empty");
+        }
+        if( report.getReportContent() == null || report.getReportContent().isEmpty()) {
+            throw new RuntimeException("Report content cannot be null or empty");
+        }
+
         report.setUsers(user);
         reportRepository.save(report);
         ReportReponse response = new ReportReponse();
@@ -51,6 +61,15 @@ public class ReportService {
         Users user = userRepository.findByUsername(request.getUsername());
         if (user == null) {
             throw new RuntimeException("User not found with username: " + request.getUsername());
+        }
+        //if (reportRepository.existsByReportTitleAndUsers_UserId(request.getReportTitle(), user.getUserId())) {
+        //    throw new RuntimeException("Report with title '" + request.getReportTitle() + "' already exists for user: " + user.getUsername());
+        //}
+        if( report.getReportTitle() == null || report.getReportTitle().isEmpty()) {
+            throw new RuntimeException("Report title cannot be null or empty");
+        }
+        if( report.getReportContent() == null || report.getReportContent().isEmpty()) {
+            throw new RuntimeException("Report content cannot be null or empty");
         }
         report.setUsers(user);
         reportRepository.save(report);
