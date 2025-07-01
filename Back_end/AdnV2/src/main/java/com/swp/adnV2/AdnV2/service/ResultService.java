@@ -127,6 +127,8 @@ public class ResultService {
     }
 
     public void deleteResult(Long resultId) {
+        Result result = resultRepository.findById(resultId)
+                .orElseThrow(() -> new RuntimeException("Result not found with id: " + resultId));
         resultRepository.deleteById(resultId);
     }
 

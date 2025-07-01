@@ -59,6 +59,9 @@ public class PaymentService {
     }
     public void deletePayment(Long paymentId) {
         // Implementation for deleting a payment
+        if (!paymentRepository.existsById(paymentId)) {
+            throw new RuntimeException("Payment not found with id: " + paymentId);
+        }
         paymentRepository.deleteById(paymentId);
     }
     public PaymentReponse updatePayment(Long paymentId, PaymentUpdateRequest payment) {

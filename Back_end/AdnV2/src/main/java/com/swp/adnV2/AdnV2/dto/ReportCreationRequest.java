@@ -15,7 +15,7 @@ public class ReportCreationRequest {
     private LocalDateTime createdAt = LocalDateTime.now();
 
 
-    private Users users;
+    private String username;
 
     public String getReportTitle() {
         return reportTitle;
@@ -41,11 +41,11 @@ public class ReportCreationRequest {
         this.createdAt = createdAt;
     }
 
-    public Users getUsers() {
-        return users;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUsers(Users users) {
-        this.users = users;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

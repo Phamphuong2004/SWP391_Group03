@@ -1,10 +1,10 @@
 package com.swp.adnV2.AdnV2.dto;
 
-import com.swp.adnV2.AdnV2.entity.Users;
-
 import java.time.LocalDateTime;
 
-public class ReportUpdateRequest {
+public class ReportReponse {
+    private Long reportId;
+
     private String reportTitle;
 
 
@@ -15,6 +15,14 @@ public class ReportUpdateRequest {
 
 
     private String username;
+
+    public Long getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
+    }
 
     public String getReportTitle() {
         return reportTitle;
