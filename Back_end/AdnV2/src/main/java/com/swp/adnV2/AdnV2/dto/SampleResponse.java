@@ -8,9 +8,18 @@ public class SampleResponse {
     private LocalDate collectedDate;
     private LocalDate receivedDate;
     private String status;
+    private Long participantId;
     private String participantFullName;
     private String username;
     private String kitComponentName;
+
+    public Long getParticipantId() {
+        return participantId;
+    }
+
+    public void setParticipantId(Long participantId) {
+        this.participantId = participantId;
+    }
 
     public Long getSampleId() {
         return sampleId;

@@ -342,7 +342,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             boolean updatedSample = false;
 
             // Kiểm tra và cập nhật kit_component_name nếu được cung cấp
-            if (updateRequest.getKit_component_name() != null && !updateRequest.getKit_component_name().isEmpty()) {
+            if (updateRequest.getKitComponentName() != null && !updateRequest.getKitComponentName().isEmpty()) {
                 // Lấy service từ appointment
                 Services service = appointment.getService();
                 if (service == null) {
@@ -354,24 +354,27 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
                 // Tìm kiếm KitComponent trong service này với tên đã cho
                 List<KitComponent> matchingComponents = kitRepository.findByService_ServiceIdAndComponentNameContainingIgnoreCase(
-                        serviceId, updateRequest.getKit_component_name());
+                        serviceId, updateRequest.getKitComponentName());
 
                 if (matchingComponents.isEmpty()) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("No kit component with name '" + updateRequest.getKit_component_name() +
+                            .body("No kit component with name '" + updateRequest.getKitComponentName() +
                                     "' found for the service ID " + serviceId);
                 }
 
                 // Lấy KitComponent đầu tiên khớp (hoặc có thể thêm logic để chọn cái phù hợp nhất)
                 KitComponent kitComponent = matchingComponents.get(0);
 
-                Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
-                if (sample != null) {
-                    sample.setKitComponent(kitComponent);
-                    if (updateRequest.getSampleType() != null && !updateRequest.getSampleType().isEmpty()) {
-                        sample.setSampleType(updateRequest.getSampleType());
+                List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+                if (!samples.isEmpty()) {
+                    for (Sample sample : samples) {
+                        // cập nhật sample như logic cũ
+                        sample.setKitComponent(kitComponent);
+                        if (updateRequest.getSampleType() != null && !updateRequest.getSampleType().isEmpty()) {
+                            sample.setSampleType(updateRequest.getSampleType());
+                        }
+                        sampleRepository.save(sample);
                     }
-                    sampleRepository.save(sample);
                     updatedSample = true;
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -382,17 +385,18 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
             // Cập nhật file kết quả nếu được cung cấp (giờ sẽ cập nhật vào Result)
             if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
-                Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
-                if (sample != null) {
+                List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+                if (samples == null || samples.isEmpty()) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("No sample found for the appointment ID " + appointmentId);
+                }
+                for (Sample sample : samples) {
                     Result result = resultRepository.findBySample_SampleId(sample.getSampleId());
                     if (result != null) {
                         result.setResultData(updateRequest.getResultFile());
                         resultRepository.save(result);
                     }
                     // Nếu chưa có result, bạn có thể tạo mới ở đây nếu nghiệp vụ yêu cầu
-                } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("No sample found for the appointment ID " + appointmentId);
                 }
             }
 
@@ -425,5 +429,8 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                     .body("Failed to find appointments: " + e.getMessage());
         }
     }
+
+
+
 
 }
