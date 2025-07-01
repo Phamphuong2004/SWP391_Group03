@@ -6,6 +6,7 @@ import com.swp.adnV2.AdnV2.dto.ResultUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Result;
 import com.swp.adnV2.AdnV2.entity.Sample;
 import com.swp.adnV2.AdnV2.entity.Users;
+import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
 import com.swp.adnV2.AdnV2.repository.ResultRepository;
 import com.swp.adnV2.AdnV2.repository.SampleRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
@@ -22,6 +23,8 @@ public class ResultService {
     private SampleRepository sampleRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
 
     public ResultReponse createResult(ResultCreationRequest request) {
@@ -39,6 +42,25 @@ public class ResultService {
             throw new RuntimeException("User not found with username: " + request.getUsername());
         }
         result.setUser(user);
+        Result existingResult = resultRepository.findByAppointment_AppointmentId(request.getAppointmentId());
+        if (existingResult != null) {
+            throw new RuntimeException("Result already exists for appointment with id: " + request.getAppointmentId());
+        }
+        if (request.getAppointmentId() != null) {
+            result.setAppointment(appointmentRepository.findById(request.getAppointmentId())
+                    .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + request.getAppointmentId())));
+        }
+        if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
+            throw new RuntimeException("Result file cannot be null or empty");
+        }
+        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
+            throw new RuntimeException("Result file name contains invalid characters");
+        }
+        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
+                && !request.getResultFile().endsWith(".doc")) {
+            throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
+        }
+
         result.setResultFile(request.getResultFile());
         resultRepository.save(result);
         ResultReponse response = new ResultReponse();
@@ -49,6 +71,7 @@ public class ResultService {
         response.setStatus(result.getStatus());
         response.setSampleId(result.getSample().getSampleId());
         response.setUsername(result.getUser().getUsername());
+        response.setAppointmentId(request.getAppointmentId());
         response.setResultFile(result.getResultFile());
         return response;
     }
@@ -70,6 +93,24 @@ public class ResultService {
             throw new RuntimeException("User not found with username: " + request.getUsername());
         }
         result.setUser(user);
+        Result existingResult = resultRepository.findByAppointment_AppointmentId(request.getAppointmentId());
+        if (existingResult != null && !existingResult.getResultId().equals(resultId)) {
+            throw new RuntimeException("Result already exists for appointment with id: " + request.getAppointmentId());
+        }
+        if (request.getAppointmentId() != null) {
+            result.setAppointment(appointmentRepository.findById(request.getAppointmentId())
+                    .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + request.getAppointmentId())));
+        }
+        if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
+            throw new RuntimeException("Result file cannot be null or empty");
+        }
+        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
+            throw new RuntimeException("Result file name contains invalid characters");
+        }
+        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
+                && !request.getResultFile().endsWith(".doc")) {
+            throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
+        }
         result.setResultFile(request.getResultFile());
         resultRepository.save(result);
         ResultReponse response = new ResultReponse();
@@ -80,6 +121,7 @@ public class ResultService {
         response.setStatus(result.getStatus());
         response.setSampleId(result.getSample().getSampleId());
         response.setUsername(result.getUser().getUsername());
+        response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
         return response;
     }
@@ -102,6 +144,7 @@ public class ResultService {
             response.setStatus(result.getStatus());
             response.setSampleId(result.getSample().getSampleId());
             response.setUsername(result.getUser().getUsername());
+            response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
             response.setResultFile(result.getResultFile());
             return response;
         }).toList();
@@ -121,6 +164,7 @@ public class ResultService {
         response.setStatus(result.getStatus());
         response.setSampleId(result.getSample().getSampleId());
         response.setUsername(result.getUser().getUsername());
+        response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
         return response;
     }
