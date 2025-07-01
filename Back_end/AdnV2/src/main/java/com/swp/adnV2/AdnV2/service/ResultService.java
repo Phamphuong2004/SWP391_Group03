@@ -58,7 +58,7 @@ public class ResultService {
         }
         if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
                 && !request.getResultFile().endsWith(".doc")) {
-            throw new RuntimeException("Result file must be a PDF or DOCX file");
+            throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
         }
 
         result.setResultFile(request.getResultFile());
@@ -109,7 +109,7 @@ public class ResultService {
         }
         if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
                 && !request.getResultFile().endsWith(".doc")) {
-            throw new RuntimeException("Result file must be a PDF or DOCX file");
+            throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
         }
         result.setResultFile(request.getResultFile());
         resultRepository.save(result);
