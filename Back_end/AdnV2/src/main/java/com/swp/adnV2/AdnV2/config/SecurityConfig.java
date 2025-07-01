@@ -56,6 +56,7 @@ public class SecurityConfig {
 
                         // API dành cho Guest - không cần xác thực
                         .requestMatchers("/api/view-appointment-guest").permitAll()
+                        .requestMatchers("/api/guest/get/**").permitAll()
 
                         // API dành cho Customer - yêu cầu role CUSTOMER
                         .requestMatchers("/api/create-appointment").hasAnyRole("CUSTOMER", "STAFF", "MANAGER")
@@ -73,6 +74,8 @@ public class SecurityConfig {
                         // API dành cho người dùng đã xác thực (đã đăng nhập)
                         .requestMatchers("/api/user/profile/update").authenticated()
                         .requestMatchers("/api/user/reset-password").authenticated()
+
+
 
                         // Mặc định, mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated()
