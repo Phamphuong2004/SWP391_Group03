@@ -11,7 +11,7 @@ public class ReportReponse {
     private String reportContent;
 
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
 
     private String username;

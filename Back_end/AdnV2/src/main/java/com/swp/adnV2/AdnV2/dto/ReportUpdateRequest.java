@@ -10,10 +10,6 @@ public class ReportUpdateRequest {
 
     private String reportContent;
 
-
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-
     private String username;
 
     public String getReportTitle() {
@@ -30,14 +26,6 @@ public class ReportUpdateRequest {
 
     public void setReportContent(String reportContent) {
         this.reportContent = reportContent;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public String getUsername() {

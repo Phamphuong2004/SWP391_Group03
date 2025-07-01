@@ -26,7 +26,6 @@ public class ReportService {
         Report report = new Report();
         report.setReportTitle(request.getReportTitle());
         report.setReportContent(request.getReportContent());
-        report.setCreatedAt(request.getCreatedAt());
         Users user = userRepository.findByUsername(request.getUsername());
         if (user == null) {
             throw new RuntimeException("User not found with username: " + request.getUsername());
@@ -49,7 +48,6 @@ public class ReportService {
 
         report.setReportTitle(request.getReportTitle());
         report.setReportContent(request.getReportContent());
-        report.setCreatedAt(request.getCreatedAt());
         Users user = userRepository.findByUsername(request.getUsername());
         if (user == null) {
             throw new RuntimeException("User not found with username: " + request.getUsername());
