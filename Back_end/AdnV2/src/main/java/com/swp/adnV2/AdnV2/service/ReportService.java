@@ -99,13 +99,15 @@ public class ReportService {
         }).toList();
     }
 
-    public List<ReportReponse> getReportsByUserId(Long userId) {
+    public List<ReportReponse> getReportsByUsername(String username) {
         // Implementation for retrieving reports by user ID
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        List<Report> reports = reportRepository.findByUsers_UserId(userId);
+        Users user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("User not found with username: " + username);
+        }
+        List<Report> reports = reportRepository.findByUsers_UserId(user.getUserId());
         if (reports.isEmpty()) {
-            throw new RuntimeException("No reports found for user with id: " + userId);
+            throw new RuntimeException("No reports found for user with username: " + username);
         }
         return reports.stream().map(report -> {
             ReportReponse response = new ReportReponse();

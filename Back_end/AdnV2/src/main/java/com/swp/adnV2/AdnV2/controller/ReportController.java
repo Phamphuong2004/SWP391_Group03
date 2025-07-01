@@ -54,10 +54,10 @@ public class ReportController {
         return reportService.getReportById(reportId);
     }
 
-    @GetMapping("/getListByUserId/{user_id}")
-    public List<ReportReponse> getReportsByUserId(Long userId) {
+    @GetMapping("/getListByUserName/{user_name}")
+    public List<ReportReponse> getReportsByUsername(String username) {
         // Logic to get reports by user ID
-        return reportService.getReportsByUserId(userId);
+        return reportService.getReportsByUsername(username);
     }
 
 
