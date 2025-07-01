@@ -185,6 +185,17 @@ public class AppointmentService {
             response.setSamples(Collections.emptyList());
         }
 
+        if (samples != null && !samples.isEmpty()) {
+            Sample firstSample = samples.get(0);
+            if (firstSample.getKitComponent() != null) {
+                response.setKitComponentName(firstSample.getKitComponent().getComponentName());
+            } else {
+                response.setKitComponentName(null);
+            }
+        } else {
+            response.setKitComponentName(null);
+        }
+
         // Lấy paymentStatus từ Payment (nếu có)
         Payment payment = paymentRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
         if (payment != null) {
