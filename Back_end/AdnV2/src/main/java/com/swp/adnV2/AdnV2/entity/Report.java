@@ -70,6 +70,14 @@ public class Report {
         this.createdAt = createdAt;
     }
 
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
     @Override
     public String toString() {
         return "Report{" +
