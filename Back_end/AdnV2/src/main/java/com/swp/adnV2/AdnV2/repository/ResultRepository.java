@@ -8,4 +8,5 @@ import com.swp.adnV2.AdnV2.entity.Result;
 @Repository
 public interface ResultRepository extends JpaRepository<Result, Long> {
     Result findBySample_SampleId(Long sampleId);
+    Result findByAppointment_AppointmentId(Long appointmentId);
 }

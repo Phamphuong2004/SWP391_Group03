@@ -42,12 +42,23 @@ public class ResultService {
             throw new RuntimeException("User not found with username: " + request.getUsername());
         }
         result.setUser(user);
+        Result existingResult = resultRepository.findByAppointment_AppointmentId(request.getAppointmentId());
+        if (existingResult != null) {
+            throw new RuntimeException("Result already exists for appointment with id: " + request.getAppointmentId());
+        }
         if (request.getAppointmentId() != null) {
             result.setAppointment(appointmentRepository.findById(request.getAppointmentId())
                     .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + request.getAppointmentId())));
         }
         if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
             throw new RuntimeException("Result file cannot be null or empty");
+        }
+        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
+            throw new RuntimeException("Result file name contains invalid characters");
+        }
+        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
+                && !request.getResultFile().endsWith(".doc")) {
+            throw new RuntimeException("Result file must be a PDF or DOCX file");
         }
 
         result.setResultFile(request.getResultFile());
@@ -82,12 +93,23 @@ public class ResultService {
             throw new RuntimeException("User not found with username: " + request.getUsername());
         }
         result.setUser(user);
+        Result existingResult = resultRepository.findByAppointment_AppointmentId(request.getAppointmentId());
+        if (existingResult != null && !existingResult.getResultId().equals(resultId)) {
+            throw new RuntimeException("Result already exists for appointment with id: " + request.getAppointmentId());
+        }
         if (request.getAppointmentId() != null) {
             result.setAppointment(appointmentRepository.findById(request.getAppointmentId())
                     .orElseThrow(() -> new RuntimeException("Appointment not found with id: " + request.getAppointmentId())));
         }
         if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
             throw new RuntimeException("Result file cannot be null or empty");
+        }
+        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
+            throw new RuntimeException("Result file name contains invalid characters");
+        }
+        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
+                && !request.getResultFile().endsWith(".doc")) {
+            throw new RuntimeException("Result file must be a PDF or DOCX file");
         }
         result.setResultFile(request.getResultFile());
         resultRepository.save(result);
