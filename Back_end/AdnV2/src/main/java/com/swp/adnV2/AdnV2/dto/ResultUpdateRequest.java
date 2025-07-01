@@ -12,6 +12,7 @@ public class ResultUpdateRequest {
     private String status = "Pending";
     private Long sampleId;
     private String username;
+    private Long appointmentId;
     private String resultFile;
 
 
@@ -69,5 +70,13 @@ public class ResultUpdateRequest {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Long getAppointmentId() {
+        return appointmentId;
+    }
+
+    public void setAppointmentId(Long appointmentId) {
+        this.appointmentId = appointmentId;
     }
 }

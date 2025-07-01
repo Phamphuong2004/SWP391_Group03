@@ -35,6 +35,10 @@ public class Result {
     @JoinColumn(name = "user_id", nullable = false)
     private Users users;
 
+    @OneToOne
+    @JoinColumn(name = "appointment_id", unique = true)
+    private Appointment appointment;
+
     // Default constructor
     public Result() {
     }
@@ -103,6 +107,22 @@ public class Result {
         this.resultFile = resultFile;
     }
 
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
+    }
+
+    public Users getUsers() {
+        return users;
+    }
+
+    public void setUsers(Users users) {
+        this.users = users;
+    }
+
     @Override
     public String toString() {
         return "Result{" +
@@ -113,6 +133,7 @@ public class Result {
                 ", sample=" + sample +
                 ", user=" + users +
                 ", status='" + status + '\'' +
+                ", appointment=" + appointment +
                 ", resultFile='" + resultFile + '\'' +
                 '}';
     }
