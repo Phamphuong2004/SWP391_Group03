@@ -30,6 +30,42 @@ public class AppointmentResponse {
 //    private Long userId;
 //    private String username;  // Optional: include if you want to show which user the appointment belongs to
 
+    public static class SampleInfo {
+        private Long sampleId;
+        private String sampleType;
+        private String participantFullName;
+        // ... các trường khác nếu cần
+
+        // getter, setter
+        public Long getSampleId() {
+            return sampleId;
+        }
+        public void setSampleId(Long sampleId) {
+            this.sampleId = sampleId;
+        }
+        public String getSampleType() {
+            return sampleType;
+        }
+        public void setSampleType(String sampleType) {
+            this.sampleType = sampleType;
+        }
+        public String getParticipantFullName() {
+            return participantFullName;
+        }
+        public void setParticipantFullName(String participantFullName) {
+            this.participantFullName = participantFullName;
+        }
+    }
+
+    private List<SampleInfo> samples;
+
+    public List<SampleInfo> getSamples() {
+        return samples;
+    }
+
+    public void setSamples(List<SampleInfo> samples) {
+        this.samples = samples;
+    }
 
     public String getPaymentStatus() {
         return paymentStatus;

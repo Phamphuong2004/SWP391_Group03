@@ -161,12 +161,28 @@ public class AppointmentService {
 
         List<Sample> samples = sampleRepository.findAllByAppointment_AppointmentId(appointment.getAppointmentId());
         if (samples != null && !samples.isEmpty()) {
+            // mapping sampleType list như cũ
             List<String> sampleTypes = samples.stream()
                     .map(Sample::getSampleType)
                     .collect(Collectors.toList());
             response.setSampleTypes(sampleTypes);
+
+            // mapping SampleInfo list mới
+            List<AppointmentResponse.SampleInfo> sampleInfos = samples.stream().map(sample -> {
+                AppointmentResponse.SampleInfo info = new AppointmentResponse.SampleInfo();
+                info.setSampleId(sample.getSampleId());
+                info.setSampleType(sample.getSampleType());
+                if (sample.getParticipant() != null) {
+                    info.setParticipantFullName(sample.getParticipant().getFullName());
+                } else {
+                    info.setParticipantFullName(null);
+                }
+                return info;
+            }).collect(Collectors.toList());
+            response.setSamples(sampleInfos);
         } else {
             response.setSampleTypes(Collections.emptyList());
+            response.setSamples(Collections.emptyList());
         }
 
         // Lấy paymentStatus từ Payment (nếu có)
