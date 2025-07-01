@@ -81,12 +81,8 @@ public class Appointment {
     @JoinColumn(name = "service_id")
     private Services service;
 
-    @ManyToOne
-    @JoinColumn(name = "kit_id")
-    private KitComponent kit;
-
-    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
-    private Sample sample;
+    @OneToMany(mappedBy = "appointment")
+    private List<Sample> samples;
 
     public String getCollectionLocation() {
         return collectionLocation;
@@ -100,20 +96,12 @@ public class Appointment {
     public Appointment() {}
 
 
-    public Sample getSample() {
-        return sample;
+    public List<Sample> getSamples() {
+        return samples;
     }
 
-    public void setSample(Sample sample) {
-        this.sample = sample;
-    }
-
-    public KitComponent getKit() {
-        return kit;
-    }
-
-    public void setKit(KitComponent kit) {
-        this.kit = kit;
+    public void setSamples(List<Sample> samples) {
+        this.samples = samples;
     }
 
     public Services getService() {

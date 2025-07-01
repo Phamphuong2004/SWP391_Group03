@@ -32,9 +32,14 @@ public class Sample {
     @JoinColumn(name = "kit_component_id", nullable = true)
     private KitComponent kitComponent;
 
-    @OneToOne
-    @JoinColumn(name = "appointment_id", unique = true)
+    @ManyToOne
+    @JoinColumn(name = "appointment_id", nullable = true)
     private Appointment appointment;
+
+    // Thêm mối quan hệ N-1 với Participant
+    @ManyToOne
+    @JoinColumn(name = "participant_id", nullable = true)
+    private Participant participant;
 
     // Default constructor
     public Sample() {
@@ -53,6 +58,14 @@ public class Sample {
 
     // Getters and setters
 
+
+    public Participant getParticipant() {
+        return participant;
+    }
+
+    public void setParticipant(Participant participant) {
+        this.participant = participant;
+    }
 
     public Users getUsers() {
         return users;

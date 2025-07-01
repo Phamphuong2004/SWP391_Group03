@@ -1,5 +1,6 @@
 package com.swp.adnV2.AdnV2.service;
 
+import com.swp.adnV2.AdnV2.dto.ParticipantResponse;
 import com.swp.adnV2.AdnV2.dto.SampleRequest;
 import com.swp.adnV2.AdnV2.dto.SampleResponse;
 import com.swp.adnV2.AdnV2.entity.*;
@@ -11,7 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SampleService {
@@ -117,6 +121,12 @@ public class SampleService {
                 sample.setStatus(sampleRequest.getStatus());
             }
 
+            if (sampleRequest.getParticipantId() != null) {
+                Participant participant = participantRepository.findById(sampleRequest.getParticipantId())
+                        .orElseThrow(() -> new RuntimeException("Participant not found"));
+                sample.setParticipant(participant);
+            }
+
             sample.setUsers(currentUser);   //cap nhat nguoi sua doi
 
             Sample savedSample = sampleRepository.save(sample);
@@ -140,14 +150,17 @@ public class SampleService {
                         .body("Appointment with ID " + appointmentId + " not found");
             }
 
-            Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
-            if (sample == null) {
+            List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+            if (samples == null || samples.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("No sample found for appointment ID " + appointmentId);
             }
 
-            SampleResponse response = convertToSampleResponse(sample);
-            return ResponseEntity.ok(response);
+            List<SampleResponse> responses = samples.stream()
+                    .map(sample -> convertToSampleResponse(sample))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(responses);
         } catch (Exception e) {
             System.err.println("Error getting samples for appointment ID " + appointmentId + ": " + e.getMessage());
             e.printStackTrace();
@@ -189,6 +202,11 @@ public class SampleService {
         if (sample.getKitComponent() != null) {
             response.setKitComponentName(sample.getKitComponent().getComponentName());
         }
+
+        if (sample.getParticipant() != null) {
+            response.setParticipantId(sample.getParticipant().getParticipantId());
+            response.setParticipantFullName(sample.getParticipant().getFullName());
+        }
         return response;
     }
 
@@ -205,47 +223,51 @@ public class SampleService {
                         .body("Appointment with ID " + appointmentId + " not found");
             }
 
-            Appointment appointment = appointmentOpt.get();
             // Kiểm tra yêu cầu tạo mẫu
             if (request.getSampleType() == null || request.getSampleType().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("Sample type is required");
             }
 
-            // Lấy sample duy nhất của appointment này
-            Sample sample = sampleRepository.findByAppointment_AppointmentId(appointmentId);
-            if (sample == null) {
+            // 4. Lấy toàn bộ sample của appointment (nếu là 1-N)
+            List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+            if (samples == null || samples.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("No sample found for appointment ID " + appointmentId);
             }
 
-            // Cập nhật thông tin sample từ request
-            if (request.getSampleType() != null && !request.getSampleType().trim().isEmpty()) {
+            // 5. Cập nhật toàn bộ sample (hoặc chọn sample phù hợp nếu muốn)
+            for (Sample sample : samples) {
+                // Update các trường nếu có
                 sample.setSampleType(request.getSampleType());
-            }
-            if (request.getCollectedDate() != null) {
-                sample.setCollectedDate(request.getCollectedDate());
-            }
-            if (request.getReceivedDate() != null) {
-                sample.setReceivedDate(request.getReceivedDate());
-            }
-            if (request.getStatus() != null && !request.getStatus().isEmpty()) {
-                sample.setStatus(request.getStatus());
-            }
-            sample.setUsers(currentUser);
 
-            if (request.getKitComponentName() != null && !request.getKitComponentName().trim().isEmpty()) {
-                // Tìm KitComponent theo tên (có thể cần điều chỉnh hàm repo cho phù hợp)
-                Optional<KitComponent> kitOpt = kitComponentRepository.findByComponentNameIgnoreCase(request.getKitComponentName().trim());
-                if (!kitOpt.isPresent()) {
-                    return ResponseEntity.badRequest().body("KitComponent not found with name: " + request.getKitComponentName());
+                if (request.getCollectedDate() != null) {
+                    sample.setCollectedDate(request.getCollectedDate());
                 }
-                KitComponent kitComponent = kitOpt.get();
-                sample.setKitComponent(kitComponent);
-                appointment.setKit(kitComponent); // hoặc appointment.setKitComponent(kitComponent) tuỳ tên field
-                appointmentRepository.save(appointment);
-            }
+                if (request.getReceivedDate() != null) {
+                    sample.setReceivedDate(request.getReceivedDate());
+                }
+                if (request.getStatus() != null && !request.getStatus().isEmpty()) {
+                    sample.setStatus(request.getStatus());
+                }
+                sample.setUsers(currentUser);
 
-            sampleRepository.save(sample);
+                if (request.getParticipantId() != null) {
+                    Participant participant = participantRepository.findById(request.getParticipantId())
+                            .orElseThrow(() -> new RuntimeException("Participant not found"));
+                    sample.setParticipant(participant);
+                }
+
+                if (request.getKitComponentName() != null && !request.getKitComponentName().trim().isEmpty()) {
+                    Optional<KitComponent> kitOpt = kitComponentRepository.findByComponentNameIgnoreCase(request.getKitComponentName().trim());
+                    if (!kitOpt.isPresent()) {
+                        return ResponseEntity.badRequest().body("KitComponent not found with name: " + request.getKitComponentName());
+                    }
+                    KitComponent kitComponent = kitOpt.get();
+                    sample.setKitComponent(kitComponent);
+                }
+
+                sampleRepository.save(sample); // Lưu từng sample
+            }
             return ResponseEntity.ok("Sample updated successfully for appointment ID: " + appointmentId);
         } catch (Exception e){
             System.err.println("Error updating sample for appointment ID " + appointmentId + ": " + e.getMessage());
@@ -253,6 +275,33 @@ public class SampleService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error updating sample: " + e.getMessage());
         }
+    }
+
+    public ResponseEntity<?> getParticipantsByAppointmentId(Long appointmentId) {
+        List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+        if (samples == null || samples.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("No sample found for appointment ID " + appointmentId);
+        }
+        // Sử dụng Set để loại trùng participant nếu cần
+        Set<Participant> participants = samples.stream()
+                .map(Sample::getParticipant)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        // Nếu muốn trả về DTO (nên như vậy)
+        Set<ParticipantResponse> participantResponses = participants.stream().map(participant -> {
+            ParticipantResponse dto = new ParticipantResponse();
+            dto.setParticipantId(participant.getParticipantId());
+            dto.setFullName(participant.getFullName());
+            dto.setGender(participant.getGender());
+            dto.setDateOfBirth(participant.getDateOfBirth());
+            dto.setPhoneNumber(participant.getPhone());
+            dto.setEmail(participant.getEmail());
+            return dto;
+        }).collect(Collectors.toSet());
+
+        return ResponseEntity.ok(participantResponses);
     }
 
 //    private KitComponent findKitComponentFromAppointment(Appointment appointment) {

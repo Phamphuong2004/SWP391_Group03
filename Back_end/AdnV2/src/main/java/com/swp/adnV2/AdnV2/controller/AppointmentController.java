@@ -104,4 +104,6 @@ public class AppointmentController {
 
         return ResponseEntity.ok(appointmentService.getAppointmentByUsernameAndStatus(username, status));
     }
+
+
 }
