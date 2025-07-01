@@ -172,6 +172,7 @@ public class ManagerAccountService {
         if (!acc.getGender().equals("male") && !acc.getGender().equals("female") && !acc.getGender().equals("other")) {
             throw new RuntimeException("Gender must be either '");
         }
+            acc.setAvatar(updated.getAvatar());
 
 
         return accountRepo.save(acc);
