@@ -42,6 +42,8 @@ import ServiceManagement from "../ServiceManagement/ServiceManagement";
 import AccountManagement from "../AccountManagement/AccountManagement";
 import UpdateRolePage from "../rolePage/UpdateRolePage";
 import ViewFeedback from "../Feedback/ViewFeedback";
+import InvoiceList from "../Payment/InvoiceList";
+import SampleManagement from "../SampleManagement/SampleManagement";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -150,6 +152,22 @@ function AppContent() {
           element={
             <ProtectedRoute allowedRoles={["manager", "staff"]}>
               <ViewFeedback />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invoices"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <InvoiceList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sample-management"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <SampleManagement />
             </ProtectedRoute>
           }
         />

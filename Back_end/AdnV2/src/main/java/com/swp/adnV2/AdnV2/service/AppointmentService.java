@@ -29,9 +29,6 @@ public class AppointmentService {
     private ServiceRepository serviceRepository;
 
     @Autowired
-    private ParticipantRepsitory participantRepository;
-
-    @Autowired
     private KitRepository kitRepository;
 
     @Autowired
@@ -46,20 +43,16 @@ public class AppointmentService {
     @Autowired
     private GuestRepository guestRepository;
 
-    @Autowired
-    private GuestAppointmentRepository guestAppointmentRepository;
 
-
-    public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request ){
+    public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request) {
         try {
             Appointment appointment = new Appointment();
             LocalDateTime appointmentDateTime = request.getAppointmentDate();
-            if(appointmentDateTime != null){
+            if (appointmentDateTime != null) {
                 appointment.setAppointmentDate(appointmentDateTime);
-        } else {
+            } else {
                 throw new IllegalArgumentException("Appointment date is required");
             }
-
             appointment.setFullName(request.getFullName());
             appointment.setDob(request.getDob());
             appointment.setPhone(request.getPhone());
@@ -81,9 +74,25 @@ public class AppointmentService {
             }
             appointment.setService(services);
 
+            // Tìm Guest theo phone (ưu tiên), nếu không có tạo mới
+            Optional<Guest> guestOpt = guestRepository.findByPhone(request.getPhone());
+            Guest guest;
+            if (guestOpt.isPresent()) {
+                guest = guestOpt.get();
+            } else {
+                guest = new Guest();
+                guest.setFullName(request.getFullName());
+                guest.setGender(request.getGender());
+                guest.setDateOfBirth(request.getDob());
+                guest.setPhone(request.getPhone());
+                guest.setEmail(request.getEmail());
+                guest = guestRepository.save(guest);
+            }
+            appointment.setGuest(guest);
+
             appointment = appointmentRepository.save(appointment);
 
-            // Xử lý N sample
+            // Xử lý N sample (như cũ)
             List<String> sampleTypes = request.getSampleTypes();
             if (sampleTypes != null && !sampleTypes.isEmpty()) {
                 for (String sampleType : sampleTypes) {
@@ -91,7 +100,6 @@ public class AppointmentService {
                     sample.setAppointment(appointment);
                     sample.setSampleType((sampleType != null && !sampleType.isEmpty()) ? sampleType : null);
 
-                    // Nếu các sample đều dùng chung 1 kitComponent theo request
                     KitComponent kitComponent = null;
                     if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
                         kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
@@ -104,24 +112,9 @@ public class AppointmentService {
                 }
             }
 
-
-            Guest guest = new Guest();
-            guest.setFullName(request.getFullName());
-            guest.setGender(request.getGender());
-            guest.setDateOfBirth(request.getDob());
-            guest.setPhone(request.getPhone());
-            guest.setEmail(request.getEmail());
-            guestRepository.save(guest);
-
-            GuestAppointment guestAppointment = new GuestAppointment();
-            guestAppointment.setGuest(guest);
-            guestAppointment.setAppointment(appointment);
-            guestAppointmentRepository.save(guestAppointment);
-
-
             AppointmentResponse response = convertToAppointmentResponse(appointment);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body("Failed to create appointment: " + e.getMessage());
         }

@@ -95,26 +95,26 @@ const Payment = () => {
       // Lấy token từ localStorage
       const userString = localStorage.getItem("user");
       const token = userString ? JSON.parse(userString).token : null;
-      if (!token) {
-        toast.error("Bạn cần đăng nhập để thực hiện thanh toán!");
-        setLoading(false);
-        return;
-      }
       // Chuẩn bị dữ liệu payment
       let status = "PENDING";
       if (paymentMethod.toLowerCase() === "online") status = "PAID";
       const paymentData = {
         appointmentId: appointment.appointmentId,
         amount: serviceDetails?.price || 1,
-        method: paymentMethod.toUpperCase(),
+        paymentMethod: paymentMethod.toUpperCase(),
         status,
+        paymentDate: new Date().toISOString(),
       };
       console.log("Dữ liệu gửi lên POST /api/payments/create:", paymentData);
-      await axios.post("/api/payments/create", paymentData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      if (token) {
+        await axios.post("/api/payments/create", paymentData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        await axios.post("/api/payments/create", paymentData);
+      }
       toast.success(
         "Thanh toán thành công! Lịch hẹn của bạn đã được xác nhận."
       );

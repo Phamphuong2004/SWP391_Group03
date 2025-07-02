@@ -22,9 +22,6 @@ function MyNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [user, setUser] = useState(null);
-  const lastGuest = JSON.parse(
-    localStorage.getItem("lastGuestAppointment") || "null"
-  );
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -118,23 +115,7 @@ function MyNavbar() {
               </Nav.Link>
               <Nav.Link
                 onClick={() => {
-                  const lastGuest = JSON.parse(
-                    localStorage.getItem("lastGuestAppointment") || "null"
-                  );
-                  if (
-                    lastGuest &&
-                    lastGuest.appointmentId &&
-                    lastGuest.email &&
-                    lastGuest.phone
-                  ) {
-                    navigate("/service-tracking", {
-                      state: {
-                        guestEmail: lastGuest.email,
-                        guestPhone: lastGuest.phone,
-                        appointmentId: lastGuest.appointmentId,
-                      },
-                    });
-                  } else if (user) {
+                  if (user) {
                     navigate("/history");
                   } else {
                     navigate("/service-tracking");
@@ -188,6 +169,26 @@ function MyNavbar() {
                     className="nav-link"
                   >
                     Xem đơn feedback
+                  </Nav.Link>
+                )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/invoices")}
+                    className="nav-link"
+                  >
+                    Xem hóa đơn
+                  </Nav.Link>
+                )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/sample-management")}
+                    className="nav-link"
+                  >
+                    Quản lý mẫu
                   </Nav.Link>
                 )}
             </Nav>

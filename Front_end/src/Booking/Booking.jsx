@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
@@ -9,7 +9,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import serviceTypes from "../serviceTypes";
 
-const genders = ["Nam", "Nữ", "Khác"];
 const testPurposes = ["Hành chính", "Dân sự"];
 
 const testCategories = [
@@ -32,26 +31,94 @@ const testCategories = [
 
 // Dropdown options for collectionLocation
 const collectionLocations = ["Tại nhà", "Tại cơ sở y tế"];
-// Dropdown options for kitComponentName (sample from your DB)
+// Danh sách kit component chuẩn hóa từ bảng DB
 const kitComponentNames = [
-  "Sample Tube",
-  "Barcode Sticker",
-  "Instruction Manual",
-  "Consent Form",
-  "Bone Collection Kit",
-  "Sterile Container",
-  "DNA Card",
-  "Desiccant Packet",
-  "Legal Consent Form",
-  "Evidence Seal Sticker",
-  "Fetal Sample Tube",
-  "Mother Consent Form",
-  "Multi-Purpose Swab",
-  "Non-Invasive Kit",
-  "Genetic Risk Form",
-  "Application Form",
-  "Child Consent Envelope",
+  {
+    id: 1,
+    name: "Buccal Swab",
+    intro: "Dùng để thu mẫu tế bào niêm mạc miệng.",
+  },
+  {
+    id: 2,
+    name: "Sample Storage Bag",
+    intro: "Bảo quản mẫu khô và sạch sau khi thu.",
+  },
+  {
+    id: 3,
+    name: "User Manual",
+    intro: "Tài liệu hướng dẫn dán lấy và gửi mẫu xét nghiệm.",
+  },
+  {
+    id: 4,
+    name: "Bone Collection Tube",
+    intro: "Dùng để chứa mẫu máu cốt hoặc xương.",
+  },
+  {
+    id: 5,
+    name: "Shockproof Box",
+    intro: "Bảo vệ mẫu xương trong quá trình vận chuyển.",
+  },
+  {
+    id: 6,
+    name: "Personal DNA Test Kit",
+    intro: "Dùng để kiểm tra cấu trúc ADN cá nhân.",
+  },
+  { id: 7, name: "Sample Envelope", intro: "Dùng để đựng mẫu thu thập." },
+  {
+    id: 8,
+    name: "Legal Confirmation Form",
+    intro: "Dùng trong hồ sơ pháp lý.",
+  },
+  {
+    id: 9,
+    name: "Prenatal DNA Test Kit",
+    intro: "Dùng để thu mẫu thai nhi không xâm lấn.",
+  },
+  {
+    id: 10,
+    name: "Pregnancy Safety Guide",
+    intro: "Tài liệu về an toàn lấy mẫu khi mang thai.",
+  },
+  {
+    id: 11,
+    name: "Custom DNA Kit",
+    intro: "Dùng cho xét nghiệm đặc thù khác theo yêu cầu.",
+  },
+  { id: 12, name: "EDTA Tube", intro: "Ống thu mẫu máu nhiễm." },
+  {
+    id: 13,
+    name: "Safety Instruction",
+    intro: "Hướng dẫn sử dụng khi xét nghiệm thai nhi.",
+  },
+  {
+    id: 14,
+    name: "Genetic History Form",
+    intro: "Mẫu tờ khai về bệnh lý gia đình.",
+  },
+  {
+    id: 15,
+    name: "Gene Report Guide",
+    intro: "Mô tả cách đọc kết quả di truyền.",
+  },
+  {
+    id: 16,
+    name: "Administrative Form",
+    intro: "Các giấy tờ cần thiết cho thủ tục.",
+  },
+  { id: 17, name: "Legal File Cover", intro: "Lưu trữ hồ sơ hành chính." },
+  {
+    id: 18,
+    name: "Civil Dispute Form",
+    intro: "Sử dụng trong tranh chấp dân sự.",
+  },
+  {
+    id: 19,
+    name: "Judicial File",
+    intro: "Tài liệu bổ sung cho hồ sơ xét xử.",
+  },
 ];
+
+const genders = ["Nam", "Nữ", "Khác"];
 
 function Booking() {
   const [form, setForm] = useState({
@@ -133,6 +200,33 @@ function Booking() {
         sampleType: form.sampleType,
       };
 
+      // Kiểm tra dữ liệu bắt buộc
+      const requiredFields = [
+        "fullName",
+        "dob",
+        "phone",
+        "gender",
+        "testPurpose",
+        "serviceType",
+        "appointmentDate",
+        "collectionTime",
+        "district",
+        "province",
+        "testCategory",
+        "collectionLocation",
+        "kitComponentName",
+        "sampleType",
+      ];
+      for (const field of requiredFields) {
+        if (!form[field]) {
+          toast.error(`Vui lòng nhập đầy đủ thông tin: ${field}`);
+          setIsLoading(false);
+          return;
+        }
+      }
+      // Log dữ liệu gửi lên để debug
+      console.log("Dữ liệu gửi lên:", data);
+
       const userString = localStorage.getItem("user");
       const serviceId = form.serviceType;
       if (!serviceId) {
@@ -156,7 +250,18 @@ function Booking() {
             phone: form.phone,
           });
           localStorage.setItem("lastServiceId", response.data.appointmentId);
-          // Không chuyển hướng về trang chủ nữa!
+          // Chuyển hướng sang trang thanh toán cho guest
+          navigate("/payment", {
+            state: {
+              appointment: {
+                ...form,
+                appointmentId: response.data.appointmentId,
+                status: "PENDING",
+                collectionSampleTime: data.collectionTime,
+              },
+            },
+          });
+          return;
         } else {
           toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
         }
@@ -195,6 +300,10 @@ function Booking() {
         navigate("/history");
       }
     } catch (err) {
+      console.error(
+        "Lỗi trả về từ backend:",
+        err.response?.data || err.message
+      );
       toast.error(
         err.response?.data?.message ||
           "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
@@ -340,9 +449,11 @@ function Booking() {
                 required
               >
                 <option value="">Chọn giới tính</option>
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
-                <option value="Khác">Khác</option>
+                {genders.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
               </select>
             </label>
             <label>
@@ -481,8 +592,8 @@ function Booking() {
               >
                 <option value="">Chọn bộ kit</option>
                 {kitComponentNames.map((kit) => (
-                  <option key={kit} value={kit}>
-                    {kit}
+                  <option key={kit.id} value={kit.name}>
+                    {kit.name} - {kit.intro}
                   </option>
                 ))}
               </select>

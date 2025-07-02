@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./ReceiveBooking.css";
+import Swal from "sweetalert2";
 
 const { Option } = Select;
 
@@ -30,24 +31,91 @@ const ReceiveBooking = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [guestBookings, setGuestBookings] = useState([]);
 
+  // Danh sách kit component chuẩn hóa từ bảng DB
   const kitComponentOptions = [
-    "Sample Tube",
-    "Barcode Sticker",
-    "Instruction Manual",
-    "Consent Form",
-    "Bone Collection Kit",
-    "Sterile Container",
-    "DNA Card",
-    "Desiccant Packet",
-    "Legal Consent Form",
-    "Evidence Seal Sticker",
-    "Fetal Sample Tube",
-    "Mother Consent Form",
-    "Multi-Purpose Swab",
-    "Non-Invasive Kit",
-    "Genetic Risk Form",
-    "Application Form",
-    "Civil Dispute Envelope",
+    {
+      id: 1,
+      name: "Buccal Swab",
+      intro: "Dùng để thu mẫu tế bào niêm mạc miệng.",
+    },
+    {
+      id: 2,
+      name: "Sample Storage Bag",
+      intro: "Bảo quản mẫu khô và sạch sau khi thu.",
+    },
+    {
+      id: 3,
+      name: "User Manual",
+      intro: "Tài liệu hướng dẫn dán lấy và gửi mẫu xét nghiệm.",
+    },
+    {
+      id: 4,
+      name: "Bone Collection Tube",
+      intro: "Dùng để chứa mẫu máu cốt hoặc xương.",
+    },
+    {
+      id: 5,
+      name: "Shockproof Box",
+      intro: "Bảo vệ mẫu xương trong quá trình vận chuyển.",
+    },
+    {
+      id: 6,
+      name: "Personal DNA Test Kit",
+      intro: "Dùng để kiểm tra cấu trúc ADN cá nhân.",
+    },
+    { id: 7, name: "Sample Envelope", intro: "Dùng để đựng mẫu thu thập." },
+    {
+      id: 8,
+      name: "Legal Confirmation Form",
+      intro: "Dùng trong hồ sơ pháp lý.",
+    },
+    {
+      id: 9,
+      name: "Prenatal DNA Test Kit",
+      intro: "Dùng để thu mẫu thai nhi không xâm lấn.",
+    },
+    {
+      id: 10,
+      name: "Pregnancy Safety Guide",
+      intro: "Tài liệu về an toàn lấy mẫu khi mang thai.",
+    },
+    {
+      id: 11,
+      name: "Custom DNA Kit",
+      intro: "Dùng cho xét nghiệm đặc thù khác theo yêu cầu.",
+    },
+    { id: 12, name: "EDTA Tube", intro: "Ống thu mẫu máu nhiễm." },
+    {
+      id: 13,
+      name: "Safety Instruction",
+      intro: "Hướng dẫn sử dụng khi xét nghiệm thai nhi.",
+    },
+    {
+      id: 14,
+      name: "Genetic History Form",
+      intro: "Mẫu tờ khai về bệnh lý gia đình.",
+    },
+    {
+      id: 15,
+      name: "Gene Report Guide",
+      intro: "Mô tả cách đọc kết quả di truyền.",
+    },
+    {
+      id: 16,
+      name: "Administrative Form",
+      intro: "Các giấy tờ cần thiết cho thủ tục.",
+    },
+    { id: 17, name: "Legal File Cover", intro: "Lưu trữ hồ sơ hành chính." },
+    {
+      id: 18,
+      name: "Civil Dispute Form",
+      intro: "Sử dụng trong tranh chấp dân sự.",
+    },
+    {
+      id: 19,
+      name: "Judicial File",
+      intro: "Tài liệu bổ sung cho hồ sơ xét xử.",
+    },
   ];
 
   // Fetch bookings based on user role
@@ -98,7 +166,7 @@ const ReceiveBooking = () => {
   const handleStatusUpdate = async (bookingId, newStatus) => {
     try {
       await axios.put(
-        `/api/update-appointment/${bookingId}`,
+        `/api/update/staff/${bookingId}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -115,23 +183,32 @@ const ReceiveBooking = () => {
 
   // Handle delete booking
   const handleDelete = (bookingId) => {
-    Modal.confirm({
+    console.log("Gọi handleDelete với bookingId:", bookingId);
+    Swal.fire({
       title: "Bạn có chắc chắn muốn xóa đơn này?",
-      content: "Hành động này không thể hoàn tác.",
-      okText: "Có",
-      okType: "danger",
-      cancelText: "Không",
-      onOk: async () => {
-        try {
-          await axios.delete(`/api/delete-appointment/${bookingId}`, {
+      text: "Hành động này không thể hoàn tác.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Có, xóa!",
+      cancelButtonText: "Không",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`/api/delete-appointment/${bookingId}`, {
             headers: { Authorization: `Bearer ${user.token}` },
+          })
+          .then(() => {
+            message.success("Xóa đơn thành công");
+            fetchBookings();
+          })
+          .catch((error) => {
+            console.error("Lỗi xóa:", error, error.response);
+            const msg = error.response?.data?.message || error.message;
+            message.error("Không thể xóa đơn: " + msg);
           });
-          message.success("Xóa đơn thành công");
-          fetchBookings();
-        } catch (error) {
-          message.error("Không thể xóa đơn");
-        }
-      },
+      }
     });
   };
 
@@ -154,6 +231,8 @@ const ReceiveBooking = () => {
               .toISOString()
               .slice(0, 16)
           : "",
+        kit_component_name:
+          bookingData.kitComponentName || bookingData.kit_component_name || "",
       };
       form.setFieldsValue(bookingDetails);
       setIsEditing(false);
@@ -167,10 +246,16 @@ const ReceiveBooking = () => {
 
   // Handle form submission for update
   const handleSubmit = async (values) => {
+    // Map lại trường cho backend camelCase
+    const submitValues = {
+      ...values,
+      kitComponentName: values.kit_component_name,
+    };
+    delete submitValues.kit_component_name;
     try {
       await axios.put(
-        `/api/update-appointment/${selectedBooking.appointmentId}`,
-        values,
+        `/api/update/staff/${selectedBooking.appointmentId}`,
+        submitValues,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
       message.success("Cập nhật đơn thành công");
@@ -185,7 +270,7 @@ const ReceiveBooking = () => {
   const handleAssign = async (bookingId) => {
     try {
       await axios.put(
-        `/api/update-appointment/${bookingId}`,
+        `/api/update/staff/${bookingId}`,
         { staffId: user.id, status: "RECEIVED" },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -302,7 +387,10 @@ const ReceiveBooking = () => {
               <Button
                 danger
                 type="primary"
-                onClick={() => handleDelete(record.appointmentId)}
+                onClick={() => {
+                  console.log("Bấm nút Xóa bookingId:", record.appointmentId);
+                  handleDelete(record.appointmentId);
+                }}
                 style={{ marginRight: 8 }}
               >
                 Xóa
@@ -452,14 +540,24 @@ const ReceiveBooking = () => {
             </Select>
           </Form.Item>
           <Form.Item
-            name="kit_component_name"
-            label="Kit Component Name"
+            name="kitComponentName"
+            label="Kit Component"
             rules={[{ required: false }]}
           >
-            <Select allowClear showSearch placeholder="Chọn kit component">
-              {kitComponentOptions.map((name) => (
-                <Option key={name} value={name}>
-                  {name}
+            <Select
+              allowClear
+              showSearch
+              placeholder="Chọn kit component"
+              optionLabelProp="label"
+            >
+              {kitComponentOptions.map((item) => (
+                <Option key={item.id} value={item.name} label={item.name}>
+                  <div>
+                    <b>{item.name}</b>
+                    <div style={{ fontSize: 12, color: "#888" }}>
+                      {item.intro}
+                    </div>
+                  </div>
                 </Option>
               ))}
             </Select>
