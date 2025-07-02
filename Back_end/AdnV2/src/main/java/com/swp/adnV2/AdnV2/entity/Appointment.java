@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -82,7 +81,7 @@ public class Appointment {
     private Services service;
 
     @OneToMany(mappedBy = "appointment")
-    private List<Sample> samples;
+    private List<CollectedSample> collectedSamples;
 
     @ManyToOne
     @JoinColumn(name = "kit_component_id")
@@ -119,12 +118,12 @@ public class Appointment {
         this.guest = guest;
     }
 
-    public List<Sample> getSamples() {
-        return samples;
+    public List<CollectedSample> getSamples() {
+        return collectedSamples;
     }
 
-    public void setSamples(List<Sample> samples) {
-        this.samples = samples;
+    public void setSamples(List<CollectedSample> collectedSamples) {
+        this.collectedSamples = collectedSamples;
     }
 
     public Services getService() {

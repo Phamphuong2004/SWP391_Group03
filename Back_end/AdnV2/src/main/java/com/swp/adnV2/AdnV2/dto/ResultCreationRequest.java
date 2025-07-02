@@ -1,8 +1,5 @@
 package com.swp.adnV2.AdnV2.dto;
 
-import com.swp.adnV2.AdnV2.entity.Sample;
-import com.swp.adnV2.AdnV2.entity.Users;
-
 import java.time.LocalDate;
 
 public class ResultCreationRequest {

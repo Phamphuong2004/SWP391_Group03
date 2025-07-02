@@ -29,7 +29,7 @@ public class Result {
 
     @ManyToOne
     @JoinColumn(name = "sample_id")
-    private Sample sample;
+    private CollectedSample collectedSample;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -76,12 +76,12 @@ public class Result {
         this.interpretation = interpretation;
     }
 
-    public Sample getSample() {
-        return sample;
+    public CollectedSample getCollectedSample() {
+        return collectedSample;
     }
 
-    public void setSample(Sample sample) {
-        this.sample = sample;
+    public void setCollectedSample(CollectedSample collectedSample) {
+        this.collectedSample = collectedSample;
     }
 
     public Users getUser() {
@@ -130,7 +130,7 @@ public class Result {
                 ", resultDate=" + resultDate +
                 ", resultData='" + resultData + '\'' +
                 ", interpretation='" + interpretation + '\'' +
-                ", sample=" + sample +
+                ", sample=" + collectedSample +
                 ", user=" + users +
                 ", status='" + status + '\'' +
                 ", appointment=" + appointment +

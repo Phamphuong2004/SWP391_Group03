@@ -5,15 +5,13 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Sample")
-public class Sample {
+@Table(name = "collected_sample")
+public class CollectedSample {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "sample_id")
     private Long sampleId;
 
-    @Column(name = "sample_type", columnDefinition = "NVARCHAR(50)")
-    private String sampleType;
 
     @Column(name = "collected_date")
     private LocalDate collectedDate;
@@ -41,19 +39,12 @@ public class Sample {
     @JoinColumn(name = "participant_id", nullable = true)
     private Participant participant;
 
-    // Default constructor
-    public Sample() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "sample_type_id", nullable = false)
+    private SampleType sampleType;
 
-    public Sample(Long sampleId, String sampleType, LocalDate collectedDate, LocalDate receivedDate, String status, Users users, KitComponent kitComponent, Appointment appointment) {
-        this.sampleId = sampleId;
-        this.sampleType = sampleType;
-        this.collectedDate = collectedDate;
-        this.receivedDate = receivedDate;
-        this.status = status;
-        this.users = users;
-        this.kitComponent = kitComponent;
-        this.appointment = appointment;
+    // Default constructor
+    public CollectedSample() {
     }
 
     // Getters and setters
@@ -108,11 +99,11 @@ public class Sample {
         this.kitComponent = kitComponent;
     }
 
-    public String getSampleType() {
+    public SampleType getSampleType() {
         return sampleType;
     }
 
-    public void setSampleType(String sampleType) {
+    public void setSampleType(SampleType sampleType) {
         this.sampleType = sampleType;
     }
 
