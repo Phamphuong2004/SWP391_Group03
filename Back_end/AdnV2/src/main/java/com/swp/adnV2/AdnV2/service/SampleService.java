@@ -53,12 +53,13 @@ public class SampleService {
 
         // Lấy SampleType từ DB
         SampleType sampleType = null;
-        if (sampleRequest.getSampleType() != null) {
-            sampleType = sampleTypeRepository.findByName(sampleRequest.getSampleType());
-            if (sampleType == null) {
+        if (sampleRequest.getSampleType() != null && !sampleRequest.getSampleType().trim().isEmpty()) {
+            Optional<SampleType> optionalSampleType = sampleTypeRepository.findByName(sampleRequest.getSampleType());
+            if (optionalSampleType.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Sample type not found: " + sampleRequest.getSampleType());
             }
+            sampleType = optionalSampleType.get();
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Sample type is required");
@@ -153,11 +154,12 @@ public class SampleService {
                         .body("Sample with ID " + sampleId + " not found");
             }
             CollectedSample collectedSample = optionalSample.get();
-            if(sampleRequest.getSampleType() != null && !sampleRequest.getSampleType().trim().isEmpty()) {
-                SampleType sampleType = sampleTypeRepository.findByName(sampleRequest.getSampleType());
-                if (sampleType == null) {
+            if (sampleRequest.getSampleType() != null && !sampleRequest.getSampleType().trim().isEmpty()) {
+                Optional<SampleType> optionalSampleType = sampleTypeRepository.findByName(sampleRequest.getSampleType());
+                if (optionalSampleType.isEmpty()) {
                     return ResponseEntity.badRequest().body("Sample type not found: " + sampleRequest.getSampleType());
                 }
+                SampleType sampleType = optionalSampleType.get();
                 collectedSample.setSampleType(sampleType);
             }
 
@@ -282,10 +284,12 @@ public class SampleService {
                 return ResponseEntity.badRequest().body("Sample type is required");
             }
 
-            SampleType sampleType = sampleTypeRepository.findByName(request.getSampleType());
-            if (sampleType == null) {
+            Optional<SampleType> optionalSampleType = sampleTypeRepository.findByName(request.getSampleType());
+            if (optionalSampleType.isEmpty()) {
                 return ResponseEntity.badRequest().body("Sample type not found: " + request.getSampleType());
             }
+
+            SampleType sampleType = optionalSampleType.get();
 
             // 4. Lấy toàn bộ sample của appointment (nếu là 1-N)
             List<CollectedSample> collectedSamples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
