@@ -191,6 +191,16 @@ function MyNavbar() {
                     Quản lý mẫu
                   </Nav.Link>
                 )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/kit-management")}
+                    className="nav-link"
+                  >
+                    Quản lý Kit
+                  </Nav.Link>
+                )}
             </Nav>
             <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
               <Form.Control

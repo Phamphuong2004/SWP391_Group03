@@ -358,6 +358,12 @@ const ReceiveBooking = () => {
       render: (text) => text || "Không có dữ liệu",
     },
     {
+      title: "Tên kit",
+      dataIndex: "kitComponentName",
+      key: "kitComponentName",
+      render: (text) => text || "Không có dữ liệu",
+    },
+    {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
@@ -424,6 +430,29 @@ const ReceiveBooking = () => {
     },
   ];
 
+  // Thêm mapping key sang tiếng Việt cho các trường cần hiển thị
+  const fieldLabels = {
+    appointmentId: "Mã đơn",
+    fullName: "Tên khách hàng",
+    dob: "Ngày sinh",
+    phone: "Số điện thoại",
+    email: "Email",
+    gender: "Giới tính",
+    testPurpose: "Mục đích xét nghiệm",
+    testCategory: "Nhóm xét nghiệm",
+    serviceType: "Loại dịch vụ",
+    appointmentDate: "Ngày hẹn",
+    collectionSampleTime: "Giờ lấy mẫu",
+    collectionLocation: "Nơi lấy mẫu",
+    fingerprintFile: "File vân tay",
+    district: "Quận/Huyện",
+    province: "Tỉnh/Thành phố",
+    status: "Trạng thái",
+    resultFile: "File kết quả",
+    kitComponentName: "Tên kit",
+    paymentStatus: "Trạng thái thanh toán",
+  };
+
   return (
     <div className="receive-booking-container">
       <h1 className="receive-booking-title">
@@ -467,172 +496,52 @@ const ReceiveBooking = () => {
         title="Chi tiết đơn đặt lịch"
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        footer={
-          user.role.toLowerCase() === "staff" ||
-          user.role.toLowerCase() === "manager"
-            ? [
-                !isEditing && (
-                  <Button
-                    key="edit"
-                    type="primary"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Chỉnh sửa
-                  </Button>
-                ),
-                isEditing && (
-                  <Button
-                    key="save"
-                    type="primary"
-                    onClick={() => form.submit()}
-                  >
-                    Lưu
-                  </Button>
-                ),
-                <Button
-                  key="cancel"
-                  onClick={() => {
-                    setIsEditing(false);
-                    form.setFieldsValue(selectedBooking);
-                  }}
-                >
-                  Hủy
-                </Button>,
-              ]
-            : [
-                <Button key="close" onClick={() => setIsModalVisible(false)}>
-                  Đóng
-                </Button>,
-              ]
-        }
+        footer={[
+          <Button key="close" onClick={() => setIsModalVisible(false)}>
+            Đóng
+          </Button>,
+        ]}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          disabled={!isEditing}
-        >
-          <Form.Item
-            name="fullName"
-            label="Tên khách hàng"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true, type: "email" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="phone"
-            label="Số điện thoại"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="appointmentTime"
-            label="Ngày giờ hẹn lấy mẫu"
-            rules={[{ required: true }]}
-          >
-            <Input type="datetime-local" />
-          </Form.Item>
-          <Form.Item name="collectionSampleTime" label="Giờ lấy mẫu">
-            <Input type="datetime-local" />
-          </Form.Item>
-          <Form.Item
-            name="status"
-            label="Trạng thái"
-            rules={[{ required: true }]}
-          >
-            <Select>
-              <Option value="PENDING">Pending</Option>
-              <Option value="CONFIRMED">Confirmed</Option>
-              <Option value="CANCELLED">Cancelled</Option>
-              <Option value="COMPLETED">Completed</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="kitComponentName"
-            label="Kit Component"
-            rules={[{ required: false }]}
-          >
-            <Select
-              allowClear
-              showSearch
-              placeholder="Chọn kit component"
-              optionLabelProp="label"
+        {selectedBooking && (
+          <div style={{ marginTop: 8 }}>
+            <h4>Tất cả thông tin chi tiết</h4>
+            <table
+              style={{
+                width: "100%",
+                background: "#f9f9f9",
+                borderCollapse: "collapse",
+                borderRadius: 8,
+                overflow: "hidden",
+                boxShadow: "0 2px 8px #eee",
+              }}
             >
-              {kitComponentOptions.map((item) => (
-                <Option key={item.id} value={item.name} label={item.name}>
-                  <div>
-                    <b>{item.name}</b>
-                    <div style={{ fontSize: 12, color: "#888" }}>
-                      {item.intro}
-                    </div>
-                  </div>
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="resultFile"
-            label="Result File"
-            rules={[{ required: false }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="serviceType" label="Loại dịch vụ">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item name="address" label="Địa chỉ">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item name="testCategory" label="Loại xét nghiệm">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item name="note" label="Ghi chú">
-            <Input.TextArea disabled />
-          </Form.Item>
-          <Form.Item
-            name="sampleName"
-            label="Mã mẫu (sampleName)"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="Nhập mã mẫu hoặc để tự sinh" />
-          </Form.Item>
-          <Form.Item
-            name="sampleType"
-            label="Loại mẫu vật lý (sampleType)"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="Ví dụ: Máu, Niêm mạc, Tóc..." />
-          </Form.Item>
-          <Form.Item
-            name="collectedDate"
-            label="Ngày lấy mẫu thực tế (collectedDate)"
-            rules={[{ required: false }]}
-          >
-            <Input type="date" />
-          </Form.Item>
-          <Form.Item
-            name="receivedDate"
-            label="Ngày nhận mẫu (receivedDate)"
-            rules={[{ required: false }]}
-          >
-            <Input type="date" />
-          </Form.Item>
-          <Form.Item
-            name="participantId"
-            label="Mã người lấy mẫu (participantId)"
-            rules={[{ required: false }]}
-          >
-            <Input placeholder="Nhập mã người lấy mẫu nếu có" />
-          </Form.Item>
-        </Form>
+              <tbody>
+                {Object.entries(selectedBooking)
+                  .filter(([key]) => fieldLabels[key])
+                  .map(([key, value]) => (
+                    <tr key={key}>
+                      <td
+                        style={{
+                          fontWeight: "bold",
+                          padding: 8,
+                          border: "1px solid #eee",
+                          width: 180,
+                          background: "#f0f0f0",
+                        }}
+                      >
+                        {fieldLabels[key]}
+                      </td>
+                      <td style={{ padding: 8, border: "1px solid #eee" }}>
+                        {value === null || value === undefined || value === ""
+                          ? "Không có dữ liệu"
+                          : String(value)}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Modal>
 
       <Modal
