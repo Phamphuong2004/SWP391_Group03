@@ -11,5 +11,6 @@ import java.util.List;
 public interface SampleRepository extends JpaRepository<CollectedSample, Long> {
     // Các phương thức liên quan đến Sample
     List<CollectedSample> findByAppointment_AppointmentId(Long appointmentId);
-
+    void deleteBySampleTypeId(Long sampleTypeId);
+    List<CollectedSample> findBySampleTypeId(Long sampleTypeId);
 }

@@ -33,6 +33,9 @@ public class SampleType {
         this.kitComponent = kitComponent;
         this.collectedSamples = collectedSamples;
     }
+    public Long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
