@@ -14,7 +14,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     // Tìm theo username
     List<Appointment> findByUsers_Username(String username);
 
-
     // Tìm theo email và phone cho người không có tài khoản
     List<Appointment> findByEmailAndPhone(String email, String phone);
 

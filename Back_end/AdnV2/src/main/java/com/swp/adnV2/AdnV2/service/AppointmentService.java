@@ -138,10 +138,11 @@ public class AppointmentService {
             List<String> sampleTypeNames = request.getSampleTypes();
             if (sampleTypeNames != null && !sampleTypeNames.isEmpty()) {
                 for (String sampleTypeName : sampleTypeNames) {
-                    SampleType sampleType = sampleTypeRepository.findByName(sampleTypeName);
-                    if (sampleType == null) {
+                    Optional<SampleType> optSampleType = sampleTypeRepository.findByName(sampleTypeName);
+                    if (optSampleType.isEmpty()) {
                         return ResponseEntity.badRequest().body("Invalid sample type: " + sampleTypeName);
                     }
+                    SampleType sampleType = optSampleType.get();
                     CollectedSample collectedSample = new CollectedSample();
                     collectedSample.setAppointment(appointment);
                     collectedSample.setSampleType(sampleType);
@@ -350,19 +351,19 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         List<String> sampleTypes = request.getSampleTypes();
         if (sampleTypes != null && !sampleTypes.isEmpty()) {
             for (String sampleTypeName : sampleTypes) {
-                SampleType sampleType = sampleTypeRepository.findByName(sampleTypeName);
-                if (sampleType == null) {
-                    // Có thể chọn xử lý lỗi: bỏ qua, hoặc trả lỗi luôn
+                Optional<SampleType> optionalSampleType = sampleTypeRepository.findByName(sampleTypeName);
+                if (optionalSampleType.isEmpty()) {
                     Map<String, Object> errorBody = new HashMap<>();
                     errorBody.put("message", "Invalid sample type: " + sampleTypeName);
                     return ResponseEntity.badRequest().body(errorBody);
                 }
+                SampleType sampleType = optionalSampleType.get();
                 CollectedSample collectedSample = new CollectedSample();
                 collectedSample.setAppointment(appointment);
                 collectedSample.setUsers(appointment.getUser());
                 collectedSample.setCollectedDate(LocalDate.now());
                 collectedSample.setKitComponent(kitComponent);
-                collectedSample.setSampleType(sampleType); // <-- Đúng kiểu
+                collectedSample.setSampleType(sampleType);
                 sampleRepository.save(collectedSample);
             }
         }
