@@ -6,10 +6,11 @@ import com.swp.adnV2.AdnV2.entity.Services;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-
+@Repository
 public interface KitRepository extends JpaRepository<KitComponent, Long> {
     // Các phương thức liên quan đến KitComponent
     List<KitComponent> findByService(Services service);
