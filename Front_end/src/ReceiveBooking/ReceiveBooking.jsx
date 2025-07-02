@@ -118,6 +118,15 @@ const ReceiveBooking = () => {
     },
   ];
 
+  // Thêm hàm chuyển đổi ngày giờ về local cho input datetime-local
+  const toDatetimeLocal = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - offset * 60000);
+    return localDate.toISOString().slice(0, 16);
+  };
+
   // Fetch bookings based on user role
   const fetchBookings = async () => {
     if (!user || !user.token) {
@@ -223,17 +232,24 @@ const ReceiveBooking = () => {
       setSelectedBooking(bookingData);
       const bookingDetails = {
         ...bookingData,
-        appointmentDate: bookingData.appointmentDate
-          ? new Date(bookingData.appointmentDate).toISOString().slice(0, 16)
-          : "",
-        collectionSampleTime: bookingData.collectionSampleTime
-          ? new Date(bookingData.collectionSampleTime)
-              .toISOString()
-              .slice(0, 16)
-          : "",
+        appointmentDate:
+          bookingData.appointmentDate || bookingData.appointment_date
+            ? toDatetimeLocal(
+                bookingData.appointmentDate || bookingData.appointment_date
+              )
+            : "",
+        collectionSampleTime:
+          bookingData.collectionSampleTime || bookingData.collection_sample_time
+            ? toDatetimeLocal(
+                bookingData.collectionSampleTime ||
+                  bookingData.collection_sample_time
+              )
+            : "",
         kit_component_name:
           bookingData.kitComponentName || bookingData.kit_component_name || "",
       };
+      form.resetFields();
+      console.log("bookingDetails set vào form:", bookingDetails);
       form.setFieldsValue(bookingDetails);
       setIsEditing(false);
       setIsModalVisible(true);
@@ -518,7 +534,7 @@ const ReceiveBooking = () => {
             <Input />
           </Form.Item>
           <Form.Item
-            name="appointmentDate"
+            name="appointmentTime"
             label="Ngày giờ hẹn lấy mẫu"
             rules={[{ required: true }]}
           >
@@ -580,6 +596,41 @@ const ReceiveBooking = () => {
           </Form.Item>
           <Form.Item name="note" label="Ghi chú">
             <Input.TextArea disabled />
+          </Form.Item>
+          <Form.Item
+            name="sampleName"
+            label="Mã mẫu (sampleName)"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="Nhập mã mẫu hoặc để tự sinh" />
+          </Form.Item>
+          <Form.Item
+            name="sampleType"
+            label="Loại mẫu vật lý (sampleType)"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="Ví dụ: Máu, Niêm mạc, Tóc..." />
+          </Form.Item>
+          <Form.Item
+            name="collectedDate"
+            label="Ngày lấy mẫu thực tế (collectedDate)"
+            rules={[{ required: false }]}
+          >
+            <Input type="date" />
+          </Form.Item>
+          <Form.Item
+            name="receivedDate"
+            label="Ngày nhận mẫu (receivedDate)"
+            rules={[{ required: false }]}
+          >
+            <Input type="date" />
+          </Form.Item>
+          <Form.Item
+            name="participantId"
+            label="Mã người lấy mẫu (participantId)"
+            rules={[{ required: false }]}
+          >
+            <Input placeholder="Nhập mã người lấy mẫu nếu có" />
           </Form.Item>
         </Form>
       </Modal>
