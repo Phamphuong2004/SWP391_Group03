@@ -10,9 +10,12 @@ export const getSampleById = async (sampleId, token) => {
 
 // Lấy sample theo appointmentId
 export const getSampleByAppointmentId = async (appointmentId, token) => {
-  const res = await axios.get(`/api/sample/get/appointment/${appointmentId}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
+  const res = await axios.get(
+    `/api/sample/get/sample-appointment/${appointmentId}`,
+    {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }
+  );
   return res.data;
 };
 
@@ -56,7 +59,7 @@ export const updateSample = async (sampleId, sampleData, token) => {
 
 // Xóa sample
 export const deleteSample = async (sampleId, token) => {
-  const res = await axios.delete(`/api/sample/delete/${sampleId}`, {
+  const res = await axios.delete(`/api/sample/${sampleId}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   return res.data;

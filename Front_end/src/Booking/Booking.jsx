@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import serviceTypes from "../serviceTypes";
+import { Select } from "antd";
 
 const testPurposes = ["Hành chính", "Dân sự"];
 
@@ -120,6 +121,20 @@ const kitComponentNames = [
 
 const genders = ["Nam", "Nữ", "Khác"];
 
+const sampleTypeOptions = [
+  { value: "Máu", label: "Máu" },
+  { value: "Niêm mạc miệng", label: "Niêm mạc miệng" },
+  { value: "Tóc có chân tóc", label: "Tóc có chân tóc" },
+  { value: "Móng tay", label: "Móng tay" },
+  { value: "Xương", label: "Xương" },
+  { value: "Răng", label: "Răng" },
+  { value: "Tinh dịch", label: "Tinh dịch" },
+  { value: "Nước bọt", label: "Nước bọt" },
+  { value: "Cuống rốn", label: "Cuống rốn" },
+  { value: "Mô mềm", label: "Mô mềm" },
+  { value: "Khác", label: "Khác" },
+];
+
 function Booking() {
   const [form, setForm] = useState({
     fullName: "",
@@ -137,7 +152,7 @@ function Booking() {
     testCategory: "",
     collectionLocation: "",
     kitComponentName: "",
-    sampleType: "",
+    sampleTypes: [],
   });
 
   const [districts, setDistricts] = useState([]);
@@ -197,7 +212,7 @@ function Booking() {
         testCategory: form.testCategory,
         collectionLocation: form.collectionLocation,
         kitComponentName: form.kitComponentName,
-        sampleType: form.sampleType,
+        sampleTypes: form.sampleTypes,
       };
 
       // Kiểm tra dữ liệu bắt buộc
@@ -215,7 +230,7 @@ function Booking() {
         "testCategory",
         "collectionLocation",
         "kitComponentName",
-        "sampleType",
+        "sampleTypes",
       ];
       for (const field of requiredFields) {
         if (!form[field]) {
@@ -599,13 +614,16 @@ function Booking() {
               </select>
             </label>
             <label>
-              Loại mẫu (sampleType)
-              <input
-                type="text"
-                name="sampleType"
-                value={form.sampleType}
-                onChange={handleChange}
-                placeholder="Nhập loại mẫu (máu, niêm mạc, ... )"
+              Loại mẫu (sampleTypes)
+              <Select
+                mode="multiple"
+                style={{ width: "100%" }}
+                placeholder="Chọn loại mẫu"
+                value={form.sampleTypes || []}
+                onChange={(values) =>
+                  setForm((prev) => ({ ...prev, sampleTypes: values }))
+                }
+                options={sampleTypeOptions}
                 required
               />
             </label>
