@@ -50,8 +50,8 @@ public class Appointment {
     @Column(name = "collection_sample_time")
     private LocalDateTime collectionSampleTime;
 
-    @Column(name = "status", columnDefinition = "NVARCHAR(20) DEFAULT 'Pending'")
-    private String status = "Pending";
+    @Column(name = "status", columnDefinition = "NVARCHAR(20) DEFAULT 'PENDING'")
+    private String status = "PENDING";
 
     @Column(name = "note", columnDefinition = "NVARCHAR(MAX)")
     private String note;
@@ -85,6 +85,10 @@ public class Appointment {
     private List<Sample> samples;
 
     @ManyToOne
+    @JoinColumn(name = "kit_component_id")
+    private KitComponent kitComponent;
+
+    @ManyToOne
     @JoinColumn(name = "guest_id", nullable = true)
     private Guest guest;
 
@@ -98,6 +102,14 @@ public class Appointment {
 
     // Default constructor
     public Appointment() {}
+
+    public KitComponent getKitComponent() {
+        return kitComponent;
+    }
+
+    public void setKitComponent(KitComponent kitComponent) {
+        this.kitComponent = kitComponent;
+    }
 
     public Guest getGuest() {
         return guest;

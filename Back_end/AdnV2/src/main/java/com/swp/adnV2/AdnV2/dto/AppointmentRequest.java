@@ -33,6 +33,9 @@ public class AppointmentRequest {
     @NotBlank(message = "Service type is required")
     private String serviceType; // Huyết thông, ADN pháp lý,...
 
+    @NotBlank(message = "Test category is required")
+    private String testCategory; // loại xét nghiệm
+
     @NotNull(message = "Appointment date is required")
     @Future(message = "Appointment date must be in the future")
     private LocalDateTime appointmentDate;
@@ -41,7 +44,7 @@ public class AppointmentRequest {
     private String fingerprintFile; // đường dẫn đến file vân tay
     private String district; // quận huyện
     private String province;
-    private String testCategory; // loại xét nghiệm
+
     private String collectionLocation;
 
     private String kitComponentName;

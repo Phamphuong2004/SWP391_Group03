@@ -22,7 +22,6 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    //Tạo cuộc hẹn mới cho khách vãng lai
     @PostMapping("/create/guest-appointment/{serviceId}")
     public ResponseEntity<?> createGuestAppointment(
             @PathVariable("serviceId") Long serviceId,

@@ -18,7 +18,6 @@ public class SampleRequest {
     @Size(max = 20, message = "Status cannot exceed 20 characters")
     private String status;
 
-    private String kitComponentName;
 
     public Long getParticipantId() {
         return participantId;
@@ -26,14 +25,6 @@ public class SampleRequest {
 
     public void setParticipantId(Long participantId) {
         this.participantId = participantId;
-    }
-
-    public String getKitComponentName() {
-        return kitComponentName;
-    }
-
-    public void setKitComponentName(String kitComponentName) {
-        this.kitComponentName = kitComponentName;
     }
 
     public SampleRequest() {
