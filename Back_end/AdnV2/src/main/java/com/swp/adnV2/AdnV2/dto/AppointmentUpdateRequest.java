@@ -4,7 +4,6 @@ public class AppointmentUpdateRequest {
     private String status;
     private String resultFile;
     private String kitComponentName;
-    private String sampleType;
 
     public String getStatus() {
         return status;
@@ -28,13 +27,5 @@ public class AppointmentUpdateRequest {
 
     public void setKitComponentName(String kitComponentName) {
         this.kitComponentName = kitComponentName;
-    }
-
-    public String getSampleType() {
-        return sampleType;
-    }
-
-    public void setSampleType(String sampleType) {
-        this.sampleType = sampleType;
     }
 }

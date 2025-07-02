@@ -84,4 +84,19 @@ public class SampleResponse {
     public void setKitComponentName(String kitComponentName) {
         this.kitComponentName = kitComponentName;
     }
+
+    @Override
+    public String toString() {
+        return "SampleResponse{" +
+                "sampleId=" + sampleId +
+                ", sampleType='" + sampleType + '\'' +
+                ", collectedDate=" + collectedDate +
+                ", receivedDate=" + receivedDate +
+                ", status='" + status + '\'' +
+                ", participantId=" + participantId +
+                ", participantFullName='" + participantFullName + '\'' +
+                ", username='" + username + '\'' +
+                ", kitComponentName='" + kitComponentName + '\'' +
+                '}';
+    }
 }

@@ -16,6 +16,16 @@ public class SampleController {
     @Autowired
     private SampleService sampleService;
 
+    @PostMapping("/create/staff/{appointmentId}")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
+    public ResponseEntity<?> createSample(
+            @PathVariable Long appointmentId,
+            @Valid @RequestBody SampleRequest sampleRequest) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        return sampleService.createSample(appointmentId, sampleRequest, username);
+    }
+
     @PostMapping("/update/{appointmentId}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ResponseEntity<?> updateSampleAndKitAppointment(@PathVariable Long appointmentId, @RequestBody SampleRequest sampleRequest) {

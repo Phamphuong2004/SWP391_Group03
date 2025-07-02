@@ -34,6 +34,38 @@ public class SampleService {
     @Autowired
     private ParticipantRepsitory participantRepository;
 
+    public ResponseEntity<?> createSample(Long appointmentId, SampleRequest sampleRequest, String username) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+        if (!appointmentOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Appointment with ID " + appointmentId + " not found");
+        }
+        Appointment appointment = appointmentOpt.get();
+
+        KitComponent kitComponent = appointment.getKitComponent();
+        if (kitComponent == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Appointment does not have a selected kit component");
+        }
+
+        Sample sample = new Sample();
+        sample.setAppointment(appointment);
+        sample.setSampleType(sampleRequest.getSampleType());
+        sample.setCollectedDate(sampleRequest.getCollectedDate() != null ? sampleRequest.getCollectedDate() : LocalDate.now());
+        sample.setReceivedDate(sampleRequest.getReceivedDate() != null ? sampleRequest.getReceivedDate() : LocalDate.now());
+        sample.setStatus(sampleRequest.getStatus() != null ? sampleRequest.getStatus() : "Pending");
+        sample.setKitComponent(kitComponent);
+        sample.setUsers(userRepository.findByUsername(username));
+        if (sampleRequest.getParticipantId() != null) {
+            Participant participant = participantRepository.findById(sampleRequest.getParticipantId())
+                    .orElseThrow(() -> new RuntimeException("Participant not found"));
+            sample.setParticipant(participant);
+        }
+        sampleRepository.save(sample);
+        SampleResponse response = convertToSampleResponse(sample);
+        return ResponseEntity.ok("Sample created successfully");
+    }
+
     public ResponseEntity<?> softDeleteSample(Long sampleId, String username) {
         try {
             // Kiểm tra thông tin người dùng
@@ -255,15 +287,6 @@ public class SampleService {
                     Participant participant = participantRepository.findById(request.getParticipantId())
                             .orElseThrow(() -> new RuntimeException("Participant not found"));
                     sample.setParticipant(participant);
-                }
-
-                if (request.getKitComponentName() != null && !request.getKitComponentName().trim().isEmpty()) {
-                    Optional<KitComponent> kitOpt = kitComponentRepository.findByComponentNameIgnoreCase(request.getKitComponentName().trim());
-                    if (!kitOpt.isPresent()) {
-                        return ResponseEntity.badRequest().body("KitComponent not found with name: " + request.getKitComponentName());
-                    }
-                    KitComponent kitComponent = kitOpt.get();
-                    sample.setKitComponent(kitComponent);
                 }
 
                 sampleRepository.save(sample); // Lưu từng sample

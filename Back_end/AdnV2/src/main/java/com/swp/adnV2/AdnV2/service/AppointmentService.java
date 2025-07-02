@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,16 +41,64 @@ public class AppointmentService {
     @Autowired
     private GuestRepository guestRepository;
 
-
     public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request) {
+        List<String> errors = new ArrayList<>();
+        if (request.getAppointmentDate() == null) {
+            errors.add("Appointment date is required");
+        }
+        if (request.getFullName() == null || request.getFullName().isEmpty()) {
+            errors.add("Full name is required");
+        }
+        if (request.getPhone() == null || request.getPhone().isEmpty()) {
+            errors.add("Phone number is required");
+        }
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            errors.add("Email is required");
+        }
+        if (request.getGender() == null || request.getGender().isEmpty()) {
+            errors.add("Gender is required");
+        }
+        if (request.getServiceType() == null || request.getServiceType().isEmpty()) {
+            errors.add("Service type is required");
+        }
+
+        TestPurpose testPurpose = TestPurpose.fromDisplayName(request.getTestPurpose());
+        if(testPurpose == TestPurpose.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
+            errors.add("Test purpose must be one of :Hành chính, Dân sự, Khác");
+        }
+
+        if(testPurpose == TestPurpose.HANH_CHINH){
+            String fingerprintFile = request.getFingerprintFile();
+            if(fingerprintFile == null || fingerprintFile.isEmpty()) {
+                errors.add("Fingerprint file is required for test purpose 'Hành chính'");
+            }
+        }
+
+        Services services = serviceRepository.findServicesByServiceId(serviceId);
+        if (services == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Service not found with ID: " + serviceId);
+        }
+
+
+        KitComponent kitComponent = null;
+        if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
+            kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
+            if (kitComponent == null) {
+                return ResponseEntity.badRequest().body("Invalid kit component name");
+            }
+            // Kiểm tra kitComponent này có thuộc service đã chọn không
+            if (!kitComponent.getService().getServiceId().equals(serviceId)) {
+                return ResponseEntity.badRequest().body("Kit component không thuộc dịch vụ đã chọn!");
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(errors);
+        }
         try {
             Appointment appointment = new Appointment();
-            LocalDateTime appointmentDateTime = request.getAppointmentDate();
-            if (appointmentDateTime != null) {
-                appointment.setAppointmentDate(appointmentDateTime);
-            } else {
-                throw new IllegalArgumentException("Appointment date is required");
-            }
+            appointment.setAppointmentDate(request.getAppointmentDate());
             appointment.setFullName(request.getFullName());
             appointment.setDob(request.getDob());
             appointment.setPhone(request.getPhone());
@@ -63,18 +109,14 @@ public class AppointmentService {
             appointment.setCollectionSampleTime(request.getCollectionTime());
             appointment.setTestCategory(request.getTestCategory());
             appointment.setFingerprintFile(request.getFingerprintFile());
+            appointment.setCollectionLocation(request.getCollectionLocation());
             appointment.setDistrict(request.getDistrict());
             appointment.setProvince(request.getProvince());
-            appointment.setCollectionLocation(request.getCollectionLocation());
             appointment.setStatus("PENDING");
 
-            Services services = serviceRepository.findServicesByServiceId(serviceId);
-            if (services == null) {
-                throw new IllegalArgumentException("Service not found with ID: " + serviceId);
-            }
             appointment.setService(services);
+            appointment.setKitComponent(kitComponent);
 
-            // Tìm Guest theo phone (ưu tiên), nếu không có tạo mới
             Optional<Guest> guestOpt = guestRepository.findByPhone(request.getPhone());
             Guest guest;
             if (guestOpt.isPresent()) {
@@ -89,38 +131,26 @@ public class AppointmentService {
                 guest = guestRepository.save(guest);
             }
             appointment.setGuest(guest);
-
             appointment = appointmentRepository.save(appointment);
 
-            // Xử lý N sample (như cũ)
             List<String> sampleTypes = request.getSampleTypes();
             if (sampleTypes != null && !sampleTypes.isEmpty()) {
                 for (String sampleType : sampleTypes) {
                     Sample sample = new Sample();
                     sample.setAppointment(appointment);
-                    sample.setSampleType((sampleType != null && !sampleType.isEmpty()) ? sampleType : null);
-
-                    KitComponent kitComponent = null;
-                    if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
-                        kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
-                        if (kitComponent == null) {
-                            return ResponseEntity.badRequest().body("Invalid kit component name");
-                        }
-                    }
-                    sample.setKitComponent(kitComponent);
+                    sample.setSampleType(sampleType != null && !sampleType.isEmpty() ? sampleType : null);
+                    sample.setKitComponent(kitComponent); // <--- Luôn dùng kit của appointment
                     sampleRepository.save(sample);
                 }
             }
 
-            AppointmentResponse response = convertToAppointmentResponse(appointment);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            AppointmentResponse appointmentResponse = convertToAppointmentResponse(appointment);
+            return ResponseEntity.status(HttpStatus.CREATED).body(appointmentResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body("Failed to create appointment: " + e.getMessage());
         }
     }
-
-
     public ResponseEntity<?> deleteAppointment(Long appointmentId) {
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isPresent()) {
@@ -150,11 +180,20 @@ public class AppointmentService {
         response.setProvince(appointment.getProvince());
         response.setStatus(appointment.getStatus());
         response.setAppointmentDate(appointment.getAppointmentDate());
-        response.setUserId(appointment.getUserId());
+        if (appointment.getUser() != null) {
+            response.setUserId(appointment.getUser().getUserId());
+        } else {
+            response.setUserId(null);
+        }
+
+        if (appointment.getKitComponent() != null) {
+            response.setKitComponentName(appointment.getKitComponent().getComponentName());
+        } else {
+            response.setKitComponentName(null);
+        }
 
         List<Sample> samples = sampleRepository.findAllByAppointment_AppointmentId(appointment.getAppointmentId());
         if (samples != null && !samples.isEmpty()) {
-            // mapping sampleType list như cũ
             List<String> sampleTypes = samples.stream()
                     .map(Sample::getSampleType)
                     .collect(Collectors.toList());
@@ -178,23 +217,11 @@ public class AppointmentService {
             response.setSamples(Collections.emptyList());
         }
 
-        if (samples != null && !samples.isEmpty()) {
-            Sample firstSample = samples.get(0);
-            if (firstSample.getKitComponent() != null) {
-                response.setKitComponentName(firstSample.getKitComponent().getComponentName());
-            } else {
-                response.setKitComponentName(null);
-            }
-        } else {
-            response.setKitComponentName(null);
-        }
-
-        // Lấy paymentStatus từ Payment (nếu có)
         Payment payment = paymentRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
         if (payment != null) {
             response.setPaymentStatus(payment.getStatus());
         } else {
-            response.setPaymentStatus(null); // hoặc "Pending" tùy nghiệp vụ
+            response.setPaymentStatus("Pending");
         }
 
         return response;
@@ -212,40 +239,86 @@ public class AppointmentService {
     }
 
 
-    public List<Appointment> getAppointmentByUsernameAndStatus(String username, String status) {;
+    public List<Appointment> getAppointmentByUsernameAndStatus(String username, String status) {
         if(status != null && !status.isEmpty()){
             try {
                 StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
                 return appointmentRepository.findByUsers_UsernameAndStatus(username, status);
             } catch (IllegalArgumentException e) {
-                // Xử lý exception khi status không hợp lệ
                 throw new RuntimeException("Invalid status: " + status);
             }
         } else {
-            // Nếu status không được cung cấp hoặc rỗng, trả về tất cả appointment của user có phân trang
             return appointmentRepository.findByUsers_Username(username);
         }
     }
 
 
-
-    /**
-     * Tạo cuộc hẹn mới
-     * @param request Thông tin cuộc hẹn
-     * @param username Tên người dùng (nếu có)
-     * @return ResponseEntity chứa thông tin cuộc hẹn hoặc thông báo lỗi
-     */
 public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest request, String username) {
+    List<String> errors = new ArrayList<>();
+    if (request.getAppointmentDate() == null) {
+        errors.add("Appointment date is required");
+    }
+    if (request.getFullName() == null || request.getFullName().isEmpty()) {
+        errors.add("Full name is required");
+    }
+    if (request.getPhone() == null || request.getPhone().isEmpty()) {
+        errors.add("Phone number is required");
+    }
+    if (request.getEmail() == null || request.getEmail().isEmpty()) {
+        errors.add("Email is required");
+    }
+    if (request.getGender() == null || request.getGender().isEmpty()) {
+        errors.add("Gender is required");
+    }
+    if (request.getServiceType() == null || request.getServiceType().isEmpty()) {
+        errors.add("Service type is required");
+    }
+
+    TestPurpose testPurpose = TestPurpose.fromDisplayName(request.getTestPurpose());
+    if(testPurpose == TestPurpose.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
+        errors.add("Test purpose must be one of :Hành chính, Dân sự, Khác");
+    }
+
+    if(testPurpose == TestPurpose.HANH_CHINH){
+        String fingerprintFile = request.getFingerprintFile();
+        if(fingerprintFile == null || fingerprintFile.isEmpty()) {
+            errors.add("Fingerprint file is required for test purpose 'Hành chính'");
+        }
+    }
+
+        Services services = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
+
+        KitComponent kitComponent = null;
+        if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
+            kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
+            if (kitComponent == null) {
+                errors.add("Invalid kit component name");
+            } else if (services != null && !kitComponent.getService().getServiceId().equals(serviceId)) {
+                errors.add("Kit component không thuộc dịch vụ đã chọn!");
+            }
+        }
+
+
+
+        // Validate user nếu có
+        Users users = null;
+        if (username != null && !username.trim().isEmpty()) {
+            users = userRepository.findByUsername(username);
+            if (users == null) {
+                errors.add("User with username " + username + " not found");
+            }
+        }
+
+        // Nếu có lỗi thì trả về luôn
+        if (!errors.isEmpty()) {
+            Map<String, Object> errorBody = new HashMap<>();
+            errorBody.put("message", "Validation failed");
+            errorBody.put("errors", errors);
+            return ResponseEntity.badRequest().body(errorBody);
+        }
     try {
         Appointment appointment = new Appointment();
-
-        // Sửa ở đây - Thay vì dùng String, lấy trực tiếp LocalDateTime
-        LocalDateTime appointmentDateTime = request.getAppointmentDate();
-        if (appointmentDateTime != null) {
-            appointment.setAppointmentDate(appointmentDateTime);
-        } else {
-            throw new IllegalArgumentException("Appointment date is required");
-        }
         appointment.setFullName(request.getFullName());
         appointment.setDob(request.getDob());
         appointment.setPhone(request.getPhone());
@@ -259,35 +332,14 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         appointment.setCollectionLocation(request.getCollectionLocation());
         appointment.setDistrict(request.getDistrict());
         appointment.setProvince(request.getProvince());
-        Services services = serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
+        appointment.setStatus("PENDING");
         appointment.setService(services);
+        appointment.setKitComponent(kitComponent);
+        if (users != null) appointment.setUser(users);
+        appointment.setAppointmentDate(request.getAppointmentDate());
 
-        // Thêm các thông tin mặc định
-        appointment.setStatus("PENDING"); // Trạng thái mặc định khi tạo cuộc hẹn
 
-        // Xử lý user (nếu có)
-        if (username != null && !username.trim().isEmpty()) {
-            Users users = userRepository.findByUsername(username);
-            if (users != null) {
-                appointment.setUser(users);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("User with username " + username + " not found");
-            }
-        }
-
-        // Lưu appointment
         appointment = appointmentRepository.save(appointment);
-
-        // Xử lý kitComponent
-        KitComponent kitComponent = null;
-        if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
-            kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
-            if (kitComponent == null) {
-                return ResponseEntity.badRequest().body("Invalid kit component name");
-            }
-        }
 
         List<String> sampleTypes = request.getSampleTypes();
         if (sampleTypes != null && !sampleTypes.isEmpty()) {
@@ -296,7 +348,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                 sample.setAppointment(appointment);
                 sample.setUsers(appointment.getUser());
                 sample.setCollectedDate(LocalDate.now());
-                sample.setKitComponent(kitComponent); // Nếu mỗi sample có kitComponent riêng, cần truyền lên theo index
+                sample.setKitComponent(kitComponent);
                 sample.setSampleType(sampleType);
                 sampleRepository.save(sample);
             }
@@ -305,30 +357,33 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         AppointmentResponse response = convertToAppointmentResponse(appointment);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     } catch (Exception e) {
-        return ResponseEntity.badRequest()
-                .body("Failed to create appointment: " + e.getMessage());
+        Map<String, Object> errorBody = new HashMap<>();
+        errorBody.put("message", "Failed to create appointment");
+        errorBody.put("error", e.getMessage());
+        return ResponseEntity.badRequest().body(errorBody);
     }
 }
 
 
-    /**
-     * Xem danh sách cuộc hẹn của người dùng
-     * @param username Tên người dùng
-     * @return ResponseEntity chứa danh sách cuộc hẹn hoặc thông báo lỗi
-     */
-
     public ResponseEntity<?> viewAppointments(String username){
-        Users user = userRepository.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("User with username " + username + " not found");
-        }
-        List<Appointment> appointments = appointmentRepository.findByUsers_UserId(user.getUserId());
+        try {
+            Users user = userRepository.findByUsername(username);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("User with username " + username + " not found");
+            }
+            List<Appointment> appointments = appointmentRepository.findByUsers_UserId(user.getUserId());
 
-        List<AppointmentResponse> responseList = appointments.stream()
-                .map(this::convertToAppointmentResponse)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(responseList, HttpStatus.OK);
+            List<AppointmentResponse> responseList = appointments.stream()
+                    .map(this::convertToAppointmentResponse)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(responseList, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error: " + e.getMessage());
+        }
+
+
     }
 
 
@@ -339,13 +394,18 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
      * @return ResponseEntity chứa thông tin cuộc hẹn hoặc thông báo lỗi
      */
     public ResponseEntity<?> getAppointmentById(Long appointmentId) {
-        Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
-        if (appointment.isPresent()) {
-            AppointmentResponse response = convertToAppointmentResponse(appointment.get());
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Appointment with ID " + appointmentId + " not found");
+        try {
+            Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
+            if (appointment.isPresent()) {
+                AppointmentResponse response = convertToAppointmentResponse(appointment.get());
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Appointment with ID " + appointmentId + " not found");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Internal server error: " + e.getMessage());
         }
     }
 
@@ -355,13 +415,17 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         if (appointmentOpt.isPresent()) {
             Appointment appointment = appointmentOpt.get();
 
-            // Cập nhật trạng thái nếu được cung cấp
             if (updateRequest.getStatus() != null && !updateRequest.getStatus().isEmpty()) {
-                appointment.setStatus(updateRequest.getStatus());
+                boolean isValid = Arrays.stream(StatusAppointment.values())
+                        .anyMatch(s -> s.name().equalsIgnoreCase(updateRequest.getStatus()));
+                if (!isValid) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("Invalid status: " + updateRequest.getStatus());
+                }
+                appointment.setStatus(updateRequest.getStatus().toUpperCase());
             }
             boolean updatedSample = false;
 
-            // Kiểm tra và cập nhật kit_component_name nếu được cung cấp
             if (updateRequest.getKitComponentName() != null && !updateRequest.getKitComponentName().isEmpty()) {
                 // Lấy service từ appointment
                 Services service = appointment.getService();
@@ -388,11 +452,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                 List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
                 if (!samples.isEmpty()) {
                     for (Sample sample : samples) {
-                        // cập nhật sample như logic cũ
                         sample.setKitComponent(kitComponent);
-                        if (updateRequest.getSampleType() != null && !updateRequest.getSampleType().isEmpty()) {
-                            sample.setSampleType(updateRequest.getSampleType());
-                        }
                         sampleRepository.save(sample);
                     }
                     updatedSample = true;
@@ -428,12 +488,6 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         }
     }
 
-    /**
-     * Tìm kiếm cuộc hẹn cho người dùng không có tài khoản
-     * @param email Email người dùng
-     * @param phone Số điện thoại người dùng
-     * @return ResponseEntity chứa danh sách cuộc hẹn hoặc thông báo lỗi
-     */
     public ResponseEntity<?> findAppointmentsByEmailAndPhone(String email, String phone) {
         try {
             List<Appointment> appointments = appointmentRepository.findByEmailAndPhone(email, phone);
@@ -449,8 +503,4 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                     .body("Failed to find appointments: " + e.getMessage());
         }
     }
-
-
-
-
 }
