@@ -125,7 +125,7 @@ function AppContent() {
         <Route
           path="/payment"
           element={
-            <ProtectedRoute allowedRoles={["customer"]}>
+            <ProtectedRoute allowedRoles={["customer", "guest"]}>
               <Payment />
             </ProtectedRoute>
           }

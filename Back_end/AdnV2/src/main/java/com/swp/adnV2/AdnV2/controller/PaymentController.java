@@ -22,26 +22,26 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    @PreAuthorize("permitAll()")
     public PaymentReponse createPayment(@RequestBody PaymentCreationRequest request) {
         // Logic to create a payment
         return paymentService.createPayment(request); // Replace with actual implementation
     }
     @GetMapping("/{paymentId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    @PreAuthorize("permitAll()")
     public PaymentReponse getPaymentById(@PathVariable Long paymentId) {
         // Logic to retrieve a payment by ID
         return paymentService.getPaymentById(paymentId); // Replace with actual implementation
     }
     @DeleteMapping("/{paymentId}")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<?> deletePayment(@PathVariable Long paymentId) {
         // Logic to delete a payment
         paymentService.deletePayment(paymentId); // Replace with actual implementation
         return ResponseEntity.ok().build();
     }
     @PutMapping("/{paymentId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    @PreAuthorize("permitAll()")
     public PaymentReponse updatePayment(@PathVariable Long paymentId, @RequestBody PaymentUpdateRequest request) {
         // Logic to update a payment
         return paymentService.updatePayment(paymentId, request); // Replace with actual implementation
@@ -53,7 +53,7 @@ public class PaymentController {
         return paymentService.getAllPayments(); // Replace with actual implementation
     }
     @GetMapping("/appointment/{appointmentId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    @PreAuthorize("permitAll()")
     public PaymentReponse getPaymentsByAppointmentId(@PathVariable Long appointmentId) {
         // Logic to retrieve payments by appointment ID
         return paymentService.getPaymentsByAppointmentId(appointmentId); // Replace with actual implementation

@@ -11,19 +11,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/sample")
+@RequestMapping("/api/collected-sample")
 public class SampleController {
     @Autowired
     private SampleService sampleService;
 
     @PostMapping("/create/staff/{appointmentId}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
-    public ResponseEntity<?> createSample(
+    public ResponseEntity<?> createCollectedSample(
             @PathVariable Long appointmentId,
             @Valid @RequestBody SampleRequest sampleRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
-        return sampleService.createSample(appointmentId, sampleRequest, username);
+        return sampleService.createCollectedSample(appointmentId, sampleRequest, username);
     }
 
     @PostMapping("/update/{appointmentId}")

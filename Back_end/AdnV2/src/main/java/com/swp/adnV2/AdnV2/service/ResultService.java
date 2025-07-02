@@ -4,7 +4,7 @@ import com.swp.adnV2.AdnV2.dto.ResultCreationRequest;
 import com.swp.adnV2.AdnV2.dto.ResultReponse;
 import com.swp.adnV2.AdnV2.dto.ResultUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Result;
-import com.swp.adnV2.AdnV2.entity.Sample;
+import com.swp.adnV2.AdnV2.entity.CollectedSample;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
 import com.swp.adnV2.AdnV2.repository.ResultRepository;
@@ -32,9 +32,9 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        Sample sample = sampleRepository.findById(request.getSampleId())
+        CollectedSample collectedSample = sampleRepository.findById(request.getSampleId())
                 .orElseThrow(() -> new RuntimeException("Sample not found with id: " + request.getSampleId()));
-        result.setSample(sample);
+        result.setCollectedSample(collectedSample);
 
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
@@ -69,7 +69,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getSample().getSampleId());
+        response.setSampleId(result.getCollectedSample().getSampleId());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(request.getAppointmentId());
         response.setResultFile(result.getResultFile());
@@ -83,9 +83,9 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        Sample sample = sampleRepository.findById(request.getSampleId())
+        CollectedSample collectedSample = sampleRepository.findById(request.getSampleId())
                 .orElseThrow(() -> new RuntimeException("Sample not found with id: " + request.getSampleId()));
-        result.setSample(sample);
+        result.setCollectedSample(collectedSample);
 
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
@@ -119,7 +119,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getSample().getSampleId());
+        response.setSampleId(result.getCollectedSample().getSampleId());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
@@ -127,6 +127,8 @@ public class ResultService {
     }
 
     public void deleteResult(Long resultId) {
+        Result result = resultRepository.findById(resultId)
+                .orElseThrow(() -> new RuntimeException("Result not found with id: " + resultId));
         resultRepository.deleteById(resultId);
     }
 
@@ -142,7 +144,7 @@ public class ResultService {
             response.setResultData(result.getResultData());
             response.setInterpretation(result.getInterpretation());
             response.setStatus(result.getStatus());
-            response.setSampleId(result.getSample().getSampleId());
+            response.setSampleId(result.getCollectedSample().getSampleId());
             response.setUsername(result.getUser().getUsername());
             response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
             response.setResultFile(result.getResultFile());
@@ -162,7 +164,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getSample().getSampleId());
+        response.setSampleId(result.getCollectedSample().getSampleId());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
