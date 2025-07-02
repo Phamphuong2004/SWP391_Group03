@@ -5,8 +5,13 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem("user"));
 
+  // Nếu allowedRoles có 'guest' và không có user (chưa đăng nhập) => cho phép guest truy cập
+  if (!user && allowedRoles && allowedRoles.includes("guest")) {
+    return children;
+  }
+
+  // Nếu không có user và không cho phép guest => chuyển hướng về login
   if (!user) {
-    // Nếu không có user, chuyển hướng về trang đăng nhập
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
