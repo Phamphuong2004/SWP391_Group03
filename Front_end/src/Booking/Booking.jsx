@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
-import ADNTestingServices from "../listOfServices";
 import "./Booking.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

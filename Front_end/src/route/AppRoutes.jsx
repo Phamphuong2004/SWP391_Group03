@@ -44,6 +44,7 @@ import UpdateRolePage from "../rolePage/UpdateRolePage";
 import ViewFeedback from "../Feedback/ViewFeedback";
 import InvoiceList from "../Payment/InvoiceList";
 import SampleManagement from "../SampleManagement/SampleManagement";
+import KitManagement from "../Kit/KitManagement";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -168,6 +169,14 @@ function AppContent() {
           element={
             <ProtectedRoute allowedRoles={["staff", "manager"]}>
               <SampleManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/kit-management"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <KitManagement />
             </ProtectedRoute>
           }
         />
