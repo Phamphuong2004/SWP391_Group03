@@ -68,83 +68,40 @@ public class KitService {
         }
     }
 
-    public ResponseEntity<?> updateKitComponent(Long serviceId, Long kitComponentId,
-                                                KitComponentRequest request) {
-        try {
-            Optional<Services> serviceOptional = servicesRepository.findById(serviceId);
-            if (!serviceOptional.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Service with ID: " + serviceId + " not found");
-            }
-
-            Optional<KitComponent> kitComponentOptional = kitRepository.findById(kitComponentId);
-            if (!kitComponentOptional.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Kit component with ID: " + kitComponentId + " not found");
-            }
-
-            // Kiểm tra KitComponent có thuộc về Service này không
-            KitComponent kitComponent = kitComponentOptional.get();
-            if (kitComponent.getService() == null ||
-                    !kitComponent.getService().getServiceId().equals(serviceId)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Kit component with ID: " + kitComponentId +
-                                " does not belong to Service with ID: " + serviceId);
-            }
-
-            // Cập nhật thông tin KitComponent
-            if (request != null) {
-                if (request.getComponentName() != null) {
-                    kitComponent.setComponentName(request.getComponentName());
-                }
-
-                if (request.getQuantity() > 0) {
-                    kitComponent.setQuantity(request.getQuantity());
-                }
-
-                if (request.getIntruction() != null) {
-                    kitComponent.setIntroduction(request.getIntruction());
-                }
-            }
-
-            kitRepository.save(kitComponent);
-            return ResponseEntity.ok("Kit component updated successfully");
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error updating kit component: " + e.getMessage());
+    public ResponseEntity<?> updateKitComponent(Long kitComponentId, KitComponentRequest request) {
+        Optional<KitComponent> kitComponentOptional = kitRepository.findById(kitComponentId);
+        if (!kitComponentOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Kit component with ID: " + kitComponentId + " not found");
         }
+        KitComponent kitComponent = kitComponentOptional.get();
+
+        // Cập nhật thông tin KitComponent
+        if (request != null) {
+            if (request.getComponentName() != null && !request.getComponentName().trim().isEmpty()) {
+                kitComponent.setComponentName(request.getComponentName());
+            }
+            if (request.getQuantity() > 0) {
+                kitComponent.setQuantity(request.getQuantity());
+            }
+            if (request.getIntruction() != null && !request.getIntruction().trim().isEmpty()) {
+                kitComponent.setIntroduction(request.getIntruction());
+            }
+        }
+
+        kitRepository.save(kitComponent);
+        return ResponseEntity.ok("Kit component updated successfully");
     }
 
-    public ResponseEntity<?> deleteKitComponent(Long serviceId, Long kitComponentId) {
+    public ResponseEntity<?> deleteKitComponent(Long kitComponentId) {
+        Optional<KitComponent> kitComponentOptional = kitRepository.findById(kitComponentId);
+        if (!kitComponentOptional.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Kit component with ID: " + kitComponentId + " not found");
+        }
         try {
-            // Kiểm tra Service tồn tại
-            Optional<Services> serviceOptional = servicesRepository.findById(serviceId);
-            if (!serviceOptional.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Service with ID: " + serviceId + " not found");
-            }
-
-            // Kiểm tra KitComponent tồn tại
-            Optional<KitComponent> kitComponentOptional = kitRepository.findById(kitComponentId);
-            if (!kitComponentOptional.isPresent()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Kit component with ID: " + kitComponentId + " not found");
-            }
-
-            // Kiểm tra KitComponent có thuộc về Service này không
-            KitComponent kitComponent = kitComponentOptional.get();
-            if (kitComponent.getService() == null ||
-                    !kitComponent.getService().getServiceId().equals(serviceId)) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Kit component with ID: " + kitComponentId +
-                                " does not belong to Service with ID: " + serviceId);
-            }
-
-            // Xóa KitComponent
-            kitRepository.delete(kitComponent);
+            kitRepository.deleteById(kitComponentId);
             return ResponseEntity.ok("Kit component deleted successfully");
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error deleting kit component: " + e.getMessage());
