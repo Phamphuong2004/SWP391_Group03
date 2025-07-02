@@ -22,36 +22,38 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @PostMapping("/create")
-
+    @PreAuthorize("hasAnyRole('GUEST', 'CUSTOMER', 'STAFF', 'MANAGER')")
     public PaymentReponse createPayment(@RequestBody PaymentCreationRequest request) {
         // Logic to create a payment
         return paymentService.createPayment(request); // Replace with actual implementation
     }
     @GetMapping("/{paymentId}")
-
+    @PreAuthorize("hasAnyRole('GUEST', 'CUSTOMER', 'STAFF', 'MANAGER')")
     public PaymentReponse getPaymentById(@PathVariable Long paymentId) {
         // Logic to retrieve a payment by ID
         return paymentService.getPaymentById(paymentId); // Replace with actual implementation
     }
     @DeleteMapping("/{paymentId}")
+    @PreAuthorize("hasAnyRole('GUEST', 'CUSTOMER', 'STAFF', 'MANAGER')")
     public ResponseEntity<?> deletePayment(@PathVariable Long paymentId) {
         // Logic to delete a payment
         paymentService.deletePayment(paymentId); // Replace with actual implementation
         return ResponseEntity.ok().build();
     }
     @PutMapping("/{paymentId}")
-
+    @PreAuthorize("hasAnyRole('GUEST', 'CUSTOMER', 'STAFF', 'MANAGER')")
     public PaymentReponse updatePayment(@PathVariable Long paymentId, @RequestBody PaymentUpdateRequest request) {
         // Logic to update a payment
         return paymentService.updatePayment(paymentId, request); // Replace with actual implementation
     }
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public List<PaymentReponse> getAllPayments() {
         // Logic to retrieve all payments
         return paymentService.getAllPayments(); // Replace with actual implementation
     }
     @GetMapping("/appointment/{appointmentId}")
-
+    @PreAuthorize("hasAnyRole('GUEST', 'CUSTOMER', 'STAFF', 'MANAGER')")
     public PaymentReponse getPaymentsByAppointmentId(@PathVariable Long appointmentId) {
         // Logic to retrieve payments by appointment ID
         return paymentService.getPaymentsByAppointmentId(appointmentId); // Replace with actual implementation
