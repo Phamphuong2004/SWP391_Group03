@@ -34,7 +34,6 @@ public class PaymentController {
         return paymentService.getPaymentById(paymentId); // Replace with actual implementation
     }
     @DeleteMapping("/{paymentId}")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public ResponseEntity<?> deletePayment(@PathVariable Long paymentId) {
         // Logic to delete a payment
         paymentService.deletePayment(paymentId); // Replace with actual implementation
@@ -47,7 +46,6 @@ public class PaymentController {
         return paymentService.updatePayment(paymentId, request); // Replace with actual implementation
     }
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public List<PaymentReponse> getAllPayments() {
         // Logic to retrieve all payments
         return paymentService.getAllPayments(); // Replace with actual implementation
