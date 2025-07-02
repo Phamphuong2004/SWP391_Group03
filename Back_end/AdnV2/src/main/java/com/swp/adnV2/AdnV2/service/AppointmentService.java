@@ -152,7 +152,7 @@ public class AppointmentService {
         response.setAppointmentDate(appointment.getAppointmentDate());
         response.setUserId(appointment.getUserId());
 
-        List<Sample> samples = sampleRepository.findAllByAppointment_AppointmentId(appointment.getAppointmentId());
+        List<Sample> samples = sampleRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
         if (samples != null && !samples.isEmpty()) {
             // mapping sampleType list như cũ
             List<String> sampleTypes = samples.stream()
