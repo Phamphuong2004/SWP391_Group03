@@ -1,7 +1,9 @@
 package com.swp.adnV2.AdnV2.service;
 
 import com.swp.adnV2.AdnV2.dto.GuestResponse;
+import com.swp.adnV2.AdnV2.entity.Appointment;
 import com.swp.adnV2.AdnV2.entity.Guest;
+import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
 import com.swp.adnV2.AdnV2.repository.GuestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ import java.util.Optional;
 public class GuestService {
     @Autowired
     private GuestRepository guestRepository;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     public GuestResponse convertGuestToResponse(Guest guest) {
         if (guest == null) {
@@ -52,11 +57,11 @@ public class GuestService {
     }
 
     public ResponseEntity<?> getGuestByAppointmentId(Long appointmentId) {
-        List<Guest> guestList = guestRepository.findGuestsByAppointmentId(appointmentId);
-        if (guestList == null || guestList.isEmpty()) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+        if (!appointmentOpt.isPresent() || appointmentOpt.get().getGuest() == null) {
             return ResponseEntity.notFound().build();
         }
-        Guest guest = guestList.get(0);
+        Guest guest = appointmentOpt.get().getGuest();
         GuestResponse response = convertGuestToResponse(guest);
         return ResponseEntity.ok(response);
     }

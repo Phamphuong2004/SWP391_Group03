@@ -84,6 +84,10 @@ public class Appointment {
     @OneToMany(mappedBy = "appointment")
     private List<Sample> samples;
 
+    @ManyToOne
+    @JoinColumn(name = "guest_id", nullable = true)
+    private Guest guest;
+
     public String getCollectionLocation() {
         return collectionLocation;
     }
@@ -95,6 +99,13 @@ public class Appointment {
     // Default constructor
     public Appointment() {}
 
+    public Guest getGuest() {
+        return guest;
+    }
+
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+    }
 
     public List<Sample> getSamples() {
         return samples;

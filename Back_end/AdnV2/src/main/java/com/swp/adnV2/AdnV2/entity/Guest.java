@@ -3,6 +3,7 @@ package com.swp.adnV2.AdnV2.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "Guest")
@@ -26,6 +27,9 @@ public class Guest {
 
     @Column(name = "email", columnDefinition = "NVARCHAR(100)")
     private String email;
+
+    @OneToMany(mappedBy = "guest")
+    private List<Appointment> appointments;
 
     public Guest() {
     }
