@@ -1,17 +1,28 @@
 package com.swp.adnV2.AdnV2.dto;
 
-import com.swp.adnV2.AdnV2.entity.Users;
-
 import java.time.LocalDateTime;
 
-public class ReportCreationRequest {
+public class ReportReponse {
+    private Long reportId;
 
     private String reportTitle;
 
 
     private String reportContent;
 
+
+    private LocalDateTime createdAt;
+
+
     private String username;
+
+    public Long getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
+    }
 
     public String getReportTitle() {
         return reportTitle;
@@ -27,6 +38,14 @@ public class ReportCreationRequest {
 
     public void setReportContent(String reportContent) {
         this.reportContent = reportContent;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getUsername() {
