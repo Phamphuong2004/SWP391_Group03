@@ -39,26 +39,13 @@ public class Users {
     @Column(name = "role", length = 20, nullable = false)
     private String role;
 
-    @Column(name = "avatar")
-    private String avatar;
+    @Lob
+    private byte[] avatar;
 
     // Default constructor
     public Users() {}
 
-    // Parameterized constructor
-    public Users(String username, String password, String email, String phone, String fullName,
-                 String address, LocalDate dateOfBirth, String gender, String role, String avatar) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.phone = phone;
-        this.fullName = fullName;
-        this.address = address;
-        this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
-        this.role = role;
-        this.avatar = avatar;
-    }
+
 
     // Getters and Setters
     public Long getUserId() {
@@ -141,11 +128,11 @@ public class Users {
         this.role = role;
     }
 
-    public String getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 }

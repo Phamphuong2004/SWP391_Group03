@@ -11,6 +11,7 @@ import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import com.swp.adnV2.AdnV2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -61,10 +65,18 @@ public class UserController {
 
     @PostMapping("/profile/update")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
-    public ResponseEntity<?> updateProfile(@RequestBody ProfileRequest profileRequest) {
+    public ResponseEntity<?> updateProfile(
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "phoneNumber", required = false) String phoneNumber,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "dateOfBirth", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateOfBirth,
+            @RequestParam(value = "gender", required = false) String gender
+    ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        return userService.updateUsers(username, profileRequest);
+        return userService.updateUsers(username, email, phoneNumber, fullName, address, dateOfBirth, gender, avatar);
     }
 
     @GetMapping("/login-history")
