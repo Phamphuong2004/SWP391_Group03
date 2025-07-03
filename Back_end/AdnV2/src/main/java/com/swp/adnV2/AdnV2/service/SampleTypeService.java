@@ -37,8 +37,6 @@ public class SampleTypeService {
     }
     public SampleTypeResponse createSampleType(SampleTypeCreateRequest sampleType) {
         // Check if the sample type already exists by name
-        SampleType existingSampleType = sampleTypeRepository.findByName(sampleType.getName())
-                .orElse(null);
         if (sampleTypeRepository.existsByName(sampleType.getName())) {
             throw new RuntimeException("Sample type already exists with name: " + sampleType.getName());
         }
@@ -146,6 +144,9 @@ public class SampleTypeService {
 
         // Update the sample type's properties
         if (sampleTypeRequest.getName() != null && !sampleTypeRequest.getName().trim().isEmpty()) {
+            if (sampleTypeRepository.existsByName(sampleTypeRequest.getName())) {
+                throw new RuntimeException("Sample type already exists with name: " + sampleTypeRequest.getName());
+            }
             existingSampleType.setName(sampleTypeRequest.getName());
         }
         if (sampleTypeRequest.getDescription() != null && !sampleTypeRequest.getDescription().trim().isEmpty()) {
