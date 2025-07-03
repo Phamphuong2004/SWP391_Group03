@@ -170,4 +170,21 @@ public class ResultService {
         response.setResultFile(result.getResultFile());
         return response;
     }
+    public ResultReponse getResultByAppointmentId(Long appointmentId) {
+        Result result = resultRepository.findByAppointment_AppointmentId(appointmentId);
+        if (result == null) {
+            throw new RuntimeException("Result not found for appointment with id: " + appointmentId);
+        }
+        ResultReponse response = new ResultReponse();
+        response.setResultId(result.getResultId());
+        response.setResultDate(result.getResultDate());
+        response.setResultData(result.getResultData());
+        response.setInterpretation(result.getInterpretation());
+        response.setStatus(result.getStatus());
+        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setUsername(result.getUser().getUsername());
+        response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
+        response.setResultFile(result.getResultFile());
+        return response;
+    }
 }

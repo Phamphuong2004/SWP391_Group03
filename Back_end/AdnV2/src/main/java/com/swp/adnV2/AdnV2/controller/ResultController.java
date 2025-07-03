@@ -46,4 +46,10 @@ public class ResultController {
         resultService.deleteResult(result_id);
         return "Result has been deleted successfully";
     }
+
+    @GetMapping("/appointment/{appointmentId}")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    public ResultReponse getResultByAppointmentId(@RequestParam Long appointmentId) {
+        return resultService.getResultByAppointmentId(appointmentId);
+    }
 }
