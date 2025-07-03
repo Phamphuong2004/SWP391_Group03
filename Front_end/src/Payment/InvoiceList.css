@@ -1,0 +1,268 @@
+/* ĐỒNG BỘ VỚI PAYMENT CARD */
+.payment-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.payment-card {
+  background: var(--card-bg);
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(0, 80, 180, 0.1), 0 1.5px 6px rgba(0, 0, 0, 0.04);
+  padding: 32px 40px;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.payment-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 2rem;
+  letter-spacing: 1px;
+  font-weight: 700;
+  color: #2563eb;
+}
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+.input-field {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.input-field:focus {
+  border: 1.5px solid #2563eb;
+}
+.invoice-table {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
+  padding: 2rem 2.5rem;
+  min-width: 350px;
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  border-collapse: separate;
+  border-spacing: 0 12px;
+}
+.invoice-table th,
+.invoice-table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px 8px;
+  font-size: 1rem;
+  color: var(--table-text);
+}
+.invoice-table th {
+  font-weight: 600;
+  color: var(--table-header-color);
+  background: var(--table-header-bg);
+}
+.invoice-table tr {
+  background: var(--table-row-bg);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+.invoice-table tr:hover {
+  background: #f0f6ff;
+}
+.invoice-status {
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 0.3em 0.8em;
+  display: inline-block;
+}
+.invoice-status.pending {
+  color: #ff9800;
+  background: #fff3e0;
+}
+.invoice-status.paid {
+  color: #2196f3;
+  background: #e3f2fd;
+}
+@media (max-width: 600px) {
+  .payment-card {
+    padding: 18px 4vw 18px 4vw;
+    max-width: 98vw;
+  }
+  .invoice-table,
+  .invoice-table th,
+  .invoice-table td {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.5rem;
+  }
+  .payment-title {
+    font-size: 1.3rem;
+  }
+  .invoice-table {
+    padding: 1rem 0.2rem;
+    min-width: unset;
+  }
+}
+/* DARK MODE */
+.dark-theme .payment-bg {
+  background: linear-gradient(135deg, #181a20 0%, #23272f 100%);
+}
+.dark-theme .payment-card {
+  background: #23272f;
+  color: #fff;
+}
+.dark-theme .payment-title,
+.dark-theme .section-title {
+  color: #ffd600 !important;
+}
+.dark-theme .invoice-table {
+  background: #23272f;
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(255, 224, 102, 0.08);
+}
+.dark-theme .invoice-table th {
+  background: #23272f;
+  color: #ffd600;
+}
+.dark-theme .invoice-table tr:hover {
+  background: #181a20;
+}
+.dark-theme .invoice-status.pending {
+  color: #ffb300;
+  background: #3a2a00;
+}
+.dark-theme .invoice-status.paid {
+  color: #40a9ff;
+  background: #1a2636;
+}
+.dark-theme .input-field {
+  background: #23272f;
+  color: #ffd600;
+  border: 1.5px solid #ffd600;
+}
+.dark-theme .input-field:focus {
+  border: 2px solid #ffd600;
+}
+
+/* Container căn giữa, nền dịu */
+.invoice-list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  background: #f4f8ff;
+}
+
+.invoice-list-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2d4fa0;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.invoice-list-filter {
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Dropdown filter */
+.invoice-list-filter select {
+  padding: 0.4em 1em;
+  border-radius: 8px;
+  border: 1px solid #b0c4de;
+  background: #f8fbff;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.invoice-list-filter select:focus {
+  border: 1.5px solid #2d4fa0;
+}
+
+/* Nút thao tác */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-confirm {
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  min-width: 60px;
+  padding: 6px 0;
+  font-size: 0.98rem;
+  margin: 0 2px;
+  transition: filter 0.15s;
+}
+.btn-confirm.view {
+  background: var(--btn-view);
+}
+.btn-confirm.edit {
+  background: var(--btn-edit);
+}
+.btn-confirm.delete {
+  background: var(--btn-delete);
+}
+.btn-confirm:hover {
+  filter: brightness(1.1);
+}
+
+/* Trạng thái thanh toán */
+.status-paid {
+  background: var(--status-paid-bg);
+  color: var(--status-paid-color);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-block;
+}
+.status-pending {
+  background: var(--status-pending-bg);
+  color: var(--status-pending-color);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Biến màu cho light và dark theme */
+:root {
+  --card-bg: #fff;
+  --table-header-bg: #f5f8ff;
+  --table-header-color: #2563eb;
+  --table-row-bg: #fff;
+  --table-text: #222;
+  --btn-view: #2563eb;
+  --btn-edit: #f59e42;
+  --btn-delete: #e74c3c;
+  --status-paid-bg: #e6f9ec;
+  --status-paid-color: #27ae60;
+  --status-pending-bg: #f8f8f8;
+  --status-pending-color: #888;
+}
+.dark-theme {
+  --card-bg: #181c24;
+  --table-header-bg: #23283a;
+  --table-header-color: #ffd700;
+  --table-row-bg: #23283a;
+  --table-text: #eee;
+  --btn-view: #2563eb;
+  --btn-edit: #f59e42;
+  --btn-delete: #e74c3c;
+  --status-paid-bg: #1e3a2a;
+  --status-paid-color: #27ae60;
+  --status-pending-bg: #2c2c2c;
+  --status-pending-color: #ffd700;
+}

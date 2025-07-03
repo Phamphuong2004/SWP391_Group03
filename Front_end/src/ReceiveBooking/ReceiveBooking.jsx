@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./ReceiveBooking.css";
+import Swal from "sweetalert2";
 
 const { Option } = Select;
 
@@ -30,25 +31,101 @@ const ReceiveBooking = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [guestBookings, setGuestBookings] = useState([]);
 
+  // Danh sách kit component chuẩn hóa từ bảng DB
   const kitComponentOptions = [
-    "Sample Tube",
-    "Barcode Sticker",
-    "Instruction Manual",
-    "Consent Form",
-    "Bone Collection Kit",
-    "Sterile Container",
-    "DNA Card",
-    "Desiccant Packet",
-    "Legal Consent Form",
-    "Evidence Seal Sticker",
-    "Fetal Sample Tube",
-    "Mother Consent Form",
-    "Multi-Purpose Swab",
-    "Non-Invasive Kit",
-    "Genetic Risk Form",
-    "Application Form",
-    "Civil Dispute Envelope",
+    {
+      id: 1,
+      name: "Buccal Swab",
+      intro: "Dùng để thu mẫu tế bào niêm mạc miệng.",
+    },
+    {
+      id: 2,
+      name: "Sample Storage Bag",
+      intro: "Bảo quản mẫu khô và sạch sau khi thu.",
+    },
+    {
+      id: 3,
+      name: "User Manual",
+      intro: "Tài liệu hướng dẫn dán lấy và gửi mẫu xét nghiệm.",
+    },
+    {
+      id: 4,
+      name: "Bone Collection Tube",
+      intro: "Dùng để chứa mẫu máu cốt hoặc xương.",
+    },
+    {
+      id: 5,
+      name: "Shockproof Box",
+      intro: "Bảo vệ mẫu xương trong quá trình vận chuyển.",
+    },
+    {
+      id: 6,
+      name: "Personal DNA Test Kit",
+      intro: "Dùng để kiểm tra cấu trúc ADN cá nhân.",
+    },
+    { id: 7, name: "Sample Envelope", intro: "Dùng để đựng mẫu thu thập." },
+    {
+      id: 8,
+      name: "Legal Confirmation Form",
+      intro: "Dùng trong hồ sơ pháp lý.",
+    },
+    {
+      id: 9,
+      name: "Prenatal DNA Test Kit",
+      intro: "Dùng để thu mẫu thai nhi không xâm lấn.",
+    },
+    {
+      id: 10,
+      name: "Pregnancy Safety Guide",
+      intro: "Tài liệu về an toàn lấy mẫu khi mang thai.",
+    },
+    {
+      id: 11,
+      name: "Custom DNA Kit",
+      intro: "Dùng cho xét nghiệm đặc thù khác theo yêu cầu.",
+    },
+    { id: 12, name: "EDTA Tube", intro: "Ống thu mẫu máu nhiễm." },
+    {
+      id: 13,
+      name: "Safety Instruction",
+      intro: "Hướng dẫn sử dụng khi xét nghiệm thai nhi.",
+    },
+    {
+      id: 14,
+      name: "Genetic History Form",
+      intro: "Mẫu tờ khai về bệnh lý gia đình.",
+    },
+    {
+      id: 15,
+      name: "Gene Report Guide",
+      intro: "Mô tả cách đọc kết quả di truyền.",
+    },
+    {
+      id: 16,
+      name: "Administrative Form",
+      intro: "Các giấy tờ cần thiết cho thủ tục.",
+    },
+    { id: 17, name: "Legal File Cover", intro: "Lưu trữ hồ sơ hành chính." },
+    {
+      id: 18,
+      name: "Civil Dispute Form",
+      intro: "Sử dụng trong tranh chấp dân sự.",
+    },
+    {
+      id: 19,
+      name: "Judicial File",
+      intro: "Tài liệu bổ sung cho hồ sơ xét xử.",
+    },
   ];
+
+  // Thêm hàm chuyển đổi ngày giờ về local cho input datetime-local
+  const toDatetimeLocal = (dateStr) => {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - offset * 60000);
+    return localDate.toISOString().slice(0, 16);
+  };
 
   // Fetch bookings based on user role
   const fetchBookings = async () => {
@@ -98,7 +175,7 @@ const ReceiveBooking = () => {
   const handleStatusUpdate = async (bookingId, newStatus) => {
     try {
       await axios.put(
-        `/api/update-appointment/${bookingId}`,
+        `/api/update/staff/${bookingId}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -115,23 +192,32 @@ const ReceiveBooking = () => {
 
   // Handle delete booking
   const handleDelete = (bookingId) => {
-    Modal.confirm({
+    console.log("Gọi handleDelete với bookingId:", bookingId);
+    Swal.fire({
       title: "Bạn có chắc chắn muốn xóa đơn này?",
-      content: "Hành động này không thể hoàn tác.",
-      okText: "Có",
-      okType: "danger",
-      cancelText: "Không",
-      onOk: async () => {
-        try {
-          await axios.delete(`/api/delete-appointment/${bookingId}`, {
+      text: "Hành động này không thể hoàn tác.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Có, xóa!",
+      cancelButtonText: "Không",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`/api/delete-appointment/${bookingId}`, {
             headers: { Authorization: `Bearer ${user.token}` },
+          })
+          .then(() => {
+            message.success("Xóa đơn thành công");
+            fetchBookings();
+          })
+          .catch((error) => {
+            console.error("Lỗi xóa:", error, error.response);
+            const msg = error.response?.data?.message || error.message;
+            message.error("Không thể xóa đơn: " + msg);
           });
-          message.success("Xóa đơn thành công");
-          fetchBookings();
-        } catch (error) {
-          message.error("Không thể xóa đơn");
-        }
-      },
+      }
     });
   };
 
@@ -146,15 +232,24 @@ const ReceiveBooking = () => {
       setSelectedBooking(bookingData);
       const bookingDetails = {
         ...bookingData,
-        appointmentDate: bookingData.appointmentDate
-          ? new Date(bookingData.appointmentDate).toISOString().slice(0, 16)
-          : "",
-        collectionSampleTime: bookingData.collectionSampleTime
-          ? new Date(bookingData.collectionSampleTime)
-              .toISOString()
-              .slice(0, 16)
-          : "",
+        appointmentDate:
+          bookingData.appointmentDate || bookingData.appointment_date
+            ? toDatetimeLocal(
+                bookingData.appointmentDate || bookingData.appointment_date
+              )
+            : "",
+        collectionSampleTime:
+          bookingData.collectionSampleTime || bookingData.collection_sample_time
+            ? toDatetimeLocal(
+                bookingData.collectionSampleTime ||
+                  bookingData.collection_sample_time
+              )
+            : "",
+        kit_component_name:
+          bookingData.kitComponentName || bookingData.kit_component_name || "",
       };
+      form.resetFields();
+      console.log("bookingDetails set vào form:", bookingDetails);
       form.setFieldsValue(bookingDetails);
       setIsEditing(false);
       setIsModalVisible(true);
@@ -167,10 +262,16 @@ const ReceiveBooking = () => {
 
   // Handle form submission for update
   const handleSubmit = async (values) => {
+    // Map lại trường cho backend camelCase
+    const submitValues = {
+      ...values,
+      kitComponentName: values.kit_component_name,
+    };
+    delete submitValues.kit_component_name;
     try {
       await axios.put(
-        `/api/update-appointment/${selectedBooking.appointmentId}`,
-        values,
+        `/api/update/staff/${selectedBooking.appointmentId}`,
+        submitValues,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
       message.success("Cập nhật đơn thành công");
@@ -185,7 +286,7 @@ const ReceiveBooking = () => {
   const handleAssign = async (bookingId) => {
     try {
       await axios.put(
-        `/api/update-appointment/${bookingId}`,
+        `/api/update/staff/${bookingId}`,
         { staffId: user.id, status: "RECEIVED" },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
@@ -257,6 +358,12 @@ const ReceiveBooking = () => {
       render: (text) => text || "Không có dữ liệu",
     },
     {
+      title: "Tên kit",
+      dataIndex: "kitComponentName",
+      key: "kitComponentName",
+      render: (text) => text || "Không có dữ liệu",
+    },
+    {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
@@ -302,7 +409,10 @@ const ReceiveBooking = () => {
               <Button
                 danger
                 type="primary"
-                onClick={() => handleDelete(record.appointmentId)}
+                onClick={() => {
+                  console.log("Bấm nút Xóa bookingId:", record.appointmentId);
+                  handleDelete(record.appointmentId);
+                }}
                 style={{ marginRight: 8 }}
               >
                 Xóa
@@ -319,6 +429,29 @@ const ReceiveBooking = () => {
       ),
     },
   ];
+
+  // Thêm mapping key sang tiếng Việt cho các trường cần hiển thị
+  const fieldLabels = {
+    appointmentId: "Mã đơn",
+    fullName: "Tên khách hàng",
+    dob: "Ngày sinh",
+    phone: "Số điện thoại",
+    email: "Email",
+    gender: "Giới tính",
+    testPurpose: "Mục đích xét nghiệm",
+    testCategory: "Nhóm xét nghiệm",
+    serviceType: "Loại dịch vụ",
+    appointmentDate: "Ngày hẹn",
+    collectionSampleTime: "Giờ lấy mẫu",
+    collectionLocation: "Nơi lấy mẫu",
+    fingerprintFile: "File vân tay",
+    district: "Quận/Huyện",
+    province: "Tỉnh/Thành phố",
+    status: "Trạng thái",
+    resultFile: "File kết quả",
+    kitComponentName: "Tên kit",
+    paymentStatus: "Trạng thái thanh toán",
+  };
 
   return (
     <div className="receive-booking-container">
@@ -363,127 +496,52 @@ const ReceiveBooking = () => {
         title="Chi tiết đơn đặt lịch"
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        footer={
-          user.role.toLowerCase() === "staff" ||
-          user.role.toLowerCase() === "manager"
-            ? [
-                !isEditing && (
-                  <Button
-                    key="edit"
-                    type="primary"
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Chỉnh sửa
-                  </Button>
-                ),
-                isEditing && (
-                  <Button
-                    key="save"
-                    type="primary"
-                    onClick={() => form.submit()}
-                  >
-                    Lưu
-                  </Button>
-                ),
-                <Button
-                  key="cancel"
-                  onClick={() => {
-                    setIsEditing(false);
-                    form.setFieldsValue(selectedBooking);
-                  }}
-                >
-                  Hủy
-                </Button>,
-              ]
-            : [
-                <Button key="close" onClick={() => setIsModalVisible(false)}>
-                  Đóng
-                </Button>,
-              ]
-        }
+        footer={[
+          <Button key="close" onClick={() => setIsModalVisible(false)}>
+            Đóng
+          </Button>,
+        ]}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          disabled={!isEditing}
-        >
-          <Form.Item
-            name="fullName"
-            label="Tên khách hàng"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[{ required: true, type: "email" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="phone"
-            label="Số điện thoại"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="appointmentDate"
-            label="Ngày giờ hẹn lấy mẫu"
-            rules={[{ required: true }]}
-          >
-            <Input type="datetime-local" />
-          </Form.Item>
-          <Form.Item name="collectionSampleTime" label="Giờ lấy mẫu">
-            <Input type="datetime-local" />
-          </Form.Item>
-          <Form.Item
-            name="status"
-            label="Trạng thái"
-            rules={[{ required: true }]}
-          >
-            <Select>
-              <Option value="PENDING">Pending</Option>
-              <Option value="CONFIRMED">Confirmed</Option>
-              <Option value="CANCELLED">Cancelled</Option>
-              <Option value="COMPLETED">Completed</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="kit_component_name"
-            label="Kit Component Name"
-            rules={[{ required: false }]}
-          >
-            <Select allowClear showSearch placeholder="Chọn kit component">
-              {kitComponentOptions.map((name) => (
-                <Option key={name} value={name}>
-                  {name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="resultFile"
-            label="Result File"
-            rules={[{ required: false }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="serviceType" label="Loại dịch vụ">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item name="address" label="Địa chỉ">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item name="testCategory" label="Loại xét nghiệm">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item name="note" label="Ghi chú">
-            <Input.TextArea disabled />
-          </Form.Item>
-        </Form>
+        {selectedBooking && (
+          <div style={{ marginTop: 8 }}>
+            <h4>Tất cả thông tin chi tiết</h4>
+            <table
+              style={{
+                width: "100%",
+                background: "#f9f9f9",
+                borderCollapse: "collapse",
+                borderRadius: 8,
+                overflow: "hidden",
+                boxShadow: "0 2px 8px #eee",
+              }}
+            >
+              <tbody>
+                {Object.entries(selectedBooking)
+                  .filter(([key]) => fieldLabels[key])
+                  .map(([key, value]) => (
+                    <tr key={key}>
+                      <td
+                        style={{
+                          fontWeight: "bold",
+                          padding: 8,
+                          border: "1px solid #eee",
+                          width: 180,
+                          background: "#f0f0f0",
+                        }}
+                      >
+                        {fieldLabels[key]}
+                      </td>
+                      <td style={{ padding: 8, border: "1px solid #eee" }}>
+                        {value === null || value === undefined || value === ""
+                          ? "Không có dữ liệu"
+                          : String(value)}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Modal>
 
       <Modal

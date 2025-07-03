@@ -41,6 +41,10 @@ import Payment from "../Payment/Payment";
 import ServiceManagement from "../ServiceManagement/ServiceManagement";
 import AccountManagement from "../AccountManagement/AccountManagement";
 import UpdateRolePage from "../rolePage/UpdateRolePage";
+import ViewFeedback from "../Feedback/ViewFeedback";
+import InvoiceList from "../Payment/InvoiceList";
+import SampleManagement from "../SampleManagement/SampleManagement";
+import KitManagement from "../Kit/KitManagement";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -122,7 +126,7 @@ function AppContent() {
         <Route
           path="/payment"
           element={
-            <ProtectedRoute allowedRoles={["customer"]}>
+            <ProtectedRoute allowedRoles={["customer", "guest"]}>
               <Payment />
             </ProtectedRoute>
           }
@@ -144,6 +148,38 @@ function AppContent() {
           }
         />
         <Route path="/update-role" element={<UpdateRolePage />} />
+        <Route
+          path="/view-feedback"
+          element={
+            <ProtectedRoute allowedRoles={["manager", "staff"]}>
+              <ViewFeedback />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/invoices"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <InvoiceList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sample-management"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <SampleManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/kit-management"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <KitManagement />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

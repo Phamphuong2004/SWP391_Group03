@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
-import ADNTestingServices from "../listOfServices";
 import "./Booking.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import serviceTypes from "../serviceTypes";
+import { Select } from "antd";
 
-const genders = ["Nam", "Nữ", "Khác"];
 const testPurposes = ["Hành chính", "Dân sự"];
 
 const testCategories = [
@@ -30,6 +29,111 @@ const testCategories = [
   "Cháu ngoại",
 ];
 
+// Dropdown options for collectionLocation
+const collectionLocations = ["Tại nhà", "Tại cơ sở y tế"];
+// Danh sách kit component chuẩn hóa từ bảng DB
+const kitComponentNames = [
+  {
+    id: 1,
+    name: "Buccal Swab",
+    intro: "Dùng để thu mẫu tế bào niêm mạc miệng.",
+  },
+  {
+    id: 2,
+    name: "Sample Storage Bag",
+    intro: "Bảo quản mẫu khô và sạch sau khi thu.",
+  },
+  {
+    id: 3,
+    name: "User Manual",
+    intro: "Tài liệu hướng dẫn dán lấy và gửi mẫu xét nghiệm.",
+  },
+  {
+    id: 4,
+    name: "Bone Collection Tube",
+    intro: "Dùng để chứa mẫu máu cốt hoặc xương.",
+  },
+  {
+    id: 5,
+    name: "Shockproof Box",
+    intro: "Bảo vệ mẫu xương trong quá trình vận chuyển.",
+  },
+  {
+    id: 6,
+    name: "Personal DNA Test Kit",
+    intro: "Dùng để kiểm tra cấu trúc ADN cá nhân.",
+  },
+  { id: 7, name: "Sample Envelope", intro: "Dùng để đựng mẫu thu thập." },
+  {
+    id: 8,
+    name: "Legal Confirmation Form",
+    intro: "Dùng trong hồ sơ pháp lý.",
+  },
+  {
+    id: 9,
+    name: "Prenatal DNA Test Kit",
+    intro: "Dùng để thu mẫu thai nhi không xâm lấn.",
+  },
+  {
+    id: 10,
+    name: "Pregnancy Safety Guide",
+    intro: "Tài liệu về an toàn lấy mẫu khi mang thai.",
+  },
+  {
+    id: 11,
+    name: "Custom DNA Kit",
+    intro: "Dùng cho xét nghiệm đặc thù khác theo yêu cầu.",
+  },
+  { id: 12, name: "EDTA Tube", intro: "Ống thu mẫu máu nhiễm." },
+  {
+    id: 13,
+    name: "Safety Instruction",
+    intro: "Hướng dẫn sử dụng khi xét nghiệm thai nhi.",
+  },
+  {
+    id: 14,
+    name: "Genetic History Form",
+    intro: "Mẫu tờ khai về bệnh lý gia đình.",
+  },
+  {
+    id: 15,
+    name: "Gene Report Guide",
+    intro: "Mô tả cách đọc kết quả di truyền.",
+  },
+  {
+    id: 16,
+    name: "Administrative Form",
+    intro: "Các giấy tờ cần thiết cho thủ tục.",
+  },
+  { id: 17, name: "Legal File Cover", intro: "Lưu trữ hồ sơ hành chính." },
+  {
+    id: 18,
+    name: "Civil Dispute Form",
+    intro: "Sử dụng trong tranh chấp dân sự.",
+  },
+  {
+    id: 19,
+    name: "Judicial File",
+    intro: "Tài liệu bổ sung cho hồ sơ xét xử.",
+  },
+];
+
+const genders = ["Nam", "Nữ", "Khác"];
+
+const sampleTypeOptions = [
+  { value: "Máu", label: "Máu" },
+  { value: "Niêm mạc miệng", label: "Niêm mạc miệng" },
+  { value: "Tóc có chân tóc", label: "Tóc có chân tóc" },
+  { value: "Móng tay", label: "Móng tay" },
+  { value: "Xương", label: "Xương" },
+  { value: "Răng", label: "Răng" },
+  { value: "Tinh dịch", label: "Tinh dịch" },
+  { value: "Nước bọt", label: "Nước bọt" },
+  { value: "Cuống rốn", label: "Cuống rốn" },
+  { value: "Mô mềm", label: "Mô mềm" },
+  { value: "Khác", label: "Khác" },
+];
+
 function Booking() {
   const [form, setForm] = useState({
     fullName: "",
@@ -45,6 +149,9 @@ function Booking() {
     district: "",
     province: "",
     testCategory: "",
+    collectionLocation: "",
+    kitComponentName: "",
+    sampleTypes: [],
   });
 
   const [districts, setDistricts] = useState([]);
@@ -89,10 +196,50 @@ function Booking() {
         (s) => s.service_id.toString() === form.serviceType
       );
       const data = {
-        ...form,
+        fullName: form.fullName,
+        dob: form.dob,
+        phone: form.phone,
+        email: form.email,
+        gender: form.gender,
+        testPurpose: form.testPurpose,
         serviceType: selectedService ? selectedService.service_name : "",
+        appointmentDate: form.appointmentDate,
         collectionTime: collectionTimeStr,
+        fingerprintFile: form.fingerprintFile,
+        district: form.district,
+        province: form.province,
+        testCategory: form.testCategory,
+        collectionLocation: form.collectionLocation,
+        kitComponentName: form.kitComponentName,
+        sampleTypes: form.sampleTypes,
       };
+
+      // Kiểm tra dữ liệu bắt buộc
+      const requiredFields = [
+        "fullName",
+        "dob",
+        "phone",
+        "gender",
+        "testPurpose",
+        "serviceType",
+        "appointmentDate",
+        "collectionTime",
+        "district",
+        "province",
+        "testCategory",
+        "collectionLocation",
+        "kitComponentName",
+        "sampleTypes",
+      ];
+      for (const field of requiredFields) {
+        if (!form[field]) {
+          toast.error(`Vui lòng nhập đầy đủ thông tin: ${field}`);
+          setIsLoading(false);
+          return;
+        }
+      }
+      // Log dữ liệu gửi lên để debug
+      console.log("Dữ liệu gửi lên:", data);
 
       const userString = localStorage.getItem("user");
       const serviceId = form.serviceType;
@@ -117,7 +264,18 @@ function Booking() {
             phone: form.phone,
           });
           localStorage.setItem("lastServiceId", response.data.appointmentId);
-          // Không chuyển hướng về trang chủ nữa!
+          // Chuyển hướng sang trang thanh toán cho guest
+          navigate("/payment", {
+            state: {
+              appointment: {
+                ...form,
+                appointmentId: response.data.appointmentId,
+                status: "PENDING",
+                collectionSampleTime: data.collectionTime,
+              },
+            },
+          });
+          return;
         } else {
           toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
         }
@@ -156,6 +314,10 @@ function Booking() {
         navigate("/history");
       }
     } catch (err) {
+      console.error(
+        "Lỗi trả về từ backend:",
+        err.response?.data || err.message
+      );
       toast.error(
         err.response?.data?.message ||
           "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
@@ -301,9 +463,11 @@ function Booking() {
                 required
               >
                 <option value="">Chọn giới tính</option>
-                <option value="Nam">Nam</option>
-                <option value="Nữ">Nữ</option>
-                <option value="Khác">Khác</option>
+                {genders.map((g) => (
+                  <option key={g} value={g}>
+                    {g}
+                  </option>
+                ))}
               </select>
             </label>
             <label>
@@ -415,6 +579,52 @@ function Booking() {
                   </option>
                 ))}
               </select>
+            </label>
+            <label>
+              Địa điểm lấy mẫu (collectionLocation)
+              <select
+                name="collectionLocation"
+                value={form.collectionLocation}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn địa điểm lấy mẫu</option>
+                {collectionLocations.map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Bộ kit sử dụng (kitComponentName)
+              <select
+                name="kitComponentName"
+                value={form.kitComponentName}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn bộ kit</option>
+                {kitComponentNames.map((kit) => (
+                  <option key={kit.id} value={kit.name}>
+                    {kit.name} - {kit.intro}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Loại mẫu (sampleTypes)
+              <Select
+                mode="multiple"
+                style={{ width: "100%" }}
+                placeholder="Chọn loại mẫu"
+                value={form.sampleTypes || []}
+                onChange={(values) =>
+                  setForm((prev) => ({ ...prev, sampleTypes: values }))
+                }
+                options={sampleTypeOptions}
+                required
+              />
             </label>
           </div>
         </div>

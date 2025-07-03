@@ -303,7 +303,7 @@
 
 .dark-theme .payment-card {
   background-color: #23272f;
-  color: #ffd600;
+  color: #fff;
   box-shadow: 0 4px 24px rgba(255, 224, 102, 0.1);
 }
 
@@ -314,12 +314,12 @@
 .dark-theme .success-message,
 .dark-theme .appointment-summary h3,
 .dark-theme .appointment-summary p {
-  color: #ffd600;
+  color: #ffd600 !important;
 }
 
 .dark-theme .appointment-details p,
 .dark-theme .service-details p {
-  color: #ffd600;
+  color: #f1f5f9 !important;
 }
 
 .dark-theme .appointment-summary {
@@ -349,4 +349,344 @@
 .dark-theme .btn-history:hover {
   background: #23272f;
   color: #ffd600;
+}
+
+/* QR Payment Section Styles */
+.qr-payment-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+  border-radius: 16px;
+  border: 2px solid #e3f2fd;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.qr-payment-section h3 {
+  color: #1976d2;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.1);
+}
+
+.qr-code {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 8px;
+  border: 2px solid #e3f2fd;
+  transition: transform 0.2s ease;
+}
+
+.qr-code:hover {
+  transform: scale(1.05);
+}
+
+.payment-instructions {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.payment-instructions p {
+  color: #1976d2;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.payment-instructions ol {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.payment-instructions li {
+  color: #424242;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+  font-size: 1rem;
+}
+
+.payment-instructions strong {
+  color: #e74c3c;
+  font-weight: 700;
+}
+
+/* Dark theme support for QR section */
+.dark-theme .qr-payment-section {
+  background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+  border-color: #42a5f5;
+}
+
+.dark-theme .qr-container {
+  background: #263238;
+}
+
+.dark-theme .payment-instructions {
+  background: #263238;
+  color: #e3f2fd;
+}
+
+.dark-theme .payment-instructions li {
+  color: #e3f2fd;
+}
+
+/* Nền mờ nhẹ cho toàn trang payment */
+.payment-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(0, 80, 180, 0.1), 0 1.5px 6px rgba(0, 0, 0, 0.04);
+  padding: 36px 32px 32px 32px;
+  max-width: 480px;
+  width: 100%;
+  margin: 32px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.payment-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 10px;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.form-row label {
+  flex: 1 1 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label-title {
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.input-field {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.input-field:focus {
+  border: 1.5px solid #2563eb;
+}
+
+.payment-methods {
+  margin-top: 8px;
+}
+.method-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.method-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f1f5fb;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border 0.2s, background 0.2s;
+  font-size: 1.08rem;
+}
+.method-option.selected {
+  border: 2px solid #2563eb;
+  background: #e0edff;
+}
+.radio-large input[type="radio"] {
+  width: 22px;
+  height: 22px;
+  accent-color: #2563eb;
+}
+.radio-icon {
+  font-size: 1.4rem;
+  margin-right: 4px;
+}
+
+.btn-confirm {
+  width: 100%;
+  background: linear-gradient(90deg, #2563eb 60%, #60a5fa 100%);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 0;
+  margin-top: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-confirm:hover {
+  background: linear-gradient(90deg, #1d4ed8 60%, #3b82f6 100%);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.13);
+}
+
+.qr-section {
+  margin: 18px 0 0 0;
+  text-align: center;
+}
+.qr-box {
+  background: #f1f5fb;
+  border-radius: 12px;
+  padding: 18px 0 10px 0;
+  margin: 0 auto 8px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+  height: 220px;
+}
+.qr-img {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+}
+.qr-note {
+  color: #64748b;
+  font-size: 0.98rem;
+  margin-top: 4px;
+}
+
+.price {
+  color: #e11d48;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .payment-card {
+    padding: 18px 4vw 18px 4vw;
+    max-width: 98vw;
+  }
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .qr-box {
+    width: 98vw;
+    max-width: 220px;
+    height: 180px;
+  }
+  .qr-img {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+.qr-guide {
+  text-align: left;
+  margin: 12px auto 0 auto;
+  padding-left: 22px;
+  max-width: 340px;
+  color: #222;
+  font-size: 1.08rem;
+  line-height: 1.8;
+  font-weight: 500;
+}
+.qr-guide li {
+  margin-bottom: 6px;
+}
+.qr-guide b {
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.dark-theme .payment-card {
+  background: #23272f;
+  color: #fff;
+}
+.dark-theme .payment-title,
+.dark-theme .section-title,
+.dark-theme .qr-section h3 {
+  color: #ffd600 !important;
+}
+.dark-theme .label-title,
+.dark-theme .input-field,
+.dark-theme .qr-note,
+.dark-theme .qr-guide,
+.dark-theme .method-option,
+.dark-theme .price {
+  color: #f1f5f9 !important;
+}
+.dark-theme .input-field {
+  background: #23272f;
+  border: 1.5px solid #ffd600;
+}
+.dark-theme .input-field:focus {
+  border: 2px solid #ffd600;
+}
+.dark-theme .method-option {
+  background: #23272f;
+  border: 2px solid #444;
+}
+.dark-theme .method-option.selected {
+  border: 2px solid #ffd600;
+  background: #2d313a;
+}
+.dark-theme .radio-icon {
+  color: #ffd600;
+}
+.dark-theme .btn-confirm {
+  background: linear-gradient(90deg, #ffd600 60%, #fff176 100%);
+  color: #23272f;
+  font-weight: 700;
+}
+.dark-theme .btn-confirm:hover {
+  background: linear-gradient(90deg, #fff176 60%, #ffd600 100%);
+}
+.dark-theme .qr-box {
+  background: #23272f;
+  border: 1.5px solid #ffd600;
+}
+.dark-theme .qr-guide {
+  color: #fff !important;
+}
+.dark-theme .qr-guide b {
+  color: #ffd600 !important;
+}
+
+.dark-theme .payment-bg {
+  background: linear-gradient(135deg, #181a20 0%, #23272f 100%);
 }

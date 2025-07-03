@@ -94,26 +94,60 @@ export default function Profile() {
         avatar,
       } = form;
 
-      const updateData = {
-        email,
-        phone,
-        full_name,
-        address,
-        date_of_birth,
-        gender,
-        avatar,
-      };
-
       const url = `/api/user/profile/update?username=${encodeURIComponent(
         userLocal.username
       )}`;
 
-      const response = await axios.post(url, updateData, {
-        headers: { Authorization: `Bearer ${userLocal.token}` },
-      });
+      let response;
+      if (
+        isEditing &&
+        avatarOption === "file" &&
+        form.avatar &&
+        form.avatar.startsWith("data:")
+      ) {
+        // Nếu chọn file từ thiết bị, gửi multipart/form-data
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("phone", phone);
+        formData.append("full_name", full_name);
+        formData.append("address", address);
+        formData.append("date_of_birth", date_of_birth);
+        formData.append("gender", gender);
+        // Chuyển base64 về file object
+        const arr = form.avatar.split(",");
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        const file = new File([u8arr], "avatar.jpg", { type: mime });
+        formData.append("avatar", file);
+        response = await axios.post(url, formData, {
+          headers: {
+            Authorization: `Bearer ${userLocal.token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      } else {
+        // Nếu là link ảnh hoặc không đổi avatar, gửi JSON như cũ
+        const updateData = {
+          email,
+          phone,
+          full_name,
+          address,
+          date_of_birth,
+          gender,
+          avatar,
+        };
+        response = await axios.post(url, updateData, {
+          headers: { Authorization: `Bearer ${userLocal.token}` },
+        });
+      }
 
       if (response.data) {
-        const updatedUser = { ...user, ...updateData };
+        const updatedUser = { ...user, ...form };
         setUser(updatedUser);
         setForm(updatedUser);
 
@@ -226,60 +260,15 @@ export default function Profile() {
           <option value="other">Khác</option>
         </select>
         <label className="profile-form-label">Avatar</label>
-        {isEditing && (
-          <div style={{ display: "flex", gap: 16, marginBottom: 8 }}>
-            <label>
-              <input
-                type="radio"
-                name="avatarOption"
-                value="url"
-                checked={avatarOption === "url"}
-                onChange={() => setAvatarOption("url")}
-                disabled={!isEditing}
-              />
-              Dán link ảnh
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="avatarOption"
-                value="file"
-                checked={avatarOption === "file"}
-                onChange={() => setAvatarOption("file")}
-                disabled={!isEditing}
-              />
-              Chọn từ thiết bị
-            </label>
-          </div>
-        )}
-        {(!isEditing || avatarOption === "url") && (
-          <input
-            className="profile-form-input"
-            name="avatar"
-            value={form.avatar || ""}
-            onChange={handleChange}
-            disabled={!isEditing}
-            placeholder="Dán link ảnh"
-            style={{ marginBottom: 8 }}
-          />
-        )}
-        {isEditing && avatarOption === "file" && (
-          <input
-            type="file"
-            accept="image/*"
-            className="profile-form-input"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  setForm({ ...form, avatar: reader.result });
-                };
-                reader.readAsDataURL(file);
-              }
-            }}
-          />
-        )}
+        <input
+          className="profile-form-input"
+          name="avatar"
+          value={form.avatar || ""}
+          onChange={handleChange}
+          disabled={!isEditing}
+          placeholder="Dán link ảnh"
+          style={{ marginBottom: 8 }}
+        />
         {!isEditing ? (
           <button
             type="button"

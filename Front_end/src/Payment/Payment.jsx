@@ -69,9 +69,6 @@ const Payment = () => {
     );
   }
 
-  const user =
-    appointment.user || JSON.parse(localStorage.getItem("user") || "{}");
-
   const serviceDetails = ADNTestingServices.find(
     (service) => service.testType === editForm.serviceType
   );
@@ -95,22 +92,34 @@ const Payment = () => {
     }
     setLoading(true);
     try {
-      // Cập nhật thông tin chỉnh sửa trước khi thanh toán (nếu có thay đổi)
-      await axios.put(`/api/update-appointment/${appointment.appointmentId}`, {
-        ...editForm,
-        paymentStatus: "PAID",
-      });
+      // Lấy token từ localStorage
+      const userString = localStorage.getItem("user");
+      const token = userString ? JSON.parse(userString).token : null;
+      // Chuẩn bị dữ liệu payment
+      let status = "PENDING";
+      if (paymentMethod.toLowerCase() === "online") status = "PAID";
+      const paymentData = {
+        appointmentId: appointment.appointmentId,
+        amount: serviceDetails?.price || 1,
+        paymentMethod: paymentMethod.toUpperCase(),
+        status,
+        paymentDate: new Date().toISOString(),
+      };
+      console.log("Dữ liệu gửi lên POST /api/payments/create:", paymentData);
+      if (token) {
+        await axios.post("/api/payments/create", paymentData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        await axios.post("/api/payments/create", paymentData);
+      }
       toast.success(
         "Thanh toán thành công! Lịch hẹn của bạn đã được xác nhận."
       );
       setPaymentSuccess(true);
-      // Cập nhật lại appointment để hiển thị thông tin mới
-      setAppointment((prev) => ({
-        ...prev,
-        ...editForm,
-        paymentStatus: "PAID",
-      }));
-    } catch (err) {
+    } catch {
       toast.error("Thanh toán thất bại. Vui lòng thử lại!");
     } finally {
       setLoading(false);
@@ -173,63 +182,66 @@ const Payment = () => {
   }
 
   return (
-    <div className="payment-container">
-      <div className="payment-card">
+    <div className="payment-bg">
+      <div className="payment-card payment-shadow">
         <h1 className="payment-title">Xác nhận và Thanh toán</h1>
-
         <div className="appointment-details">
-          <h2>Chi tiết lịch hẹn</h2>
-          <label>
-            <strong>Họ và tên:</strong>
-            <input
-              type="text"
-              name="fullName"
-              value={editForm.fullName}
-              onChange={handleEditChange}
-            />
-          </label>
-          <label>
-            <strong>Ngày hẹn:</strong>
-            <input
-              type="date"
-              name="appointmentDate"
-              value={editForm.appointmentDate?.slice(0, 10) || ""}
-              onChange={handleEditChange}
-            />
-          </label>
-          <label>
-            <strong>Giờ lấy mẫu:</strong>
-            <input
-              type="time"
-              name="collectionTime"
-              value={getTime(editForm.collectionTime)}
-              onChange={(e) => {
-                // Cập nhật lại collectionTime theo ISO
-                const date = editForm.appointmentDate?.slice(0, 10) || "";
-                setEditForm((prev) => ({
-                  ...prev,
-                  collectionTime:
-                    date && e.target.value
-                      ? `${date}T${e.target.value}:00`
-                      : "",
-                }));
-              }}
-            />
-          </label>
-          <label>
-            <strong>Loại dịch vụ:</strong>
-            <input
-              type="text"
-              name="serviceType"
-              value={editForm.serviceType}
-              onChange={handleEditChange}
-            />
-          </label>
+          <h2 className="section-title">Chi tiết lịch hẹn</h2>
+          <div className="form-row">
+            <label>
+              <span className="label-title">Họ và tên:</span>
+              <input
+                type="text"
+                name="fullName"
+                value={editForm.fullName}
+                onChange={handleEditChange}
+                className="input-field"
+              />
+            </label>
+            <label>
+              <span className="label-title">Ngày hẹn:</span>
+              <input
+                type="date"
+                name="appointmentDate"
+                value={editForm.appointmentDate?.slice(0, 10) || ""}
+                onChange={handleEditChange}
+                className="input-field"
+              />
+            </label>
+            <label>
+              <span className="label-title">Giờ lấy mẫu:</span>
+              <input
+                type="time"
+                name="collectionTime"
+                value={getTime(editForm.collectionTime)}
+                onChange={(e) => {
+                  const date = editForm.appointmentDate?.slice(0, 10) || "";
+                  setEditForm((prev) => ({
+                    ...prev,
+                    collectionTime:
+                      date && e.target.value
+                        ? `${date}T${e.target.value}:00`
+                        : "",
+                  }));
+                }}
+                className="input-field"
+              />
+            </label>
+            <label>
+              <span className="label-title">Loại dịch vụ:</span>
+              <input
+                type="text"
+                name="serviceType"
+                value={editForm.serviceType}
+                onChange={handleEditChange}
+                className="input-field"
+              />
+            </label>
+          </div>
         </div>
-
         {serviceDetails && (
           <div className="service-details">
-            <h2>Chi tiết dịch vụ</h2>
+            <h2 className="section-title">Chi tiết dịch vụ</h2>
             <p>
               <strong>Mô tả:</strong> {serviceDetails.description}
             </p>
@@ -238,41 +250,75 @@ const Payment = () => {
             </p>
           </div>
         )}
-
         <div className="payment-methods">
-          <h2>Chọn phương thức thanh toán</h2>
-          <div className="method-option">
-            <input
-              type="radio"
-              id="cod"
-              name="paymentMethod"
-              value="cod"
-              checked={paymentMethod === "cod"}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            />
-            <label htmlFor="cod">Thanh toán khi đến lấy mẫu (COD)</label>
-          </div>
-          <div className="method-option">
-            <input
-              type="radio"
-              id="online"
-              name="paymentMethod"
-              value="online"
-              checked={paymentMethod === "online"}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            />
-            <label htmlFor="online">
-              Thanh toán trực tuyến (VNPAY, Momo, ...)
+          <h2 className="section-title">Chọn phương thức thanh toán</h2>
+          <div className="method-options">
+            <label
+              className={`method-option radio-large ${
+                paymentMethod === "cod" ? "selected" : ""
+              }`}
+            >
+              <input
+                type="radio"
+                id="cod"
+                name="paymentMethod"
+                value="cod"
+                checked={paymentMethod === "cod"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <span className="radio-icon">💵</span>
+              <span>Thanh toán khi đến lấy mẫu (COD)</span>
+            </label>
+            <label
+              className={`method-option radio-large ${
+                paymentMethod === "online" ? "selected" : ""
+              }`}
+            >
+              <input
+                type="radio"
+                id="online"
+                name="paymentMethod"
+                value="online"
+                checked={paymentMethod === "online"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <span className="radio-icon">💳</span>
+              <span>Thanh toán trực tuyến (VNPAY, Momo, ...)</span>
             </label>
           </div>
         </div>
-
+        {paymentMethod === "online" && (
+          <div className="qr-section">
+            <h3>Quét mã QR để thanh toán</h3>
+            <div className="qr-box">
+              <img
+                src="z6747527619716_88085c5bdad6c2700ec8923daaf73e09.jpg"
+                alt="QR code"
+                className="qr-img"
+              />
+            </div>
+            <p className="qr-note">
+              Vui lòng quét mã QR bằng app ngân hàng hoặc ví điện tử để thanh
+              toán.
+            </p>
+            <ol className="qr-guide">
+              <li>Mở ứng dụng ngân hàng hoặc ví điện tử trên điện thoại.</li>
+              <li>Chọn tính năng quét mã QR.</li>
+              <li>Quét mã QR hiển thị trên màn hình.</li>
+              <li>Kiểm tra thông tin và nhập số tiền (nếu cần).</li>
+              <li>Xác nhận thanh toán.</li>
+              <li>
+                Nhấn <b>"Xác nhận & Thanh toán"</b> bên dưới sau khi hoàn tất.
+              </li>
+            </ol>
+          </div>
+        )}
         <button
-          className="btn btn-primary"
+          className="btn-confirm"
           onClick={handlePayment}
           disabled={loading}
         >
-          Xác nhận & Thanh toán
+          {loading ? "Đang xử lý..." : "Xác nhận & Thanh toán"}
         </button>
       </div>
     </div>
