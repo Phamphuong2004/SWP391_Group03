@@ -141,9 +141,13 @@ public class SampleTypeService {
         // Retrieve the existing sample type
         SampleType existingSampleType = sampleTypeRepository.findById(sampleTypeId)
                 .orElseThrow(() -> new RuntimeException("Sample type not found with id: " + sampleTypeId));
-
+        SampleType nameSampleType = sampleTypeRepository.findByName(sampleTypeRequest.getName())
+                .orElse(null);
         // Update the sample type's properties
         if (sampleTypeRequest.getName() != null && !sampleTypeRequest.getName().trim().isEmpty()) {
+            if (nameSampleType != null && !nameSampleType.getId().equals(existingSampleType.getId())) {
+                throw new RuntimeException("Sample type with name " + sampleTypeRequest.getName() + " already exists.");
+            }
             existingSampleType.setName(sampleTypeRequest.getName());
         }
         if (sampleTypeRequest.getDescription() != null && !sampleTypeRequest.getDescription().trim().isEmpty()) {
