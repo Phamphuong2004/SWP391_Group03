@@ -200,20 +200,18 @@ function MyNavbar() {
                 (user.role.toLowerCase() === "staff" ||
                   user.role.toLowerCase() === "manager") && (
                   <Nav.Link
-                    onClick={() => navigate("/sample-management")}
-                    className="nav-link"
-                  >
-                    Quản lý mẫu
-                  </Nav.Link>
-                )}
-              {user &&
-                (user.role.toLowerCase() === "staff" ||
-                  user.role.toLowerCase() === "manager") && (
-                  <Nav.Link
                     onClick={() => navigate("/kit-management")}
                     className="nav-link"
                   >
                     Quản lý Kit
+                  </Nav.Link>
+                )}
+              {/* Link quản lý mẫu tổng hợp cho staff và manager */}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link href="/sample-workspace" className="nav-link">
+                    Quản lý mẫu (Tổng hợp)
                   </Nav.Link>
                 )}
             </Nav>
