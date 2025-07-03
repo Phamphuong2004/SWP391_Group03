@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface SampleTypeRepository extends JpaRepository<SampleType, Long> {
     Optional<SampleType> findByName(String name);
     boolean existsByName(String sampleTypeName);
+    Optional<SampleType> findByKitComponent_ComponentName(String componentName);
+
 }

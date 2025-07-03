@@ -174,5 +174,22 @@ public class SampleTypeService {
         response.setSampleId(sampleIds);
         return response;
     }
+    public SampleTypeResponse getSampleTypeByComponentName(String componentName) {
+        // Retrieve the sample type by its component name
+        SampleType sampleType = sampleTypeRepository.findByKitComponent_ComponentName(componentName)
+                .orElseThrow(() -> new RuntimeException("Sample type not found with component name: " + componentName));
+        // Create and return the response object
+        SampleTypeResponse response = new SampleTypeResponse();
+        response.setId(sampleType.getId());
+        response.setName(sampleType.getName());
+        response.setDescription(sampleType.getDescription());
+        response.setComponentName(sampleType.getKitComponent().getComponentName());
+        List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(sampleType.getId());
+        List<Long> sampleIds = collectedSamples.stream()
+                .map(CollectedSample::getSampleId)
+                .toList();
+        response.setSampleId(sampleIds);
+        return response;
+    }
 
 }

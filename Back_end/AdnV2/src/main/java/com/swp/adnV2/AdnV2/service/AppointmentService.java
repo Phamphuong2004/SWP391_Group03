@@ -161,6 +161,12 @@ public class AppointmentService {
     public ResponseEntity<?> deleteAppointment(Long appointmentId) {
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isPresent()) {
+            Payment payment = paymentRepository.findByAppointment_AppointmentId(appointmentId);
+            if (payment == null) {
+                throw new RuntimeException("Payment not found for appointment id: " + appointmentId);
+            }
+            payment.setAppointment(null);
+            paymentRepository.save(payment);
             appointmentRepository.delete(appointmentOpt.get());
             return ResponseEntity.ok("Appointment deleted successfully");
         } else {
