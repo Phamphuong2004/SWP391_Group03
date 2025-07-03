@@ -141,9 +141,13 @@ public class SampleTypeService {
         // Retrieve the existing sample type
         SampleType existingSampleType = sampleTypeRepository.findById(sampleTypeId)
                 .orElseThrow(() -> new RuntimeException("Sample type not found with id: " + sampleTypeId));
-
+        SampleType nameSampleType = sampleTypeRepository.findByName(sampleTypeRequest.getName())
+                .orElse(null);
         // Update the sample type's properties
         if (sampleTypeRequest.getName() != null && !sampleTypeRequest.getName().trim().isEmpty()) {
+            if (nameSampleType != null && !nameSampleType.getId().equals(existingSampleType.getId())) {
+                throw new RuntimeException("Sample type with name " + sampleTypeRequest.getName() + " already exists.");
+            }
             existingSampleType.setName(sampleTypeRequest.getName());
         }
         if (sampleTypeRequest.getDescription() != null && !sampleTypeRequest.getDescription().trim().isEmpty()) {
@@ -164,6 +168,23 @@ public class SampleTypeService {
         response.setDescription(existingSampleType.getDescription());
         response.setComponentName(existingSampleType.getKitComponent().getComponentName());
         List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(existingSampleType.getId());
+        List<Long> sampleIds = collectedSamples.stream()
+                .map(CollectedSample::getSampleId)
+                .toList();
+        response.setSampleId(sampleIds);
+        return response;
+    }
+    public SampleTypeResponse getSampleTypeByComponentName(String componentName) {
+        // Retrieve the sample type by its component name
+        SampleType sampleType = sampleTypeRepository.findByKitComponent_ComponentName(componentName)
+                .orElseThrow(() -> new RuntimeException("Sample type not found with component name: " + componentName));
+        // Create and return the response object
+        SampleTypeResponse response = new SampleTypeResponse();
+        response.setId(sampleType.getId());
+        response.setName(sampleType.getName());
+        response.setDescription(sampleType.getDescription());
+        response.setComponentName(sampleType.getKitComponent().getComponentName());
+        List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(sampleType.getId());
         List<Long> sampleIds = collectedSamples.stream()
                 .map(CollectedSample::getSampleId)
                 .toList();
