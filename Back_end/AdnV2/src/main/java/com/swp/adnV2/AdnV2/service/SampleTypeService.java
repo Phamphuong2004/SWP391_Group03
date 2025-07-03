@@ -37,6 +37,8 @@ public class SampleTypeService {
     }
     public SampleTypeResponse createSampleType(SampleTypeCreateRequest sampleType) {
         // Check if the sample type already exists by name
+        SampleType existingSampleType = sampleTypeRepository.findByName(sampleType.getName())
+                .orElse(null);
         if (sampleTypeRepository.existsByName(sampleType.getName())) {
             throw new RuntimeException("Sample type already exists with name: " + sampleType.getName());
         }
