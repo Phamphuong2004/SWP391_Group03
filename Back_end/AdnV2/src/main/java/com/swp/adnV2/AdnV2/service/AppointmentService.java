@@ -163,7 +163,8 @@ public class AppointmentService {
         if (appointmentOpt.isPresent()) {
             Payment payment = paymentRepository.findByAppointment_AppointmentId(appointmentId);
             if (payment == null) {
-                throw new RuntimeException("Payment not found for appointment id: " + appointmentId);
+                appointmentRepository.delete(appointmentOpt.get());
+                return ResponseEntity.ok("Appointment deleted successfully");
             }
             payment.setAppointment(null);
             paymentRepository.save(payment);
