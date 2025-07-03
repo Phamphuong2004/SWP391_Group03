@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
-import ADNTestingServices from "../listOfServices";
 import "./Booking.css";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -123,16 +122,15 @@ const genders = ["Nam", "Nữ", "Khác"];
 
 const sampleTypeOptions = [
   { value: "Máu", label: "Máu" },
-  { value: "Niêm mạc miệng", label: "Niêm mạc miệng" },
-  { value: "Tóc có chân tóc", label: "Tóc có chân tóc" },
-  { value: "Móng tay", label: "Móng tay" },
-  { value: "Xương", label: "Xương" },
-  { value: "Răng", label: "Răng" },
-  { value: "Tinh dịch", label: "Tinh dịch" },
+  { value: "Tóc", label: "Tóc" },
+  { value: "Móng", label: "Móng" },
   { value: "Nước bọt", label: "Nước bọt" },
-  { value: "Cuống rốn", label: "Cuống rốn" },
-  { value: "Mô mềm", label: "Mô mềm" },
-  { value: "Khác", label: "Khác" },
+  { value: "Da", label: "Da" },
+  { value: "Nước tiểu", label: "Nước tiểu" },
+  { value: "Dịch mũi", label: "Dịch mũi" },
+  { value: "Dịch họng", label: "Dịch họng" },
+  { value: "Sữa mẹ", label: "Sữa mẹ" },
+  { value: "Tinh dịch", label: "Tinh dịch" },
 ];
 
 function Booking() {

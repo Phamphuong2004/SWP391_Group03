@@ -74,9 +74,15 @@ const SampleManagement = () => {
 
   const columns = [
     { title: "ID", dataIndex: "sampleId", key: "sampleId" },
-    { title: "Tên mẫu", dataIndex: "sampleName", key: "sampleName" },
     { title: "Loại mẫu", dataIndex: "sampleType", key: "sampleType" },
     { title: "Trạng thái", dataIndex: "status", key: "status" },
+    { title: "Ngày lấy mẫu", dataIndex: "collectedDate", key: "collectedDate" },
+    {
+      title: "Thành phần kit",
+      dataIndex: "kitComponentName",
+      key: "kitComponentName",
+    },
+    { title: "Người tạo", dataIndex: "username", key: "username" },
     {
       title: "Hành động",
       key: "actions",
@@ -137,28 +143,31 @@ const SampleManagement = () => {
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            name="sampleName"
-            label="Tên mẫu"
-            rules={[{ required: true }]}
-          >
-            {" "}
-            <Input />{" "}
-          </Form.Item>
-          <Form.Item
             name="sampleType"
             label="Loại mẫu"
             rules={[{ required: true }]}
           >
-            {" "}
-            <Input />{" "}
+            <Input />
           </Form.Item>
           <Form.Item
             name="status"
             label="Trạng thái"
             rules={[{ required: true }]}
           >
-            {" "}
-            <Input />{" "}
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="collectedDate"
+            label="Ngày lấy mẫu"
+            rules={[{ required: true }]}
+          >
+            <Input type="date" />
+          </Form.Item>
+          <Form.Item name="kitComponentName" label="Thành phần kit">
+            <Input disabled />
+          </Form.Item>
+          <Form.Item name="username" label="Người tạo">
+            <Input disabled />
           </Form.Item>
         </Form>
       </Modal>

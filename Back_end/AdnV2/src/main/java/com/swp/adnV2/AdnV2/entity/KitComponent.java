@@ -10,7 +10,7 @@ public class KitComponent {
     @Column(name = "kit_component_id")
     private Long kitComponentId;
 
-    @Column(name = "component_name", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "component_name", columnDefinition = "NVARCHAR(100)", unique = true)
     private String componentName;
 
     @Column(name = "quantity", columnDefinition = "INT DEFAULT 1")

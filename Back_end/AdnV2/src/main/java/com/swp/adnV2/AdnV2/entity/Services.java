@@ -12,7 +12,7 @@ public class Services {
     @Column(name = "service_id")
     private Long serviceId;
 
-    @Column(name = "service_name", columnDefinition = "NVARCHAR(100)", nullable = false)
+    @Column(name = "service_name", columnDefinition = "NVARCHAR(100)", nullable = false, unique = true)
     private String serviceName;
 
     @Column(name = "description", columnDefinition = "NVARCHAR(255)")

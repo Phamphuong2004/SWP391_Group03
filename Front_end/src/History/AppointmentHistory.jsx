@@ -17,6 +17,8 @@ const AppointmentHistory = () => {
 
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
+  const isStaff = user && user.role && user.role.toLowerCase() === "staff";
+
   useEffect(() => {
     if (isGuest) return; // Không fetch cho user khi đang ở chế độ guest
     if (!user || !user.token) {
@@ -27,31 +29,25 @@ const AppointmentHistory = () => {
 
     const fetchAppointments = async () => {
       try {
-        console.log("--- BẮT ĐẦU LẤY LỊCH SỬ ĐƠN HÀNG ---");
-        console.log("1. Người dùng hiện tại (từ localStorage):", user);
-        console.log("2. Đang gửi yêu cầu đến API: /api/view-appointments-user");
-
-        const response = await axios.get("/api/view-appointments-user", {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
-
-        console.log(
-          "3. ĐÃ NHẬN PHẢN HỒI TỪ MÁY CHỦ. Dữ liệu thô:",
-          response.data
-        );
-
+        let response;
+        if (isStaff) {
+          // Staff lấy toàn bộ lịch sử
+          response = await axios.get("/api/get-all-appointments", {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+        } else {
+          // User thường lấy lịch sử của mình
+          response = await axios.get("/api/view-appointments-user", {
+            headers: { Authorization: `Bearer ${user.token}` },
+          });
+        }
         // Sort appointments by date in descending order (newest first)
         const sortedAppointments = response.data.sort(
           (a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate)
         );
         setAppointments(sortedAppointments);
-        console.log(
-          "4. Dữ liệu sau khi đã sắp xếp và lưu vào state:",
-          sortedAppointments
-        );
       } catch (err) {
         setError("Không thể tải lịch sử đặt lịch. Vui lòng thử lại sau.");
-        console.error("LỖI KHI GỌI API:", err);
       } finally {
         setLoading(false);
       }

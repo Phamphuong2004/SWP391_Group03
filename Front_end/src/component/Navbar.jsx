@@ -86,33 +86,48 @@ function MyNavbar() {
               <Nav.Link href="/" className="nav-link">
                 Trang chủ
               </Nav.Link>
-              <Nav.Link href="/booking" className="nav-link">
-                Đặt lịch
-              </Nav.Link>
-              <NavDropdown title="Dịch vụ" id="navbarScrollingDropdown">
-                <NavDropdown.Item
-                  href="/administrative-service"
-                  className="dropdown-item"
+              {/* Đặt lịch chỉ cho guest và customer */}
+              {(!user ||
+                (user.role && user.role.toLowerCase() === "customer")) && (
+                <Nav.Link href="/booking" className="nav-link">
+                  Đặt lịch
+                </Nav.Link>
+              )}
+              {/* Dịch vụ và Blog chỉ cho guest và customer */}
+              {(!user ||
+                (user.role && user.role.toLowerCase() === "customer")) && (
+                <>
+                  <NavDropdown title="Dịch vụ" id="navbarScrollingDropdown">
+                    <NavDropdown.Item
+                      href="/administrative-service"
+                      className="dropdown-item"
+                    >
+                      Hành chính
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item
+                      href="/civil-service"
+                      className="dropdown-item"
+                    >
+                      Dân sự
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                  <Nav.Link href="/blog" className="nav-link">
+                    Blog
+                  </Nav.Link>
+                </>
+              )}
+              {/* Xem kết quả chỉ cho guest và customer */}
+              {(!user ||
+                (user.role && user.role.toLowerCase() === "customer")) && (
+                <Nav.Link
+                  onClick={() => navigate("/dashboard")}
+                  className="nav-link"
                 >
-                  Hành chính
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item
-                  href="/civil-service"
-                  className="dropdown-item"
-                >
-                  Dân sự
-                </NavDropdown.Item>
-              </NavDropdown>
-              <Nav.Link href="/blog" className="nav-link">
-                Blog
-              </Nav.Link>
-              <Nav.Link
-                onClick={() => navigate("/dashboard")}
-                className="nav-link"
-              >
-                Xem kết quả
-              </Nav.Link>
+                  Xem kết quả
+                </Nav.Link>
+              )}
+              {/* Theo dõi đơn cho tất cả các loại tài khoản */}
               <Nav.Link
                 onClick={() => {
                   if (user) {
@@ -189,6 +204,16 @@ function MyNavbar() {
                     className="nav-link"
                   >
                     Quản lý mẫu
+                  </Nav.Link>
+                )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/kit-management")}
+                    className="nav-link"
+                  >
+                    Quản lý Kit
                   </Nav.Link>
                 )}
             </Nav>
