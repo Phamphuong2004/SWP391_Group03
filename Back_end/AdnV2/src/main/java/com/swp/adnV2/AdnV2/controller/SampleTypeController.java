@@ -47,4 +47,9 @@ public class SampleTypeController {
     public SampleTypeResponse getSampleTypeByName(String name) {
         return sampleTypeService.getSampleTypeByName(name);
     }
+
+    @GetMapping("/get-by-component-name/{componentName}")
+    public List<SampleTypeResponse> getSampleTypeByComponentName (@RequestParam String componentName) {
+        return sampleTypeService.getSampleTypeByComponentName(componentName);
+    }
 }
