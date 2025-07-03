@@ -271,4 +271,22 @@ public class UserService {
         userRepository.save(users);
         return ResponseEntity.ok("Profile updated successfully");
     }
+
+    public ResponseEntity<?> signInByGoogle(@RequestBody GoogleSignInRequest googleSignInRequest) {
+        Map<String, Object> response = new HashMap<>();
+        Users users = userRepository.findByEmail(googleSignInRequest.getEmail());
+        if (users == null) {
+            // Create a new user if not found
+            users = new Users();
+            users.setFullName(googleSignInRequest.getFullName());
+            users.setEmail(googleSignInRequest.getEmail());
+            users.setUsername(googleSignInRequest.getEmail());
+            users.setRole(Role.CUSTOMER.name());
+            userRepository.save(users);
+        }
+        response.put("Exists", true);
+        response.put("message", "Login successful");
+        response.put("role", users.getRole());
+        return ResponseEntity.ok(response);
+    }
 }

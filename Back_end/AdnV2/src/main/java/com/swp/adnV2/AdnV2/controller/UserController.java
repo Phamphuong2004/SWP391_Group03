@@ -1,9 +1,6 @@
 package com.swp.adnV2.AdnV2.controller;
 
-import com.swp.adnV2.AdnV2.dto.LoginRequest;
-import com.swp.adnV2.AdnV2.dto.PasswordResetRequest;
-import com.swp.adnV2.AdnV2.dto.ProfileRequest;
-import com.swp.adnV2.AdnV2.dto.RegisterRequest;
+import com.swp.adnV2.AdnV2.dto.*;
 import com.swp.adnV2.AdnV2.entity.LoginHistory;
 import com.swp.adnV2.AdnV2.entity.Role;
 import com.swp.adnV2.AdnV2.entity.Users;
@@ -101,5 +98,10 @@ public class UserController {
             response.put("Message", "Invalid role");
             return ResponseEntity.badRequest().body(response);
         }
+    }
+    @PostMapping("/signinbyGoogle")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    public ResponseEntity<?> sighinByGoogle(GoogleSignInRequest googleSignInRequest){
+        return userService.signInByGoogle(googleSignInRequest);
     }
 }
