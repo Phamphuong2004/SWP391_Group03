@@ -99,9 +99,4 @@ public class UserController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-    @PostMapping("/signinbyGoogle")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
-    public ResponseEntity<?> sighinByGoogle(GoogleSignInRequest googleSignInRequest){
-        return userService.signInByGoogle(googleSignInRequest);
-    }
 }

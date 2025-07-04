@@ -1,5 +1,6 @@
 package com.swp.adnV2.AdnV2.service;
 
+import com.swp.adnV2.AdnV2.config.JwtUtil;
 import com.swp.adnV2.AdnV2.dto.*;
 import com.swp.adnV2.AdnV2.entity.LoginHistory;
 import com.swp.adnV2.AdnV2.entity.Role;
@@ -10,6 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -270,23 +273,5 @@ public class UserService {
         }
         userRepository.save(users);
         return ResponseEntity.ok("Profile updated successfully");
-    }
-
-    public ResponseEntity<?> signInByGoogle(@RequestBody GoogleSignInRequest googleSignInRequest) {
-        Map<String, Object> response = new HashMap<>();
-        Users users = userRepository.findByEmail(googleSignInRequest.getEmail());
-        if (users == null) {
-            // Create a new user if not found
-            users = new Users();
-            users.setFullName(googleSignInRequest.getFullName());
-            users.setEmail(googleSignInRequest.getEmail());
-            users.setUsername(googleSignInRequest.getEmail());
-            users.setRole(Role.CUSTOMER.name());
-            userRepository.save(users);
-        }
-        response.put("Exists", true);
-        response.put("message", "Login successful");
-        response.put("role", users.getRole());
-        return ResponseEntity.ok(response);
     }
 }
