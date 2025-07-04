@@ -4,12 +4,12 @@ import com.swp.adnV2.AdnV2.entity.SampleType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface SampleTypeRepository extends JpaRepository<SampleType, Long> {
     Optional<SampleType> findByName(String name);
     boolean existsByName(String sampleTypeName);
-    Optional<SampleType> findByKitComponent_ComponentName(String componentName);
-
+    List<SampleType> findByKitComponent_ComponentName(String componentName);
 }

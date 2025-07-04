@@ -45,6 +45,7 @@ import ViewFeedback from "../Feedback/ViewFeedback";
 import InvoiceList from "../Payment/InvoiceList";
 import SampleManagement from "../SampleManagement/SampleManagement";
 import KitManagement from "../Kit/KitManagement";
+import SampleWorkspace from "../SampleWorkspace/SampleWorkspace";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -177,6 +178,14 @@ function AppContent() {
           element={
             <ProtectedRoute allowedRoles={["staff", "manager"]}>
               <KitManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sample-workspace"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <SampleWorkspace />
             </ProtectedRoute>
           }
         />

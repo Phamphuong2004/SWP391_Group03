@@ -133,6 +133,36 @@ const sampleTypeOptions = [
   { value: "Tinh dịch", label: "Tinh dịch" },
 ];
 
+// Ánh xạ bộ kit với loại mẫu tương ứng
+const kitSampleTypeMap = {
+  "Buccal Swab": ["Nước bọt"],
+  "Sample Storage Bag": ["Tóc", "Móng", "Da"],
+  "Bone Collection Tube": ["Xương"],
+  "EDTA Tube": ["Máu"],
+  "Personal DNA Test Kit": ["Máu", "Tóc", "Móng", "Nước bọt", "Da"],
+  "Prenatal DNA Test Kit": ["Tinh dịch", "Sữa mẹ"],
+  "Shockproof Box": ["Xương"],
+  "Sample Envelope": ["Tóc", "Móng", "Da", "Nước bọt"],
+  "Legal Confirmation Form": ["Tinh dịch", "Sữa mẹ"],
+  "Pregnancy Safety Guide": ["Sữa mẹ"],
+  "Custom DNA Kit": [
+    "Máu",
+    "Tóc",
+    "Móng",
+    "Nước bọt",
+    "Da",
+    "Dịch mũi",
+    "Dịch họng",
+  ],
+  "Safety Instruction": ["Sữa mẹ"],
+  "Genetic History Form": ["Máu", "Da"],
+  "Gene Report Guide": ["Máu", "Tóc"],
+  "Administrative Form": ["Máu", "Da"],
+  "Legal File Cover": ["Máu", "Da"],
+  "Civil Dispute Form": ["Máu", "Da"],
+  "Judicial File": ["Máu", "Da"],
+};
+
 function Booking() {
   const [form, setForm] = useState({
     fullName: "",
@@ -159,6 +189,9 @@ function Booking() {
   const [guestSuccess, setGuestSuccess] = useState(false);
   const [guestInfo, setGuestInfo] = useState({});
 
+  const [dynamicSampleTypeOptions, setDynamicSampleTypeOptions] =
+    useState(sampleTypeOptions);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log("Thay đổi:", name, value);
@@ -166,6 +199,18 @@ function Booking() {
       const selected = provinces.find((p) => p.name === value);
       setDistricts(selected ? selected.districts : []);
       setForm((prev) => ({ ...prev, province: value, district: "" }));
+    } else if (name === "kitComponentName") {
+      // Lấy loại mẫu tương ứng với bộ kit
+      const mappedTypes =
+        kitSampleTypeMap[value] || sampleTypeOptions.map((opt) => opt.value);
+      setForm((prev) => ({
+        ...prev,
+        kitComponentName: value,
+        sampleTypes: [], // reset lựa chọn mẫu khi đổi bộ kit
+      }));
+      setDynamicSampleTypeOptions(
+        sampleTypeOptions.filter((opt) => mappedTypes.includes(opt.value))
+      );
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
@@ -621,7 +666,7 @@ function Booking() {
                 onChange={(values) =>
                   setForm((prev) => ({ ...prev, sampleTypes: values }))
                 }
-                options={sampleTypeOptions}
+                options={dynamicSampleTypeOptions}
                 required
               />
             </label>
