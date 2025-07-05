@@ -22,6 +22,10 @@ body,
   }
 }
 
+body.dark {
+  background: #18191a !important;
+}
+
 /* Center the form */
 /* #root {
   /* min-height: 100vh;

@@ -5,6 +5,7 @@ import com.swp.adnV2.AdnV2.dto.AppointmentResponse;
 import com.swp.adnV2.AdnV2.dto.AppointmentUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.*;
 import com.swp.adnV2.AdnV2.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +42,9 @@ public class AppointmentService {
     private GuestRepository guestRepository;
 
     @Autowired
-    private SampleTypeRepository sampleTypeRepository;
+    private SampleTypeRepository sampleTypeRepository;  
 
+    @Transactional
     public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request) {
         List<String> errors = new ArrayList<>();
         if (request.getAppointmentDate() == null) {
@@ -84,6 +86,9 @@ public class AppointmentService {
 
 
         KitComponent kitComponent = null;
+        List<String> sampleTypeNames = request.getSampleTypes();
+        int requestedSampleCount = (sampleTypeNames != null) ? sampleTypeNames.size() : 0;
+
         if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
             kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
             if (kitComponent == null) {
@@ -92,6 +97,14 @@ public class AppointmentService {
             // Kiểm tra kitComponent này có thuộc service đã chọn không
             if (!kitComponent.getService().getServiceId().equals(serviceId)) {
                 return ResponseEntity.badRequest().body("Kit component không thuộc dịch vụ đã chọn!");
+            }
+            // Kiểm tra số lượng kit đủ không
+            if (kitComponent.getQuantity() < requestedSampleCount) {
+                Map<String, Object> errorBody = new HashMap<>();
+                errorBody.put("message", "Số lượng kit không đủ cho số lượng mẫu đăng ký!");
+                errorBody.put("kitAvailable", kitComponent.getQuantity());
+                errorBody.put("kitRequired", requestedSampleCount);
+                return ResponseEntity.badRequest().body(errorBody);
             }
         }
 
@@ -135,7 +148,6 @@ public class AppointmentService {
             appointment.setGuest(guest);
             appointment = appointmentRepository.save(appointment);
 
-            List<String> sampleTypeNames = request.getSampleTypes();
             if (sampleTypeNames != null && !sampleTypeNames.isEmpty()) {
                 for (String sampleTypeName : sampleTypeNames) {
                     Optional<SampleType> optSampleType = sampleTypeRepository.findByName(sampleTypeName);
@@ -151,6 +163,12 @@ public class AppointmentService {
                 }
             }
 
+            // Trừ số lượng kit sau khi lưu sample thành công
+            if (kitComponent != null && requestedSampleCount > 0) {
+                kitComponent.setQuantity(kitComponent.getQuantity() - requestedSampleCount);
+                kitRepository.save(kitComponent);
+            }
+
             AppointmentResponse appointmentResponse = convertToAppointmentResponse(appointment);
             return ResponseEntity.status(HttpStatus.CREATED).body(appointmentResponse);
         } catch (Exception e) {
@@ -161,6 +179,18 @@ public class AppointmentService {
     public ResponseEntity<?> deleteAppointment(Long appointmentId) {
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isPresent()) {
+            Appointment appointment = appointmentOpt.get();
+            // Check trạng thái là PENDING hoặc CONFIRMED
+            if ("PENDING".equalsIgnoreCase(appointment.getStatus()) || "CONFIRMED".equalsIgnoreCase(appointment.getStatus())) {
+                KitComponent kitComponent = appointment.getKitComponent();
+                if (kitComponent != null) {
+                    // Đếm số lượng sample trong appointment này
+                    int sampleCount = sampleRepository.findByAppointment_AppointmentId(appointmentId).size();
+                    kitComponent.setQuantity(kitComponent.getQuantity() + sampleCount);
+                    kitRepository.save(kitComponent);
+                }
+            }
+
             Payment payment = paymentRepository.findByAppointment_AppointmentId(appointmentId);
             if (payment == null) {
                 appointmentRepository.delete(appointmentOpt.get());
@@ -266,27 +296,15 @@ public class AppointmentService {
         }
     }
 
-
+    @Transactional
 public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest request, String username) {
     List<String> errors = new ArrayList<>();
-    if (request.getAppointmentDate() == null) {
-        errors.add("Appointment date is required");
-    }
-    if (request.getFullName() == null || request.getFullName().isEmpty()) {
-        errors.add("Full name is required");
-    }
-    if (request.getPhone() == null || request.getPhone().isEmpty()) {
-        errors.add("Phone number is required");
-    }
-    if (request.getEmail() == null || request.getEmail().isEmpty()) {
-        errors.add("Email is required");
-    }
-    if (request.getGender() == null || request.getGender().isEmpty()) {
-        errors.add("Gender is required");
-    }
-    if (request.getServiceType() == null || request.getServiceType().isEmpty()) {
-        errors.add("Service type is required");
-    }
+    if (request.getAppointmentDate() == null) errors.add("Appointment date is required");
+    if (request.getFullName() == null || request.getFullName().isEmpty()) errors.add("Full name is required");
+    if (request.getPhone() == null || request.getPhone().isEmpty()) errors.add("Phone number is required");
+    if (request.getEmail() == null || request.getEmail().isEmpty()) errors.add("Email is required");
+    if (request.getGender() == null || request.getGender().isEmpty()) errors.add("Gender is required");
+    if (request.getServiceType() == null || request.getServiceType().isEmpty()) errors.add("Service type is required");
 
     TestPurpose testPurpose = TestPurpose.fromDisplayName(request.getTestPurpose());
     if(testPurpose == TestPurpose.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
@@ -303,17 +321,24 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         Services services = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
 
-        KitComponent kitComponent = null;
-        if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
-            kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
-            if (kitComponent == null) {
-                errors.add("Invalid kit component name");
-            } else if (services != null && !kitComponent.getService().getServiceId().equals(serviceId)) {
-                errors.add("Kit component không thuộc dịch vụ đã chọn!");
-            }
+    KitComponent kitComponent = null;
+    List<String> sampleTypes = request.getSampleTypes();
+    int requestedSampleCount = (sampleTypes != null) ? sampleTypes.size() : 0;
+
+    if (request.getKitComponentName() != null && !request.getKitComponentName().isEmpty()) {
+        kitComponent = kitRepository.findByComponentName(request.getKitComponentName());
+        if (kitComponent == null) {
+            errors.add("Invalid kit component name");
+        } else if (services != null && !kitComponent.getService().getServiceId().equals(serviceId)) {
+            errors.add("Kit component không thuộc dịch vụ đã chọn!");
+        } else if (kitComponent.getQuantity() < requestedSampleCount) {
+            Map<String, Object> errorBody = new HashMap<>();
+            errorBody.put("message", "Số lượng kit không đủ cho số lượng mẫu đăng ký!");
+            errorBody.put("kitAvailable", kitComponent.getQuantity());
+            errorBody.put("kitRequired", requestedSampleCount);
+            return ResponseEntity.badRequest().body(errorBody);
         }
-
-
+    }
 
         // Validate user nếu có
         Users users = null;
@@ -355,7 +380,6 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
         appointment = appointmentRepository.save(appointment);
 
-        List<String> sampleTypes = request.getSampleTypes();
         if (sampleTypes != null && !sampleTypes.isEmpty()) {
             for (String sampleTypeName : sampleTypes) {
                 Optional<SampleType> optionalSampleType = sampleTypeRepository.findByName(sampleTypeName);
@@ -373,6 +397,12 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                 collectedSample.setSampleType(sampleType);
                 sampleRepository.save(collectedSample);
             }
+        }
+
+        // Trừ số lượng kit sau khi đã lưu hết sample
+        if (kitComponent != null && requestedSampleCount > 0) {
+            kitComponent.setQuantity(kitComponent.getQuantity() - requestedSampleCount);
+            kitRepository.save(kitComponent);
         }
 
         AppointmentResponse response = convertToAppointmentResponse(appointment);
@@ -435,6 +465,8 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isPresent()) {
             Appointment appointment = appointmentOpt.get();
+            String oldStatus = appointment.getStatus();
+            boolean kitRestored = false;
 
             if (updateRequest.getStatus() != null && !updateRequest.getStatus().isEmpty()) {
                 boolean isValid = Arrays.stream(StatusAppointment.values())
@@ -443,7 +475,20 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("Invalid status: " + updateRequest.getStatus());
                 }
-                appointment.setStatus(updateRequest.getStatus().toUpperCase());
+                String newStatus = updateRequest.getStatus().toUpperCase();
+
+                // --- Kiểm tra nếu chuyển sang CANCELLED và trạng thái cũ là PENDING hoặc CONFIRMED ---
+                if ("CANCELLED".equalsIgnoreCase(newStatus)
+                        && ("PENDING".equalsIgnoreCase(oldStatus) || "CONFIRMED".equalsIgnoreCase(oldStatus))) {
+                    KitComponent kitComponent = appointment.getKitComponent();
+                    if (kitComponent != null) {
+                        int sampleCount = sampleRepository.findByAppointment_AppointmentId(appointmentId).size();
+                        kitComponent.setQuantity(kitComponent.getQuantity() + sampleCount);
+                        kitRepository.save(kitComponent);
+                        kitRestored = true;
+                    }
+                }
+                appointment.setStatus(newStatus);
             }
             boolean updatedSample = false;
 
@@ -502,7 +547,8 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             }
 
             appointmentRepository.save(appointment);
-            return ResponseEntity.ok("Appointment updated successfully");
+            String msg = kitRestored ? "Appointment updated and kit quantity restored successfully" : "Appointment updated successfully";
+            return ResponseEntity.ok(msg);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Appointment with ID " + appointmentId + " not found");
