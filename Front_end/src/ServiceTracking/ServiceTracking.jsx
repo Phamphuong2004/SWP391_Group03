@@ -96,67 +96,177 @@ const DetailItem = ({ icon, label, value }) => (
 const ServiceTracking = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
-  if (!user || !user.role || user.role.toLowerCase() !== "customer") {
+  // Nếu không đăng nhập hoặc không có role thì hiển thị GuestServiceTracking
+  if (!user || !user.role) {
     return <GuestServiceTracking />;
   }
+  // Nếu là customer thì hiển thị giao diện khách hàng (giữ nguyên)
+  if (user.role.toLowerCase() === "customer") {
+    const [appointments, setAppointments] = useState([]);
+    const [selected, setSelected] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-  const [appointments, setAppointments] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+    // Lấy danh sách lịch sử
+    useEffect(() => {
+      if (!selected) {
+        setLoading(true);
+        setError(null);
+        axios
+          .get("/api/view-appointments-user", {
+            headers: { Authorization: `Bearer ${user.token}` },
+          })
+          .then((res) => {
+            const arr = Array.isArray(res.data)
+              ? res.data
+              : res.data
+              ? [res.data]
+              : [];
+            arr.sort(
+              (a, b) =>
+                new Date(b.appointmentDate) - new Date(a.appointmentDate)
+            );
+            setAppointments(arr);
+          })
+          .catch(() => setError("Không lấy được lịch sử đặt lịch!"))
+          .finally(() => setLoading(false));
+      }
+      // eslint-disable-next-line
+    }, [selected]);
 
-  // Lấy danh sách lịch sử
-  useEffect(() => {
-    if (!selected) {
+    // Lấy chi tiết khi chọn
+    const handleViewDetail = (item) => {
       setLoading(true);
       setError(null);
       axios
-        .get("/api/view-appointments-user", {
+        .get(`/api/view-appointment/${item.appointmentId}`, {
           headers: { Authorization: `Bearer ${user.token}` },
         })
-        .then((res) => {
-          const arr = Array.isArray(res.data)
-            ? res.data
-            : res.data
-            ? [res.data]
-            : [];
-          arr.sort(
-            (a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate)
-          );
-          setAppointments(arr);
-        })
-        .catch(() => setError("Không lấy được lịch sử đặt lịch!"))
+        .then((res) => setSelected(res.data))
+        .catch(() =>
+          setError("Không tìm thấy đơn này hoặc bạn không có quyền xem!")
+        )
         .finally(() => setLoading(false));
+    };
+
+    const handleBackToList = () => {
+      setSelected(null);
+      setError(null);
+    };
+
+    // Render chi tiết
+    if (selected) {
+      if (loading)
+        return (
+          <div style={{ textAlign: "center", marginTop: 40 }}>
+            Đang tải chi tiết đơn...
+          </div>
+        );
+      if (error)
+        return (
+          <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>
+            {error}
+          </div>
+        );
+      return (
+        <div className="tracking-container">
+          <div className="tracking-header">
+            <h1>Theo dõi lịch hẹn</h1>
+            <p>
+              Kiểm tra trạng thái và thông tin chi tiết cho lịch hẹn của bạn.
+            </p>
+          </div>
+          <button onClick={handleBackToList} style={{ marginBottom: 24 }}>
+            Quay lại
+          </button>
+          <div className="tracking-card status-card">
+            <h3>Trạng thái đơn hàng</h3>
+            <StatusTimeline status={selected.status} />
+          </div>
+          <div className="tracking-card details-card">
+            <h3>Thông tin chi tiết</h3>
+            <div className="detail-grid">
+              <DetailItem
+                icon="fa-user"
+                label="Họ tên"
+                value={selected.fullName}
+              />
+              <DetailItem
+                icon="fa-envelope"
+                label="Email"
+                value={selected.email}
+              />
+              <DetailItem
+                icon="fa-phone"
+                label="Số điện thoại"
+                value={selected.phone}
+              />
+              <DetailItem
+                icon="fa-calendar-days"
+                label="Ngày sinh"
+                value={formatDate(selected.dob)}
+              />
+              <DetailItem
+                icon="fa-venus-mars"
+                label="Giới tính"
+                value={selected.gender}
+              />
+              <DetailItem
+                icon="fa-map-marker-alt"
+                label="Địa chỉ lấy mẫu"
+                value={`${selected.district}, ${selected.province}`}
+              />
+              <DetailItem
+                icon="fa-calendar-days"
+                label="Ngày hẹn"
+                value={formatDate(selected.appointmentDate)}
+              />
+              <DetailItem
+                icon="fa-clock"
+                label="Giờ hẹn"
+                value={formatTime(selected.appointmentDate)}
+              />
+              <DetailItem
+                icon="fa-calendar-check"
+                label="Ngày lấy mẫu"
+                value={formatDate(selected.collectionSampleTime)}
+              />
+              <DetailItem
+                icon="fa-hourglass-half"
+                label="Giờ lấy mẫu"
+                value={formatTime(selected.collectionSampleTime)}
+              />
+              <DetailItem
+                icon="fa-dna"
+                label="Loại dịch vụ"
+                value={selected.serviceType}
+              />
+              <DetailItem
+                icon="fa-bullseye"
+                label="Mục đích"
+                value={selected.testpurpose}
+              />
+              <DetailItem
+                icon="fa-tags"
+                label="Phân loại"
+                value={selected.testcategory}
+              />
+              <DetailItem
+                icon="fa-sticky-note"
+                label="Ghi chú"
+                value={selected.note}
+              />
+            </div>
+          </div>
+        </div>
+      );
     }
-    // eslint-disable-next-line
-  }, [selected]);
 
-  // Lấy chi tiết khi chọn
-  const handleViewDetail = (item) => {
-    setLoading(true);
-    setError(null);
-    axios
-      .get(`/api/view-appointment/${item.appointmentId}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      })
-      .then((res) => setSelected(res.data))
-      .catch(() =>
-        setError("Không tìm thấy đơn này hoặc bạn không có quyền xem!")
-      )
-      .finally(() => setLoading(false));
-  };
-
-  const handleBackToList = () => {
-    setSelected(null);
-    setError(null);
-  };
-
-  // Render chi tiết
-  if (selected) {
+    // Render danh sách
     if (loading)
       return (
         <div style={{ textAlign: "center", marginTop: 40 }}>
-          Đang tải chi tiết đơn...
+          Đang tải dữ liệu...
         </div>
       );
     if (error)
@@ -166,189 +276,340 @@ const ServiceTracking = () => {
         </div>
       );
     return (
-      <div className="tracking-container">
-        <div className="tracking-header">
-          <h1>Theo dõi lịch hẹn</h1>
-          <p>Kiểm tra trạng thái và thông tin chi tiết cho lịch hẹn của bạn.</p>
-        </div>
-        <button onClick={handleBackToList} style={{ marginBottom: 24 }}>
-          Quay lại
-        </button>
-        <div className="tracking-card status-card">
-          <h3>Trạng thái đơn hàng</h3>
-          <StatusTimeline status={selected.status} />
-        </div>
-        <div className="tracking-card details-card">
-          <h3>Thông tin chi tiết</h3>
-          <div className="detail-grid">
-            <DetailItem
-              icon="fa-user"
-              label="Họ tên"
-              value={selected.fullName}
-            />
-            <DetailItem
-              icon="fa-envelope"
-              label="Email"
-              value={selected.email}
-            />
-            <DetailItem
-              icon="fa-phone"
-              label="Số điện thoại"
-              value={selected.phone}
-            />
-            <DetailItem
-              icon="fa-calendar-days"
-              label="Ngày sinh"
-              value={formatDate(selected.dob)}
-            />
-            <DetailItem
-              icon="fa-venus-mars"
-              label="Giới tính"
-              value={selected.gender}
-            />
-            <DetailItem
-              icon="fa-map-marker-alt"
-              label="Địa chỉ lấy mẫu"
-              value={`${selected.district}, ${selected.province}`}
-            />
-            <DetailItem
-              icon="fa-calendar-days"
-              label="Ngày hẹn"
-              value={formatDate(selected.appointmentDate)}
-            />
-            <DetailItem
-              icon="fa-clock"
-              label="Giờ hẹn"
-              value={formatTime(selected.appointmentDate)}
-            />
-            <DetailItem
-              icon="fa-calendar-check"
-              label="Ngày lấy mẫu"
-              value={formatDate(selected.collectionSampleTime)}
-            />
-            <DetailItem
-              icon="fa-hourglass-half"
-              label="Giờ lấy mẫu"
-              value={formatTime(selected.collectionSampleTime)}
-            />
-            <DetailItem
-              icon="fa-dna"
-              label="Loại dịch vụ"
-              value={selected.serviceType}
-            />
-            <DetailItem
-              icon="fa-bullseye"
-              label="Mục đích"
-              value={selected.testpurpose}
-            />
-            <DetailItem
-              icon="fa-tags"
-              label="Phân loại"
-              value={selected.testcategory}
-            />
-            <DetailItem
-              icon="fa-sticky-note"
-              label="Ghi chú"
-              value={selected.note}
-            />
+      <div style={{ maxWidth: 900, margin: "40px auto" }}>
+        <h2 style={{ textAlign: "center", marginBottom: 24 }}>
+          Lịch sử đặt lịch của bạn
+        </h2>
+        {appointments.length === 0 ? (
+          <div style={{ textAlign: "center" }}>
+            Bạn chưa có lịch sử đặt lịch.
           </div>
-        </div>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 32,
+              justifyContent: "center",
+            }}
+          >
+            {appointments.map((item) => (
+              <div
+                key={item.appointmentId}
+                style={{
+                  background: "#fff",
+                  borderRadius: 16,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  padding: 24,
+                  minWidth: 300,
+                  maxWidth: 340,
+                  marginBottom: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                <div
+                  style={{ fontWeight: "bold", fontSize: 18, marginBottom: 8 }}
+                >
+                  {item.serviceType || "Dịch vụ ADN"}
+                  <span
+                    style={{
+                      background: "#f7e7b7",
+                      color: "#bfa100",
+                      borderRadius: 8,
+                      padding: "2px 10px",
+                      fontSize: 14,
+                      marginLeft: 12,
+                    }}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <b>Mã đơn:</b> {item.appointmentId}
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <b>Ngày hẹn:</b> {formatDate(item.appointmentDate)}
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <b>Khách hàng:</b> {item.fullName}
+                </div>
+                <button
+                  style={{
+                    background: "#3b82f6",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: "10px 0",
+                    width: "100%",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleViewDetail(item)}
+                >
+                  Xem chi tiết
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
+  // Nếu là staff hoặc manager thì hiển thị giao diện quản lý đơn (danh sách tất cả các đơn, xem chi tiết)
+  if (
+    user.role.toLowerCase() === "staff" ||
+    user.role.toLowerCase() === "manager"
+  ) {
+    const [appointments, setAppointments] = React.useState([]);
+    const [selected, setSelected] = React.useState(null);
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(null);
 
-  // Render danh sách
-  if (loading)
-    return (
-      <div style={{ textAlign: "center", marginTop: 40 }}>
-        Đang tải dữ liệu...
-      </div>
-    );
-  if (error)
-    return (
-      <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>
-        {error}
-      </div>
-    );
-  return (
-    <div style={{ maxWidth: 900, margin: "40px auto" }}>
-      <h2 style={{ textAlign: "center", marginBottom: 24 }}>
-        Lịch sử đặt lịch của bạn
-      </h2>
-      {appointments.length === 0 ? (
-        <div style={{ textAlign: "center" }}>Bạn chưa có lịch sử đặt lịch.</div>
-      ) : (
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 32,
-            justifyContent: "center",
-          }}
-        >
-          {appointments.map((item) => (
-            <div
-              key={item.appointmentId}
-              style={{
-                background: "#fff",
-                borderRadius: 16,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                padding: 24,
-                minWidth: 300,
-                maxWidth: 340,
-                marginBottom: 24,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <div
-                style={{ fontWeight: "bold", fontSize: 18, marginBottom: 8 }}
-              >
-                {item.serviceType || "Dịch vụ ADN"}
-                <span
-                  style={{
-                    background: "#f7e7b7",
-                    color: "#bfa100",
-                    borderRadius: 8,
-                    padding: "2px 10px",
-                    fontSize: 14,
-                    marginLeft: 12,
-                  }}
-                >
-                  {item.status}
-                </span>
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <b>Mã đơn:</b> {item.appointmentId}
-              </div>
-              <div style={{ marginBottom: 8 }}>
-                <b>Ngày hẹn:</b> {formatDate(item.appointmentDate)}
-              </div>
-              <div style={{ marginBottom: 16 }}>
-                <b>Khách hàng:</b> {item.fullName}
-              </div>
-              <button
-                style={{
-                  background: "#3b82f6",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 8,
-                  padding: "10px 0",
-                  width: "100%",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleViewDetail(item)}
-              >
-                Xem chi tiết
-              </button>
+    React.useEffect(() => {
+      if (!selected) {
+        setLoading(true);
+        setError(null);
+        axios
+          .get("/api/get-all-appointments", {
+            headers: { Authorization: `Bearer ${user.token}` },
+          })
+          .then((res) => {
+            const arr = Array.isArray(res.data)
+              ? res.data
+              : res.data
+              ? [res.data]
+              : [];
+            arr.sort(
+              (a, b) =>
+                new Date(b.appointmentDate) - new Date(a.appointmentDate)
+            );
+            setAppointments(arr);
+          })
+          .catch(() => setError("Không lấy được danh sách đơn!"))
+          .finally(() => setLoading(false));
+      }
+    }, [selected, user.token]);
+
+    const handleViewDetail = (item) => {
+      setLoading(true);
+      setError(null);
+      axios
+        .get(`/api/view-appointment/${item.appointmentId}`, {
+          headers: { Authorization: `Bearer ${user.token}` },
+        })
+        .then((res) => setSelected(res.data))
+        .catch(() =>
+          setError("Không tìm thấy đơn này hoặc bạn không có quyền xem!")
+        )
+        .finally(() => setLoading(false));
+    };
+
+    const handleBackToList = () => {
+      setSelected(null);
+      setError(null);
+    };
+
+    // Render chi tiết
+    if (selected) {
+      if (loading)
+        return (
+          <div style={{ textAlign: "center", marginTop: 40 }}>
+            Đang tải chi tiết đơn...
+          </div>
+        );
+      if (error)
+        return (
+          <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>
+            {error}
+          </div>
+        );
+      return (
+        <div className="tracking-container">
+          <div className="tracking-header">
+            <h1>Chi tiết đơn đặt lịch</h1>
+            <p>Xem thông tin chi tiết và trạng thái của đơn đặt lịch.</p>
+          </div>
+          <button onClick={handleBackToList} style={{ marginBottom: 24 }}>
+            Quay lại
+          </button>
+          <div className="tracking-card status-card">
+            <h3>Trạng thái đơn hàng</h3>
+            <StatusTimeline status={selected.status} />
+          </div>
+          <div className="tracking-card details-card">
+            <h3>Thông tin chi tiết</h3>
+            <div className="detail-grid">
+              <DetailItem
+                icon="fa-user"
+                label="Họ tên"
+                value={selected.fullName}
+              />
+              <DetailItem
+                icon="fa-envelope"
+                label="Email"
+                value={selected.email}
+              />
+              <DetailItem
+                icon="fa-phone"
+                label="Số điện thoại"
+                value={selected.phone}
+              />
+              <DetailItem
+                icon="fa-calendar-days"
+                label="Ngày sinh"
+                value={formatDate(selected.dob)}
+              />
+              <DetailItem
+                icon="fa-venus-mars"
+                label="Giới tính"
+                value={selected.gender}
+              />
+              <DetailItem
+                icon="fa-map-marker-alt"
+                label="Địa chỉ lấy mẫu"
+                value={`${selected.district}, ${selected.province}`}
+              />
+              <DetailItem
+                icon="fa-calendar-days"
+                label="Ngày hẹn"
+                value={formatDate(selected.appointmentDate)}
+              />
+              <DetailItem
+                icon="fa-clock"
+                label="Giờ hẹn"
+                value={formatTime(selected.appointmentDate)}
+              />
+              <DetailItem
+                icon="fa-calendar-check"
+                label="Ngày lấy mẫu"
+                value={formatDate(selected.collectionSampleTime)}
+              />
+              <DetailItem
+                icon="fa-hourglass-half"
+                label="Giờ lấy mẫu"
+                value={formatTime(selected.collectionSampleTime)}
+              />
+              <DetailItem
+                icon="fa-dna"
+                label="Loại dịch vụ"
+                value={selected.serviceType}
+              />
+              <DetailItem
+                icon="fa-bullseye"
+                label="Mục đích"
+                value={selected.testpurpose}
+              />
+              <DetailItem
+                icon="fa-tags"
+                label="Phân loại"
+                value={selected.testcategory}
+              />
+              <DetailItem
+                icon="fa-sticky-note"
+                label="Ghi chú"
+                value={selected.note}
+              />
             </div>
-          ))}
+          </div>
         </div>
-      )}
-    </div>
-  );
+      );
+    }
+
+    // Render danh sách
+    if (loading)
+      return (
+        <div style={{ textAlign: "center", marginTop: 40 }}>
+          Đang tải dữ liệu...
+        </div>
+      );
+    if (error)
+      return (
+        <div style={{ textAlign: "center", marginTop: 40, color: "red" }}>
+          {error}
+        </div>
+      );
+    return (
+      <div style={{ maxWidth: 1000, margin: "40px auto" }}>
+        <h2 style={{ textAlign: "center", marginBottom: 24 }}>
+          Danh sách tất cả đơn đặt lịch
+        </h2>
+        {appointments.length === 0 ? (
+          <div style={{ textAlign: "center" }}>Không có đơn đặt lịch nào.</div>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 32,
+              justifyContent: "center",
+            }}
+          >
+            {appointments.map((item) => (
+              <div
+                key={item.appointmentId}
+                style={{
+                  background: "#fff",
+                  borderRadius: 16,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                  padding: 24,
+                  minWidth: 300,
+                  maxWidth: 340,
+                  marginBottom: 24,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
+              >
+                <div
+                  style={{ fontWeight: "bold", fontSize: 18, marginBottom: 8 }}
+                >
+                  {item.serviceType || "Dịch vụ ADN"}
+                  <span
+                    style={{
+                      background: "#f7e7b7",
+                      color: "#bfa100",
+                      borderRadius: 8,
+                      padding: "2px 10px",
+                      fontSize: 14,
+                      marginLeft: 12,
+                    }}
+                  >
+                    {item.status}
+                  </span>
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <b>Mã đơn:</b> {item.appointmentId}
+                </div>
+                <div style={{ marginBottom: 8 }}>
+                  <b>Ngày hẹn:</b> {formatDate(item.appointmentDate)}
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <b>Khách hàng:</b> {item.fullName}
+                </div>
+                <button
+                  style={{
+                    background: "#3b82f6",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 8,
+                    padding: "10px 0",
+                    width: "100%",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleViewDetail(item)}
+                >
+                  Xem chi tiết
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 };
 
 export default ServiceTracking;

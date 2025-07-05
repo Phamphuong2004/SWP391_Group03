@@ -46,10 +46,13 @@ import InvoiceList from "../Payment/InvoiceList";
 import SampleManagement from "../SampleManagement/SampleManagement";
 import KitManagement from "../Kit/KitManagement";
 import SampleWorkspace from "../SampleWorkspace/SampleWorkspace";
+import ManagerDashboard from "../Dashboard/ManagerDashboard";
 
 function AppContent() {
   const { pathname } = useLocation();
-  const hideNavbar = pathname === "/login" || pathname === "/register";
+  const hideNavbar = ["/login", "/register", "/forgot-password"].includes(
+    pathname
+  );
 
   return (
     <>
@@ -189,15 +192,19 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/manager-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
 }
 
 export default function AppRoutes() {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
+  return <AppContent />;
 }

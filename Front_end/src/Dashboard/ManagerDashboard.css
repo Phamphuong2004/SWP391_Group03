@@ -1,0 +1,205 @@
+/* Sidebar styles - Tối ưu cho nhiều mục menu */
+.manager-dashboard-container {
+  font-family: "Segoe UI", "Roboto", Arial, sans-serif;
+}
+.manager-sidebar {
+  background: #23235b;
+  color: #fff;
+  min-height: 100vh;
+  width: 250px;
+  position: relative;
+  box-shadow: 2px 0 8px rgba(44, 62, 80, 0.08);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 18px 0 0 0;
+  height: 100vh;
+}
+.sidebar-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+  padding-left: 32px;
+}
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 120px);
+  scrollbar-width: thin;
+  scrollbar-color: #2d2e82 #fff;
+}
+.sidebar-menu li {
+  margin-bottom: 8px;
+}
+.sidebar-menu-btn {
+  background: none;
+  color: #fff;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  padding: 13px 32px 13px 32px;
+  border-radius: 8px 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-weight: 500;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
+  will-change: transform;
+  outline: none;
+}
+.sidebar-menu-btn:hover,
+.sidebar-menu-btn.selected {
+  background: #fff;
+  color: #23235b;
+  box-shadow: 2px 2px 12px rgba(44, 62, 80, 0.08);
+  font-weight: 700;
+  transform: scale(1.06) translateX(4px);
+}
+.sidebar-menu-btn .sidebar-menu-icon {
+  font-size: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  transition: transform 0.18s cubic-bezier(0.4, 2, 0.6, 1), color 0.18s;
+}
+.sidebar-menu-btn:hover .sidebar-menu-icon,
+.sidebar-menu-btn.selected .sidebar-menu-icon {
+  color: #2d2e82;
+  transform: scale(1.18) rotate(-8deg);
+}
+.logout-btn {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  color: #fff;
+  background: #e74c3c;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.18s;
+}
+.logout-btn:hover {
+  background: #c0392b;
+}
+
+/* Main content styles */
+.manager-dashboard-container > div:last-child {
+  flex: 1;
+  background: #f7f7fb;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: auto;
+}
+
+/* Stat cards */
+.stat-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.07);
+  padding: 28px 24px 20px 24px;
+  min-width: 200px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 0;
+  position: relative;
+}
+.stat-card .stat-icon {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-size: 2.1em;
+  opacity: 0.13;
+}
+.stat-card:nth-child(1) {
+  border-left: 6px solid #2d2e82;
+}
+.stat-card:nth-child(2) {
+  border-left: 6px solid #4caf50;
+}
+.stat-card:nth-child(3) {
+  border-left: 6px solid #f39c12;
+}
+.stat-card:nth-child(4) {
+  border-left: 6px solid #e67e22;
+}
+
+/* Scrollbar đẹp cho sidebar */
+.sidebar-menu::-webkit-scrollbar {
+  width: 7px;
+  background: #23235b;
+}
+.sidebar-menu::-webkit-scrollbar-thumb {
+  background: #2d2e82;
+  border-radius: 6px;
+}
+
+@media (max-width: 900px) {
+  .manager-dashboard-container {
+    flex-direction: column;
+  }
+  .manager-sidebar {
+    width: 100vw;
+    min-height: unset;
+    height: auto;
+    position: static;
+    box-shadow: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 0;
+  }
+  .sidebar-title {
+    margin-bottom: 0;
+    margin-right: 24px;
+    padding-left: 12px;
+  }
+  .sidebar-menu {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    max-height: unset;
+    overflow-y: visible;
+  }
+  .sidebar-menu li {
+    margin-bottom: 0;
+  }
+  .logout-btn {
+    position: static;
+    margin-left: auto;
+    margin-bottom: 0;
+    width: auto;
+    padding: 14px 32px;
+  }
+}
+
+/* Hiệu ứng slide-in khi sidebar mount */
+@keyframes sidebar-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
