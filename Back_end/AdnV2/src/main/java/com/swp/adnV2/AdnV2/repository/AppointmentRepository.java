@@ -9,13 +9,13 @@ import java.util.List;
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     // Tìm theo user_id
-    List<Appointment> findByUsers_UserId(Long userId);
+    List<Appointment> findByUsers_UserIdAndIsActiveTrue(Long userId);
 
-    // Tìm theo username
-    List<Appointment> findByUsers_Username(String username);
+    List<Appointment> findByIsActiveTrue();
+    List<Appointment> findByUsers_UsernameAndIsActiveTrue(String username);
 
     // Tìm theo email và phone cho người không có tài khoản
-    List<Appointment> findByEmailAndPhone(String email, String phone);
+    List<Appointment> findByEmailAndPhoneAndIsActiveTrue(String email, String phone);
 
     List<Appointment> findByUsers_UsernameAndStatus(String username, String status);
 

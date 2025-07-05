@@ -91,6 +91,9 @@ public class Appointment {
     @JoinColumn(name = "guest_id", nullable = true)
     private Guest guest;
 
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
+
     public String getCollectionLocation() {
         return collectionLocation;
     }
@@ -101,6 +104,22 @@ public class Appointment {
 
     // Default constructor
     public Appointment() {}
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public List<CollectedSample> getCollectedSamples() {
+        return collectedSamples;
+    }
+
+    public void setCollectedSamples(List<CollectedSample> collectedSamples) {
+        this.collectedSamples = collectedSamples;
+    }
 
     public KitComponent getKitComponent() {
         return kitComponent;

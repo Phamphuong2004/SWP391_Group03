@@ -176,10 +176,12 @@ public class AppointmentService {
                     .body("Failed to create appointment: " + e.getMessage());
         }
     }
+    @Transactional
     public ResponseEntity<?> deleteAppointment(Long appointmentId) {
         Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
         if (appointmentOpt.isPresent()) {
             Appointment appointment = appointmentOpt.get();
+
             // Check trạng thái là PENDING hoặc CONFIRMED
             if ("PENDING".equalsIgnoreCase(appointment.getStatus()) || "CONFIRMED".equalsIgnoreCase(appointment.getStatus())) {
                 KitComponent kitComponent = appointment.getKitComponent();
@@ -191,18 +193,14 @@ public class AppointmentService {
                 }
             }
 
-            Payment payment = paymentRepository.findByAppointment_AppointmentId(appointmentId);
-            if (payment == null) {
-                appointmentRepository.delete(appointmentOpt.get());
-                return ResponseEntity.ok("Appointment deleted successfully");
-            }
-            payment.setAppointment(null);
-            paymentRepository.save(payment);
-            appointmentRepository.delete(appointmentOpt.get());
-            return ResponseEntity.ok("Appointment deleted successfully");
+            // Đánh dấu appointment là không hoạt động thay vì xóa
+            appointment.setActive(false);
+            appointmentRepository.save(appointment);
+
+            return ResponseEntity.ok("Cuộc hẹn đã được đánh dấu là không hoạt động");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Appointment with ID " + appointmentId + " not found");
+                    .body("Không tìm thấy cuộc hẹn với ID " + appointmentId);
         }
     }
 
@@ -272,7 +270,7 @@ public class AppointmentService {
     }
 
     public ResponseEntity<List<AppointmentResponse>> getAllAppointments() {
-        List<Appointment> appointments = appointmentRepository.findAll();
+        List<Appointment> appointments = appointmentRepository.findByIsActiveTrue();
         if (appointments.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -292,7 +290,7 @@ public class AppointmentService {
                 throw new RuntimeException("Invalid status: " + status);
             }
         } else {
-            return appointmentRepository.findByUsers_Username(username);
+            return appointmentRepository.findByUsers_UsernameAndIsActiveTrue(username);
         }
     }
 
@@ -423,7 +421,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("User with username " + username + " not found");
             }
-            List<Appointment> appointments = appointmentRepository.findByUsers_UserId(user.getUserId());
+            List<Appointment> appointments = appointmentRepository.findByUsers_UserIdAndIsActiveTrue(user.getUserId());
 
             List<AppointmentResponse> responseList = appointments.stream()
                     .map(this::convertToAppointmentResponse)
@@ -557,7 +555,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
     public ResponseEntity<?> findAppointmentsByEmailAndPhone(String email, String phone) {
         try {
-            List<Appointment> appointments = appointmentRepository.findByEmailAndPhone(email, phone);
+            List<Appointment> appointments = appointmentRepository.findByEmailAndPhoneAndIsActiveTrue(email, phone);
             if (appointments.isEmpty()) {
                 return ResponseEntity.ok(Collections.emptyList());
             }
