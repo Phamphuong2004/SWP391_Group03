@@ -5,11 +5,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import "./Login.css";
+import { FaUser, FaLock } from "react-icons/fa";
 
 export default function Login() {
-  const [username, setUsername] = useState(""); // Đổi tên biến
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [remember, setRemember] = useState(false);
   const navigate = useNavigate();
 
   const recordLoginHistory = async (userId, status, token) => {
@@ -151,92 +153,71 @@ export default function Login() {
   };
 
   return (
-    <div
-      className="login-page"
-      style={{
-        minHeight: "100vh",
-        width: "100vw",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: `url("https://img.lovepik.com/photo/40088/2192.jpg_wh860.jpg") no-repeat center center fixed`,
-        backgroundSize: "cover",
-      }}
-    >
-      <div className="login-split-bg">
-        <div className="login-left">
-          <div className="service-card-home">
-            <h2>Dịch vụ xét nghiệm ADN</h2>
-            <p>Chính xác - Bảo mật - Nhanh chóng</p>
+    <div className="login-split-root">
+      <div className="login-split-left">
+        <div className="login-welcome-block">
+          <div className="login-welcome-title">Welcome Back!</div>
+          <div className="login-welcome-desc">
+            Đăng nhập để tiếp tục trải nghiệm hệ thống ADN Testing
           </div>
         </div>
-        <div className="login-right">
-          <div className="login-container">
-            <h2 className="login-title">Đăng nhập</h2>
-            <form className="login-form" onSubmit={handleSubmit}>
-              <div className="login-group">
-                <label htmlFor="username">Tên đăng nhập</label>
+      </div>
+      <div className="login-split-right">
+        <div className="login-form-container">
+          <div className="login-title">Đăng nhập</div>
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="login-group">
+              <label htmlFor="username">Tên đăng nhập</label>
+              <input
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                autoFocus
+                autoComplete="username"
+              />
+              <span className="input-icon">
+                <FaUser />
+              </span>
+            </div>
+            <div className="login-group">
+              <label htmlFor="password">Mật khẩu</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+              <span className="input-icon">
+                <FaLock />
+              </span>
+            </div>
+            <div className="login-options">
+              <label className="login-remember">
                 <input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  placeholder="Nhập tên đăng nhập"
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
                 />
-              </div>
-              <div className="login-group">
-                <label htmlFor="password">Mật khẩu</label>
-                <input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Nhập mật khẩu"
-                />
-              </div>
-              <button className="login-btn" type="submit" disabled={isLoading}>
-                {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
-              </button>
-              <button
-                type="button"
-                className="login-btn"
-                style={{
-                  marginTop: "10px",
-                  background: "#fff",
-                  color: "#2193b0",
-                  border: "2px solid #2193b0",
-                }}
+                Ghi nhớ đăng nhập
+              </label>
+              <span
+                className="login-link"
                 onClick={() => navigate("/forgot-password")}
               >
-                Quên mật khẩu
-              </button>
-              <div className="google-login-wrapper">
-                <GoogleLogin
-                  onSuccess={responseGoogleSuccess}
-                  onError={responseGoogleFailure}
-                  width="100%"
-                  text="signin_with"
-                  shape="rectangular"
-                  locale="vi"
-                  theme="outline"
-                />
-              </div>
-              <button
-                type="button"
-                className="login-btn"
-                style={{
-                  marginTop: "10px",
-                  background: "#fff",
-                  color: "#2193b0",
-                  border: "2px solid #2193b0",
-                }}
-                onClick={() => navigate("/")}
-              >
-                Quay về trang chủ
-              </button>
-            </form>
+                Quên mật khẩu?
+              </span>
+            </div>
+            <button className="login-btn" type="submit" disabled={isLoading}>
+              {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+            </button>
+          </form>
+          <div className="login-signup">
+            Chưa có tài khoản?
+            <a onClick={() => navigate("/register")}>Đăng ký ngay</a>
           </div>
         </div>
       </div>
