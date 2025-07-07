@@ -47,6 +47,7 @@ import SampleManagement from "../SampleManagement/SampleManagement";
 import KitManagement from "../Kit/KitManagement";
 import SampleWorkspace from "../SampleWorkspace/SampleWorkspace";
 import ManagerDashboard from "../Dashboard/ManagerDashboard";
+import StaffResult from "../StaffResult/StaffResult";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -197,6 +198,14 @@ function AppContent() {
           element={
             <ProtectedRoute allowedRoles={["manager"]}>
               <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff-result"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <StaffResult />
             </ProtectedRoute>
           }
         />

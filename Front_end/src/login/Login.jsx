@@ -52,6 +52,9 @@ export default function Login() {
         return;
       }
 
+      // Lưu token vào localStorage
+      localStorage.setItem("token", token);
+
       // Step 2: Use the token to get the user's role from the user endpoint
       const userResponse = await axios.post(
         "/api/user/login",
