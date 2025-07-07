@@ -49,7 +49,7 @@ public class ResultController {
 
     @GetMapping("/appointment/{appointmentId}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
-    public ResultReponse getResultByAppointmentId(@RequestParam Long appointmentId) {
+    public ResultReponse getResultByAppointmentId(@PathVariable Long appointmentId) {
         return resultService.getResultByAppointmentId(appointmentId);
     }
 }
