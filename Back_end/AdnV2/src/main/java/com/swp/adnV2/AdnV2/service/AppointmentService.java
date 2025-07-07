@@ -259,6 +259,13 @@ public class AppointmentService {
             response.setSamples(Collections.emptyList());
         }
 
+        Result result = resultRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
+        if (result != null && result.getResultFile() != null) {
+            response.setResultFile(result.getResultFile());
+        } else {
+            response.setResultFile(null);
+        }
+
         Payment payment = paymentRepository.findByAppointment_AppointmentId(appointment.getAppointmentId());
         if (payment != null) {
             response.setPaymentStatus(payment.getStatus());
