@@ -72,9 +72,9 @@ const SampleTypeManagement = () => {
   const handleEdit = (record) => {
     setEditingSampleType(record);
     form.setFieldsValue({
+      kit_component_id: record.kit_component_id,
       name: record.name,
       description: record.description,
-      componentName: record.componentName,
     });
     setIsModalVisible(true);
   };
@@ -93,9 +93,9 @@ const SampleTypeManagement = () => {
     try {
       const values = await form.validateFields();
       const payload = {
+        kit_component_id: values.kit_component_id,
         name: values.name,
         description: values.description,
-        componentName: values.componentName,
       };
       console.log("Payload FE gửi lên:", payload);
       if (editingSampleType) {
@@ -116,7 +116,6 @@ const SampleTypeManagement = () => {
     { title: "ID", dataIndex: "id", key: "id" },
     { title: "Tên loại mẫu", dataIndex: "name", key: "name" },
     { title: "Mô tả", dataIndex: "description", key: "description" },
-    { title: "Tên bộ kit", dataIndex: "componentName", key: "componentName" },
     {
       title: "Hành động",
       key: "actions",
@@ -159,6 +158,13 @@ const SampleTypeManagement = () => {
       >
         <Form form={form} layout="vertical">
           <Form.Item
+            name="kit_component_id"
+            label="ID bộ kit"
+            rules={[{ required: true }]}
+          >
+            <Input type="number" />
+          </Form.Item>
+          <Form.Item
             name="name"
             label="Tên loại mẫu"
             rules={[{ required: true }]}
@@ -171,19 +177,6 @@ const SampleTypeManagement = () => {
             rules={[{ required: true }]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            name="componentName"
-            label="Tên bộ kit"
-            rules={[{ required: true }]}
-          >
-            <Select>
-              {kitComponents.map((kit) => (
-                <Select.Option key={kit.name} value={kit.name}>
-                  {kit.name}
-                </Select.Option>
-              ))}
-            </Select>
           </Form.Item>
         </Form>
       </Modal>

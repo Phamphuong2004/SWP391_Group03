@@ -7,6 +7,7 @@ import { ThemeProvider } from "./component/ThemeContext";
 import ManagerDashboard from "./Dashboard/ManagerDashboard";
 import Navbar from "./component/Navbar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ChatBox from "./component/ChatBox";
 
 function LayoutWithNavbar() {
   useEffect(() => {
@@ -19,6 +20,7 @@ function LayoutWithNavbar() {
       <AppRoutes />
       <ToastContainer position="top-center" autoClose={2000} />
       <Notification />
+      <ChatBox />
     </>
   );
 }

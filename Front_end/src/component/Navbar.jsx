@@ -175,6 +175,9 @@ function MyNavbar() {
                       <Nav.Link href="/sample-workspace" className="nav-link">
                         Quản lý mẫu (Tổng hợp)
                       </Nav.Link>
+                      <Nav.Link href="/staff-result" className="nav-link">
+                        Kết quả xét nghiệm
+                      </Nav.Link>
                     </>
                   )}
                   {user &&
