@@ -181,17 +181,22 @@ function MyNavbar() {
                     </>
                   )}
                   {user &&
-                    ["manager", "staff", "customer"].includes(
-                      user.role.toLowerCase()
-                    ) && (
-                      <Nav.Link href="/login-history" className="nav-link">
-                        Lịch Sử Người Dùng
-                      </Nav.Link>
+                    ["manager", "staff"].includes(user.role.toLowerCase()) && (
+                      <>
+                        <Nav.Link href="/login-history" className="nav-link">
+                          Lịch Sử Người Dùng
+                        </Nav.Link>
+                        <Nav.Link href="/report" className="nav-link">
+                          Báo cáo
+                        </Nav.Link>
+                      </>
                     )}
                   {user && user.role.toLowerCase() === "customer" && (
-                    <Nav.Link href="/payment" className="nav-link">
-                      Thanh toán
-                    </Nav.Link>
+                    <>
+                      <Nav.Link href="/payment" className="nav-link">
+                        Thanh toán
+                      </Nav.Link>
+                    </>
                   )}
                 </>
               )}
