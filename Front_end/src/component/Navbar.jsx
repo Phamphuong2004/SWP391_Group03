@@ -89,9 +89,11 @@ function MyNavbar() {
               {/* Ẩn hoàn toàn các nút quản lý khi là manager, chỉ giữ lại Trang chủ và Quản trị hệ thống */}
               {user && user.role && user.role.toLowerCase() === "manager" ? (
                 <>
-                  <Nav.Link href="/manager-dashboard" className="nav-link">
-                    Quản trị hệ thống
-                  </Nav.Link>
+                  <NavDropdown title="Quản trị hệ thống" id="manager-system-dropdown" className="nav-link">
+                    <NavDropdown.Item href="/manager-dashboard">
+                      Trang quản trị
+                    </NavDropdown.Item>
+                  </NavDropdown>
                 </>
               ) : (
                 <>

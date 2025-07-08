@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createReport } from "./ReportApi";
 import "./Report.css";
+import { useNavigate } from "react-router-dom";
+// import ReportManager from "./ReportManager";
 
 const Report = () => {
   const [reportTitle, setReportTitle] = useState("");
@@ -8,13 +10,24 @@ const Report = () => {
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [isManager, setIsManager] = useState(false);
+  const [checkedRole, setCheckedRole] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (user && user.role && user.role.toLowerCase() === "manager") {
+      setIsManager(true);
+      navigate("/manager-dashboard", { replace: true });
+    }
+    setCheckedRole(true);
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
     try {
-      // Đảm bảo truyền đúng key cho API
       await createReport({
         reportTitle: reportTitle,
         reportContent: reportContent,
@@ -30,6 +43,13 @@ const Report = () => {
       setLoading(false);
     }
   };
+
+  if (!checkedRole) return null; // Đợi kiểm tra xong role mới render
+
+  if (isManager) {
+    // Đã chuyển hướng, không render gì ở đây
+    return null;
+  }
 
   return (
     <div className="report-container">
@@ -62,7 +82,7 @@ const Report = () => {
             required
           />
         </div>
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className="report-btn">
           {loading ? "Đang gửi..." : "Tạo báo cáo"}
         </button>
       </form>
