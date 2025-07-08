@@ -153,6 +153,51 @@
   border-radius: 6px;
 }
 
+.sidebar-menu-btn.report-orange {
+  color: #ff5722 !important;
+  font-weight: bold;
+  border: 2px solid #ff5722;
+  background: #fff7f3;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.sidebar-menu-btn.report-orange.selected,
+.sidebar-menu-btn.report-orange:hover,
+.sidebar-menu-btn.report-orange:focus {
+  color: #fff !important;
+  background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%);
+  border-color: #ff9800;
+}
+
+.go-home-btn {
+  background: #fff3e0;
+  color: #ff5722;
+  border: 2px solid #ff9800;
+  font-weight: bold;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.go-home-btn:hover, .go-home-btn:focus {
+  background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%);
+  color: #fff;
+  border-color: #ff9800;
+}
+
+.manager-dashboard-main {
+  flex: 1;
+  padding: 48px 32px 32px 280px; /* padding trên, phải, dưới, trái (sidebar ~260px + 20px) */
+  min-height: 100vh;
+  background: #f7f7fa;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  box-sizing: border-box;
+}
+
 @media (max-width: 900px) {
   .manager-dashboard-container {
     flex-direction: column;
