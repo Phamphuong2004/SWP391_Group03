@@ -1,5 +1,7 @@
 package com.swp.adnV2.AdnV2.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDate;
 
 public class ResultUpdateRequest {
@@ -10,7 +12,7 @@ public class ResultUpdateRequest {
     private Long sampleId;
     private String username;
     private Long appointmentId;
-    private String resultFile;
+    private MultipartFile resultFile;
 
 
 
@@ -57,11 +59,11 @@ public class ResultUpdateRequest {
         return username;
     }
 
-    public String getResultFile() {
+    public MultipartFile getResultFile() {
         return resultFile;
     }
 
-    public void setResultFile(String resultFile) {
+    public void setResultFile(MultipartFile resultFile) {
         this.resultFile = resultFile;
     }
 

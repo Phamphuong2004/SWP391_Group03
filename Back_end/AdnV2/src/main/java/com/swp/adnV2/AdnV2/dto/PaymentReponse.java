@@ -15,6 +15,8 @@ public class PaymentReponse {
 
     private Long appointmentId;
 
+    private String note;
+
     public Long getPaymentId() {
         return paymentId;
     }
@@ -61,5 +63,13 @@ public class PaymentReponse {
 
     public void setAppointmentId(Long appointmentId) {
         this.appointmentId = appointmentId;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 }

@@ -59,4 +59,17 @@ public class PaymentController {
         return paymentService.getPaymentsByAppointmentId(appointmentId); // Replace with actual implementation
     }
 
+    @PostMapping("/refund/{appointmentId}")
+    @PreAuthorize("permitAll()")
+    public PaymentReponse refundPayment(@PathVariable Long appointmentId) {
+        // Logic to refund a payment
+        return paymentService.refundPayment(appointmentId); // Replace with actual implementation
+    }
+
+    @PostMapping("/set-payment-status/refund/{appointmentId}")
+    @PreAuthorize("permitAll()")
+    public String setPaymentStatusRefund(@PathVariable Long appointmentId) {
+        // Logic to set payment status to refunded
+        return paymentService.setPaymentStatusRefund(appointmentId); // Replace with actual implementation
+    }
 }
