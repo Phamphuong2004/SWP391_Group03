@@ -68,7 +68,7 @@ const StatusTimeline = ({ status }) => {
       ></div>
       {mainStatuses.map((s, index) => (
         <div
-          key={s}
+          key={s || index}
           className={`status-point ${
             index <= currentStatusIndex ? "completed" : ""
           } ${index === currentStatusIndex ? "current" : ""}`}
@@ -293,9 +293,9 @@ const ServiceTracking = () => {
               justifyContent: "center",
             }}
           >
-            {appointments.map((item) => (
+            {appointments.map((item, idx) => (
               <div
-                key={item.appointmentId}
+                key={item.appointmentId || idx}
                 style={{
                   background: "#fff",
                   borderRadius: 16,
@@ -546,9 +546,9 @@ const ServiceTracking = () => {
               justifyContent: "center",
             }}
           >
-            {appointments.map((item) => (
+            {appointments.map((item, idx) => (
               <div
-                key={item.appointmentId}
+                key={item.appointmentId || idx}
                 style={{
                   background: "#fff",
                   borderRadius: 16,

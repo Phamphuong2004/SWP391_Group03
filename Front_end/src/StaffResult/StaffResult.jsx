@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Modal, Form, Input, message, Popconfirm } from "antd";
+import "./StaffResult.css";
 import {
   getResultList,
   createResult,
@@ -121,9 +122,16 @@ const StaffResult = () => {
     }
   };
 
+  // --- Sửa lỗi gọi API với undefined triệt để ---
   const handleFilter = async () => {
-    if (!filterAppointmentId) {
+    if (!filterAppointmentId || filterAppointmentId === "undefined") {
+      // Nếu input rỗng hoặc là undefined, chỉ load lại toàn bộ danh sách
+      setFilterAppointmentId("");
       fetchResults();
+      return;
+    }
+    if (!/^[0-9]+$/.test(filterAppointmentId)) {
+      message.error("Mã lịch hẹn phải là số!");
       return;
     }
     try {
@@ -136,9 +144,10 @@ const StaffResult = () => {
         }
       );
       const data = await res.json();
-      setResults(data);
+      setResults(Array.isArray(data) ? data : data ? [data] : []);
     } catch {
       message.error("Không thể lọc kết quả theo mã lịch hẹn");
+      setResults([]);
     }
   };
 
@@ -147,7 +156,12 @@ const StaffResult = () => {
     { title: "Ngày trả kết quả", dataIndex: "resultDate", key: "resultDate" },
     { title: "Kết quả", dataIndex: "resultData", key: "resultData" },
     { title: "Nhận định", dataIndex: "interpretation", key: "interpretation" },
-    { title: "Trạng thái", dataIndex: "status", key: "status" },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (text) => <span className="status">{text}</span>,
+    },
     { title: "ID mẫu", dataIndex: "sampleId", key: "sampleId" },
     { title: "Người nhập", dataIndex: "username", key: "username" },
     { title: "Mã lịch hẹn", dataIndex: "appointmentId", key: "appointmentId" },
@@ -158,19 +172,26 @@ const StaffResult = () => {
       render: (_, record) => (
         <>
           <Button
+            className="button"
             onClick={() => handleViewDetail(record.id)}
             style={{ marginRight: 8 }}
           >
             Xem chi tiết
           </Button>
-          <Button onClick={() => handleEdit(record)} style={{ marginRight: 8 }}>
+          <Button
+            className="button"
+            onClick={() => handleEdit(record)}
+            style={{ marginRight: 8 }}
+          >
             Sửa
           </Button>
           <Popconfirm
             title="Bạn chắc chắn muốn xóa?"
             onConfirm={() => handleDelete(record.id)}
           >
-            <Button danger>Xóa</Button>
+            <Button danger className="button">
+              Xóa
+            </Button>
           </Popconfirm>
         </>
       ),
@@ -178,8 +199,8 @@ const StaffResult = () => {
   ];
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: 24 }}>
-      <h1>Quản lý kết quả xét nghiệm</h1>
+    <div className="staff-result-container">
+      <h1 className="staff-result-title">Quản lý kết quả xét nghiệm</h1>
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         <Input
           placeholder="Lọc theo mã lịch hẹn"
@@ -187,8 +208,11 @@ const StaffResult = () => {
           onChange={(e) => setFilterAppointmentId(e.target.value)}
           style={{ width: 200 }}
         />
-        <Button onClick={handleFilter}>Lọc</Button>
+        <Button className="button" onClick={handleFilter}>
+          Lọc
+        </Button>
         <Button
+          className="button"
           onClick={() => {
             setFilterAppointmentId("");
             fetchResults();
@@ -198,6 +222,7 @@ const StaffResult = () => {
         </Button>
         <Button
           type="primary"
+          className="button"
           onClick={handleAdd}
           style={{ marginLeft: "auto" }}
         >
@@ -205,10 +230,11 @@ const StaffResult = () => {
         </Button>
       </div>
       <Table
+        className="staff-result-table"
         columns={columns}
         dataSource={results}
         loading={loading}
-        rowKey="id"
+        rowKey={(record) => record.id}
         pagination={false}
       />
       <Modal
@@ -299,30 +325,11 @@ const StaffResult = () => {
       >
         {detailResult ? (
           <div>
-            <p>
-              <b>Ngày trả kết quả:</b> {detailResult.resultDate}
-            </p>
-            <p>
-              <b>Kết quả:</b> {detailResult.resultData}
-            </p>
-            <p>
-              <b>Nhận định:</b> {detailResult.interpretation}
-            </p>
-            <p>
-              <b>Trạng thái:</b> {detailResult.status}
-            </p>
-            <p>
-              <b>ID mẫu:</b> {detailResult.sampleId}
-            </p>
-            <p>
-              <b>Người nhập:</b> {detailResult.username}
-            </p>
-            <p>
-              <b>Mã lịch hẹn:</b> {detailResult.appointmentId}
-            </p>
-            <p>
-              <b>File kết quả:</b> {detailResult.resultFile}
-            </p>
+            {Object.entries(detailResult).map(([key, value]) => (
+              <p key={key}>
+                <b>{key}:</b> {value}
+              </p>
+            ))}
           </div>
         ) : (
           <p>Đang tải...</p>

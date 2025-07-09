@@ -112,8 +112,8 @@ const ResultList = () => {
               <td colSpan="9">Không có dữ liệu</td>
             </tr>
           ) : (
-            results.map((result) => (
-              <tr key={result.resultId}>
+            results.map((result, idx) => (
+              <tr key={result.id || result.resultId || idx}>
                 <td>{result.resultId}</td>
                 <td>{result.resultDate}</td>
                 <td>{result.status}</td>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./ViewFeedback.css";
 
 export default function ViewFeedback() {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -37,7 +38,12 @@ export default function ViewFeedback() {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get(`/api/feedback/search/by-service-name/${encodeURIComponent(serviceName)}`, { headers: authHeader });
+        const res = await axios.get(
+          `/api/feedback/search/by-service-name/${encodeURIComponent(
+            serviceName
+          )}`,
+          { headers: authHeader }
+        );
         setFeedbacks(res.data || []);
       } catch (err) {
         console.error(err);
@@ -77,10 +83,14 @@ export default function ViewFeedback() {
     setLoading(true);
     setError("");
     try {
-      await axios.put(`/api/feedback/update/${editingId}`, {
-        content: editContent,
-        rating: editRating,
-      }, { headers: authHeader });
+      await axios.put(
+        `/api/feedback/update/${editingId}`,
+        {
+          content: editContent,
+          rating: editRating,
+        },
+        { headers: authHeader }
+      );
       setFeedbacks((prev) =>
         prev.map((f) =>
           f.feedbackId === editingId || f.id === editingId
@@ -112,9 +122,16 @@ export default function ViewFeedback() {
       <h2>Quản lý đơn phản hồi khách hàng</h2>
       <div style={{ marginBottom: 16 }}>
         <label style={{ marginRight: 8 }}>Chọn dịch vụ:</label>
-        <select value={serviceName} onChange={e => setServiceName(e.target.value)}>
+        <select
+          value={serviceName}
+          onChange={(e) => setServiceName(e.target.value)}
+        >
           <option value="">Chọn dịch vụ</option>
-          {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
+          {SERVICES.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
       </div>
       {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
@@ -151,10 +168,13 @@ export default function ViewFeedback() {
                 </td>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
                   {editingId === (fb.feedbackId || fb.id) ? (
-                    <form onSubmit={handleEditSubmit} style={{ display: "flex", gap: 8 }}>
+                    <form
+                      onSubmit={handleEditSubmit}
+                      style={{ display: "flex", gap: 8 }}
+                    >
                       <input
                         value={editContent}
-                        onChange={e => setEditContent(e.target.value)}
+                        onChange={(e) => setEditContent(e.target.value)}
                         required
                         style={{ flex: 1 }}
                       />
@@ -163,12 +183,14 @@ export default function ViewFeedback() {
                         min={1}
                         max={5}
                         value={editRating}
-                        onChange={e => setEditRating(Number(e.target.value))}
+                        onChange={(e) => setEditRating(Number(e.target.value))}
                         required
                         style={{ width: 50 }}
                       />
                       <button type="submit">Lưu</button>
-                      <button type="button" onClick={() => setEditingId(null)}>Hủy</button>
+                      <button type="button" onClick={() => setEditingId(null)}>
+                        Hủy
+                      </button>
                     </form>
                   ) : (
                     fb.content
@@ -178,8 +200,16 @@ export default function ViewFeedback() {
                   {fb.rating || 5}
                 </td>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.createdAt || fb.feedback_date || fb.feedbackDate || fb.feedbackDateTime
-                    ? new Date(fb.createdAt || fb.feedback_date || fb.feedbackDate || fb.feedbackDateTime).toLocaleString()
+                  {fb.createdAt ||
+                  fb.feedback_date ||
+                  fb.feedbackDate ||
+                  fb.feedbackDateTime
+                    ? new Date(
+                        fb.createdAt ||
+                          fb.feedback_date ||
+                          fb.feedbackDate ||
+                          fb.feedbackDateTime
+                      ).toLocaleString()
                     : ""}
                 </td>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
