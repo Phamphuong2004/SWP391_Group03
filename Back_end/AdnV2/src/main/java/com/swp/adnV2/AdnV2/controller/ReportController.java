@@ -23,7 +23,7 @@ public class ReportController {
     private ReportService reportService;
 
     @PostMapping ("/create")
-    public ReportReponse createReport(ReportCreationRequest request) {
+    public ReportReponse createReport(@RequestBody ReportCreationRequest request) {
         // Logic to create a report
         return reportService.createReport(request);
     }
@@ -36,26 +36,26 @@ public class ReportController {
 
     // Additional methods for updating and deleting reports can be added here
     @PutMapping("/{report_id}")
-    public ReportReponse updateReport(Long reportId, ReportUpdateRequest request) {
+    public ReportReponse updateReport(@PathVariable("report_id") Long reportId, @RequestBody ReportUpdateRequest request) {
         // Logic to update a report
         return reportService.updateReport(reportId, request);
     }
 
     @DeleteMapping("/{report_id}")
-    public String deleteReport(Long reportId) {
+    public String deleteReport(@PathVariable("report_id") Long reportId) {
         // Logic to delete a report
         reportService.deleteReport(reportId);
         return "Report has been deleted successfully";
     }
 
     @GetMapping("/{report_id}")
-    public ReportReponse getReportById(Long reportId) {
+    public ReportReponse getReportById(@PathVariable("report_id") Long reportId) {
         // Logic to get a report by ID
         return reportService.getReportById(reportId);
     }
 
     @GetMapping("/getListByUserName/{user_name}")
-    public List<ReportReponse> getReportsByUsername(String username) {
+    public List<ReportReponse> getReportsByUsername(@RequestParam("user_name") String username) {
         // Logic to get reports by user ID
         return reportService.getReportsByUsername(username);
     }
