@@ -180,46 +180,38 @@ export default function ViewFeedback() {
                         max={5}
                         value={editRating}
                         onChange={e => setEditRating(Number(e.target.value))}
-                        required
                         style={{ width: 50 }}
                       />
-                      <button type="submit" className="btn-edit">Lưu</button>
-                      <button type="button" className="btn-delete" onClick={handleCancelEdit}>Hủy</button>
+                      <button type="submit">Lưu</button>
+                      <button type="button" onClick={handleCancelEdit}>Hủy</button>
                     </form>
                   ) : (
                     fb.content
                   )}
                 </td>
                 <td>
-                  <span className="star-rating">
-                    {"★".repeat(fb.rating || 5)}
-                    {"☆".repeat(5 - (fb.rating || 5))}
-                  </span>
+                  {[1,2,3,4,5].map((star) => (
+                    <span
+                      key={star}
+                      style={{
+                        color: star <= (fb.rating || 0) ? "#FFD700" : "#ccc",
+                        fontSize: 18
+                      }}
+                    >
+                      ★
+                    </span>
+                  ))}
                 </td>
-                <td>
-                  {fb.createdAt ||
-                  fb.feedback_date ||
-                  fb.feedbackDate ||
-                  fb.feedbackDateTime
-                    ? new Date(
-                        fb.createdAt ||
-                          fb.feedback_date ||
-                          fb.feedbackDate ||
-                          fb.feedbackDateTime
-                      ).toLocaleString()
-                    : ""}
-                </td>
+                <td>{fb.feedback_date || fb.feedbackDate || fb.feedbackDateTime || ""}</td>
                 {isStaff && (
                   <td>
-                    {editingId === (fb.feedbackId || fb.id) ? null : (
-                      <>
-                        <button className="btn-edit" onClick={() => handleEdit(fb)}>
-                          ✏️ Sửa
-                        </button>
-                        <button className="btn-delete" onClick={() => handleDelete(fb.feedbackId || fb.id)}>
-                          🗑️ Xóa
-                        </button>
-                      </>
+                    <button className="btn-delete" onClick={() => handleDelete(fb.feedbackId || fb.id)}>
+                      Xóa
+                    </button>
+                    {editingId !== (fb.feedbackId || fb.id) && (
+                      <button className="btn-edit" onClick={() => handleEdit(fb)}>
+                        Sửa
+                      </button>
                     )}
                   </td>
                 )}
