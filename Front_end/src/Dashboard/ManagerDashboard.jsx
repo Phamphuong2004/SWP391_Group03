@@ -40,7 +40,11 @@ const managerMenu = [
   { label: "Quản lý đơn", key: "receive-booking", icon: <FaClipboardList /> },
   { label: "Theo dõi đơn", key: "service-tracking", icon: <FaChartBar /> },
   // Thêm mục Báo cáo ở đây
-  { label: "Báo cáo", key: "report", icon: <FaFileAlt style={{ color: '#ff5722' }} /> },
+  {
+    label: "Báo cáo",
+    key: "report",
+    icon: <FaFileAlt style={{ color: "#ff5722" }} />,
+  },
 ];
 
 const ManagerDashboard = () => {
@@ -249,22 +253,35 @@ const ManagerDashboard = () => {
             </li>
           ))}
         </ul>
-        <div style={{marginTop: 'auto', padding: '16px 0 0 0'}}>
-          <button className="sidebar-menu-btn go-home-btn" onClick={() => navigate("/")}
-            style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-            <span className="sidebar-menu-icon"><FaArrowLeft /></span>
+        <div
+          className="menu-actions"
+          style={{ marginTop: "auto", padding: "16px 0 0 0" }}
+        >
+          <button
+            className="sidebar-menu-btn go-home-btn"
+            onClick={() => navigate("/")}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span className="sidebar-menu-icon">
+              <FaArrowLeft />
+            </span>
             <span>Về trang chủ</span>
           </button>
+          <button
+            className="logout-btn"
+            onClick={() => {
+              localStorage.removeItem("user");
+              navigate("/");
+            }}
+          >
+            <FaSignOutAlt style={{ marginRight: 8 }} /> Đăng xuất
+          </button>
         </div>
-        <button
-          className="logout-btn"
-          onClick={() => {
-            localStorage.removeItem("user");
-            navigate("/");
-          }}
-        >
-          <FaSignOutAlt style={{ marginRight: 8 }} /> Đăng xuất
-        </button>
       </nav>
       {/* Main content */}
       <div className="manager-dashboard-main">{renderContent()}</div>

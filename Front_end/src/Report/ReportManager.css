@@ -1,4 +1,4 @@
- 
+/* Quản lý báo cáo hiện đại */
 .report-manager-dashboard {
   background: transparent !important;
   min-height: 100vh;
@@ -9,12 +9,11 @@
   padding-top: 40px;
   box-sizing: border-box;
 }
-
 .report-manager-dashboard .report-manager-container {
   background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 6px 32px rgba(0,0,0,0.13);
-  padding: 40px 36px 36px 36px;
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(255, 87, 34, 0.13);
+  padding: 48px 36px 36px 36px;
   margin: 0 auto;
   max-width: 1100px;
   min-width: 340px;
@@ -24,29 +23,32 @@
   flex-direction: column;
   align-items: center;
 }
-
 .report-manager-dashboard h2 {
   text-align: center;
   color: #ff5722;
   margin-bottom: 36px;
-  font-size: 2.3rem;
-  font-weight: bold;
-  letter-spacing: 1px;
+  font-size: 2.4rem;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  background: linear-gradient(90deg, #ff9800 60%, #ff5722 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  text-shadow: 0 4px 24px #ff980022, 0 2px 0 #fff;
 }
-
 .report-manager-dashboard .report-filter-form {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 26px;
+  gap: 16px;
+  margin-bottom: 28px;
   width: 100%;
 }
-
 .report-manager-dashboard .report-filter-input {
-  padding: 12px 18px;
+  padding: 14px 20px;
   border: 2px solid #ffb74d;
-  border-radius: 9px;
+  border-radius: 12px;
   font-size: 1.13rem;
   outline: none;
   transition: border 0.2s;
@@ -57,33 +59,33 @@
 .report-manager-dashboard .report-filter-input:focus {
   border-color: #ff5722;
 }
-
 .report-manager-dashboard .report-btn {
   background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%);
   color: #fff;
   border: none;
-  border-radius: 9px;
-  padding: 12px 26px;
-  font-weight: 600;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-weight: 800;
   font-size: 1.13rem;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(255,87,34,0.08);
-  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 87, 34, 0.08);
+  transition: background 0.2s, color 0.2s, box-shadow 0.18s;
   font-family: inherit;
 }
-.report-manager-dashboard .report-btn:hover, .report-manager-dashboard .report-btn:focus {
+.report-manager-dashboard .report-btn:hover,
+.report-manager-dashboard .report-btn:focus {
   background: linear-gradient(90deg, #ff5722 0%, #ff9800 100%);
   color: #fff;
+  box-shadow: 0 4px 16px #ff980033;
 }
-
 .report-btn.delete {
   background: #e53935 !important;
   color: #fff;
   border: none;
-  border-radius: 7px;
-  padding: 8px 18px;
-  font-weight: 600;
-  font-size: 1rem;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-weight: 700;
+  font-size: 1.05rem;
   cursor: pointer;
   margin-left: 4px;
   transition: background 0.2s;
@@ -91,61 +93,54 @@
 .report-btn.delete:hover {
   background: #b71c1c !important;
 }
-
 .report-manager-dashboard .report-table {
   width: 100%;
   min-width: 700px;
   border-collapse: separate;
   border-spacing: 0;
   background: #fafbfc;
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  margin: 0 auto;
+  box-shadow: 0 2px 16px rgba(255, 87, 34, 0.08);
+  margin: 0 auto 32px auto;
   table-layout: auto;
 }
-
-.report-manager-dashboard .report-table th, .report-manager-dashboard .report-table td {
-  padding: 18px 16px;
+.report-manager-dashboard .report-table th,
+.report-manager-dashboard .report-table td {
+  padding: 20px 18px;
   text-align: left;
-  font-size: 1.13rem;
+  font-size: 1.15rem;
   font-family: inherit;
 }
-
 .report-manager-dashboard .report-table th {
-  background: #ffccbc;
+  background: linear-gradient(90deg, #ffccbc 60%, #ffe0b2 100%);
   color: #d84315;
   font-size: 1.18rem;
-  font-weight: 700;
+  font-weight: 800;
   border-bottom: 3px solid #ffab91;
   letter-spacing: 0.5px;
 }
-
 .report-manager-dashboard .report-table tbody tr {
   transition: background 0.18s;
 }
-
 .report-manager-dashboard .report-table tbody tr:hover {
   background: #fff3e0;
 }
-
 .report-manager-dashboard .report-table td {
   border-bottom: 1.5px solid #f5f5f5;
   font-size: 1.09rem;
   word-break: break-word;
 }
-
 .report-manager-dashboard .report-message.error {
   color: #d32f2f;
   background: #ffebee;
   border: 1.5px solid #ffcdd2;
   padding: 14px 22px;
-  border-radius: 9px;
+  border-radius: 12px;
   margin: 20px 0;
   text-align: center;
   font-size: 1.13rem;
 }
-
 @media (max-width: 1100px) {
   .report-manager-dashboard {
     margin-left: 0;
@@ -160,7 +155,8 @@
     max-width: 99vw;
     min-width: unset;
   }
-  .report-manager-dashboard .report-table th, .report-manager-dashboard .report-table td {
+  .report-manager-dashboard .report-table th,
+  .report-manager-dashboard .report-table td {
     padding: 8px 4px;
     font-size: 0.98rem;
   }
@@ -175,4 +171,4 @@
     padding: 7px 12px;
     font-size: 0.98rem;
   }
-} 
+}

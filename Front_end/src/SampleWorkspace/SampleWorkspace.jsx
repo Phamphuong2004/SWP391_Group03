@@ -2,6 +2,8 @@ import React from "react";
 import { Tabs } from "antd";
 import SampleManagement from "../SampleManagement/SampleManagement";
 import SampleTypeManagement from "../SampleTypeManagement/SampleTypeManagement";
+import "../SampleTypeManagement/SampleTypeManagement.css";
+import "../SampleManagement/SampleManagement.css";
 
 const { TabPane } = Tabs;
 

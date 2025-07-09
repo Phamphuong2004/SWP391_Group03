@@ -15,6 +15,7 @@ import {
   updateSampleType,
   deleteSampleType,
 } from "../SampleManagement/SampleApi";
+import "./SampleTypeManagement.css";
 
 const kitComponents = [
   { name: "Buccal Swab" },
@@ -97,7 +98,6 @@ const SampleTypeManagement = () => {
         name: values.name,
         description: values.description,
       };
-      console.log("Payload FE gửi lên:", payload);
       if (editingSampleType) {
         await updateSampleType(editingSampleType.id, payload, user?.token);
         message.success("Cập nhật loại mẫu thành công");
@@ -121,14 +121,20 @@ const SampleTypeManagement = () => {
       key: "actions",
       render: (_, record) => (
         <>
-          <Button onClick={() => handleEdit(record)} style={{ marginRight: 8 }}>
+          <Button
+            className="button"
+            onClick={() => handleEdit(record)}
+            style={{ marginRight: 8 }}
+          >
             Sửa
           </Button>
           <Popconfirm
             title="Bạn chắc chắn muốn xóa?"
             onConfirm={() => handleDelete(record.id)}
           >
-            <Button danger>Xóa</Button>
+            <Button danger className="button">
+              Xóa
+            </Button>
           </Popconfirm>
         </>
       ),
@@ -136,12 +142,18 @@ const SampleTypeManagement = () => {
   ];
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: 24 }}>
-      <h1>Quản lý loại mẫu</h1>
-      <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
+    <div className="sample-type-management-container">
+      <h1 className="sample-type-management-title">Quản lý loại mẫu</h1>
+      <Button
+        type="primary"
+        className="button"
+        onClick={handleAdd}
+        style={{ marginBottom: 16 }}
+      >
         Thêm loại mẫu
       </Button>
       <Table
+        className="sample-type-management-table"
         columns={columns}
         dataSource={sampleTypes}
         loading={loading}

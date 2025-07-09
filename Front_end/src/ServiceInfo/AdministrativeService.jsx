@@ -1,20 +1,20 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import ServiceCard from "./ServiceCard";
 import { administrativeServices } from "./servicesData";
 import "./AdministrativeService.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const AdministrativeService = () => {
   const navigate = useNavigate();
 
   const handleServiceClick = (serviceId) => {
-    if (serviceId === 'birth-certificate') {
-      navigate('/service/birth-certificate');
-    } else if (serviceId === 'household-registration') {
-      navigate('/service/household-registration');
-    } else if (serviceId === 'adoption') {
-      navigate('/service/adoption');
+    if (serviceId === "birth-certificate") {
+      navigate("/service/birth-certificate");
+    } else if (serviceId === "household-registration") {
+      navigate("/service/household-registration");
+    } else if (serviceId === "adoption") {
+      navigate("/service/adoption");
     }
   };
 
@@ -30,18 +30,22 @@ const AdministrativeService = () => {
       </div>
 
       <div className="services-grid">
-        {administrativeServices.map((service) => (
-          <ServiceCard
-            key={service.id}
-            service={service}
-            onClick={() => handleServiceClick(service.id)}
-          />
+        {administrativeServices.map((service, idx) => (
+          <div key={service.id || idx}>
+            <ServiceCard
+              key={service.id}
+              service={service}
+              onClick={() => handleServiceClick(service.id)}
+            />
+          </div>
         ))}
       </div>
 
       <div className="contact-section">
         <h2>Liên hệ tư vấn</h2>
-        <p>Để được tư vấn chi tiết về các dịch vụ hành chính, vui lòng liên hệ:</p>
+        <p>
+          Để được tư vấn chi tiết về các dịch vụ hành chính, vui lòng liên hệ:
+        </p>
         <div className="contact-info">
           <div className="contact-item">
             <span className="contact-icon">📞</span>

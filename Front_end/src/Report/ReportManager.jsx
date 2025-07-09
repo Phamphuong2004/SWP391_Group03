@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { getReportList, getReportListByUserName, getReportById, deleteReport } from "./ReportApi";
-import "./Report.css";
+import {
+  getReportList,
+  getReportListByUserName,
+  getReportById,
+  deleteReport,
+} from "./ReportApi";
+import "./ReportManager.css";
 
 const ReportManager = () => {
   const [reports, setReports] = useState([]);
@@ -29,7 +34,9 @@ const ReportManager = () => {
         setFiltering(false);
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Không thể tải danh sách báo cáo!");
+      setError(
+        err.response?.data?.message || "Không thể tải danh sách báo cáo!"
+      );
       setReports([]);
     } finally {
       setLoading(false);
@@ -49,7 +56,7 @@ const ReportManager = () => {
     if (!window.confirm("Bạn có chắc muốn xóa báo cáo này?")) return;
     try {
       await deleteReport(id);
-      setReports(reports.filter(r => (r.reportId || r.id) !== id));
+      setReports(reports.filter((r) => (r.reportId || r.id) !== id));
     } catch (err) {
       setError(err.response?.data?.message || "Xóa báo cáo thất bại!");
     }
@@ -64,21 +71,34 @@ const ReportManager = () => {
             type="text"
             placeholder="Tìm theo ID báo cáo..."
             value={filterId}
-            onChange={e => setFilterId(e.target.value)}
+            onChange={(e) => setFilterId(e.target.value)}
             className="report-filter-input"
-            style={{maxWidth: 180}}
+            style={{ maxWidth: 180 }}
           />
           <input
             type="text"
             placeholder="Lọc theo username nhân viên..."
             value={filterUser}
-            onChange={e => setFilterUser(e.target.value)}
+            onChange={(e) => setFilterUser(e.target.value)}
             className="report-filter-input"
-            style={{maxWidth: 220}}
+            style={{ maxWidth: 220 }}
           />
-          <button type="submit" className="report-btn">Lọc</button>
+          <button type="submit" className="report-btn">
+            Lọc
+          </button>
           {filtering && (
-            <button type="button" className="report-btn" style={{marginLeft:8}} onClick={() => { setFilterUser(""); setFilterId(""); fetchReports("", ""); }}>Bỏ lọc</button>
+            <button
+              type="button"
+              className="report-btn"
+              style={{ marginLeft: 8 }}
+              onClick={() => {
+                setFilterUser("");
+                setFilterId("");
+                fetchReports("", "");
+              }}
+            >
+              Bỏ lọc
+            </button>
           )}
         </form>
         {loading ? (
@@ -97,12 +117,14 @@ const ReportManager = () => {
               </tr>
             </thead>
             <tbody>
-              {reports.map((r) => (
-                <tr key={r.reportId || r.id}>
+              {reports.map((r, idx) => (
+                <tr key={r.id || r.reportId || idx}>
                   <td>{r.reportTitle}</td>
                   <td>{r.reportContent}</td>
                   <td>{r.username}</td>
-                  <td>{r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}</td>
+                  <td>
+                    {r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}
+                  </td>
                   <td>
                     <button
                       className="report-btn delete"
