@@ -1,22 +1,26 @@
-/* Modern, clean, readable style for ViewFeedback */
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0e7ff 0%, #f0f6ff 40%, #e0ecff 100%);
+}
+
 .view-feedback-container {
-  max-width: 1100px;
-  margin: 40px auto;
-  background: #fff;
-  color: #222;
-  padding: 32px 18px 36px 18px;
-  border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding-top: 40px;
+  /* Không cần background ở đây, để bảng nổi bật trên nền gradient */
 }
-.view-feedback-container h1 {
-  text-align: center;
-  color: #23408e;
-  margin-bottom: 28px;
+
+.feedback-title {
   font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-shadow: none;
+  font-weight: 700;
+  color: #23272f;
+  margin-bottom: 24px;
+  text-align: center;
 }
+
 .view-feedback-table {
   width: 100%;
   border-collapse: separate;
@@ -130,4 +134,108 @@
 .dark-theme .button:hover {
   background: #fff3cd;
   color: #23272f;
+}
+
+.feedback-table {
+  width: 90%;
+  max-width: 1100px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+  overflow: hidden;
+  margin-top: 24px;
+  margin-bottom: 32px;
+  transition: box-shadow 0.2s;
+}
+
+.feedback-table th, .feedback-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 17px;
+}
+
+.feedback-table th {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.feedback-table tr:hover {
+  background: #f0f6ff;
+  transition: background 0.2s;
+}
+
+.btn-edit, .btn-delete {
+  border: none;
+  outline: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  margin-right: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+
+.btn-edit {
+  background: #e0f2fe;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.btn-edit:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+.star-rating {
+  color: #fbbf24;
+  font-size: 20px;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+/* Canh giữa select và tiêu đề */
+.select-service {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.select-service label {
+  margin-right: 10px;
+  font-size: 16px;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.select-service select {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #2563eb;
+  font-size: 16px;
+  color: #23272f;
+  background: #f0f6ff;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.select-service select:focus {
+  border: 2px solid #2563eb;
 }
