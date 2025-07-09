@@ -67,7 +67,7 @@ const InvoiceList = () => {
       setModalData(data);
       setModalType("view");
       setShowModal(true);
-    } catch (err) {
+    } catch {
       message.error("Không thể lấy chi tiết hóa đơn!");
     }
   };
@@ -80,7 +80,7 @@ const InvoiceList = () => {
       setModalData(data);
       setModalType("edit");
       setShowModal(true);
-    } catch (err) {
+    } catch {
       message.error("Không thể lấy dữ liệu để sửa!");
     }
   };
@@ -94,7 +94,7 @@ const InvoiceList = () => {
       setShowModal(false);
       const data = await getAllPayments(token);
       setInvoices(data);
-    } catch (err) {
+    } catch {
       message.error("Không thể cập nhật hóa đơn!");
     }
   };
@@ -120,7 +120,7 @@ const InvoiceList = () => {
       setShowModal(false);
       const data = await getAllPayments(token);
       setInvoices(data);
-    } catch (err) {
+    } catch {
       message.error("Không thể tạo hóa đơn!");
     }
   };
