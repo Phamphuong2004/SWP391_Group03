@@ -3,6 +3,7 @@ package com.swp.adnV2.AdnV2.dto;
 import java.time.LocalDateTime;
 
 public class FeedbackResponse {
+    private Long feedbackId;
     private String content;
     private int rating;
     private LocalDateTime feedbackDate;
@@ -11,6 +12,14 @@ public class FeedbackResponse {
 
     public String getContent() {
         return content;
+    }
+
+    public Long getFeedbackId() {
+        return feedbackId;
+    }
+
+    public void setFeedbackId(Long feedbackId) {
+        this.feedbackId = feedbackId;
     }
 
     public void setContent(String content) {
