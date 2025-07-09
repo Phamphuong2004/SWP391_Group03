@@ -76,6 +76,22 @@
   color: #fff;
 }
 
+.report-btn.delete {
+  background: #e53935 !important;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 18px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 4px;
+  transition: background 0.2s;
+}
+.report-btn.delete:hover {
+  background: #b71c1c !important;
+}
+
 .report-manager-dashboard .report-table {
   width: 100%;
   min-width: 700px;

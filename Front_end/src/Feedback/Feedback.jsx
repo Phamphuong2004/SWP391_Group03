@@ -32,8 +32,11 @@ export default function Feedback() {
 
   // Lấy user info từ localStorage
   const user = JSON.parse(localStorage.getItem("user") || "null");
-  const role = user?.role;
+  const role = user?.role?.toLowerCase();
   const username = user?.username;
+
+  // Debug: log ra console để kiểm tra giá trị thực tế
+  console.log("[Feedback] user:", user, "role:", role);
 
   // Lấy feedback khi chọn dịch vụ (chỉ staff/manager mới được xem)
   useEffect(() => {
@@ -50,6 +53,16 @@ export default function Feedback() {
       setFeedbacks([]);
     }
   }, [serviceId, showSuccess, role]);
+
+  // Nếu không có user hoặc role thì hiển thị cảnh báo (đặt sau tất cả các hook)
+  if (!user || !role) {
+    return (
+      <div className="feedback-container">
+        <h2 className="feedback-title">Gửi phản hồi về dịch vụ xét nghiệm ADN</h2>
+        <div style={{color: 'red', marginTop: 24, fontWeight: 'bold'}}>Bạn cần đăng nhập bằng tài khoản customer để gửi phản hồi.</div>
+      </div>
+    );
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -114,16 +127,24 @@ export default function Feedback() {
             />
           </div>
           <div className="mb-3">
-            <label className="feedback-label">Đánh giá (1-5)</label>
-            <input
-              type="number"
-              min={1}
-              max={5}
-              value={rating}
-              onChange={(e) => setRating(Number(e.target.value))}
-              required
-              className="feedback-input"
-            />
+            <label className="feedback-label">Đánh giá</label>
+            <div style={{ fontSize: 32 }}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  style={{
+                    cursor: "pointer",
+                    color: star <= rating ? "#FFD700" : "#ccc",
+                    transition: "color 0.2s"
+                  }}
+                  onClick={() => setRating(star)}
+                  role="button"
+                  aria-label={`Đánh giá ${star} sao`}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
           </div>
           <button type="submit" className="feedback-btn" disabled={loading}>
             Gửi phản hồi
@@ -132,83 +153,113 @@ export default function Feedback() {
       )}
 
       {/* Danh sách feedback chỉ staff/manager mới xem được */}
-      {(role === "manager" || role === "staff") && serviceId && (
+      {(role === "manager" || role === "staff") && (
         <div className="feedback-list">
-          <h3>
-            Phản hồi cho dịch vụ:{" "}
-            {SERVICES.find((s) => s.id === Number(serviceId))?.name}
-          </h3>
-          {loading ? (
-            <p>Đang tải...</p>
-          ) : feedbacks.length === 0 ? (
-            <p>Chưa có phản hồi nào.</p>
-          ) : (
-            <ul>
-              {feedbacks.map((fb) => (
-                <li key={fb.feedbackId} className="feedback-item">
-                  <div>
-                    <b>{fb.username || fb.email || "Ẩn danh"}</b>:{" "}
-                    {editingId === fb.feedbackId ? (
-                      <form
-                        onSubmit={handleEditSubmit}
-                        style={{ display: "inline" }}
-                      >
-                        <input
-                          value={editContent}
-                          onChange={(e) => setEditContent(e.target.value)}
-                          required
-                        />
-                        <input
-                          type="number"
-                          min={1}
-                          max={5}
-                          value={editRating}
-                          onChange={(e) =>
-                            setEditRating(Number(e.target.value))
-                          }
-                          required
-                          style={{ width: 40, marginLeft: 8 }}
-                        />
-                        <button type="submit">Lưu</button>
-                        <button
-                          type="button"
-                          onClick={() => setEditingId(null)}
-                        >
-                          Hủy
-                        </button>
-                      </form>
-                    ) : (
-                      <>
-                        {fb.content}{" "}
-                        <span style={{ color: "#f39c12" }}>
-                          [Đánh giá: {fb.rating || 5}]
-                        </span>
-                      </>
-                    )}
-                  </div>
-                  {(role === "manager" ||
-                    role === "staff" ||
-                    fb.username === username) && (
-                    <>
-                      <button
-                        className="feedback-delete-btn"
-                        onClick={() => handleDelete(fb.feedbackId)}
-                      >
-                        Xóa
-                      </button>
-                      {editingId !== fb.feedbackId && (
-                        <button
-                          className="feedback-edit-btn"
-                          onClick={() => handleEdit(fb)}
-                        >
-                          Sửa
-                        </button>
-                      )}
-                    </>
-                  )}
-                </li>
+          <div className="mb-3">
+            <label className="feedback-label">Chọn dịch vụ để xem feedback</label>
+            <select
+              className="feedback-input"
+              value={serviceId}
+              onChange={(e) => setServiceId(e.target.value)}
+              required
+            >
+              <option value="">Chọn dịch vụ</option>
+              {SERVICES.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
               ))}
-            </ul>
+            </select>
+          </div>
+          {serviceId && (
+            <>
+              <h3>
+                Phản hồi cho dịch vụ: {SERVICES.find((s) => s.id === Number(serviceId))?.name}
+              </h3>
+              {loading ? (
+                <p>Đang tải...</p>
+              ) : feedbacks.length === 0 ? (
+                <p>Chưa có phản hồi nào.</p>
+              ) : (
+                <ul>
+                  {feedbacks.map((fb) => (
+                    <li key={fb.feedbackId} className="feedback-item">
+                      <div>
+                        <b>{fb.username || fb.email || "Ẩn danh"}</b>: {editingId === fb.feedbackId ? (
+                          <form
+                            onSubmit={handleEditSubmit}
+                            style={{ display: "inline" }}
+                          >
+                            <input
+                              value={editContent}
+                              onChange={(e) => setEditContent(e.target.value)}
+                              required
+                            />
+                            <span style={{ color: "#f39c12", marginLeft: 8 }}>
+                              {[1,2,3,4,5].map((star) => (
+                                <span
+                                  key={star}
+                                  style={{
+                                    cursor: "pointer",
+                                    color: star <= editRating ? "#FFD700" : "#ccc",
+                                    fontSize: 20
+                                  }}
+                                  onClick={() => setEditRating(star)}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </span>
+                            <button type="submit">Lưu</button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingId(null)}
+                            >
+                              Hủy
+                            </button>
+                          </form>
+                        ) : (
+                          <>
+                            {fb.content} {" "}
+                            <span style={{ color: "#f39c12" }}>
+                              {[1,2,3,4,5].map((star) => (
+                                <span
+                                  key={star}
+                                  style={{
+                                    color: star <= fb.rating ? "#FFD700" : "#ccc",
+                                    fontSize: 20
+                                  }}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      {(role === "manager" || role === "staff" || fb.username === username) && (
+                        <>
+                          <button
+                            className="feedback-delete-btn"
+                            onClick={() => handleDelete(fb.feedbackId)}
+                          >
+                            Xóa
+                          </button>
+                          {editingId !== fb.feedbackId && (
+                            <button
+                              className="feedback-edit-btn"
+                              onClick={() => handleEdit(fb)}
+                            >
+                              Sửa
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
           )}
         </div>
       )}
