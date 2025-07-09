@@ -15,7 +15,7 @@ import BlogDetail from "../Blog/BlogDetail";
 import AdministrativeService from "../ServiceInfo/AdministrativeService";
 import CivilService from "../ServiceInfo/CivilService";
 import Dashboard from "../Dashboard/Dashboard";
-import Feedback from "../Feedback/Feedback";
+import Feedback from "../Feedback/Feedback.jsx";
 import RegisterNotification from "../register/RegisterNotification";
 import AuthNotification from "../AuthNotification/AuthNotification";
 import ProtectedRoute from "./ProtectedRoute";
