@@ -19,9 +19,9 @@ export default function HomePage() {
       </h1>
       <div className="container-fluid py-4">
         <div className="row g-4 justify-content-center">
-          {ADNTestingServices.map((service) => (
+          {ADNTestingServices.map((service, idx) => (
             <div
-              key={service.id}
+              key={service.id || idx}
               className="col-lg-4 col-md-6 col-sm-12 d-flex align-items-stretch"
               style={{ maxWidth: "400px", marginBottom: "24px" }}
             >
