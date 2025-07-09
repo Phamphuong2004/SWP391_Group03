@@ -16,9 +16,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -224,53 +228,71 @@ public class UserService {
             profileResponse.setDateOfBirth(null);
         }
         profileResponse.setGender(users.getGender());
-        profileResponse.setAvatar(users.getAvatar());
+        if (users.getAvatar() != null && users.getAvatar().length > 0) {
+            String avatarBase64 = Base64.getEncoder().encodeToString(users.getAvatar());
+            profileResponse.setAvatar(avatarBase64);
+        } else {
+            profileResponse.setAvatar(null);
+        }
         return ResponseEntity.ok(profileResponse);
     }
 
-    public ResponseEntity<?> updateUsers(String username, ProfileRequest profileRequest) {
+    public ResponseEntity<?> updateUsers(
+            String username,
+            String email,
+            String phoneNumber,
+            String fullName,
+            String address,
+            LocalDate dateOfBirth,
+            String gender,
+            MultipartFile avatar
+    ) {
         Users users = userRepository.findByUsername(username);
         if (users == null) {
             return ResponseEntity.badRequest().body("User not found");
         }
 
         // 1. Kiểm tra và cập nhật email
-        if (profileRequest.getEmail() != null && !profileRequest.getEmail().isEmpty()
-                && !profileRequest.getEmail().equals(users.getEmail())) {
+        if (email != null && !email.isEmpty() && !email.equals(users.getEmail())) {
             // Kiểm tra định dạng email
-            if (!profileRequest.getEmail().matches("^[\\w.-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            if (!email.matches("^[\\w.-]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
                 return ResponseEntity.badRequest().body("Invalid email format");
             }
             // Kiểm tra email đã tồn tại
-            Users existingUsers = userRepository.findByEmail(profileRequest.getEmail());
+            Users existingUsers = userRepository.findByEmail(email);
             if (existingUsers != null) {
                 return ResponseEntity.badRequest().body("Email already exists");
             }
-            users.setEmail(profileRequest.getEmail());
+            users.setEmail(email);
         }
 
-        if (profileRequest.getFullName() != null && !profileRequest.getFullName().isEmpty()) {
-            users.setFullName(profileRequest.getFullName());
+        if (fullName != null && !fullName.isEmpty()) {
+            users.setFullName(fullName);
         }
-        if (profileRequest.getAddress() != null && !profileRequest.getAddress().isEmpty()) {
-            users.setAddress(profileRequest.getAddress());
+        if (address != null && !address.isEmpty()) {
+            users.setAddress(address);
         }
-        if (profileRequest.getDateOfBirth() != null) {
-            users.setDateOfBirth(profileRequest.getDateOfBirth());
+        if (dateOfBirth != null) {
+            users.setDateOfBirth(dateOfBirth);
         }
-        if (profileRequest.getGender() != null && !profileRequest.getGender().isEmpty()) {
-            users.setGender(profileRequest.getGender());
+        if (gender != null && !gender.isEmpty()) {
+            users.setGender(gender);
         }
-        if (profileRequest.getPhoneNumber() != null && !profileRequest.getPhoneNumber().isEmpty()) {
-            if (!profileRequest.getPhoneNumber().matches("^0\\d{9,10}$")) {
+        if (phoneNumber != null && !phoneNumber.isEmpty()) {
+            if (!phoneNumber.matches("^0\\d{9,10}$")) {
                 return ResponseEntity.badRequest().body("Invalid phone number format");
             }
-            users.setPhone(profileRequest.getPhoneNumber());
+            users.setPhone(phoneNumber);
         }
 
-        if(profileRequest.getAvatar() != null && !profileRequest.getAvatar().isEmpty()) {
-            users.setAvatar(profileRequest.getAvatar());
+        if (avatar != null && !avatar.isEmpty()) {
+            try {
+                users.setAvatar(avatar.getBytes());
+            } catch (IOException e) {
+                return ResponseEntity.badRequest().body("Upload avatar failed");
+            }
         }
+
         userRepository.save(users);
         return ResponseEntity.ok("Profile updated successfully");
     }

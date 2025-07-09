@@ -115,6 +115,7 @@ public class FeedbackService {
 
     public FeedbackResponse convertToDto(Feedback feedback) {
         FeedbackResponse feedbackResponse = new FeedbackResponse();
+        feedbackResponse.setFeedbackId(feedback.getFeedbackId());
         feedbackResponse.setFullName(feedback.getUser().getFullName());
         feedbackResponse.setContent(feedback.getContent());
         feedbackResponse.setRating(feedback.getRating());

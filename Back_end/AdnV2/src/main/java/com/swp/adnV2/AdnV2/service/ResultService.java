@@ -13,6 +13,11 @@ import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @Service
@@ -53,15 +58,26 @@ public class ResultService {
         if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
             throw new RuntimeException("Result file cannot be null or empty");
         }
-        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
+        String fileName = request.getResultFile().getOriginalFilename();
+
+        if (!request.getResultFile().getOriginalFilename().matches("^[a-zA-Z0-9._-]+$")) {
             throw new RuntimeException("Result file name contains invalid characters");
         }
-        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
-                && !request.getResultFile().endsWith(".doc")) {
+        if (!request.getResultFile().getOriginalFilename().endsWith(".pdf") && !request.getResultFile().getOriginalFilename().endsWith(".docx")
+                && !request.getResultFile().getOriginalFilename().endsWith(".doc")) {
             throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
         }
 
-        result.setResultFile(request.getResultFile());
+        // Save file to disk
+        String uploadDir = "path/to/result/files";
+        Path filePath = Paths.get(uploadDir, fileName);
+        try {
+            Files.copy(request.getResultFile().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save result file", e);
+        }
+
+        result.setResultFile(fileName);
         resultRepository.save(result);
         ResultReponse response = new ResultReponse();
         response.setResultId(result.getResultId());
@@ -72,7 +88,7 @@ public class ResultService {
         response.setSampleId(result.getCollectedSample().getSampleId());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(request.getAppointmentId());
-        response.setResultFile(result.getResultFile());
+        response.setResultFile(result.getResultFile());// Save the uploaded file to a directory
         return response;
     }
 
@@ -104,14 +120,27 @@ public class ResultService {
         if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
             throw new RuntimeException("Result file cannot be null or empty");
         }
-        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
+        String fileName = request.getResultFile().getOriginalFilename();
+
+        if (!request.getResultFile().getOriginalFilename().matches("^[a-zA-Z0-9._-]+$")) {
             throw new RuntimeException("Result file name contains invalid characters");
         }
-        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
-                && !request.getResultFile().endsWith(".doc")) {
+        if (!request.getResultFile().getOriginalFilename().endsWith(".pdf") && !request.getResultFile().getOriginalFilename().endsWith(".docx")
+                && !request.getResultFile().getOriginalFilename().endsWith(".doc")) {
             throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
         }
-        result.setResultFile(request.getResultFile());
+
+
+        // Save file to disk
+        String uploadDir = "path/to/result/files";
+        Path filePath = Paths.get(uploadDir, fileName);
+        try {
+            Files.copy(request.getResultFile().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save result file", e);
+        }
+
+        result.setResultFile(request.getResultFile().getOriginalFilename());
         resultRepository.save(result);
         ResultReponse response = new ResultReponse();
         response.setResultId(result.getResultId());

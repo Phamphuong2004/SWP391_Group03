@@ -3,6 +3,7 @@ package com.swp.adnV2.AdnV2.service;
 import com.swp.adnV2.AdnV2.dto.PaymentCreationRequest;
 import com.swp.adnV2.AdnV2.dto.PaymentReponse;
 import com.swp.adnV2.AdnV2.dto.PaymentUpdateRequest;
+import com.swp.adnV2.AdnV2.entity.Appointment;
 import com.swp.adnV2.AdnV2.entity.Payment;
 import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
 import com.swp.adnV2.AdnV2.repository.PaymentRepository;
@@ -115,5 +116,77 @@ public class PaymentService {
         response.setStatus(payment.getStatus());
         response.setAppointmentId(payment.getAppointment().getAppointmentId());
         return response;
+    }
+    public PaymentReponse refundPayment(Long appointmentId) {
+        // Implementation for refunding a payment
+        Payment payment = paymentRepository.findByAppointment_AppointmentId(appointmentId);
+        PaymentReponse response = new PaymentReponse();
+        if (payment == null) {
+            response.setNote("Payment not found for appointment id: " + appointmentId);
+            return response; // or throw an exception if preferred
+        }
+        if (!"Completed".equalsIgnoreCase(payment.getStatus()) && !"PAID".equalsIgnoreCase(payment.getStatus())) {
+            response.setNote("Payment is not completed, cannot process refund.");
+            return response; // or throw an exception if preferred
+        }
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElse(null);
+        if (appointment == null) {
+            response.setNote("Appointment not found with id: " + appointmentId);
+            return response; // or throw an exception if preferred
+        }else if (!appointment.getActive()) {
+            response.setNote("Appointment is not active, cannot process refund.");
+            return response; // or throw an exception if preferred
+        }else if ("PENDING".equalsIgnoreCase(appointment.getStatus()) || "CONFIRMED".equalsIgnoreCase(appointment.getStatus())) {
+            response.setPaymentId(payment.getPaymentId());
+            response.setAmount(payment.getAmount());
+            response.setPaymentDate(payment.getPaymentDate());
+            response.setPaymentMethod(payment.getPaymentMethod());
+            response.setStatus(payment.getStatus());
+            response.setAppointmentId(payment.getAppointment().getAppointmentId());
+            return response;
+        }else if ("SEND".equalsIgnoreCase(appointment.getStatus()) || "RECEIVED".equalsIgnoreCase(appointment.getStatus())) {
+            double refundAmount = payment.getAmount() * 0.5; // Assuming a 50% refund policy
+
+            response.setPaymentId(payment.getPaymentId());
+            response.setAmount(refundAmount);
+            response.setPaymentDate(payment.getPaymentDate());
+            response.setPaymentMethod(payment.getPaymentMethod());
+            response.setStatus(payment.getStatus());
+            response.setAppointmentId(payment.getAppointment().getAppointmentId());
+            return response;
+        }else if("INPROCESS".equalsIgnoreCase(appointment.getStatus())) {
+            double refundAmount = payment.getAmount() * 0.25; // Assuming a 25% refund policy
+
+            response.setPaymentId(payment.getPaymentId());
+            response.setAmount(refundAmount);
+            response.setPaymentDate(payment.getPaymentDate());
+            response.setPaymentMethod(payment.getPaymentMethod());
+            response.setStatus(payment.getStatus());
+            response.setAppointmentId(payment.getAppointment().getAppointmentId());
+            return response;
+        }else {
+            response.setPaymentId(payment.getPaymentId());
+            response.setAmount(0);
+            response.setPaymentDate(payment.getPaymentDate());
+            response.setPaymentMethod(payment.getPaymentMethod());
+            response.setStatus(payment.getStatus());
+            response.setAppointmentId(payment.getAppointment().getAppointmentId());
+            return response;
+        }
+    }
+    public String setPaymentStatusRefund(Long appointmentId) {
+        // Implementation for setting the status of a payment
+        Payment payment = paymentRepository.findByAppointment_AppointmentId(appointmentId);
+        if (payment == null) {
+            return "Payment not found for appointment id: " + appointmentId;
+        }
+        if (!"Completed".equalsIgnoreCase(payment.getStatus()) && !"PAID".equalsIgnoreCase(payment.getStatus())) {
+            return "Payment is not completed, cannot process refund.";
+        }
+        payment.setStatus("Refunded");
+        paymentRepository.save(payment);
+        return "Payment status updated to Refunded for appointment id: " + appointmentId;
     }
 }

@@ -12,4 +12,6 @@ public interface SampleTypeRepository extends JpaRepository<SampleType, Long> {
     Optional<SampleType> findByName(String name);
     boolean existsByName(String sampleTypeName);
     List<SampleType> findByKitComponent_ComponentName(String componentName);
+
+    Optional<SampleType> findByNameAndKitComponent_ComponentName(String name, String kitComponentComponentName);
 }
