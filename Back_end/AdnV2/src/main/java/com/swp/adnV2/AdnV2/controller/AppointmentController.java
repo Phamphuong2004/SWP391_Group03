@@ -22,6 +22,12 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
+    @GetMapping("/get/by-today")
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByDate(){
+        return appointmentService.getAppointmentsByDate(date);
+    }
+
     @PostMapping("/create/guest-appointment/{serviceId}")
     public ResponseEntity<?> createGuestAppointment(
             @PathVariable("serviceId") Long serviceId,
