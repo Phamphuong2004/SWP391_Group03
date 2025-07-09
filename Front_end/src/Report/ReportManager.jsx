@@ -15,6 +15,10 @@ const ReportManager = () => {
   const [filterId, setFilterId] = useState("");
   const [filtering, setFiltering] = useState(false);
 
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const role = user?.role?.toLowerCase();
+  const isStaff = role === "staff";
+
   const fetchReports = async (username = "", id = "") => {
     setLoading(true);
     setError("");
@@ -113,26 +117,23 @@ const ReportManager = () => {
                 <th>Nội dung</th>
                 <th>Người tạo</th>
                 <th>Ngày tạo</th>
-                <th>Hành động</th>
+                {isStaff && <th>Hành động</th>}
               </tr>
             </thead>
             <tbody>
-              {reports.map((r, idx) => (
-                <tr key={r.id || r.reportId || idx}>
-                  <td>{r.reportTitle}</td>
-                  <td>{r.reportContent}</td>
-                  <td>{r.username}</td>
-                  <td>
-                    {r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}
-                  </td>
-                  <td>
-                    <button
-                      className="report-btn delete"
-                      onClick={() => handleDelete(r.reportId || r.id)}
-                    >
-                      Xóa
-                    </button>
-                  </td>
+              {reports.map((report, idx) => (
+                <tr key={report.id || report.reportId || idx}>
+                  <td>{report.reportTitle}</td>
+                  <td>{report.reportContent}</td>
+                  <td>{report.username}</td>
+                  <td>{report.createdAt}</td>
+                  {isStaff && (
+                    <td>
+                      <button className="report-delete-btn" onClick={() => handleDelete(report.id || report.reportId)}>
+                        Xóa
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
