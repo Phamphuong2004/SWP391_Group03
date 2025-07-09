@@ -8,6 +8,21 @@ export default function ViewFeedback() {
   const [editRating, setEditRating] = useState(5);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [serviceName, setServiceName] = useState("");
+
+  // Danh sách dịch vụ đúng theo DB
+  const SERVICES = [
+    "Xét nghiệm huyết thống",
+    "Xét nghiệm hài cốt",
+    "Xét nghiệm ADN cá nhân",
+    "Xét nghiệm ADN pháp lý",
+    "Xét nghiệm ADN trước sinh",
+    "Xét nghiệm ADN khác",
+    "Xét nghiệm ADN thai nhi",
+    "Xét nghiệm ADN di truyền",
+    "Xét nghiệm ADN hành chính",
+    "Xét nghiệm ADN dân sự",
+  ];
 
   // Lấy user info từ localStorage
   const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -15,14 +30,14 @@ export default function ViewFeedback() {
   const token = user?.token;
   const authHeader = token ? { Authorization: `Bearer ${token}` } : {};
 
-  // Lấy danh sách feedback từ API
+  // Lấy danh sách feedback từ API (theo serviceName)
   useEffect(() => {
+    if (!serviceName) return;
     const fetchFeedbacks = async () => {
       setLoading(true);
       setError("");
       try {
-        // Lấy tất cả feedback (bỏ trống serviceName)
-        const res = await axios.get("/api/feedback/search/by-service-name/", { headers: authHeader });
+        const res = await axios.get(`/api/feedback/search/by-service-name/${encodeURIComponent(serviceName)}`, { headers: authHeader });
         setFeedbacks(res.data || []);
       } catch (err) {
         console.error(err);
@@ -32,7 +47,7 @@ export default function ViewFeedback() {
       }
     };
     fetchFeedbacks();
-  }, []);
+  }, [serviceName]);
 
   // Xóa feedback
   const handleDelete = async (id) => {
@@ -52,7 +67,7 @@ export default function ViewFeedback() {
 
   // Sửa feedback
   const handleEdit = (fb) => {
-    setEditingId(fb.feedbackId);
+    setEditingId(fb.feedbackId || fb.id);
     setEditContent(fb.content);
     setEditRating(fb.rating || 5);
   };
@@ -68,7 +83,7 @@ export default function ViewFeedback() {
       }, { headers: authHeader });
       setFeedbacks((prev) =>
         prev.map((f) =>
-          f.feedbackId === editingId
+          f.feedbackId === editingId || f.id === editingId
             ? { ...f, content: editContent, rating: editRating }
             : f
         )
@@ -95,6 +110,13 @@ export default function ViewFeedback() {
   return (
     <div style={{ padding: 32 }}>
       <h2>Quản lý đơn phản hồi khách hàng</h2>
+      <div style={{ marginBottom: 16 }}>
+        <label style={{ marginRight: 8 }}>Chọn dịch vụ:</label>
+        <select value={serviceName} onChange={e => setServiceName(e.target.value)}>
+          <option value="">Chọn dịch vụ</option>
+          {SERVICES.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+      </div>
       {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
       {loading ? (
         <div>Đang tải...</div>
@@ -117,25 +139,22 @@ export default function ViewFeedback() {
           </thead>
           <tbody>
             {feedbacks.map((fb) => (
-              <tr key={fb.feedbackId}>
+              <tr key={fb.feedbackId || fb.id}>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.feedbackId}
+                  {fb.feedbackId || fb.id || ""}
                 </td>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
                   {fb.serviceName}
                 </td>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.username}
+                  {fb.username || fb.fullName || "Ẩn danh"}
                 </td>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {editingId === fb.feedbackId ? (
-                    <form
-                      onSubmit={handleEditSubmit}
-                      style={{ display: "flex", gap: 8 }}
-                    >
+                  {editingId === (fb.feedbackId || fb.id) ? (
+                    <form onSubmit={handleEditSubmit} style={{ display: "flex", gap: 8 }}>
                       <input
                         value={editContent}
-                        onChange={(e) => setEditContent(e.target.value)}
+                        onChange={e => setEditContent(e.target.value)}
                         required
                         style={{ flex: 1 }}
                       />
@@ -144,14 +163,12 @@ export default function ViewFeedback() {
                         min={1}
                         max={5}
                         value={editRating}
-                        onChange={(e) => setEditRating(Number(e.target.value))}
+                        onChange={e => setEditRating(Number(e.target.value))}
                         required
                         style={{ width: 50 }}
                       />
                       <button type="submit">Lưu</button>
-                      <button type="button" onClick={() => setEditingId(null)}>
-                        Hủy
-                      </button>
+                      <button type="button" onClick={() => setEditingId(null)}>Hủy</button>
                     </form>
                   ) : (
                     fb.content
@@ -161,16 +178,18 @@ export default function ViewFeedback() {
                   {fb.rating || 5}
                 </td>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.createdAt ? new Date(fb.createdAt).toLocaleString() : ""}
+                  {fb.createdAt || fb.feedback_date || fb.feedbackDate || fb.feedbackDateTime
+                    ? new Date(fb.createdAt || fb.feedback_date || fb.feedbackDate || fb.feedbackDateTime).toLocaleString()
+                    : ""}
                 </td>
                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
                   <button
-                    onClick={() => handleDelete(fb.feedbackId)}
+                    onClick={() => handleDelete(fb.feedbackId || fb.id)}
                     style={{ marginRight: 8 }}
                   >
                     Xóa
                   </button>
-                  {editingId !== fb.feedbackId && (
+                  {editingId !== (fb.feedbackId || fb.id) && (
                     <button onClick={() => handleEdit(fb)}>Sửa</button>
                   )}
                 </td>
