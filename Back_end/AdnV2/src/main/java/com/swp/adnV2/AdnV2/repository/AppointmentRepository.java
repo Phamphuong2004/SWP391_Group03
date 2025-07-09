@@ -4,6 +4,7 @@ import com.swp.adnV2.AdnV2.entity.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -19,4 +20,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findByUsers_UsernameAndStatus(String username, String status);
 
+    List<Appointment> findAllByAppointmentDateBetweenAndIsActiveTrue(
+            LocalDateTime startDate, LocalDateTime endDate);
+
+    List<Appointment> findAllByAppointmentDateBetweenAndIsActiveTrueAndUsers_Username(
+            LocalDateTime startDate, LocalDateTime endDate, String username);
 }

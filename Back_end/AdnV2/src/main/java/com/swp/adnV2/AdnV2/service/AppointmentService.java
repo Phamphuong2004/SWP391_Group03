@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,7 +44,31 @@ public class AppointmentService {
     private GuestRepository guestRepository;
 
     @Autowired
-    private SampleTypeRepository sampleTypeRepository;  
+    private SampleTypeRepository sampleTypeRepository;
+
+    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByToDateCustomer(String username){
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+
+        List<Appointment> appointments = appointmentRepository.findAllByAppointmentDateBetweenAndIsActiveTrueAndUsers_Username(startOfDay, endOfDay, username);
+
+        List<AppointmentResponse> responseList = appointments.stream().map(this::convertToAppointmentResponse)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
+
+    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByToDate() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();        //00:00:00
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);   //23:59:59
+
+        List<Appointment> appointments = appointmentRepository.findAllByAppointmentDateBetweenAndIsActiveTrue(startOfDay, endOfDay);
+
+        List<AppointmentResponse> responseList = appointments.stream().map(this::convertToAppointmentResponse)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
 
     @Transactional
     public ResponseEntity<?> createGuestAppointment(Long serviceId, AppointmentRequest request) {
@@ -150,11 +176,11 @@ public class AppointmentService {
 
             if (sampleTypeNames != null && !sampleTypeNames.isEmpty()) {
                 for (String sampleTypeName : sampleTypeNames) {
-                    Optional<SampleType> optSampleType = sampleTypeRepository.findByName(sampleTypeName);
-                    if (optSampleType.isEmpty()) {
-                        return ResponseEntity.badRequest().body("Invalid sample type: " + sampleTypeName);
+                    Optional<SampleType> optionalSampleType = sampleTypeRepository.findByNameAndKitComponent_ComponentName(sampleTypeName, kitComponent.getComponentName());
+                    if (optionalSampleType.isEmpty()) {
+                        return ResponseEntity.badRequest().body("Sample type '" + sampleTypeName + "' không thuộc kit component đã chọn!");
                     }
-                    SampleType sampleType = optSampleType.get();
+                    SampleType sampleType = optionalSampleType.get();
                     CollectedSample collectedSample = new CollectedSample();
                     collectedSample.setAppointment(appointment);
                     collectedSample.setSampleType(sampleType);
@@ -362,6 +388,20 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             return ResponseEntity.badRequest().body(errorBody);
         }
     try {
+
+        List<SampleType> validSampleTypes = new ArrayList<>();
+        if (sampleTypes != null && !sampleTypes.isEmpty()) {
+            for (String sampleTypeName : sampleTypes) {
+                Optional<SampleType> optionalSampleType = sampleTypeRepository.findByNameAndKitComponent_ComponentName(sampleTypeName, kitComponent.getComponentName());
+                if (optionalSampleType.isEmpty()) {
+                    Map<String, Object> errorBody = new HashMap<>();
+                    errorBody.put("message", "Sample type '" + sampleTypeName + "' không thuộc kit component đã chọn!");
+                    return ResponseEntity.badRequest().body(errorBody);
+                }
+                validSampleTypes.add(optionalSampleType.get());
+            }
+        }
+
         Appointment appointment = new Appointment();
         appointment.setFullName(request.getFullName());
         appointment.setDob(request.getDob());
@@ -385,23 +425,14 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
         appointment = appointmentRepository.save(appointment);
 
-        if (sampleTypes != null && !sampleTypes.isEmpty()) {
-            for (String sampleTypeName : sampleTypes) {
-                Optional<SampleType> optionalSampleType = sampleTypeRepository.findByName(sampleTypeName);
-                if (optionalSampleType.isEmpty()) {
-                    Map<String, Object> errorBody = new HashMap<>();
-                    errorBody.put("message", "Invalid sample type: " + sampleTypeName);
-                    return ResponseEntity.badRequest().body(errorBody);
-                }
-                SampleType sampleType = optionalSampleType.get();
-                CollectedSample collectedSample = new CollectedSample();
-                collectedSample.setAppointment(appointment);
-                collectedSample.setUsers(appointment.getUser());
-                collectedSample.setCollectedDate(LocalDate.now());
-                collectedSample.setKitComponent(kitComponent);
-                collectedSample.setSampleType(sampleType);
-                sampleRepository.save(collectedSample);
-            }
+        for (SampleType sampleType : validSampleTypes) {
+            CollectedSample collectedSample = new CollectedSample();
+            collectedSample.setAppointment(appointment);
+            collectedSample.setUsers(appointment.getUser());
+            collectedSample.setCollectedDate(LocalDate.now());
+            collectedSample.setKitComponent(kitComponent);
+            collectedSample.setSampleType(sampleType);
+            sampleRepository.save(collectedSample);
         }
 
         // Trừ số lượng kit sau khi đã lưu hết sample

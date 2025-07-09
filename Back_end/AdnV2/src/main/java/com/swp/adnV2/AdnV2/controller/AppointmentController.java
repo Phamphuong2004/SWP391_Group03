@@ -22,10 +22,18 @@ public class AppointmentController {
     @Autowired
     private AppointmentService appointmentService;
 
-    @GetMapping("/get/by-today")
+    @GetMapping("/get/staff/by-today")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
-    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByDate(){
-        return appointmentService.getAppointmentsByDate(date);
+    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByToDateStaff(){
+        return appointmentService.getAppointmentsByToDate();
+    }
+
+    @GetMapping("/get/customer/by-today")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ResponseEntity<List<AppointmentResponse>> getAppointmentsByToDateCustom(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        return appointmentService.getAppointmentsByToDateCustomer(username);
     }
 
     @PostMapping("/create/guest-appointment/{serviceId}")
