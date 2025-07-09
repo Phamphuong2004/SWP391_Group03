@@ -46,10 +46,15 @@ import InvoiceList from "../Payment/InvoiceList";
 import SampleManagement from "../SampleManagement/SampleManagement";
 import KitManagement from "../Kit/KitManagement";
 import SampleWorkspace from "../SampleWorkspace/SampleWorkspace";
+import ManagerDashboard from "../Dashboard/ManagerDashboard";
+import StaffResult from "../StaffResult/StaffResult";
+import Report from "../Report/Report";
 
 function AppContent() {
   const { pathname } = useLocation();
-  const hideNavbar = pathname === "/login" || pathname === "/register";
+  const hideNavbar = ["/login", "/register", "/forgot-password"].includes(
+    pathname
+  );
 
   return (
     <>
@@ -189,15 +194,35 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/manager-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff-result"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <StaffResult />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/report"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <Report />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
 }
 
 export default function AppRoutes() {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
+  return <AppContent />;
 }
