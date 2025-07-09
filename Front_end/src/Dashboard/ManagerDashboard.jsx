@@ -10,6 +10,7 @@ import SampleTypeManagement from "../SampleTypeManagement/SampleTypeManagement";
 import ResultList from "../result/ResultList";
 import ReceiveBooking from "../ReceiveBooking/ReceiveBooking";
 import ServiceTracking from "../ServiceTracking/ServiceTracking";
+import ReportManager from "../Report/ReportManager";
 import "./ManagerDashboard.css";
 import {
   FaChartBar,
@@ -23,6 +24,7 @@ import {
   FaClipboardList,
   FaSignOutAlt,
   FaHome,
+  FaArrowLeft,
 } from "react-icons/fa";
 
 const managerMenu = [
@@ -37,10 +39,12 @@ const managerMenu = [
   { label: "Quản lý kết quả xét nghiệm", key: "results", icon: <FaFileAlt /> },
   { label: "Quản lý đơn", key: "receive-booking", icon: <FaClipboardList /> },
   { label: "Theo dõi đơn", key: "service-tracking", icon: <FaChartBar /> },
+  // Thêm mục Báo cáo ở đây
+  { label: "Báo cáo", key: "report", icon: <FaFileAlt style={{ color: '#ff5722' }} /> },
 ];
 
 const ManagerDashboard = () => {
-  const [selectedMenu, setSelectedMenu] = useState("dashboard");
+  const [selectedMenu, setSelectedMenu] = useState("report");
   const navigate = useNavigate();
   const [isManager, setIsManager] = useState(true);
 
@@ -93,6 +97,8 @@ const ManagerDashboard = () => {
         return <ReceiveBooking />;
       case "service-tracking":
         return <ServiceTracking />;
+      case "report":
+        return <ReportManager />;
       default:
         return (
           <div style={{ padding: 32 }}>
@@ -228,8 +234,14 @@ const ManagerDashboard = () => {
               <button
                 className={`sidebar-menu-btn${
                   selectedMenu === item.key ? " selected" : ""
-                }`}
-                onClick={() => setSelectedMenu(item.key)}
+                }${item.key === "report" ? " report-orange" : ""}`}
+                onClick={() => {
+                  if (item.key === "report") {
+                    navigate("/report");
+                  } else {
+                    setSelectedMenu(item.key);
+                  }
+                }}
               >
                 <span className="sidebar-menu-icon">{item.icon}</span>
                 <span>{item.label}</span>
@@ -237,6 +249,13 @@ const ManagerDashboard = () => {
             </li>
           ))}
         </ul>
+        <div style={{marginTop: 'auto', padding: '16px 0 0 0'}}>
+          <button className="sidebar-menu-btn go-home-btn" onClick={() => navigate("/")}
+            style={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <span className="sidebar-menu-icon"><FaArrowLeft /></span>
+            <span>Về trang chủ</span>
+          </button>
+        </div>
         <button
           className="logout-btn"
           onClick={() => {
