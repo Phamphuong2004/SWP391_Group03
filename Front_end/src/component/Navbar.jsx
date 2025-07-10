@@ -89,7 +89,11 @@ function MyNavbar() {
               {/* Ẩn hoàn toàn các nút quản lý khi là manager, chỉ giữ lại Trang chủ và Quản trị hệ thống */}
               {user && user.role && user.role.toLowerCase() === "manager" ? (
                 <>
-                  <NavDropdown title="Quản trị hệ thống" id="manager-system-dropdown" className="nav-link">
+                  <NavDropdown
+                    title="Quản trị hệ thống"
+                    id="manager-system-dropdown"
+                    className="nav-link"
+                  >
                     <NavDropdown.Item href="/manager-dashboard">
                       Trang quản trị
                     </NavDropdown.Item>
@@ -180,6 +184,7 @@ function MyNavbar() {
                       <Nav.Link href="/staff-result" className="nav-link">
                         Kết quả xét nghiệm
                       </Nav.Link>
+                      {/* Đã xóa hai nút quản lý test category và test purpose */}
                     </>
                   )}
                   {user &&
@@ -200,6 +205,15 @@ function MyNavbar() {
                       </Nav.Link>
                     </>
                   )}
+                  {user &&
+                    ["manager", "staff"].includes(user.role?.toLowerCase()) && (
+                      <Nav.Link
+                        href="/parallel-management"
+                        className="nav-link"
+                      >
+                        Quản lý song song
+                      </Nav.Link>
+                    )}
                 </>
               )}
             </Nav>
