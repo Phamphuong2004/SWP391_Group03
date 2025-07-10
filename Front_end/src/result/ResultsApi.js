@@ -12,15 +12,26 @@ export const getResultById = (resultId, token) =>
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 
-export const createResult = (data, token) =>
-  axios.post(`${API_BASE}/create`, data, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+export const createResult = (data, token) => {
+  // Nếu là FormData (upload file), KHÔNG set Content-Type thủ công
+  const isFormData = data instanceof FormData;
+  return axios.post(`${API_BASE}/create`, data, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    },
   });
+};
 
-export const updateResult = (resultId, data, token) =>
-  axios.put(`${API_BASE}/${resultId}`, data, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+export const updateResult = (resultId, data, token) => {
+  const isFormData = data instanceof FormData;
+  return axios.put(`${API_BASE}/${resultId}`, data, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+    },
   });
+};
 
 export const deleteResult = (resultId, token) =>
   axios.delete(`${API_BASE}/${resultId}`, {

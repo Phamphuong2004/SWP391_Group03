@@ -14,17 +14,11 @@
 
 .booking-form {
   max-width: 950px;
-  margin: 48px auto;
-  background: #cce3ff; /* Màu nền giống Navbar */
-  padding: 56px 40px 40px 40px;
-  border-radius: 32px;
-  font-family: "Segoe UI", Arial, sans-serif;
-  box-shadow: 0 16px 48px 0 rgba(25, 118, 210, 0.12), 0 2px 8px #fff inset;
-  border: 2.5px solid #1976d2; /* Viền xanh đậm */
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(8px) saturate(1.2);
-  transition: box-shadow 0.3s;
+  margin: 32px auto;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
 }
 
 .booking-form::before,
@@ -54,15 +48,10 @@
 
 .booking-title {
   text-align: center;
-  font-size: 2.8rem;
-  font-weight: 900;
-  color: #1976d2; /* Tiêu đề xanh đậm */
-  margin-bottom: 40px;
-  letter-spacing: 2.5px;
-  text-shadow: 0 6px 32px #1976d222, 0 2px 0 #fff;
-  position: relative;
-  z-index: 1;
-  filter: drop-shadow(0 4px 16px #cce3ff);
+  color: #3f51b5;
+  font-size: 26px;
+  margin-bottom: 32px;
+  font-weight: 700;
 }
 
 .booking-row {
@@ -157,24 +146,24 @@
 
 .booking-submit {
   text-align: center;
-  margin-top: 48px;
-  position: relative;
-  z-index: 1;
+  margin-top: 12px;
 }
 
 .booking-submit button {
-  padding: 16px 64px;
-  font-size: 1.3rem;
-  background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%);
+  background: #3f51b5;
   color: #fff;
+  font-size: 18px;
   border: none;
-  border-radius: 16px;
-  font-weight: 900;
+  border-radius: 8px;
+  padding: 12px 36px;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 8px 32px 0 rgba(25, 118, 210, 0.22), 0 2px 0 #fff inset;
-  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-  letter-spacing: 1.5px;
-  filter: drop-shadow(0 4px 16px #cce3ff);
+  box-shadow: 0 2px 8px rgba(63, 81, 181, 0.08);
+  transition: background 0.2s;
+}
+.booking-submit button:disabled {
+  background: #bfc6e0;
+  cursor: not-allowed;
 }
 
 .booking-submit button:hover {
@@ -272,20 +261,68 @@
   vertical-align: middle;
 }
 
-@media (max-width: 900px) {
-  .booking-row {
+/* 2 cột song song cho form đặt lịch */
+.booking-2col-flex {
+  display: flex;
+  gap: 36px;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.booking-col {
+  background: #f6f8ff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(63, 81, 181, 0.08);
+  padding: 32px 24px 24px 24px;
+  min-width: 320px;
+  flex: 1 1 0;
+  max-width: 420px;
+  border: 1.5px solid #bfc6e0;
+}
+
+.booking-col h3 {
+  margin-top: 0;
+  margin-bottom: 22px;
+  color: #3f51b5;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.booking-col label {
+  display: block;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.booking-col input,
+.booking-col select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #bfc6e0;
+  margin-top: 6px;
+  font-size: 15px;
+  background: #fff;
+}
+
+.booking-step-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+@media (max-width: 950px) {
+  .booking-2col-flex {
     flex-direction: column;
-    gap: 0;
+    gap: 18px;
   }
-  .booking-form {
-    padding: 24px 8px;
-  }
-  .booking-title {
-    font-size: 2rem;
-  }
-  .service-card {
-    width: 98vw;
-    min-width: 0;
+  .booking-col {
+    max-width: 100%;
+    min-width: unset;
   }
 }
 
@@ -518,5 +555,57 @@ body.dark-theme .booking-service span {
     opacity: 1;
     transform: translateY(0) scale(1);
     filter: blur(0);
+  }
+}
+
+.booking-stepper {
+  max-width: 500px;
+  margin: 0 auto 32px auto;
+}
+
+.booking-step {
+  background: #f6f8ff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 32px 24px 24px 24px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.booking-step h3 {
+  text-align: center;
+  color: #3f51b5;
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+
+.booking-step label {
+  display: block;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.booking-step input,
+.booking-step select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #bfc6e0;
+  margin-top: 6px;
+  font-size: 15px;
+}
+
+.booking-step-btns {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+@media (max-width: 600px) {
+  .booking-step,
+  .booking-stepper {
+    max-width: 100%;
+    padding: 12px 4px;
   }
 }

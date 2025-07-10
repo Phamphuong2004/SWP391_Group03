@@ -101,12 +101,17 @@ export default function ViewFeedback() {
       setEditingId(null);
       setEditContent("");
       setEditRating(5);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError("Cập nhật feedback thất bại.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditContent("");
+    setEditRating(5);
   };
 
   if (role !== "manager" && role !== "staff") {
@@ -116,6 +121,8 @@ export default function ViewFeedback() {
       </div>
     );
   }
+
+  const isStaff = role === "staff";
 
   return (
     <div style={{ padding: 32 }}>
@@ -140,41 +147,30 @@ export default function ViewFeedback() {
       ) : feedbacks.length === 0 ? (
         <p>Chưa có đơn phản hồi nào.</p>
       ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <table className="feedback-table">
           <thead>
-            <tr style={{ background: "#f5f5f5" }}>
-              <th style={{ border: "1px solid #ccc", padding: 8 }}>ID</th>
-              <th style={{ border: "1px solid #ccc", padding: 8 }}>Dịch vụ</th>
-              <th style={{ border: "1px solid #ccc", padding: 8 }}>
-                Khách hàng
-              </th>
-              <th style={{ border: "1px solid #ccc", padding: 8 }}>Nội dung</th>
-              <th style={{ border: "1px solid #ccc", padding: 8 }}>Đánh giá</th>
-              <th style={{ border: "1px solid #ccc", padding: 8 }}>Ngày gửi</th>
-              <th style={{ border: "1px solid #ccc", padding: 8 }}>Thao tác</th>
+            <tr>
+              <th>ID</th>
+              <th>Dịch vụ</th>
+              <th>Khách hàng</th>
+              <th>Nội dung</th>
+              <th>Đánh giá</th>
+              <th>Ngày gửi</th>
+              {isStaff && <th>Thao tác</th>}
             </tr>
           </thead>
           <tbody>
             {feedbacks.map((fb) => (
               <tr key={fb.feedbackId || fb.id}>
-                <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.feedbackId || fb.id || ""}
-                </td>
-                <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.serviceName}
-                </td>
-                <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.username || fb.fullName || "Ẩn danh"}
-                </td>
-                <td style={{ border: "1px solid #ccc", padding: 8 }}>
+                <td>{fb.feedbackId || fb.id || ""}</td>
+                <td>{fb.serviceName}</td>
+                <td>{fb.username || fb.fullName || "Ẩn danh"}</td>
+                <td>
                   {editingId === (fb.feedbackId || fb.id) ? (
-                    <form
-                      onSubmit={handleEditSubmit}
-                      style={{ display: "flex", gap: 8 }}
-                    >
+                    <form onSubmit={handleEditSubmit} style={{ display: "flex", gap: 8 }}>
                       <input
                         value={editContent}
-                        onChange={(e) => setEditContent(e.target.value)}
+                        onChange={e => setEditContent(e.target.value)}
                         required
                         style={{ flex: 1 }}
                       />
@@ -183,46 +179,42 @@ export default function ViewFeedback() {
                         min={1}
                         max={5}
                         value={editRating}
-                        onChange={(e) => setEditRating(Number(e.target.value))}
-                        required
+                        onChange={e => setEditRating(Number(e.target.value))}
                         style={{ width: 50 }}
                       />
                       <button type="submit">Lưu</button>
-                      <button type="button" onClick={() => setEditingId(null)}>
-                        Hủy
-                      </button>
+                      <button type="button" onClick={handleCancelEdit}>Hủy</button>
                     </form>
                   ) : (
                     fb.content
                   )}
                 </td>
-                <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.rating || 5}
+                <td>
+                  {[1,2,3,4,5].map((star) => (
+                    <span
+                      key={star}
+                      style={{
+                        color: star <= (fb.rating || 0) ? "#FFD700" : "#ccc",
+                        fontSize: 18
+                      }}
+                    >
+                      ★
+                    </span>
+                  ))}
                 </td>
-                <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  {fb.createdAt ||
-                  fb.feedback_date ||
-                  fb.feedbackDate ||
-                  fb.feedbackDateTime
-                    ? new Date(
-                        fb.createdAt ||
-                          fb.feedback_date ||
-                          fb.feedbackDate ||
-                          fb.feedbackDateTime
-                      ).toLocaleString()
-                    : ""}
-                </td>
-                <td style={{ border: "1px solid #ccc", padding: 8 }}>
-                  <button
-                    onClick={() => handleDelete(fb.feedbackId || fb.id)}
-                    style={{ marginRight: 8 }}
-                  >
-                    Xóa
-                  </button>
-                  {editingId !== (fb.feedbackId || fb.id) && (
-                    <button onClick={() => handleEdit(fb)}>Sửa</button>
-                  )}
-                </td>
+                <td>{fb.feedback_date || fb.feedbackDate || fb.feedbackDateTime || ""}</td>
+                {isStaff && (
+                  <td>
+                    <button className="btn-delete" onClick={() => handleDelete(fb.feedbackId || fb.id)}>
+                      Xóa
+                    </button>
+                    {editingId !== (fb.feedbackId || fb.id) && (
+                      <button className="btn-edit" onClick={() => handleEdit(fb)}>
+                        Sửa
+                      </button>
+                    )}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

@@ -8,6 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import serviceTypes from "../serviceTypes";
 import { Select } from "antd";
+// XÓA: import { Steps } from "antd";
 
 const testPurposes = ["Hành chính", "Dân sự"];
 
@@ -191,6 +192,44 @@ function Booking() {
 
   const [dynamicSampleTypeOptions, setDynamicSampleTypeOptions] =
     useState(sampleTypeOptions);
+
+  // Validate bước 1
+  const validateStep1 = () => {
+    const requiredFields = [
+      "fullName",
+      "dob",
+      "phone",
+      "gender",
+      "province",
+      "district",
+      "email",
+    ];
+    for (const field of requiredFields) {
+      if (!form[field]) return false;
+    }
+    return true;
+  };
+  // Validate bước 2
+  const validateStep2 = () => {
+    const requiredFields = [
+      "testPurpose",
+      "serviceType",
+      "appointmentDate",
+      "collectionTime",
+      "testCategory",
+      "collectionLocation",
+      "kitComponentName",
+      "sampleTypes",
+    ];
+    for (const field of requiredFields) {
+      if (
+        !form[field] ||
+        (Array.isArray(form[field]) && form[field].length === 0)
+      )
+        return false;
+    }
+    return true;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -409,8 +448,10 @@ function Booking() {
     <div className="booking-page">
       <form className="booking-form" onSubmit={handleSubmit}>
         <h2 className="booking-title">Đặt lịch hẹn xét nghiệm ADN</h2>
-        <div className="booking-row">
-          <div className="booking-col">
+        <div className="booking-2col-flex">
+          {/* Cột trái: Thông tin cá nhân */}
+          <div className="booking-col booking-col-personal">
+            <h3>Thông tin cá nhân</h3>
             <label>
               Họ và tên
               <input
@@ -461,11 +502,6 @@ function Booking() {
                           cursor: "pointer",
                           fontSize: 20,
                         }}
-                        onClick={(e) => {
-                          e.target.previousSibling &&
-                            e.target.previousSibling.focus &&
-                            e.target.previousSibling.focus();
-                        }}
                         title="Chọn ngày sinh"
                         role="button"
                         tabIndex={0}
@@ -496,6 +532,7 @@ function Booking() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="Nhập email"
+                required
               />
             </label>
             <label>
@@ -514,6 +551,44 @@ function Booking() {
                 ))}
               </select>
             </label>
+            <label>
+              Tỉnh/Thành phố
+              <select
+                name="province"
+                value={form.province}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn tỉnh/thành phố</option>
+                {provinces.map((p) => (
+                  <option key={p.name} value={p.name}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Quận/Huyện
+              <select
+                name="district"
+                value={form.district}
+                onChange={handleChange}
+                required
+                disabled={!form.province}
+              >
+                <option value="">Chọn Quận/Huyện</option>
+                {districts.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {/* Cột phải: Thông tin xét nghiệm */}
+          <div className="booking-col booking-col-test">
+            <h3>Thông tin xét nghiệm</h3>
             <label>
               Mục đích xét nghiệm
               <select
@@ -574,39 +649,6 @@ function Booking() {
                 accept="image/*,.pdf"
                 onChange={handleFileChange}
               />
-            </label>
-            <label>
-              Tỉnh/Thành phố
-              <select
-                name="province"
-                value={form.province}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Chọn tỉnh/thành phố</option>
-                {provinces.map((p) => (
-                  <option key={p.name} value={p.name}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Quận/Huyện
-              <select
-                name="district"
-                value={form.district}
-                onChange={handleChange}
-                required
-                disabled={!form.province}
-              >
-                <option value="">Chọn Quận/Huyện</option>
-                {districts.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
             </label>
             <label>
               Loại xét nghiệm
