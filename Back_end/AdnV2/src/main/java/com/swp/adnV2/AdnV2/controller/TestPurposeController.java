@@ -22,17 +22,6 @@ public class TestPurposeController {
         return testPurposeService.createTestPurpose(request);
     }
 
-//    @GetMapping("/get-by-service/{serviceName}")
-//    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
-//    public List<TestPurposeResponse> getAllTestPurposes(@PathVariable String serviceName) {
-//        return testPurposeService.getAllByServiceName(serviceName);
-//    }
-//
-//    @GetMapping("/get/active/{serviceName}")
-//    public List<TestPurposeResponse> getActiveTestPurposes(@PathVariable String serviceName) {
-//        return testPurposeService.getActiveTestPurpose(serviceName);
-//    }
-
     @GetMapping("/get-by-id/{testPurposeId}")
     @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
     public TestPurposeResponse getTestPurposeById(@PathVariable Long testPurposeId) {

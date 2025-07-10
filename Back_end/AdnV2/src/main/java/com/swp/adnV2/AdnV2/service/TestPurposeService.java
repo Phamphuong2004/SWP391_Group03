@@ -57,20 +57,6 @@ public class TestPurposeService {
         return convertToTestPurposeResponse(testPurpose);
     }
 
-//    public List<TestPurposeResponse> getAllByServiceName(String serviceName) {
-//        List<ServiceTestPurpose> stps = serviceTestPurposeRepository.findAllByService_ServiceName(serviceName);
-//        return stps.stream()
-//                .map(this::convertToTestPurposeResponse)
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<TestPurposeResponse> getActiveTestPurpose(String serviceName) {
-//        List<ServiceTestPurpose> stps = serviceTestPurposeRepository.findAllByService_ServiceNameAndIsActiveTrue(serviceName);
-//        return stps.stream()
-//                .map(this::convertToTestPurposeResponse)
-//                .collect(Collectors.toList());
-//    }
-
     public TestPurposeResponse getTestPurposeById(Long id) {
         Optional<TestPurpose> testPurposeOpt = testPurposeRepository.findById(id);
         if (testPurposeOpt.isEmpty())
@@ -102,6 +88,10 @@ public class TestPurposeService {
         }
         if (request.getTestPurposeDescription() != null) {
             testPurpose.setTestPurposeDescription(request.getTestPurposeDescription());
+        }
+
+        if (request.getActive() != null) {
+            testPurpose.setIsActive(request.getActive());
         }
         testPurposeRepository.save(testPurpose);
         return ResponseEntity.ok("Update successful");
