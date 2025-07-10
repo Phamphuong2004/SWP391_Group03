@@ -20,6 +20,14 @@ public class TestCategory {
     @Column(name = "is_active")
     private Boolean isActive;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public TestCategory() {
         this.isActive = true;
     }
