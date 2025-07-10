@@ -21,8 +21,11 @@ public class Services {
     @Column(name = "price", nullable = false)
     private double price;
 
-//    @OneToMany(mappedBy = "service")
-//    private List<Appointment> appointments;
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<TestCategory> testCategories;
+
+    @OneToMany(mappedBy = "service")
+    private List<ServiceTestPurpose> serviceTestPurposes;
 
     public Services() {
     }
@@ -31,6 +34,22 @@ public class Services {
         this.serviceName = serviceName;
         this.description = description;
         this.price = price;
+    }
+
+    public List<TestCategory> getTestCategories() {
+        return testCategories;
+    }
+
+    public void setTestCategories(List<TestCategory> testCategories) {
+        this.testCategories = testCategories;
+    }
+
+    public List<ServiceTestPurpose> getServiceTestPurposes() {
+        return serviceTestPurposes;
+    }
+
+    public void setServiceTestPurposes(List<ServiceTestPurpose> serviceTestPurposes) {
+        this.serviceTestPurposes = serviceTestPurposes;
     }
 
     public Long getServiceId() {
@@ -63,15 +82,5 @@ public class Services {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
-    }
-
-    @Override
-    public String toString() {
-        return "Services{" +
-                "serviceId=" + serviceId +
-                ", serviceName='" + serviceName + '\'' +
-                ", description='" + description + '\'' +
-                ", price=" + price +
-                '}';
     }
 }
