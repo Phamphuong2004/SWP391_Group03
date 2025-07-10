@@ -19,6 +19,7 @@ const StaffResult = () => {
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [detailResult, setDetailResult] = useState(null);
   const [filterAppointmentId, setFilterAppointmentId] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const fetchResults = async () => {
     setLoading(true);
@@ -41,6 +42,8 @@ const StaffResult = () => {
   const handleAdd = () => {
     setEditingResult(null);
     form.resetFields();
+    setSelectedFile(null); // Reset file object
+    setSelectedFileName(""); // Reset file name
     setIsModalVisible(true);
   };
 
@@ -56,6 +59,8 @@ const StaffResult = () => {
       appointmentId: record.appointmentId,
       resultFile: record.resultFile,
     });
+    setSelectedFile(null); // Reset file object
+    setSelectedFileName(""); // Reset file name
     setIsModalVisible(true);
   };
 
@@ -77,22 +82,30 @@ const StaffResult = () => {
       const userString = localStorage.getItem("user");
       const user = userString ? JSON.parse(userString) : null;
       const username = user ? user.username : null;
-      const payload = {
-        resultDate: values.resultDate,
-        resultData: values.resultData,
-        interpretation: values.interpretation,
-        status: values.status,
-        sampleId: values.sampleId,
-        username: username,
-        appointmentId: values.appointmentId,
-        resultFile: values.resultFile,
-      };
       const token = user ? user.token : null;
-      if (editingResult) {
-        await updateResult(editingResult.id, payload, token);
+
+      // Kiểm tra đã chọn file thực chưa
+      if (!selectedFile) {
+        message.error("Vui lòng chọn file kết quả!");
+        return;
+      }
+
+      // Tạo FormData
+      const formData = new FormData();
+      formData.append("resultDate", values.resultDate);
+      formData.append("resultData", values.resultData);
+      formData.append("interpretation", values.interpretation);
+      formData.append("status", values.status);
+      formData.append("sampleId", values.sampleId);
+      formData.append("username", username);
+      formData.append("appointmentId", values.appointmentId);
+      formData.append("resultFile", selectedFile); // file object thực
+
+      if (editingResult && editingResult.id) {
+        await updateResult(editingResult.id, formData, token);
         message.success("Cập nhật kết quả thành công");
       } else {
-        await createResult(payload, token);
+        await createResult(formData, token);
         message.success("Thêm kết quả thành công");
       }
       setIsModalVisible(false);
@@ -105,8 +118,13 @@ const StaffResult = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setSelectedFile(file); // Lưu object file thực
       setSelectedFileName(file.name);
-      form.setFieldsValue({ resultFile: file.name });
+      form.setFieldsValue({ resultFile: file.name }); // Vẫn set tên để validate
+    } else {
+      setSelectedFile(null);
+      setSelectedFileName("");
+      form.setFieldsValue({ resultFile: "" });
     }
   };
 
