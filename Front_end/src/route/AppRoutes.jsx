@@ -49,6 +49,9 @@ import SampleWorkspace from "../SampleWorkspace/SampleWorkspace";
 import ManagerDashboard from "../Dashboard/ManagerDashboard";
 import StaffResult from "../StaffResult/StaffResult";
 import Report from "../Report/Report";
+import TestCategoryManager from "../TestCategory/TestCategoryManager";
+import TestPurposeManager from "../TestPurpose/TestPurposeManager";
+import ParallelManagement from "../TestPurposeAndCategoryManagement/ParallelManagement";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -218,6 +221,23 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/test-category"
+          element={
+            <ProtectedRoute allowedRoles={["staff"]}>
+              <TestCategoryManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/test-purpose"
+          element={
+            <ProtectedRoute allowedRoles={["staff"]}>
+              <TestPurposeManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/parallel-management" element={<ParallelManagement />} />
       </Routes>
     </>
   );
