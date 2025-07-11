@@ -89,7 +89,11 @@ function MyNavbar() {
               {/* Ẩn hoàn toàn các nút quản lý khi là manager, chỉ giữ lại Trang chủ và Quản trị hệ thống */}
               {user && user.role && user.role.toLowerCase() === "manager" ? (
                 <>
-                  <NavDropdown title="Quản trị hệ thống" id="manager-system-dropdown" className="nav-link">
+                  <NavDropdown
+                    title="Quản trị hệ thống"
+                    id="manager-system-dropdown"
+                    className="nav-link"
+                  >
                     <NavDropdown.Item href="/manager-dashboard">
                       Trang quản trị
                     </NavDropdown.Item>
@@ -98,13 +102,6 @@ function MyNavbar() {
               ) : (
                 <>
                   {/* Đặt lịch chỉ cho guest và customer */}
-                  {(!user ||
-                    (user.role && user.role.toLowerCase() === "customer")) && (
-                    <Nav.Link href="/booking" className="nav-link">
-                      Đặt lịch
-                    </Nav.Link>
-                  )}
-                  {/* Dịch vụ và Blog chỉ cho guest và customer */}
                   {(!user ||
                     (user.role && user.role.toLowerCase() === "customer")) && (
                     <>
@@ -123,6 +120,9 @@ function MyNavbar() {
                           Dân sự
                         </NavDropdown.Item>
                       </NavDropdown>
+                      <Nav.Link href="/booking" className="nav-link">
+                        Đặt lịch
+                      </Nav.Link>
                       <Nav.Link href="/blog" className="nav-link">
                         Blog
                       </Nav.Link>
@@ -180,7 +180,16 @@ function MyNavbar() {
                       <Nav.Link href="/staff-result" className="nav-link">
                         Kết quả xét nghiệm
                       </Nav.Link>
+                      {/* Đã xóa hai nút quản lý test category và test purpose */}
                     </>
+                  )}
+                  {user && user.role && user.role.toLowerCase() === "staff" && (
+                    <Nav.Link
+                      onClick={() => navigate("/service-check")}
+                      className="nav-link"
+                    >
+                      Kiểm tra dịch vụ
+                    </Nav.Link>
                   )}
                   {user &&
                     ["manager", "staff"].includes(user.role.toLowerCase()) && (
@@ -200,6 +209,15 @@ function MyNavbar() {
                       </Nav.Link>
                     </>
                   )}
+                  {user &&
+                    ["manager", "staff"].includes(user.role?.toLowerCase()) && (
+                      <Nav.Link
+                        href="/parallel-management"
+                        className="nav-link"
+                      >
+                        Quản lý song song
+                      </Nav.Link>
+                    )}
                 </>
               )}
             </Nav>

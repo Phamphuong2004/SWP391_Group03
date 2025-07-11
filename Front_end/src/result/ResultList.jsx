@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getResultList, getResultByAppointmentId } from "./ResultsApi";
 import { getAllSampleTypes } from "../SampleManagement/SampleApi";
+import "./ResultList.css";
 
 const ResultList = () => {
   const [results, setResults] = useState([]);
@@ -63,7 +64,7 @@ const ResultList = () => {
   if (loading) return <div>Đang tải...</div>;
 
   return (
-    <div>
+    <div className="result-table-container">
       <h2>Danh sách kết quả</h2>
       <div style={{ marginBottom: 16 }}>
         <input
@@ -88,11 +89,7 @@ const ResultList = () => {
         ) : null}
       </div>
       {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
-      <table
-        border="1"
-        cellPadding="8"
-        style={{ borderCollapse: "collapse", width: "100%" }}
-      >
+      <table className="result-table">
         <thead>
           <tr>
             <th>Mã kết quả</th>

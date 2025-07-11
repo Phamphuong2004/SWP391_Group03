@@ -26,10 +26,22 @@ import {
   FaHome,
   FaArrowLeft,
 } from "react-icons/fa";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend, LabelList } from 'recharts';
-import ADNTestingServices from '../listOfServices';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend,
+  LabelList,
+} from "recharts";
 import axios from "axios";
 import { getAllPayments } from "../Payment/PaymentApi";
+import TestCategoryManager from "../TestCategory/TestCategoryManager";
+import TestPurposeManager from "../TestPurpose/TestPurposeManager";
+import { Box, Grid } from "@mui/material";
 
 const managerMenu = [
   { label: "Tổng quan", key: "dashboard", icon: <FaHome /> },
@@ -43,7 +55,7 @@ const managerMenu = [
   { label: "Quản lý kết quả xét nghiệm", key: "results", icon: <FaFileAlt /> },
   { label: "Quản lý đơn", key: "receive-booking", icon: <FaClipboardList /> },
   { label: "Theo dõi đơn", key: "service-tracking", icon: <FaChartBar /> },
-  // Thêm mục Báo cáo ở đây
+  { label: "Quản lý song song", key: "song-song", icon: <FaClipboardList /> },
   {
     label: "Báo cáo",
     key: "report",
@@ -90,22 +102,24 @@ const ManagerDashboard = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios.get("/api/services/view-all-service", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => setServiceCount(res.data.length))
+    axios
+      .get("/api/services/view-all-service", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => setServiceCount(res.data.length))
       .catch(() => setServiceCount(0));
     // Lấy số lượng lịch hẹn thực tế và lịch hẹn gần đây
-    axios.get("/api/get-all-appointments", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => {
+    axios
+      .get("/api/get-all-appointments", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
         setAppointmentCount(res.data.length);
         // Lọc lịch hẹn trong tháng hiện tại và tháng sau
         const now = new Date();
@@ -113,7 +127,7 @@ const ManagerDashboard = () => {
         const currentYear = now.getFullYear();
         const nextMonth = (currentMonth + 1) % 12;
         const nextMonthYear = nextMonth === 0 ? currentYear + 1 : currentYear;
-        const filtered = res.data.filter(a => {
+        const filtered = res.data.filter((a) => {
           const date = new Date(a.appointmentDate);
           const month = date.getMonth();
           const year = date.getFullYear();
@@ -122,11 +136,13 @@ const ManagerDashboard = () => {
             (month === nextMonth && year === nextMonthYear)
           );
         });
-        filtered.sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
+        filtered.sort(
+          (a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate)
+        );
         setRecentAppointments(filtered.slice(0, 3));
         // Đếm số lượng từng loại dịch vụ
         const serviceCountMap = {};
-        res.data.forEach(a => {
+        res.data.forEach((a) => {
           const type = a.serviceType || a.serviceName;
           if (type) {
             serviceCountMap[type] = (serviceCountMap[type] || 0) + 1;
@@ -145,18 +161,18 @@ const ManagerDashboard = () => {
       });
     // Lấy tổng doanh thu thực tế
     getAllPayments(token)
-      .then(payments => {
+      .then((payments) => {
         // Chỉ tính các payment có status là 'PAID'
         const total = payments
-          .filter(p => p.status === 'PAID')
+          .filter((p) => p.status === "PAID")
           .reduce((sum, p) => sum + (p.amount || 0), 0);
         setTotalRevenue(total);
         // Tính doanh thu 12 tháng
         const now = new Date();
         const year = now.getFullYear();
         const monthlyRevenue = Array(12).fill(0);
-        payments.forEach(p => {
-          if (p.status === 'PAID' && p.paymentDate) {
+        payments.forEach((p) => {
+          if (p.status === "PAID" && p.paymentDate) {
             const date = new Date(p.paymentDate);
             if (date.getFullYear() === year) {
               const month = date.getMonth(); // 0-11
@@ -166,7 +182,7 @@ const ManagerDashboard = () => {
         });
         const chartData = monthlyRevenue.map((revenue, idx) => ({
           month: `Tháng ${idx + 1}`,
-          revenue
+          revenue,
         }));
         setRevenueData(chartData);
       })
@@ -180,12 +196,14 @@ const ManagerDashboard = () => {
       for (const serviceName of SERVICES) {
         try {
           const res = await axios.get(
-            `/api/feedback/search/by-service-name/${encodeURIComponent(serviceName)}`,
+            `/api/feedback/search/by-service-name/${encodeURIComponent(
+              serviceName
+            )}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              }
+                "Content-Type": "application/json",
+              },
             }
           );
           if (Array.isArray(res.data)) {
@@ -205,7 +223,7 @@ const ManagerDashboard = () => {
     serviceCount: serviceCount, // Số lượng dịch vụ ADN thực tế từ API
     appointmentCount: appointmentCount, // Số lượng lịch hẹn thực tế từ API
     totalRevenue: totalRevenue, // Tổng doanh thu thực tế từ API
-    feedbackCount: feedbackCount // Số lượng đánh giá thực tế từ API
+    feedbackCount: feedbackCount, // Số lượng đánh giá thực tế từ API
   };
 
   if (!isManager) {
@@ -245,6 +263,19 @@ const ManagerDashboard = () => {
         return <ReceiveBooking />;
       case "service-tracking":
         return <ServiceTracking />;
+      case "song-song":
+        return (
+          <Box sx={{ flexGrow: 1, px: 2, py: 4 }}>
+            <Grid container spacing={4} justifyContent="center">
+              <Grid item xs={12} md={6}>
+                <TestCategoryManager />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TestPurposeManager />
+              </Grid>
+            </Grid>
+          </Box>
+        );
       case "report":
         return <ReportManager />;
       default:
@@ -255,45 +286,100 @@ const ManagerDashboard = () => {
               <div className="stat-card">
                 <div className="dashboard-card">
                   <div className="dashboard-card-title">Dịch vụ ADN</div>
-                  <div className="dashboard-card-value">{summaryData.serviceCount} dịch vụ</div>
+                  <div className="dashboard-card-value">
+                    {summaryData.serviceCount} dịch vụ
+                  </div>
                 </div>
               </div>
               <div className="stat-card">
                 <div className="dashboard-card">
                   <div className="dashboard-card-title">Lịch hẹn ADN</div>
-                  <div className="dashboard-card-value">{summaryData.appointmentCount} lịch hẹn</div>
+                  <div className="dashboard-card-value">
+                    {summaryData.appointmentCount} lịch hẹn
+                  </div>
                 </div>
               </div>
               <div className="stat-card">
                 <div className="dashboard-card">
                   <div className="dashboard-card-title">Doanh thu</div>
-                  <div className="dashboard-card-value">{summaryData.totalRevenue.toLocaleString()} VNĐ</div>
+                  <div className="dashboard-card-value">
+                    {summaryData.totalRevenue.toLocaleString()} VNĐ
+                  </div>
                 </div>
               </div>
               <div className="stat-card">
                 <div className="dashboard-card">
                   <div className="dashboard-card-title">Đánh giá</div>
-                  <div className="dashboard-card-value">{summaryData.feedbackCount} đánh giá</div>
+                  <div className="dashboard-card-value">
+                    {summaryData.feedbackCount} đánh giá
+                  </div>
                 </div>
               </div>
             </div>
             {/* Phần Doanh thu theo tháng */}
-            <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px rgba(44,62,80,0.08)', padding: 24, marginBottom: 32 }}>
-              <h3 style={{ color: '#2563eb', marginBottom: 16 }}>Biểu đồ doanh thu theo tháng</h3>
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 16,
+                boxShadow: "0 4px 24px rgba(44,62,80,0.08)",
+                padding: 24,
+                marginBottom: 32,
+              }}
+            >
+              <h3 style={{ color: "#2563eb", marginBottom: 16 }}>
+                Biểu đồ doanh thu theo tháng
+              </h3>
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={revenueData} margin={{ top: 24, right: 32, left: 0, bottom: 24 }}>
+                <BarChart
+                  data={revenueData}
+                  margin={{ top: 24, right: 32, left: 0, bottom: 24 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="month" tick={{ fontWeight: 600, fontSize: 14 }} />
-                  <YAxis tickFormatter={v => v.toLocaleString()} tick={{ fontWeight: 600, fontSize: 13 }} domain={[0, dataMax => Math.ceil(dataMax * 1.2)]} />
-                  <Tooltip formatter={v => v.toLocaleString() + ' VNĐ'} contentStyle={{ borderRadius: 12, fontWeight: 500 }} />
-                  <Legend iconType="rect" wrapperStyle={{ fontWeight: 700, color: '#2563eb' }} />
-                  <Bar dataKey="revenue" name="Doanh thu" fill="url(#colorRevenue)" radius={[8, 8, 0, 0]} barSize={36}>
-                    <LabelList dataKey="revenue" position="top" formatter={v => v > 0 ? v.toLocaleString() : ''} style={{ fill: '#2563eb', fontWeight: 700, fontSize: 13 }} />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fontWeight: 600, fontSize: 14 }}
+                  />
+                  <YAxis
+                    tickFormatter={(v) => v.toLocaleString()}
+                    tick={{ fontWeight: 600, fontSize: 13 }}
+                    domain={[0, (dataMax) => Math.ceil(dataMax * 1.2)]}
+                  />
+                  <Tooltip
+                    formatter={(v) => v.toLocaleString() + " VNĐ"}
+                    contentStyle={{ borderRadius: 12, fontWeight: 500 }}
+                  />
+                  <Legend
+                    iconType="rect"
+                    wrapperStyle={{ fontWeight: 700, color: "#2563eb" }}
+                  />
+                  <Bar
+                    dataKey="revenue"
+                    name="Doanh thu"
+                    fill="url(#colorRevenue)"
+                    radius={[8, 8, 0, 0]}
+                    barSize={36}
+                  >
+                    <LabelList
+                      dataKey="revenue"
+                      position="top"
+                      formatter={(v) => (v > 0 ? v.toLocaleString() : "")}
+                      style={{ fill: "#2563eb", fontWeight: 700, fontSize: 13 }}
+                    />
                   </Bar>
                   <defs>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient
+                      id="colorRevenue"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
                       <stop offset="0%" stopColor="#2563eb" stopOpacity={0.9} />
-                      <stop offset="100%" stopColor="#90caf9" stopOpacity={0.7} />
+                      <stop
+                        offset="100%"
+                        stopColor="#90caf9"
+                        stopOpacity={0.7}
+                      />
                     </linearGradient>
                   </defs>
                 </BarChart>
@@ -314,29 +400,48 @@ const ManagerDashboard = () => {
                     Chưa có dữ liệu
                   </div>
                 ) : (
-                  <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div
+                    style={{
+                      marginTop: 16,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 16,
+                    }}
+                  >
                     {recentAppointments.map((a) => (
-                      <div key={a.appointmentId} style={{
-                        background: "#f5f7fa",
-                        borderRadius: 10,
-                        padding: 16,
-                        boxShadow: "0 2px 8px #e0e7ef",
-                        marginBottom: 8
-                      }}>
-                        <div style={{ fontWeight: 600 }}>{a.serviceType || a.serviceName}</div>
+                      <div
+                        key={a.appointmentId}
+                        style={{
+                          background: "#f5f7fa",
+                          borderRadius: 10,
+                          padding: 16,
+                          boxShadow: "0 2px 8px #e0e7ef",
+                          marginBottom: 8,
+                        }}
+                      >
+                        <div style={{ fontWeight: 600 }}>
+                          {a.serviceType || a.serviceName}
+                        </div>
                         <div>Mã đơn: {a.appointmentId}</div>
-                        <div>Ngày hẹn: {new Date(a.appointmentDate).toLocaleDateString()}</div>
+                        <div>
+                          Ngày hẹn:{" "}
+                          {new Date(a.appointmentDate).toLocaleDateString()}
+                        </div>
                         <div>Khách hàng: {a.fullName}</div>
                         <div style={{ marginTop: 8 }}>
-                          <button style={{
-                            background: "#2563eb",
-                            color: "#fff",
-                            border: "none",
-                            borderRadius: 6,
-                            padding: "6px 18px",
-                            fontWeight: 500,
-                            cursor: "pointer"
-                          }}>Xem chi tiết</button>
+                          <button
+                            style={{
+                              background: "#2563eb",
+                              color: "#fff",
+                              border: "none",
+                              borderRadius: 6,
+                              padding: "6px 18px",
+                              fontWeight: 500,
+                              cursor: "pointer",
+                            }}
+                          >
+                            Xem chi tiết
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -359,17 +464,22 @@ const ManagerDashboard = () => {
                 ) : (
                   <div style={{ marginTop: 16 }}>
                     {popularServices.map(([type, count]) => (
-                      <div key={type} style={{
-                        background: "#f5f7fa",
-                        borderRadius: 10,
-                        padding: 12,
-                        marginBottom: 10,
-                        fontWeight: 500,
-                        display: "flex",
-                        justifyContent: "space-between"
-                      }}>
+                      <div
+                        key={type}
+                        style={{
+                          background: "#f5f7fa",
+                          borderRadius: 10,
+                          padding: 12,
+                          marginBottom: 10,
+                          fontWeight: 500,
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
                         <span>{type}</span>
-                        <span style={{ color: "#2563eb" }}>{count} lượt đặt</span>
+                        <span style={{ color: "#2563eb" }}>
+                          {count} lượt đặt
+                        </span>
                       </div>
                     ))}
                   </div>
