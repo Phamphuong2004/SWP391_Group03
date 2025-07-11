@@ -52,6 +52,10 @@ import Report from "../Report/Report";
 import TestCategoryManager from "../TestCategory/TestCategoryManager";
 import TestPurposeManager from "../TestPurpose/TestPurposeManager";
 import ParallelManagement from "../TestPurposeAndCategoryManagement/ParallelManagement";
+<<<<<<< HEAD
+import ServiceTestPurposeStaff from "../servicetestpurpose/servicetestpurposestafff";
+=======
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -238,6 +242,17 @@ function AppContent() {
           }
         />
         <Route path="/parallel-management" element={<ParallelManagement />} />
+<<<<<<< HEAD
+        <Route
+          path="/service-check"
+          element={
+            <ProtectedRoute allowedRoles={["staff"]}>
+              <ServiceTestPurposeStaff />
+            </ProtectedRoute>
+          }
+        />
+=======
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
       </Routes>
     </>
   );

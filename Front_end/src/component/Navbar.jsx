@@ -104,13 +104,6 @@ function MyNavbar() {
                   {/* Đặt lịch chỉ cho guest và customer */}
                   {(!user ||
                     (user.role && user.role.toLowerCase() === "customer")) && (
-                    <Nav.Link href="/booking" className="nav-link">
-                      Đặt lịch
-                    </Nav.Link>
-                  )}
-                  {/* Dịch vụ và Blog chỉ cho guest và customer */}
-                  {(!user ||
-                    (user.role && user.role.toLowerCase() === "customer")) && (
                     <>
                       <NavDropdown title="Dịch vụ" id="navbarScrollingDropdown">
                         <NavDropdown.Item
@@ -127,6 +120,9 @@ function MyNavbar() {
                           Dân sự
                         </NavDropdown.Item>
                       </NavDropdown>
+                      <Nav.Link href="/booking" className="nav-link">
+                        Đặt lịch
+                      </Nav.Link>
                       <Nav.Link href="/blog" className="nav-link">
                         Blog
                       </Nav.Link>
@@ -186,6 +182,14 @@ function MyNavbar() {
                       </Nav.Link>
                       {/* Đã xóa hai nút quản lý test category và test purpose */}
                     </>
+                  )}
+                  {user && user.role && user.role.toLowerCase() === "staff" && (
+                    <Nav.Link
+                      onClick={() => navigate("/service-check")}
+                      className="nav-link"
+                    >
+                      Kiểm tra dịch vụ
+                    </Nav.Link>
                   )}
                   {user &&
                     ["manager", "staff"].includes(user.role.toLowerCase()) && (

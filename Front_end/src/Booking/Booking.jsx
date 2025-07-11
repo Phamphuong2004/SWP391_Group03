@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
 import "./Booking.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import serviceTypes from "../serviceTypes";
 import { Select } from "antd";
 // XÓA: import { Steps } from "antd";
+<<<<<<< HEAD
+// import { getKitByServiceId } from "../Kit/KitApi";
+=======
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
 
 const testPurposes = ["Hành chính", "Dân sự"];
 
@@ -164,6 +168,20 @@ const kitSampleTypeMap = {
   "Judicial File": ["Máu", "Da"],
 };
 
+// Mapping dịch vụ sang mục đích xét nghiệm
+const servicePurposeMap = {
+  1: ["Hành chính"],
+  2: ["Hành chính"],
+  3: ["Hành chính"],
+  4: ["Hành chính", "Dân sự"], // Ví dụ: dịch vụ này có cả hai
+  5: ["Hành chính"],
+  6: ["Dân sự"],
+  7: ["Dân sự"],
+  8: ["Dân sự"],
+  9: ["Hành chính"],
+  10: ["Dân sự"],
+};
+
 function Booking() {
   const [form, setForm] = useState({
     fullName: "",
@@ -192,6 +210,26 @@ function Booking() {
 
   const [dynamicSampleTypeOptions, setDynamicSampleTypeOptions] =
     useState(sampleTypeOptions);
+  const [availablePurposes, setAvailablePurposes] = useState([]);
+
+  const location = useLocation();
+
+  // Khi vào trang booking, nếu có state truyền từ trang hướng dẫn dịch vụ thì set cứng mục đích xét nghiệm
+  React.useEffect(() => {
+    if (location.state && location.state.fixedPurpose) {
+      setForm((prev) => ({
+        ...prev,
+        testPurpose: location.state.fixedPurpose,
+      }));
+      setAvailablePurposes([location.state.fixedPurpose]);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (!form.testPurpose && availablePurposes && availablePurposes.length === 1) {
+      setForm((prev) => ({ ...prev, testPurpose: availablePurposes[0] }));
+    }
+  }, [availablePurposes, form.testPurpose]);
 
   // Validate bước 1
   const validateStep1 = () => {
@@ -238,6 +276,15 @@ function Booking() {
       const selected = provinces.find((p) => p.name === value);
       setDistricts(selected ? selected.districts : []);
       setForm((prev) => ({ ...prev, province: value, district: "" }));
+    } else if (name === "serviceType") {
+      setForm((prev) => ({ ...prev, serviceType: value, testPurpose: "" }));
+      // Xác định mục đích xét nghiệm hỗ trợ
+      const purposes = servicePurposeMap[value] || [];
+      setAvailablePurposes(purposes);
+      // Nếu có fixedPurpose thì giữ nguyên, không tự động set lại
+      if (purposes.length === 1 && !(location.state && location.state.fixedPurpose)) {
+        setForm((prev) => ({ ...prev, testPurpose: purposes[0] }));
+      }
     } else if (name === "kitComponentName") {
       // Lấy loại mẫu tương ứng với bộ kit
       const mappedTypes =
@@ -553,6 +600,8 @@ function Booking() {
             </label>
             <label>
               Tỉnh/Thành phố
+<<<<<<< HEAD
+=======
               <select
                 name="province"
                 value={form.province}
@@ -591,20 +640,80 @@ function Booking() {
             <h3>Thông tin xét nghiệm</h3>
             <label>
               Mục đích xét nghiệm
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
               <select
-                name="testPurpose"
-                value={form.testPurpose}
+                name="province"
+                value={form.province}
                 onChange={handleChange}
                 required
               >
-                <option value="">Chọn mục đích</option>
-                {testPurposes.map((purpose) => (
-                  <option key={purpose} value={purpose}>
-                    {purpose}
+                <option value="">Chọn tỉnh/thành phố</option>
+                {provinces.map((p) => (
+                  <option key={p.name} value={p.name}>
+                    {p.name}
                   </option>
                 ))}
               </select>
             </label>
+            <label>
+              Quận/Huyện
+              <select
+                name="district"
+                value={form.district}
+                onChange={handleChange}
+                required
+                disabled={!form.province}
+              >
+                <option value="">Chọn Quận/Huyện</option>
+                {districts.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {/* Cột phải: Thông tin xét nghiệm */}
+          <div className="booking-col booking-col-test">
+            <h3>Thông tin xét nghiệm</h3>
+            {/* Thanh thông báo mục đích xét nghiệm */}
+            {form.serviceType && availablePurposes.length > 0 && (
+              <div className="purpose-info-bar" style={{margin:'10px 0',padding:'10px',background:'#e3f0ff',border:'1.5px solid #1976d2',borderRadius:8}}>
+                <b>Dịch vụ này hỗ trợ mục đích xét nghiệm:</b> {availablePurposes.join(", ")}
+              </div>
+            )}
+            {/* Dropdown mục đích xét nghiệm chỉ hiện nếu có nhiều hơn 1 mục đích hoặc không có fixedPurpose */}
+            {((!form.serviceType || availablePurposes.length > 1) && !(location.state && location.state.fixedPurpose)) && (
+              <label>
+                Mục đích xét nghiệm
+                <select
+                  name="testPurpose"
+                  value={form.testPurpose}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Chọn mục đích</option>
+                  {(availablePurposes.length > 0 ? availablePurposes : testPurposes).map((purpose) => (
+                    <option key={purpose} value={purpose}>
+                      {purpose}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {/* Nếu có fixedPurpose thì hiện input disabled */}
+            {(location.state && location.state.fixedPurpose) && (
+              <label>
+                Mục đích xét nghiệm
+                <input
+                  type="text"
+                  value={location.state.fixedPurpose}
+                  disabled
+                  style={{background:'#f7eaea', color:'#b9b9b9'}}
+                />
+              </label>
+            )}
             <label>
               Loại dịch vụ
               <select

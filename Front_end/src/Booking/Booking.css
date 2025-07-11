@@ -13,7 +13,11 @@
 }
 
 .booking-form {
+<<<<<<< HEAD
+  max-width: 1300px;
+=======
   max-width: 950px;
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
   margin: 32px auto;
   background: transparent;
   box-shadow: none;
@@ -264,7 +268,11 @@
 /* 2 cột song song cho form đặt lịch */
 .booking-2col-flex {
   display: flex;
+<<<<<<< HEAD
+  gap: 64px;
+=======
   gap: 36px;
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
   justify-content: center;
   align-items: flex-start;
   margin-bottom: 32px;
@@ -274,10 +282,17 @@
   background: #f6f8ff;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(63, 81, 181, 0.08);
+<<<<<<< HEAD
+  padding: 32px 32px 24px 32px;
+  min-width: 400px;
+  flex: 1 1 0;
+  max-width: 600px;
+=======
   padding: 32px 24px 24px 24px;
   min-width: 320px;
   flex: 1 1 0;
   max-width: 420px;
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
   border: 1.5px solid #bfc6e0;
 }
 

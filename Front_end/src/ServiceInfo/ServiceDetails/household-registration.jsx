@@ -1,9 +1,11 @@
 import React from "react";
 import "./ServiceDetail.css";
+import { useNavigate } from "react-router-dom";
 
 const tags = ["#ĐăngKýHộKhẩu", "#HướngDẫn", "#PhápLý"];
 
 const HouseholdRegistrationGuide = () => {
+  const navigate = useNavigate();
   return (
     <div className="service-detail-container">
       <div className="service-detail-content">
@@ -80,6 +82,25 @@ const HouseholdRegistrationGuide = () => {
               </span>
             ))}
           </div>
+         <div style={{ textAlign: 'center', marginTop: 32 }}>
+           <button
+             onClick={() => navigate('/booking', { state: { fixedPurpose: 'Hành chính' } })}
+             style={{
+               background: '#1976d2',
+               color: '#fff',
+               border: 'none',
+               borderRadius: 8,
+               padding: '12px 36px',
+               fontWeight: 700,
+               fontSize: 20,
+               cursor: 'pointer',
+               boxShadow: '0 2px 8px #1976d233',
+               transition: 'background 0.2s',
+             }}
+           >
+             Đặt lịch
+           </button>
+         </div>
         </div>
       </div>
     </div>
