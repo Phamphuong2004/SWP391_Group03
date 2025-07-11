@@ -9,7 +9,10 @@ import { toast } from "react-toastify";
 import serviceTypes from "../serviceTypes";
 import { Select } from "antd";
 // XÓA: import { Steps } from "antd";
+<<<<<<< HEAD
 // import { getKitByServiceId } from "../Kit/KitApi";
+=======
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
 
 const testPurposes = ["Hành chính", "Dân sự"];
 
@@ -227,6 +230,44 @@ function Booking() {
       setForm((prev) => ({ ...prev, testPurpose: availablePurposes[0] }));
     }
   }, [availablePurposes, form.testPurpose]);
+
+  // Validate bước 1
+  const validateStep1 = () => {
+    const requiredFields = [
+      "fullName",
+      "dob",
+      "phone",
+      "gender",
+      "province",
+      "district",
+      "email",
+    ];
+    for (const field of requiredFields) {
+      if (!form[field]) return false;
+    }
+    return true;
+  };
+  // Validate bước 2
+  const validateStep2 = () => {
+    const requiredFields = [
+      "testPurpose",
+      "serviceType",
+      "appointmentDate",
+      "collectionTime",
+      "testCategory",
+      "collectionLocation",
+      "kitComponentName",
+      "sampleTypes",
+    ];
+    for (const field of requiredFields) {
+      if (
+        !form[field] ||
+        (Array.isArray(form[field]) && form[field].length === 0)
+      )
+        return false;
+    }
+    return true;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -559,6 +600,47 @@ function Booking() {
             </label>
             <label>
               Tỉnh/Thành phố
+<<<<<<< HEAD
+=======
+              <select
+                name="province"
+                value={form.province}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn tỉnh/thành phố</option>
+                {provinces.map((p) => (
+                  <option key={p.name} value={p.name}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Quận/Huyện
+              <select
+                name="district"
+                value={form.district}
+                onChange={handleChange}
+                required
+                disabled={!form.province}
+              >
+                <option value="">Chọn Quận/Huyện</option>
+                {districts.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {/* Cột phải: Thông tin xét nghiệm */}
+          <div className="booking-col booking-col-test">
+            <h3>Thông tin xét nghiệm</h3>
+            <label>
+              Mục đích xét nghiệm
+>>>>>>> bcd0a20497d5c742c7349eb3fe445506c80ae903
               <select
                 name="province"
                 value={form.province}
