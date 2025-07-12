@@ -88,9 +88,6 @@ public class AppointmentService {
         if (request.getGender() == null || request.getGender().isEmpty()) {
             errors.add("Gender is required");
         }
-        if (request.getServiceType() == null || request.getServiceType().isEmpty()) {
-            errors.add("Service type is required");
-        }
 
         TestPurposeV1 testPurposeV1 = TestPurposeV1.fromDisplayName(request.getTestPurpose());
         if(testPurposeV1 == TestPurposeV1.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
@@ -103,11 +100,29 @@ public class AppointmentService {
                 errors.add("Fingerprint file is required for test purpose 'Hành chính'");
             }
         }
+        if (request.getServiceType() == null || request.getServiceType().isEmpty()) errors.add("Service type is required");
 
         Services services = servicesRepository.findServicesByServiceId(serviceId);
         if (services == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Service not found with ID: " + serviceId);
+        }
+
+        if(request.getTestCategory() != null && !request.getTestCategory().isEmpty()){
+            boolean testCategorySupported = false;
+            List<TestCategory> supportedCategories = services.getTestCategories();
+            if (supportedCategories != null) {
+                for (TestCategory category : supportedCategories) {
+                    // Kiểm tra theo tên, có thể đổi sang id nếu cần
+                    if (category.getName().equalsIgnoreCase(request.getTestCategory())) {
+                        testCategorySupported = true;
+                        break;
+                    }
+                }
+            }
+            if (!testCategorySupported) {
+                errors.add("Dịch vụ hiện tại không hỗ trợ loại xét nghiệm: " + request.getTestCategory());
+            }
         }
 
 
@@ -351,6 +366,23 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
         Services services = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
+
+        if(request.getTestCategory() != null && !request.getTestCategory().isEmpty()){
+            boolean testCategorySupported = false;
+            List<TestCategory> supportedCategories = services.getTestCategories();
+            if (supportedCategories != null) {
+                for (TestCategory category : supportedCategories) {
+                    // Kiểm tra theo tên, có thể đổi sang id nếu cần
+                    if (category.getName().equalsIgnoreCase(request.getTestCategory())) {
+                        testCategorySupported = true;
+                        break;
+                    }
+                }
+            }
+            if (!testCategorySupported) {
+                errors.add("Dịch vụ hiện tại không hỗ trợ loại xét nghiệm: " + request.getTestCategory());
+            }
+        }
 
     KitComponent kitComponent = null;
     List<String> sampleTypes = request.getSampleTypes();
