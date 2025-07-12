@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ADNTestingServices from "../listOfServices";
 import "./Payment.css";
 import { toast } from "react-toastify";
-import { createPayment } from "./PaymentApi";
+import axios from "axios";
 
 const Payment = () => {
   const location = useLocation();
@@ -16,20 +16,21 @@ const Payment = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [editForm, setEditForm] = useState(null);
 
+  // Lấy lại thông tin lịch hẹn nếu không có trong state
   useEffect(() => {
     if (!appointment) {
       const appointmentId = localStorage.getItem("lastServiceId");
       if (appointmentId) {
         setLoading(true);
-        fetch(`/api/view-appointment/${appointmentId}`)
-          .then((res) => res.json())
-          .then((data) => {
-            setAppointment(data);
+        axios
+          .get(`/api/view-appointment/${appointmentId}`)
+          .then((res) => {
+            setAppointment(res.data);
             setEditForm({
-              fullName: data.fullName,
-              appointmentDate: data.appointmentDate,
-              collectionTime: data.collectionTime,
-              serviceType: data.serviceType,
+              fullName: res.data.fullName,
+              appointmentDate: res.data.appointmentDate,
+              collectionTime: res.data.collectionTime,
+              serviceType: res.data.serviceType,
             });
           })
           .catch(() => {
@@ -77,12 +78,13 @@ const Payment = () => {
     return str.substring(11, 16);
   };
 
+  // Xử lý thay đổi form chỉnh sửa
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Xử lý thanh toán sử dụng PaymentApi.js
+  // Xử lý thanh toán
   const handlePayment = async () => {
     if (!paymentMethod) {
       toast.warn("Vui lòng chọn phương thức thanh toán.");
@@ -90,27 +92,35 @@ const Payment = () => {
     }
     setLoading(true);
     try {
+      // Lấy token từ localStorage
       const userString = localStorage.getItem("user");
       const token = userString ? JSON.parse(userString).token : null;
-      if (!token) throw new Error("Bạn cần đăng nhập!");
+      // Chuẩn bị dữ liệu payment
       let status = "PENDING";
       if (paymentMethod.toLowerCase() === "online") status = "PAID";
       const paymentData = {
         appointmentId: appointment.appointmentId,
         amount: serviceDetails?.price || 1,
-        paymentMethod: paymentMethod.toUpperCase(), // Sửa key này
+        paymentMethod: paymentMethod.toUpperCase(),
         status,
         paymentDate: new Date().toISOString(),
       };
-      await createPayment(paymentData, token);
+      console.log("Dữ liệu gửi lên POST /api/payments/create:", paymentData);
+      if (token) {
+        await axios.post("/api/payments/create", paymentData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        await axios.post("/api/payments/create", paymentData);
+      }
       toast.success(
         "Thanh toán thành công! Lịch hẹn của bạn đã được xác nhận."
       );
       setPaymentSuccess(true);
-    } catch (err) {
-      toast.error(
-        "Thanh toán thất bại. " + (err.response?.data?.message || err.message)
-      );
+    } catch {
+      toast.error("Thanh toán thất bại. Vui lòng thử lại!");
     } finally {
       setLoading(false);
     }
@@ -120,6 +130,7 @@ const Payment = () => {
     navigate("/");
   };
 
+  // Hiển thị màn hình thanh toán thành công
   if (paymentSuccess) {
     return (
       <div className="payment-container">
@@ -244,16 +255,16 @@ const Payment = () => {
           <div className="method-options">
             <label
               className={`method-option radio-large ${
-                paymentMethod === "cash" ? "selected" : ""
+                paymentMethod === "cod" ? "selected" : ""
               }`}
             >
               <input
                 type="radio"
-                id="cash"
+                id="cod"
                 name="paymentMethod"
-                value="cash"
-                checked={paymentMethod === "cash"}
-                onChange={() => setPaymentMethod("cash")}
+                value="cod"
+                checked={paymentMethod === "cod"}
+                onChange={(e) => setPaymentMethod(e.target.value)}
               />
               <span className="radio-icon">💵</span>
               <span>Thanh toán khi đến lấy mẫu (COD)</span>
@@ -269,7 +280,7 @@ const Payment = () => {
                 name="paymentMethod"
                 value="online"
                 checked={paymentMethod === "online"}
-                onChange={() => setPaymentMethod("online")}
+                onChange={(e) => setPaymentMethod(e.target.value)}
               />
               <span className="radio-icon">💳</span>
               <span>Thanh toán trực tuyến (VNPAY, Momo, ...)</span>

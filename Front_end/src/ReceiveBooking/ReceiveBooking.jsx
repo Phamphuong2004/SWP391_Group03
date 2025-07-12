@@ -518,8 +518,8 @@ const ReceiveBooking = () => {
               <tbody>
                 {Object.entries(selectedBooking)
                   .filter(([key]) => fieldLabels[key])
-                  .map(([key, value], idx) => (
-                    <tr key={key || idx}>
+                  .map(([key, value]) => (
+                    <tr key={key}>
                       <td
                         style={{
                           fontWeight: "bold",

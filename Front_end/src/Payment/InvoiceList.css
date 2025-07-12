@@ -1,21 +1,22 @@
 /* ĐỒNG BỘ VỚI PAYMENT CARD */
 .payment-bg {
+  min-height: 100vh;
   background: linear-gradient(135deg, #e3f0ff 0%, #f8fbff 100%);
-  padding-top: 0;
-  padding-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .payment-card {
   background: var(--card-bg);
-  border-radius: 14px;
-  box-shadow: 0 4px 18px rgba(0, 80, 180, 0.08), 0 1.5px 6px rgba(0, 0, 0, 0.04);
-  padding: 18px 16px 24px 16px;
-  max-width: 1400px;
-  width: 97vw;
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(0, 80, 180, 0.1), 0 1.5px 6px rgba(0, 0, 0, 0.04);
+  padding: 32px 40px;
+  max-width: 900px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  margin-top: 0 !important;
+  gap: 28px;
 }
 .payment-title {
   text-align: center;
@@ -24,7 +25,6 @@
   letter-spacing: 1px;
   font-weight: 700;
   color: #2563eb;
-  margin-top: 0 !important;
 }
 .section-title {
   font-size: 1.15rem;
@@ -45,31 +45,28 @@
 }
 .invoice-table {
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 1px 4px rgba(44, 62, 80, 0.04);
-  min-width: 1100px;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.08);
+  padding: 2rem 2.5rem;
+  min-width: 350px;
+  max-width: 700px;
   width: 100%;
   margin: 0 auto;
-  border-collapse: collapse;
-  table-layout: auto;
+  border-collapse: separate;
+  border-spacing: 0 12px;
 }
 .invoice-table th,
 .invoice-table td {
   text-align: center;
   vertical-align: middle;
-  padding: 10px 8px;
+  padding: 12px 8px;
   font-size: 1rem;
   color: var(--table-text);
-  border-bottom: 1px solid #e3e8ee;
 }
 .invoice-table th {
-  font-weight: 700;
+  font-weight: 600;
   color: var(--table-header-color);
   background: var(--table-header-bg);
-  border-bottom: 2px solid #e3e8ee;
-}
-.invoice-table tr:last-child td {
-  border-bottom: none;
 }
 .invoice-table tr {
   background: var(--table-row-bg);
@@ -77,7 +74,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 .invoice-table tr:hover {
-  background: #f5faff;
+  background: #f0f6ff;
 }
 .invoice-status {
   font-weight: bold;
@@ -92,15 +89,6 @@
 .invoice-status.paid {
   color: #2196f3;
   background: #e3f2fd;
-}
-@media (max-width: 1500px) {
-  .payment-card {
-    max-width: 99vw;
-    padding: 8px 2vw 14px 2vw;
-  }
-  .invoice-table {
-    min-width: 800px;
-  }
 }
 @media (max-width: 600px) {
   .payment-card {
@@ -211,39 +199,38 @@
 .btn-confirm {
   color: #fff;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   min-width: 60px;
-  padding: 5px 0;
-  font-size: 0.97rem;
+  padding: 6px 0;
+  font-size: 0.98rem;
   margin: 0 2px;
-  transition: background 0.15s, filter 0.13s;
-  font-weight: 600;
+  transition: filter 0.15s;
 }
 .btn-confirm.view {
-  background: #2563eb;
+  background: var(--btn-view);
 }
 .btn-confirm.edit {
-  background: #f59e42;
+  background: var(--btn-edit);
 }
 .btn-confirm.delete {
-  background: #e74c3c;
+  background: var(--btn-delete);
 }
 .btn-confirm:hover {
-  filter: brightness(1.08);
+  filter: brightness(1.1);
 }
 
 /* Trạng thái thanh toán */
 .status-paid {
-  background: #e6f9ec;
-  color: #22a55e;
+  background: var(--status-paid-bg);
+  color: var(--status-paid-color);
   padding: 4px 12px;
   border-radius: 6px;
   font-weight: 600;
   display: inline-block;
 }
 .status-pending {
-  background: #fffbe6;
-  color: #bfa100;
+  background: var(--status-pending-bg);
+  color: var(--status-pending-color);
   padding: 4px 12px;
   border-radius: 6px;
   font-weight: 600;

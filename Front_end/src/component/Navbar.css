@@ -629,19 +629,3 @@ body.dark-theme .brand-text {
     gap: 8px;
   }
 }
-
-.report-orange {
-  color: #ff5722 !important; /* Đỏ cam nổi bật */
-  font-weight: bold;
-  background: transparent;
-  border: 2px solid #ff5722;
-  border-radius: 8px;
-  margin-left: 8px;
-  box-shadow: 0 0 0 2px rgba(255,87,34,0.15);
-  transition: background 0.2s, color 0.2s, border 0.2s;
-}
-.report-orange:hover, .report-orange:focus {
-  color: #fff !important;
-  background: linear-gradient(90deg, #ff9800 0%, #ff5722 100%);
-  border-color: #ff9800;
-}

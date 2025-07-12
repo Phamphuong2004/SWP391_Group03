@@ -184,7 +184,7 @@ export default function ServiceManagement() {
               </tr>
             ) : (
               services.map((s, idx) => (
-                <tr key={s.id || idx}>
+                <tr key={s.serviceId || idx}>
                   <td>{s.service_id}</td>
                   <td>{s.service_name}</td>
                   <td>{s.description}</td>

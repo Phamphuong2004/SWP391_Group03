@@ -1,8 +1,8 @@
 @keyframes historyFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-24px) scale(0.98);
-    filter: blur(2px);
+    transform: translateY(-32px) scale(0.98);
+    filter: blur(4px);
   }
   to {
     opacity: 1;
@@ -54,153 +54,173 @@
   transform: translateY(-8px) scale(1.03);
 }
 
-/* Bảng lịch sử user/public nổi bật */
 .history-container {
-  padding: 36px 18px 36px 18px;
-  max-width: 1100px;
-  margin: 40px auto;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
   background-color: #fff;
-  border-radius: 20px;
-  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.1);
-  animation: historyFadeIn 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(25, 118, 210, 0.1);
+  animation: historyFadeIn 0.9s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .history-container h1 {
   text-align: center;
-  color: #23408e;
-  margin-bottom: 28px;
-  font-size: 2rem;
-  font-weight: 800;
+  color: #ffd600;
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  font-weight: 900;
   letter-spacing: 1px;
-  text-shadow: none;
+  text-shadow: 0 2px 8px #ffd60033;
 }
+
 .history-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
   background: #fff;
-  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
-  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(25, 118, 210, 0.1);
+  border-radius: 10px;
   overflow: hidden;
-  margin-bottom: 32px;
 }
+
 .history-table th,
 .history-table td {
-  padding: 16px 14px;
+  padding: 12px 15px;
   text-align: left;
-  font-size: 1rem;
-}
-.history-table th {
-  background-color: #f3f6fa;
-  color: #23408e;
-  font-weight: 800;
-  font-size: 1.05rem;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid #e3f0ff;
-}
-.history-table td {
-  color: #23408e;
+  border-bottom: 1.5px solid #ffd600;
+  color: #232323;
   background: #fff;
-  border-bottom: 1px solid #f3f6fa;
+  font-size: 1.05rem;
 }
-.history-table tr:nth-child(even) td {
-  background-color: #f7faff;
-}
-.history-table tr {
-  transition: background 0.18s;
-}
-.history-table tr:hover td {
-  background: #eaf1ff;
-}
-.status {
-  padding: 6px 16px;
-  border-radius: 10px;
-  font-size: 0.98em;
-  font-weight: 700;
-  box-shadow: none;
-  margin-left: 6px;
+
+.history-table th {
+  background-color: #ffd600;
+  color: #232323;
+  font-weight: 900;
+  font-size: 1.08rem;
   letter-spacing: 0.5px;
 }
-.status.success {
-  background: #e6f7e6;
-  color: #22a55e;
+
+.history-table tr:nth-child(even) {
+  background-color: #f9fafb;
 }
+
+.history-table tr {
+  transition: background 0.2s;
+}
+
+.history-table tr:hover {
+  background: #fffbe6;
+}
+
+.history-table tr:last-child td {
+  border-bottom: none;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.9em;
+  font-weight: 700;
+}
+
+.status.success {
+  background-color: #d4edda;
+  color: #28a745;
+}
+
 .status.failed {
-  background: #fde7e7;
+  background-color: #fde7e7;
   color: #e74c3c;
 }
+
 .status.pending {
-  background: #ffeeba;
-  color: #bfa100;
+  background-color: #fffbe6;
+  color: #ffd600;
 }
+
 .history-table tbody tr {
-  border-bottom: 1px solid #e3f0ff;
+  border-bottom: 1px solid #90caf9;
 }
+
 .history-table tbody tr:nth-of-type(even) {
-  background-color: #f7faff;
+  background-color: #f3f3f3;
 }
+
 .history-table tbody tr:last-of-type {
-  border-bottom: 2px solid #23408e;
+  border-bottom: 2px solid #1976d2;
 }
+
 .history-table tbody tr.active-row {
-  font-weight: 700;
-  color: #23408e;
+  font-weight: bold;
+  color: #1976d2;
 }
+
+/* Add this to ensure text is visible in dark mode */
 .history-table tbody td {
-  color: #23408e;
+  color: #1976d2;
 }
+
 .error {
   color: #e74c3c;
   text-align: center;
-  margin-top: 18px;
+  margin-top: 20px;
 }
+
 @media (max-width: 700px) {
   .history-container {
     padding: 8px;
   }
   .history-table th,
   .history-table td {
-    padding: 6px 2px;
+    padding: 8px 4px;
     font-size: 0.95rem;
   }
-  .history-container h1 {
-    font-size: 1.1rem;
-  }
 }
+
 .dark-theme .history-container {
   background-color: #23272f;
-  color: #eee;
-  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.1);
+  color: #ffd600;
+  box-shadow: 0 4px 24px rgba(255, 224, 102, 0.1);
 }
+
 .dark-theme .history-container h1 {
-  color: #ffeeba;
-  text-shadow: none;
+  color: #ffd600;
+  text-shadow: 0 2px 8px #ffd60099;
 }
+
 .dark-theme .history-table {
-  background: #23272f;
-  box-shadow: 0 1px 3px rgba(255, 224, 102, 0.08);
+  background: #181a20;
+  box-shadow: 0 1px 3px rgba(255, 224, 102, 0.1);
 }
+
 .dark-theme .history-table th,
 .dark-theme .history-table td {
-  border-bottom: 1px solid #3b5cb8;
-  color: #ffeeba;
+  border-bottom: 1.5px solid #ffd600;
+  color: #ffd600;
+  background: #181a20;
+}
+
+.dark-theme .history-table th {
+  background-color: #ffd600;
+  color: #232323;
+}
+
+.dark-theme .history-table tr:hover {
   background: #23272f;
 }
-.dark-theme .history-table th {
-  background-color: #2c3550;
-  color: #ffeeba;
-}
-.dark-theme .history-table tr:hover td {
-  background: #2c3550;
-}
+
 .dark-theme .status.success {
   background-color: #223a1a;
   color: #b6ffb6;
 }
+
 .dark-theme .status.failed {
   background-color: #3a1a1a;
   color: #ffb6b6;
 }
+
 .dark-theme .status.pending {
-  background-color: #3b5cb8;
-  color: #ffeeba;
+  background-color: #23272f;
+  color: #ffd600;
 }

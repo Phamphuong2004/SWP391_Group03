@@ -86,140 +86,136 @@ function MyNavbar() {
               <Nav.Link href="/" className="nav-link">
                 Trang chủ
               </Nav.Link>
-              {/* Ẩn hoàn toàn các nút quản lý khi là manager, chỉ giữ lại Trang chủ và Quản trị hệ thống */}
-              {user && user.role && user.role.toLowerCase() === "manager" ? (
+              {/* Đặt lịch chỉ cho guest và customer */}
+              {(!user ||
+                (user.role && user.role.toLowerCase() === "customer")) && (
+                <Nav.Link href="/booking" className="nav-link">
+                  Đặt lịch
+                </Nav.Link>
+              )}
+              {/* Dịch vụ và Blog chỉ cho guest và customer */}
+              {(!user ||
+                (user.role && user.role.toLowerCase() === "customer")) && (
                 <>
-                  <NavDropdown
-                    title="Quản trị hệ thống"
-                    id="manager-system-dropdown"
-                    className="nav-link"
-                  >
-                    <NavDropdown.Item href="/manager-dashboard">
-                      Trang quản trị
+                  <NavDropdown title="Dịch vụ" id="navbarScrollingDropdown">
+                    <NavDropdown.Item
+                      href="/administrative-service"
+                      className="dropdown-item"
+                    >
+                      Hành chính
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item
+                      href="/civil-service"
+                      className="dropdown-item"
+                    >
+                      Dân sự
                     </NavDropdown.Item>
                   </NavDropdown>
-                </>
-              ) : (
-                <>
-                  {/* Đặt lịch chỉ cho guest và customer */}
-                  {(!user ||
-                    (user.role && user.role.toLowerCase() === "customer")) && (
-                    <>
-                      <NavDropdown title="Dịch vụ" id="navbarScrollingDropdown">
-                        <NavDropdown.Item
-                          href="/administrative-service"
-                          className="dropdown-item"
-                        >
-                          Hành chính
-                        </NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item
-                          href="/civil-service"
-                          className="dropdown-item"
-                        >
-                          Dân sự
-                        </NavDropdown.Item>
-                      </NavDropdown>
-                      <Nav.Link href="/booking" className="nav-link">
-                        Đặt lịch
-                      </Nav.Link>
-                      <Nav.Link href="/blog" className="nav-link">
-                        Blog
-                      </Nav.Link>
-                    </>
-                  )}
-                  {/* Xem kết quả chỉ cho guest và customer */}
-                  {(!user ||
-                    (user.role && user.role.toLowerCase() === "customer")) && (
-                    <Nav.Link
-                      onClick={() => navigate("/dashboard")}
-                      className="nav-link"
-                    >
-                      Xem kết quả
-                    </Nav.Link>
-                  )}
-                  {/* Theo dõi đơn cho tất cả các loại tài khoản */}
-                  <Nav.Link
-                    onClick={() => {
-                      if (user) {
-                        navigate("/history");
-                      } else {
-                        navigate("/service-tracking");
-                      }
-                    }}
-                    className="nav-link"
-                  >
-                    Theo dõi đơn
+                  <Nav.Link href="/blog" className="nav-link">
+                    Blog
                   </Nav.Link>
-                  {user && user.role.toLowerCase() === "staff" && (
-                    <>
-                      <Nav.Link href="/receive-booking" className="nav-link">
-                        Quản lý đơn
-                      </Nav.Link>
-                      <Nav.Link
-                        onClick={() => navigate("/view-feedback")}
-                        className="nav-link"
-                      >
-                        Xem đơn feedback
-                      </Nav.Link>
-                      <Nav.Link
-                        onClick={() => navigate("/invoices")}
-                        className="nav-link"
-                      >
-                        Xem hóa đơn
-                      </Nav.Link>
-                      <Nav.Link
-                        onClick={() => navigate("/kit-management")}
-                        className="nav-link"
-                      >
-                        Quản lý Kit
-                      </Nav.Link>
-                      <Nav.Link href="/sample-workspace" className="nav-link">
-                        Quản lý mẫu (Tổng hợp)
-                      </Nav.Link>
-                      <Nav.Link href="/staff-result" className="nav-link">
-                        Kết quả xét nghiệm
-                      </Nav.Link>
-                      {/* Đã xóa hai nút quản lý test category và test purpose */}
-                    </>
-                  )}
-                  {user && user.role && user.role.toLowerCase() === "staff" && (
-                    <Nav.Link
-                      onClick={() => navigate("/service-check")}
-                      className="nav-link"
-                    >
-                      Kiểm tra dịch vụ
-                    </Nav.Link>
-                  )}
-                  {user &&
-                    ["manager", "staff"].includes(user.role.toLowerCase()) && (
-                      <>
-                        <Nav.Link href="/login-history" className="nav-link">
-                          Lịch Sử Người Dùng
-                        </Nav.Link>
-                        <Nav.Link href="/report" className="nav-link">
-                          Báo cáo
-                        </Nav.Link>
-                      </>
-                    )}
-                  {user && user.role.toLowerCase() === "customer" && (
-                    <>
-                      <Nav.Link href="/payment" className="nav-link">
-                        Thanh toán
-                      </Nav.Link>
-                    </>
-                  )}
-                  {user &&
-                    ["manager", "staff"].includes(user.role?.toLowerCase()) && (
-                      <Nav.Link
-                        href="/parallel-management"
-                        className="nav-link"
-                      >
-                        Quản lý song song
-                      </Nav.Link>
-                    )}
                 </>
               )}
+              {/* Xem kết quả chỉ cho guest và customer */}
+              {(!user ||
+                (user.role && user.role.toLowerCase() === "customer")) && (
+                <Nav.Link
+                  onClick={() => navigate("/dashboard")}
+                  className="nav-link"
+                >
+                  Xem kết quả
+                </Nav.Link>
+              )}
+              {/* Theo dõi đơn cho tất cả các loại tài khoản */}
+              <Nav.Link
+                onClick={() => {
+                  if (user) {
+                    navigate("/history");
+                  } else {
+                    navigate("/service-tracking");
+                  }
+                }}
+                className="nav-link"
+              >
+                Theo dõi đơn
+              </Nav.Link>
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link href="/receive-booking" className="nav-link">
+                    Quản lý đơn
+                  </Nav.Link>
+                )}
+              {user &&
+                ["manager", "staff", "customer"].includes(
+                  user.role.toLowerCase()
+                ) && (
+                  <Nav.Link href="/login-history" className="nav-link">
+                    Lịch Sử Người Dùng
+                  </Nav.Link>
+                )}
+              {user && user.role.toLowerCase() === "customer" && (
+                <Nav.Link href="/payment" className="nav-link">
+                  Thanh toán
+                </Nav.Link>
+              )}
+              {user && user.role && user.role.toLowerCase() === "manager" && (
+                <Nav.Link
+                  onClick={() => navigate("/service-management")}
+                  className="nav-link"
+                >
+                  Quản lý dịch vụ
+                </Nav.Link>
+              )}
+              {user && user.role && user.role.toLowerCase() === "manager" && (
+                <Nav.Link
+                  onClick={() => navigate("/account-management")}
+                  className="nav-link"
+                >
+                  Quản lý tài khoản
+                </Nav.Link>
+              )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/view-feedback")}
+                    className="nav-link"
+                  >
+                    Xem đơn feedback
+                  </Nav.Link>
+                )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/invoices")}
+                    className="nav-link"
+                  >
+                    Xem hóa đơn
+                  </Nav.Link>
+                )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/sample-management")}
+                    className="nav-link"
+                  >
+                    Quản lý mẫu
+                  </Nav.Link>
+                )}
+              {user &&
+                (user.role.toLowerCase() === "staff" ||
+                  user.role.toLowerCase() === "manager") && (
+                  <Nav.Link
+                    onClick={() => navigate("/kit-management")}
+                    className="nav-link"
+                  >
+                    Quản lý Kit
+                  </Nav.Link>
+                )}
             </Nav>
             <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
               <Form.Control

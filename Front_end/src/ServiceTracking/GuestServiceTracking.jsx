@@ -65,16 +65,14 @@ const StatusTimeline = ({ status }) => {
         }}
       ></div>
       {mainStatuses.map((s, index) => (
-        <div key={s || index}>
-          <div
-            key={s}
-            className={`status-point ${
-              index <= currentStatusIndex ? "completed" : ""
-            } ${index === currentStatusIndex ? "current" : ""}`}
-          >
-            <div className="status-dot"></div>
-            <div className="status-label">{statusTranslations[s] || s}</div>
-          </div>
+        <div
+          key={s}
+          className={`status-point ${
+            index <= currentStatusIndex ? "completed" : ""
+          } ${index === currentStatusIndex ? "current" : ""}`}
+        >
+          <div className="status-dot"></div>
+          <div className="status-label">{statusTranslations[s] || s}</div>
         </div>
       ))}
     </div>
@@ -184,9 +182,9 @@ export default function GuestServiceTracking() {
             justifyContent: "center",
           }}
         >
-          {guestList.map((item, idx) => (
+          {guestList.map((item) => (
             <div
-              key={item.id || item.appointmentId || idx}
+              key={item.appointmentId}
               style={{
                 background: "#fff",
                 borderRadius: 16,
