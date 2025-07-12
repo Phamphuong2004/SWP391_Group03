@@ -10,5 +10,6 @@ public interface TestCategoryRepository extends JpaRepository<TestCategory, Long
     List<TestCategory> findByService_ServiceNameAndIsActiveTrue(String serviceName);
     List<TestCategory> findByService_ServiceName(String serviceName);
     TestCategory findByName(String name);
+    List<TestCategory> findByService_ServiceId(Long serviceId);
 
 }

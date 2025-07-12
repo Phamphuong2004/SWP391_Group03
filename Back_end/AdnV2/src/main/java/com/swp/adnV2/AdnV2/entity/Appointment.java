@@ -22,7 +22,6 @@ public class Appointment {
     @JsonIgnore
     private Users users;
 
-    // Thêm phương thức này để vẫn hiển thị userId
     @JsonProperty("userId")
     public Long getUserId() {
         return users != null ? users.getUserId() : null;
