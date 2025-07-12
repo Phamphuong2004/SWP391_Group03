@@ -26,7 +26,6 @@ public class AppointmentRequest {
 
     @NotBlank(message = "Gender is required")
     private String gender;
-    
 
     @NotBlank(message = "Test purpose is required")
     private String testPurpose; // dân sự, hành chính
