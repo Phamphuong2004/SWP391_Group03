@@ -34,7 +34,7 @@ export default function TestPurposeManager() {
       const res = await getTestPurposeById(testPurposeId);
       setPurpose(res.data);
     } catch (err) {
-      setMessage("Không tìm thấy hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Không tìm thấy hoặc lỗi API");
     }
   };
 
@@ -46,7 +46,7 @@ export default function TestPurposeManager() {
       const res = await createTestPurpose(form);
       setMessage("Tạo thành công! ID: " + res.data.id);
     } catch (err) {
-      setMessage("Tạo thất bại hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Tạo thất bại hoặc lỗi API");
     }
   };
 
@@ -58,7 +58,7 @@ export default function TestPurposeManager() {
       setMessage("Đã xóa thành công!");
       setPurpose(null);
     } catch (err) {
-      setMessage("Xóa thất bại hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Xóa thất bại hoặc lỗi API");
     }
   };
 

@@ -45,7 +45,7 @@ export default function TestCategoryManager() {
       const res = await getTestCategoryById(categoryId);
       setCategory(res.data);
     } catch (err) {
-      setMessage("Không tìm thấy hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Không tìm thấy hoặc lỗi API");
     }
   };
 
@@ -57,7 +57,7 @@ export default function TestCategoryManager() {
       await createTestCategory(form);
       setMessage("Tạo thành công!");
     } catch (err) {
-      setMessage("Tạo thất bại hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Tạo thất bại hoặc lỗi API");
     }
   };
 
@@ -69,7 +69,7 @@ export default function TestCategoryManager() {
       setMessage("Đã xóa thành công!");
       setCategory(null);
     } catch (err) {
-      setMessage("Xóa thất bại hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Xóa thất bại hoặc lỗi API");
     }
   };
 
@@ -81,7 +81,7 @@ export default function TestCategoryManager() {
       await updateTestCategory(updateId, updateForm);
       setMessage("Cập nhật thành công!");
     } catch (err) {
-      setMessage("Cập nhật thất bại hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Cập nhật thất bại hoặc lỗi API");
     }
   };
 
@@ -93,7 +93,7 @@ export default function TestCategoryManager() {
       const res = await getAllTestCategoriesByService(serviceName);
       setCategories(res.data);
     } catch (err) {
-      setMessage("Không tìm thấy hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Không tìm thấy hoặc lỗi API");
     }
   };
 
@@ -105,7 +105,7 @@ export default function TestCategoryManager() {
       const res = await getActiveTestCategoriesByService(serviceName);
       setCategories(res.data);
     } catch (err) {
-      setMessage("Không tìm thấy hoặc lỗi API");
+      setMessage(err.response?.data?.message || "Không tìm thấy hoặc lỗi API");
     }
   };
 
