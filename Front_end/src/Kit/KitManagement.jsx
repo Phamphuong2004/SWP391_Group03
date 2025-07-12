@@ -6,6 +6,7 @@ import {
   deleteKitComponent,
   updateKitComponent,
 } from "./KitApi";
+import { Table, Button, Popconfirm, message, Form, Input, Card } from "antd";
 
 const KitManagement = () => {
   const [serviceId, setServiceId] = useState("");
@@ -95,132 +96,144 @@ const KitManagement = () => {
     // eslint-disable-next-line
   }, [serviceId, refresh]);
 
+  // Chuẩn bị columns cho AntD Table
+  const columns = [
+    {
+      title: "Tên kit",
+      dataIndex: "componentName",
+      key: "componentName",
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+    {
+      title: "Hướng dẫn",
+      dataIndex: "introduction",
+      key: "introduction",
+    },
+    {
+      title: "Hành động",
+      key: "actions",
+      render: (_, kit) => (
+        <div style={{ display: "flex", gap: 8 }}>
+          <Button type="primary" onClick={() => handleEdit(kit)}>
+            Sửa
+          </Button>
+          <Popconfirm
+            title="Bạn chắc chắn muốn xóa?"
+            onConfirm={() => handleDelete(kit.kitComponentId || kit.id)}
+          >
+            <Button danger>Xóa</Button>
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div className="kit-management-card">
       <h2 className="kit-management-title">Quản lý Kit</h2>
       <div className="kit-management-serviceid-row">
         <label htmlFor="serviceId">Nhập mã dịch vụ:</label>
         <div className="serviceid-input-group">
-          <input
+          <Input
             id="serviceId"
             className="kit-service-id-input"
             value={serviceId}
             onChange={(e) => setServiceId(e.target.value)}
             placeholder="Nhập mã dịch vụ"
+            style={{ width: 200, marginRight: 8 }}
           />
-          <button
+          <Button
             className="btn-load-kit"
             onClick={fetchKits}
             disabled={!serviceId}
+            type="primary"
           >
             Tải kit
-          </button>
+          </Button>
         </div>
       </div>
       {error && <div className="kit-management-error">{error}</div>}
       {loading ? (
         <div>Đang tải...</div>
       ) : (
-        <table
-          className="kit-management-table"
-          border="1"
-          cellPadding="8"
-          style={{ width: "100%", borderCollapse: "collapse" }}
-        >
-          <thead>
-            <tr>
-              <th>Tên kit</th>
-              <th>Số lượng</th>
-              <th>Hướng dẫn</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {kits.length === 0 ? (
-              <tr>
-                <td colSpan="4">Không có kit nào</td>
-              </tr>
-            ) : (
-              kits.map((kit) => (
-                <tr key={kit.kitComponentId || kit.id}>
-                  <td>{kit.componentName}</td>
-                  <td>{kit.quantity}</td>
-                  <td>{kit.introduction}</td>
-                  <td style={{ display: "flex", gap: 8 }}>
-                    <button
-                      className="btn-edit"
-                      onClick={() => handleEdit(kit)}
-                    >
-                      Sửa
-                    </button>
-                    <button
-                      className="btn-delete"
-                      onClick={() => handleDelete(kit.kitComponentId || kit.id)}
-                    >
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+        <Table
+          columns={columns}
+          dataSource={kits}
+          rowKey={(kit) => kit.kitComponentId || kit.id}
+          pagination={false}
+          bordered
+          locale={{ emptyText: "Không có kit nào" }}
+          style={{ borderRadius: 8, marginTop: 16 }}
+        />
       )}
-      <h3 className="kit-management-subtitle">
-        {editingKit ? "Cập nhật kit" : "Thêm kit mới"}
-      </h3>
-      <form
-        className="kit-management-form"
-        onSubmit={editingKit ? handleUpdateKit : handleAddKit}
-      >
-        <div className="form-group">
-          <label htmlFor="componentName">Tên kit</label>
-          <input
-            id="componentName"
+      <Card style={{ maxWidth: 500, margin: "32px auto 0", borderRadius: 8 }}>
+        <h3 className="kit-management-subtitle" style={{ textAlign: "center" }}>
+          {editingKit ? "Cập nhật kit" : "Thêm kit mới"}
+        </h3>
+        <Form
+          layout="vertical"
+          onFinish={editingKit ? handleUpdateKit : handleAddKit}
+          initialValues={form}
+        >
+          <Form.Item
+            label="Tên kit"
             name="componentName"
-            placeholder="Tên kit"
-            value={form.componentName ?? ""}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="quantity">Số lượng</label>
-          <input
-            id="quantity"
+            rules={[{ required: true, message: "Vui lòng nhập tên kit" }]}
+            initialValue={form.componentName}
+          >
+            <Input
+              placeholder="Tên kit"
+              value={form.componentName}
+              onChange={handleInputChange}
+              name="componentName"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Số lượng"
             name="quantity"
-            type="number"
-            placeholder="Số lượng"
-            value={form.quantity ?? ""}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="introduction">Hướng dẫn</label>
-          <input
-            id="introduction"
+            rules={[{ required: true, message: "Vui lòng nhập số lượng" }]}
+            initialValue={form.quantity}
+          >
+            <Input
+              type="number"
+              placeholder="Số lượng"
+              value={form.quantity}
+              onChange={handleInputChange}
+              name="quantity"
+            />
+          </Form.Item>
+          <Form.Item
+            label="Hướng dẫn"
             name="introduction"
-            placeholder="Hướng dẫn"
-            value={form.introduction ?? ""}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button type="submit" disabled={!serviceId}>
-            {editingKit ? "Cập nhật kit" : "Thêm kit"}
-          </button>
-          {editingKit && (
-            <button
-              type="button"
-              className="btn-cancel"
-              onClick={handleCancelEdit}
-            >
-              Hủy
-            </button>
-          )}
-        </div>
-      </form>
+            initialValue={form.introduction}
+          >
+            <Input
+              placeholder="Hướng dẫn"
+              value={form.introduction}
+              onChange={handleInputChange}
+              name="introduction"
+            />
+          </Form.Item>
+          <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+            <Button type="primary" htmlType="submit" disabled={!serviceId}>
+              {editingKit ? "Cập nhật kit" : "Thêm kit"}
+            </Button>
+            {editingKit && (
+              <Button
+                type="default"
+                className="btn-cancel"
+                onClick={handleCancelEdit}
+              >
+                Hủy
+              </Button>
+            )}
+          </div>
+        </Form>
+      </Card>
     </div>
   );
 };
