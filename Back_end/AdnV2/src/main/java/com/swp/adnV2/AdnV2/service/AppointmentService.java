@@ -100,6 +100,7 @@ public class AppointmentService {
                 errors.add("Fingerprint file is required for test purpose 'Hành chính'");
             }
         }
+        if (request.getServiceType() == null || request.getServiceType().isEmpty()) errors.add("Service type is required");
 
         Services services = servicesRepository.findServicesByServiceId(serviceId);
         if (services == null) {
@@ -160,7 +161,7 @@ public class AppointmentService {
             appointment.setEmail(request.getEmail());
             appointment.setGender(request.getGender());
             appointment.setTestPurpose(request.getTestPurpose());
-            appointment.setServiceType(services.getServiceName());
+            appointment.setServiceType(request.getServiceType());
             appointment.setCollectionSampleTime(request.getCollectionTime());
             appointment.setTestCategory(request.getTestCategory());
             appointment.setFingerprintFile(request.getFingerprintFile());
@@ -349,7 +350,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
     if (request.getPhone() == null || request.getPhone().isEmpty()) errors.add("Phone number is required");
     if (request.getEmail() == null || request.getEmail().isEmpty()) errors.add("Email is required");
     if (request.getGender() == null || request.getGender().isEmpty()) errors.add("Gender is required");
-//    if (request.getServiceType() == null || request.getServiceType().isEmpty()) errors.add("Service type is required");
+    if (request.getServiceType() == null || request.getServiceType().isEmpty()) errors.add("Service type is required");
 
     TestPurposeV1 testPurposeV1 = TestPurposeV1.fromDisplayName(request.getTestPurpose());
     if(testPurposeV1 == TestPurposeV1.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
@@ -440,7 +441,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
         appointment.setEmail(request.getEmail());
         appointment.setGender(request.getGender());
         appointment.setTestPurpose(request.getTestPurpose());
-        appointment.setServiceType(services.getServiceName());
+        appointment.setServiceType(request.getServiceType());
         appointment.setCollectionSampleTime(request.getCollectionTime());
         appointment.setTestCategory(request.getTestCategory());
         appointment.setFingerprintFile(request.getFingerprintFile());

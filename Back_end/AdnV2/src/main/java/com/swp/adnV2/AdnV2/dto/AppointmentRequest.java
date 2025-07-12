@@ -30,8 +30,8 @@ public class AppointmentRequest {
     @NotBlank(message = "Test purpose is required")
     private String testPurpose; // dân sự, hành chính
 
-//    @NotBlank(message = "Service type is required")
-//    private String serviceType; // Huyết thông, ADN pháp lý,...
+    @NotBlank(message = "Service type is required")
+    private String serviceType; // Huyết thông, ADN pháp lý,...
 
     @NotBlank(message = "Test category is required")
     private String testCategory; // loại xét nghiệm
@@ -123,13 +123,13 @@ public class AppointmentRequest {
         this.testPurpose = testPurpose;
     }
 
-//    public String getServiceType() {
-//        return serviceType;
-//    }
-//
-//    public void setServiceType(String serviceType) {
-//        this.serviceType = serviceType;
-//    }
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
     public LocalDateTime getCollectionTime() {
         return collectionTime;
