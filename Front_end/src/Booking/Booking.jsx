@@ -206,6 +206,7 @@ function Booking() {
   const [dynamicSampleTypeOptions, setDynamicSampleTypeOptions] =
     useState(sampleTypeOptions);
   const [availablePurposes, setAvailablePurposes] = useState([]);
+  const [filteredKits, setFilteredKits] = useState(kitComponentNames);
 
   const location = useLocation();
 
@@ -221,7 +222,11 @@ function Booking() {
   }, [location.state]);
 
   useEffect(() => {
-    if (!form.testPurpose && availablePurposes && availablePurposes.length === 1) {
+    if (
+      !form.testPurpose &&
+      availablePurposes &&
+      availablePurposes.length === 1
+    ) {
       setForm((prev) => ({ ...prev, testPurpose: availablePurposes[0] }));
     }
   }, [availablePurposes, form.testPurpose]);
@@ -275,8 +280,30 @@ function Booking() {
       // Xác định mục đích xét nghiệm hỗ trợ
       const purposes = servicePurposeMap[value] || [];
       setAvailablePurposes(purposes);
-      // Reset testPurpose về rỗng mỗi khi đổi dịch vụ
-      setForm((prev) => ({ ...prev, serviceType: value, testPurpose: "" }));
+      // Lọc bộ kit phù hợp với dịch vụ
+      const selectedService = serviceTypes.find(
+        (s) => String(s.service_id) === String(value)
+      );
+      if (
+        selectedService &&
+        selectedService.kits &&
+        selectedService.kits.length > 0
+      ) {
+        setFilteredKits(
+          kitComponentNames.filter((kit) =>
+            selectedService.kits.includes(kit.name)
+          )
+        );
+      } else {
+        setFilteredKits(kitComponentNames); // fallback: hiển thị tất cả nếu không có mapping
+      }
+      // Reset testPurpose và kitComponentName về rỗng mỗi khi đổi dịch vụ
+      setForm((prev) => ({
+        ...prev,
+        serviceType: value,
+        testPurpose: "",
+        kitComponentName: "",
+      }));
     } else if (name === "kitComponentName") {
       // Lấy loại mẫu tương ứng với bộ kit
       const mappedTypes =
@@ -630,24 +657,34 @@ function Booking() {
             <h3>Thông tin xét nghiệm</h3>
             {/* Thanh thông báo mục đích xét nghiệm */}
             {form.serviceType && availablePurposes.length > 0 && (
-              <div className="purpose-info-bar" style={{margin:'10px 0',padding:'10px',background:'#e3f0ff',border:'1.5px solid #1976d2',borderRadius:8}}>
-                <b>Dịch vụ này hỗ trợ mục đích xét nghiệm:</b> {availablePurposes.join(", ")}
+              <div
+                className="purpose-info-bar"
+                style={{
+                  margin: "10px 0",
+                  padding: "10px",
+                  background: "#e3f0ff",
+                  border: "1.5px solid #1976d2",
+                  borderRadius: 8,
+                }}
+              >
+                <b>Dịch vụ này hỗ trợ mục đích xét nghiệm:</b>{" "}
+                {availablePurposes.join(", ")}
               </div>
             )}
             {/* Nếu có fixedPurpose thì hiện input disabled */}
-            {(location.state && location.state.fixedPurpose) && (
+            {location.state && location.state.fixedPurpose && (
               <label>
                 Mục đích xét nghiệm
                 <input
                   type="text"
                   value={location.state.fixedPurpose}
                   disabled
-                  style={{background:'#f7eaea', color:'#b9b9b9'}}
+                  style={{ background: "#f7eaea", color: "#b9b9b9" }}
                 />
               </label>
             )}
             {/* Nếu có nhiều hơn 1 mục đích thì hiện dropdown */}
-            {(!location.state?.fixedPurpose && availablePurposes.length > 1) && (
+            {!location.state?.fixedPurpose && availablePurposes.length > 1 && (
               <label>
                 Mục đích xét nghiệm
                 <select
@@ -666,17 +703,18 @@ function Booking() {
               </label>
             )}
             {/* Nếu chỉ có 1 mục đích và không có fixedPurpose thì hiện input disabled */}
-            {(!location.state?.fixedPurpose && availablePurposes.length === 1) && (
-              <label>
-                Mục đích xét nghiệm
-                <input
-                  type="text"
-                  value={availablePurposes[0]}
-                  disabled
-                  style={{background:'#f7eaea', color:'#b9b9b9'}}
-                />
-              </label>
-            )}
+            {!location.state?.fixedPurpose &&
+              availablePurposes.length === 1 && (
+                <label>
+                  Mục đích xét nghiệm
+                  <input
+                    type="text"
+                    value={availablePurposes[0]}
+                    disabled
+                    style={{ background: "#f7eaea", color: "#b9b9b9" }}
+                  />
+                </label>
+              )}
             <label>
               Loại dịch vụ
               <select
@@ -694,32 +732,49 @@ function Booking() {
               </select>
             </label>
             {/* Hiển thị thông tin mô tả và bộ kit sử dụng của loại dịch vụ */}
-            {form.serviceType && (() => {
-              const selected = serviceTypes.find(s => String(s.service_id) === String(form.serviceType));
-              if (!selected) return null;
-              return (
-                <div className="service-info-box" style={{margin:'10px 0',padding:'10px',background:'#f6fafd',border:'1.5px solid #90caf9',borderRadius:8}}>
-                  <div><b>Mô tả dịch vụ:</b> {selected.description}</div>
-                  <div style={{marginTop:4}}>
-                    <b>Bộ kit sử dụng:</b>
-                    <ul style={{margin: '4px 0 0 16px', padding: 0}}>
-                      {selected.kits && selected.kits.length > 0 ? (
-                        selected.kits.map(kitName => {
-                          const kit = kitComponentNames.find(k => k.name === kitName);
-                          return (
-                            <li key={kitName} style={{marginBottom:2}}>
-                              <b>{kitName}</b>{kit && kit.intro ? `: ${kit.intro}` : ''}
-                            </li>
-                          );
-                        })
-                      ) : (
-                        <li>Không xác định</li>
-                      )}
-                    </ul>
+            {form.serviceType &&
+              (() => {
+                const selected = serviceTypes.find(
+                  (s) => String(s.service_id) === String(form.serviceType)
+                );
+                if (!selected) return null;
+                return (
+                  <div
+                    className="service-info-box"
+                    style={{
+                      margin: "10px 0",
+                      padding: "10px",
+                      background: "#f6fafd",
+                      border: "1.5px solid #90caf9",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <div>
+                      <b>Mô tả dịch vụ:</b> {selected.description}
+                    </div>
+                    <div style={{ marginTop: 4 }}>
+                      <b>Bộ kit sử dụng:</b>
+                      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+                        {selected.kits && selected.kits.length > 0 ? (
+                          selected.kits.map((kitName) => {
+                            const kit = kitComponentNames.find(
+                              (k) => k.name === kitName
+                            );
+                            return (
+                              <li key={kitName} style={{ marginBottom: 2 }}>
+                                <b>{kitName}</b>
+                                {kit && kit.intro ? `: ${kit.intro}` : ""}
+                              </li>
+                            );
+                          })
+                        ) : (
+                          <li>Không xác định</li>
+                        )}
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              );
-            })()}
+                );
+              })()}
             <label>
               Ngày & giờ hẹn (ISO 8601)
               <input
@@ -790,7 +845,7 @@ function Booking() {
                 required
               >
                 <option value="">Chọn bộ kit</option>
-                {kitComponentNames.map((kit) => (
+                {filteredKits.map((kit) => (
                   <option key={kit.id} value={kit.name}>
                     {kit.name} - {kit.intro}
                   </option>
