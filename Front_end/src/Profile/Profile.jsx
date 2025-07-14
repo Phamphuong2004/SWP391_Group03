@@ -106,7 +106,13 @@ export default function Profile() {
       formData.append("address", address);
       formData.append("dateOfBirth", date_of_birth);
       formData.append("gender", gender);
-      formData.append("avatar", avatar);
+      // Chỉ append avatar nếu là base64 string
+      if (avatar && avatar.startsWith("data:image")) {
+        formData.append("avatar", avatar);
+      } else {
+        formData.append("avatar", "");
+      }
+      console.log("Avatar gửi lên:", avatar);
 
       const response = await axios.post(url, formData, {
         headers: {
@@ -240,7 +246,9 @@ export default function Profile() {
               if (file) {
                 const reader = new FileReader();
                 reader.onloadend = () => {
+                  // Chỉ lưu base64 string vào form.avatar
                   setForm((prev) => ({ ...prev, avatar: reader.result }));
+                  console.log("Avatar base64:", reader.result);
                 };
                 reader.readAsDataURL(file);
               }
