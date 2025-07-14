@@ -80,7 +80,7 @@ function MyNavbar() {
           <Navbar.Collapse id="navbarScroll">
             <Nav
               className="me-auto my-2 my-lg-0 navbar-nav"
-              style={{ maxHeight: "100px" }}
+              style={{ maxHeight: "100px", gap: "16px" }}
               navbarScroll
             >
               <Nav.Link href="/" className="nav-link">
@@ -221,24 +221,26 @@ function MyNavbar() {
                 </>
               )}
             </Nav>
-            <Form className="d-flex align-items-center" style={{ gap: "8px" }}>
-              <Form.Control
-                type="search"
-                placeholder="Search"
-                className="me-2 form-control"
-                aria-label="Search"
-              />
-              <Button variant="info" className="btn-info">
-                Search
-              </Button>
-              <Button
-                variant="warning"
-                className="btn-warning"
-                style={{ margin: "0 8px" }}
-                onClick={() => navigate("/feedback")}
-              >
-                Feedback
-              </Button>
+            <div className="navbar-actions">
+              <Form className="d-flex align-items-center navbar-form-actions">
+                <Form.Control
+                  type="search"
+                  placeholder="Search"
+                  className="me-2 form-control"
+                  aria-label="Search"
+                />
+                <Button variant="info" className="btn-info">
+                  Search
+                </Button>
+                <Button
+                  variant="warning"
+                  className="btn-warning"
+                  style={{ margin: 0 }}
+                  onClick={() => navigate("/feedback")}
+                >
+                  Feedback
+                </Button>
+              </Form>
               {user ? (
                 <div className="user-menu">
                   <Dropdown align="end">
@@ -259,14 +261,21 @@ function MyNavbar() {
                       <img
                         src={getAvatar(
                           user.avatar,
-                          user.full_name || user.name
+                          user.fullName ||
+                            user.full_name ||
+                            user.fullname ||
+                            user.name
                         )}
                         alt="avatar"
                         className="user-avatar"
                       />
                       <div className="user-info">
-                        <div className="user-name">{user.name}</div>
-                        <div className="user-username">{user.username}</div>
+                        <div className="user-name">
+                          {user.fullName ||
+                            user.full_name ||
+                            user.fullname ||
+                            user.name}
+                        </div>
                       </div>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
@@ -301,7 +310,7 @@ function MyNavbar() {
                   </Button>
                 </div>
               )}
-            </Form>
+            </div>
             <div className="theme-toggle-wrapper" style={{ zIndex: 1 }}>
               <button className="theme-toggle-btn" onClick={toggleTheme}>
                 <span
