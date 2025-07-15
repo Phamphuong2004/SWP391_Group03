@@ -12,7 +12,7 @@ public class ResultUpdateRequest {
     private Long sampleId;
     private String username;
     private Long appointmentId;
-    private MultipartFile resultFile;
+    private String resultFile;
 
 
 
@@ -59,11 +59,11 @@ public class ResultUpdateRequest {
         return username;
     }
 
-    public MultipartFile getResultFile() {
+    public String getResultFile() {
         return resultFile;
     }
 
-    public void setResultFile(MultipartFile resultFile) {
+    public void setResultFile(String resultFile) {
         this.resultFile = resultFile;
     }
 

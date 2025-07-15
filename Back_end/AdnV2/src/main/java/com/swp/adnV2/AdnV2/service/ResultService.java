@@ -58,26 +58,17 @@ public class ResultService {
         if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
             throw new RuntimeException("Result file cannot be null or empty");
         }
-        String fileName = request.getResultFile().getOriginalFilename();
 
-        if (!request.getResultFile().getOriginalFilename().matches("^[a-zA-Z0-9._-]+$")) {
+
+        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
             throw new RuntimeException("Result file name contains invalid characters");
         }
-        if (!request.getResultFile().getOriginalFilename().endsWith(".pdf") && !request.getResultFile().getOriginalFilename().endsWith(".docx")
-                && !request.getResultFile().getOriginalFilename().endsWith(".doc")) {
+        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
+                && !request.getResultFile().endsWith(".doc")) {
             throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
         }
 
-        // Save file to disk
-        String uploadDir = "path/to/result/files";
-        Path filePath = Paths.get(uploadDir, fileName);
-        try {
-            Files.copy(request.getResultFile().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save result file", e);
-        }
-
-        result.setResultFile(fileName);
+        result.setResultFile(request.getResultFile());
         resultRepository.save(result);
         ResultReponse response = new ResultReponse();
         response.setResultId(result.getResultId());
@@ -120,27 +111,17 @@ public class ResultService {
         if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
             throw new RuntimeException("Result file cannot be null or empty");
         }
-        String fileName = request.getResultFile().getOriginalFilename();
+        String fileName = request.getResultFile();
 
-        if (!request.getResultFile().getOriginalFilename().matches("^[a-zA-Z0-9._-]+$")) {
+        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
             throw new RuntimeException("Result file name contains invalid characters");
         }
-        if (!request.getResultFile().getOriginalFilename().endsWith(".pdf") && !request.getResultFile().getOriginalFilename().endsWith(".docx")
-                && !request.getResultFile().getOriginalFilename().endsWith(".doc")) {
+        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
+                && !request.getResultFile().endsWith(".doc")) {
             throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
         }
 
-
-        // Save file to disk
-        String uploadDir = "path/to/result/files";
-        Path filePath = Paths.get(uploadDir, fileName);
-        try {
-            Files.copy(request.getResultFile().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save result file", e);
-        }
-
-        result.setResultFile(request.getResultFile().getOriginalFilename());
+        result.setResultFile(request.getResultFile());
         resultRepository.save(result);
         ResultReponse response = new ResultReponse();
         response.setResultId(result.getResultId());
