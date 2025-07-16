@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class CollectedSample {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sample_id")
+    @Column(name = "collected_sample_id")
     private Long sampleId;
 
 

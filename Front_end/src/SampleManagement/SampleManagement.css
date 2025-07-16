@@ -1,0 +1,133 @@
+/* Modern, clean, readable style for SampleManagement */
+.sample-management-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  background: #fff;
+  color: #222;
+  padding: 32px 18px 36px 18px;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.1);
+}
+.sample-management-container h1 {
+  text-align: center;
+  color: #23408e;
+  margin-bottom: 28px;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-shadow: none;
+}
+.sample-management-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.sample-management-table th,
+.sample-management-table td {
+  padding: 16px 14px;
+  text-align: left;
+  font-size: 1rem;
+}
+.sample-management-table th {
+  background-color: #f3f6fa;
+  color: #23408e;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e3f0ff;
+}
+.sample-management-table td {
+  color: #23408e;
+  background: #fff;
+  border-bottom: 1px solid #f3f6fa;
+}
+.sample-management-table tr:nth-child(even) td {
+  background-color: #f7faff;
+}
+.sample-management-table tr {
+  transition: background 0.18s;
+}
+.sample-management-table tr:hover td {
+  background: #eaf1ff;
+}
+.status {
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-size: 0.98em;
+  font-weight: 700;
+  box-shadow: none;
+  margin-left: 6px;
+  letter-spacing: 0.5px;
+  background: #ffeeba;
+  color: #bfa100;
+}
+.button {
+  background: #23408e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.18s;
+}
+.button:hover {
+  background: #3b5cb8;
+}
+@media (max-width: 700px) {
+  .sample-management-container {
+    padding: 8px;
+  }
+  .sample-management-table th,
+  .sample-management-table td {
+    padding: 6px 2px;
+    font-size: 0.95rem;
+  }
+  .sample-management-container h1 {
+    font-size: 1.1rem;
+  }
+}
+.dark-theme .sample-management-container {
+  background: #23272f;
+  color: #eee;
+  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.1);
+}
+.dark-theme .sample-management-container h1 {
+  color: #ffeeba;
+  text-shadow: none;
+}
+.dark-theme .sample-management-table {
+  background: #23272f;
+  box-shadow: 0 1px 3px rgba(255, 224, 102, 0.08);
+}
+.dark-theme .sample-management-table th,
+.dark-theme .sample-management-table td {
+  border-bottom: 1px solid #3b5cb8;
+  color: #ffeeba;
+  background: #23272f;
+}
+.dark-theme .sample-management-table th {
+  background-color: #2c3550;
+  color: #ffeeba;
+}
+.dark-theme .sample-management-table tr:hover td {
+  background: #2c3550;
+}
+.dark-theme .status {
+  background-color: #3b5cb8;
+  color: #ffeeba;
+}
+.dark-theme .button {
+  background: #ffeeba;
+  color: #23272f;
+}
+.dark-theme .button:hover {
+  background: #fff3cd;
+  color: #23272f;
+}

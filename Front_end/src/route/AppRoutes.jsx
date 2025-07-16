@@ -15,7 +15,7 @@ import BlogDetail from "../Blog/BlogDetail";
 import AdministrativeService from "../ServiceInfo/AdministrativeService";
 import CivilService from "../ServiceInfo/CivilService";
 import Dashboard from "../Dashboard/Dashboard";
-import Feedback from "../Feedback/Feedback";
+import Feedback from "../Feedback/Feedback.jsx";
 import RegisterNotification from "../register/RegisterNotification";
 import AuthNotification from "../AuthNotification/AuthNotification";
 import ProtectedRoute from "./ProtectedRoute";
@@ -45,10 +45,20 @@ import ViewFeedback from "../Feedback/ViewFeedback";
 import InvoiceList from "../Payment/InvoiceList";
 import SampleManagement from "../SampleManagement/SampleManagement";
 import KitManagement from "../Kit/KitManagement";
+import SampleWorkspace from "../SampleWorkspace/SampleWorkspace";
+import ManagerDashboard from "../Dashboard/ManagerDashboard";
+import StaffResult from "../StaffResult/StaffResult";
+import Report from "../Report/Report";
+import TestCategoryManager from "../TestCategory/TestCategoryManager";
+import TestPurposeManager from "../TestPurpose/TestPurposeManager";
+import ParallelManagement from "../TestPurposeAndCategoryManagement/ParallelManagement";
+import ServiceTestPurposeStaff from "../servicetestpurpose/servicetestpurposestafff";
 
 function AppContent() {
   const { pathname } = useLocation();
-  const hideNavbar = pathname === "/login" || pathname === "/register";
+  const hideNavbar = ["/login", "/register", "/forgot-password"].includes(
+    pathname
+  );
 
   return (
     <>
@@ -180,15 +190,68 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/sample-workspace"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <SampleWorkspace />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/manager-dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["manager"]}>
+              <ManagerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff-result"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <StaffResult />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/report"
+          element={
+            <ProtectedRoute allowedRoles={["staff", "manager"]}>
+              <Report />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/test-category"
+          element={
+            <ProtectedRoute allowedRoles={["staff"]}>
+              <TestCategoryManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/test-purpose"
+          element={
+            <ProtectedRoute allowedRoles={["staff"]}>
+              <TestPurposeManager />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/parallel-management" element={<ParallelManagement />} />
+        <Route
+          path="/service-check"
+          element={
+            <ProtectedRoute allowedRoles={["staff"]}>
+              <ServiceTestPurposeStaff />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );
 }
 
 export default function AppRoutes() {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
+  return <AppContent />;
 }

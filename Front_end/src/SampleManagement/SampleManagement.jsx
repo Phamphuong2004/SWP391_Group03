@@ -6,7 +6,7 @@ import {
   updateSample,
   deleteSample,
 } from "./SampleApi";
-
+import "./SampleManagement.css";
 const SampleManagement = () => {
   const [samples, setSamples] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -75,7 +75,12 @@ const SampleManagement = () => {
   const columns = [
     { title: "ID", dataIndex: "sampleId", key: "sampleId" },
     { title: "Loại mẫu", dataIndex: "sampleType", key: "sampleType" },
-    { title: "Trạng thái", dataIndex: "status", key: "status" },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (text) => <span className="status">{text}</span>,
+    },
     { title: "Ngày lấy mẫu", dataIndex: "collectedDate", key: "collectedDate" },
     {
       title: "Thành phần kit",
@@ -91,12 +96,17 @@ const SampleManagement = () => {
         user?.role?.toLowerCase() === "manager" ? (
           <>
             <Button
+              className="button"
               onClick={() => handleEdit(record)}
               style={{ marginRight: 8 }}
             >
               Sửa
             </Button>
-            <Button danger onClick={() => handleDeleteSample(record.sampleId)}>
+            <Button
+              danger
+              className="button"
+              onClick={() => handleDeleteSample(record.sampleId)}
+            >
               Xóa
             </Button>
           </>
@@ -105,8 +115,8 @@ const SampleManagement = () => {
   ];
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto", padding: 24 }}>
-      <h1>Quản lý mẫu xét nghiệm</h1>
+    <div className="sample-management-container">
+      <h1 className="sample-management-title">Quản lý mẫu xét nghiệm</h1>
       <div style={{ marginBottom: 16 }}>
         <Input
           placeholder="Nhập mã lịch hẹn (appointmentId)"
@@ -116,6 +126,7 @@ const SampleManagement = () => {
         />
         <Button
           type="primary"
+          className="button"
           onClick={handleSearch}
           style={{ marginRight: 8 }}
         >
@@ -123,10 +134,13 @@ const SampleManagement = () => {
         </Button>
         {(user?.role?.toLowerCase() === "staff" ||
           user?.role?.toLowerCase() === "manager") && (
-          <Button onClick={handleAdd}>Thêm mẫu</Button>
+          <Button className="button" onClick={handleAdd}>
+            Thêm mẫu
+          </Button>
         )}
       </div>
       <Table
+        className="sample-management-table"
         columns={columns}
         dataSource={samples}
         loading={loading}

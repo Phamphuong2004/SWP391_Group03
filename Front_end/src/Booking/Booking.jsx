@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
 import "./Booking.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import serviceTypes from "../serviceTypes";
 import { Select } from "antd";
-
-const testPurposes = ["Hành chính", "Dân sự"];
+// XÓA: import { Steps } from "antd";
+// import { getKitByServiceId } from "../Kit/KitApi";
 
 const testCategories = [
   "Cha - Con",
@@ -133,6 +133,50 @@ const sampleTypeOptions = [
   { value: "Tinh dịch", label: "Tinh dịch" },
 ];
 
+// Ánh xạ bộ kit với loại mẫu tương ứng
+const kitSampleTypeMap = {
+  "Buccal Swab": ["Nước bọt"],
+  "Sample Storage Bag": ["Tóc", "Móng", "Da"],
+  "Bone Collection Tube": ["Xương"],
+  "EDTA Tube": ["Máu"],
+  "Personal DNA Test Kit": ["Máu", "Tóc", "Móng", "Nước bọt", "Da"],
+  "Prenatal DNA Test Kit": ["Tinh dịch", "Sữa mẹ"],
+  "Shockproof Box": ["Xương"],
+  "Sample Envelope": ["Tóc", "Móng", "Da", "Nước bọt"],
+  "Legal Confirmation Form": ["Tinh dịch", "Sữa mẹ"],
+  "Pregnancy Safety Guide": ["Sữa mẹ"],
+  "Custom DNA Kit": [
+    "Máu",
+    "Tóc",
+    "Móng",
+    "Nước bọt",
+    "Da",
+    "Dịch mũi",
+    "Dịch họng",
+  ],
+  "Safety Instruction": ["Sữa mẹ"],
+  "Genetic History Form": ["Máu", "Da"],
+  "Gene Report Guide": ["Máu", "Tóc"],
+  "Administrative Form": ["Máu", "Da"],
+  "Legal File Cover": ["Máu", "Da"],
+  "Civil Dispute Form": ["Máu", "Da"],
+  "Judicial File": ["Máu", "Da"],
+};
+
+// Mapping dịch vụ sang mục đích xét nghiệm
+const servicePurposeMap = {
+  1: ["Hành chính"],
+  2: ["Hành chính"],
+  3: ["Hành chính"],
+  4: ["Hành chính", "Dân sự"], // Ví dụ: dịch vụ này có cả hai
+  5: ["Hành chính"],
+  6: ["Dân sự"],
+  7: ["Dân sự"],
+  8: ["Dân sự"],
+  9: ["Hành chính"],
+  10: ["Dân sự"],
+};
+
 function Booking() {
   const [form, setForm] = useState({
     fullName: "",
@@ -159,6 +203,72 @@ function Booking() {
   const [guestSuccess, setGuestSuccess] = useState(false);
   const [guestInfo, setGuestInfo] = useState({});
 
+  const [dynamicSampleTypeOptions, setDynamicSampleTypeOptions] =
+    useState(sampleTypeOptions);
+  const [availablePurposes, setAvailablePurposes] = useState([]);
+  const [filteredKits, setFilteredKits] = useState(kitComponentNames);
+
+  const location = useLocation();
+
+  // Khi vào trang booking, nếu có state truyền từ trang hướng dẫn dịch vụ thì set cứng mục đích xét nghiệm
+  React.useEffect(() => {
+    if (location.state && location.state.fixedPurpose) {
+      setForm((prev) => ({
+        ...prev,
+        testPurpose: location.state.fixedPurpose,
+      }));
+      setAvailablePurposes([location.state.fixedPurpose]);
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    if (
+      !form.testPurpose &&
+      availablePurposes &&
+      availablePurposes.length === 1
+    ) {
+      setForm((prev) => ({ ...prev, testPurpose: availablePurposes[0] }));
+    }
+  }, [availablePurposes, form.testPurpose]);
+
+  // Validate bước 1
+  // const validateStep1 = () => {
+  //   const requiredFields = [
+  //     "fullName",
+  //     "dob",
+  //     "phone",
+  //     "gender",
+  //     "province",
+  //     "district",
+  //     "email",
+  //   ];
+  //   for (const field of requiredFields) {
+  //     if (!form[field]) return false;
+  //   }
+  //   return true;
+  // };
+  // Validate bước 2
+  // const validateStep2 = () => {
+  //   const requiredFields = [
+  //     "testPurpose",
+  //     "serviceType",
+  //     "appointmentDate",
+  //     "collectionTime",
+  //     "testCategory",
+  //     "collectionLocation",
+  //     "kitComponentName",
+  //     "sampleTypes",
+  //   ];
+  //   for (const field of requiredFields) {
+  //     if (
+  //       !form[field] ||
+  //       (Array.isArray(form[field]) && form[field].length === 0)
+  //     )
+  //       return false;
+  //   }
+  //   return true;
+  // };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log("Thay đổi:", name, value);
@@ -166,6 +276,46 @@ function Booking() {
       const selected = provinces.find((p) => p.name === value);
       setDistricts(selected ? selected.districts : []);
       setForm((prev) => ({ ...prev, province: value, district: "" }));
+    } else if (name === "serviceType") {
+      // Xác định mục đích xét nghiệm hỗ trợ
+      const purposes = servicePurposeMap[value] || [];
+      setAvailablePurposes(purposes);
+      // Lọc bộ kit phù hợp với dịch vụ
+      const selectedService = serviceTypes.find(
+        (s) => String(s.service_id) === String(value)
+      );
+      if (
+        selectedService &&
+        selectedService.kits &&
+        selectedService.kits.length > 0
+      ) {
+        setFilteredKits(
+          kitComponentNames.filter((kit) =>
+            selectedService.kits.includes(kit.name)
+          )
+        );
+      } else {
+        setFilteredKits(kitComponentNames); // fallback: hiển thị tất cả nếu không có mapping
+      }
+      // Reset testPurpose và kitComponentName về rỗng mỗi khi đổi dịch vụ
+      setForm((prev) => ({
+        ...prev,
+        serviceType: value,
+        testPurpose: "",
+        kitComponentName: "",
+      }));
+    } else if (name === "kitComponentName") {
+      // Lấy loại mẫu tương ứng với bộ kit
+      const mappedTypes =
+        kitSampleTypeMap[value] || sampleTypeOptions.map((opt) => opt.value);
+      setForm((prev) => ({
+        ...prev,
+        kitComponentName: value,
+        sampleTypes: [], // reset lựa chọn mẫu khi đổi bộ kit
+      }));
+      setDynamicSampleTypeOptions(
+        sampleTypeOptions.filter((opt) => mappedTypes.includes(opt.value))
+      );
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
@@ -364,8 +514,10 @@ function Booking() {
     <div className="booking-page">
       <form className="booking-form" onSubmit={handleSubmit}>
         <h2 className="booking-title">Đặt lịch hẹn xét nghiệm ADN</h2>
-        <div className="booking-row">
-          <div className="booking-col">
+        <div className="booking-2col-flex">
+          {/* Cột trái: Thông tin cá nhân */}
+          <div className="booking-col booking-col-personal">
+            <h3>Thông tin cá nhân</h3>
             <label>
               Họ và tên
               <input
@@ -416,11 +568,6 @@ function Booking() {
                           cursor: "pointer",
                           fontSize: 20,
                         }}
-                        onClick={(e) => {
-                          e.target.previousSibling &&
-                            e.target.previousSibling.focus &&
-                            e.target.previousSibling.focus();
-                        }}
                         title="Chọn ngày sinh"
                         role="button"
                         tabIndex={0}
@@ -451,6 +598,7 @@ function Booking() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="Nhập email"
+                required
               />
             </label>
             <label>
@@ -468,67 +616,6 @@ function Booking() {
                   </option>
                 ))}
               </select>
-            </label>
-            <label>
-              Mục đích xét nghiệm
-              <select
-                name="testPurpose"
-                value={form.testPurpose}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Chọn mục đích</option>
-                {testPurposes.map((purpose) => (
-                  <option key={purpose} value={purpose}>
-                    {purpose}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Loại dịch vụ
-              <select
-                name="serviceType"
-                value={form.serviceType}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Chọn loại dịch vụ</option>
-                {serviceTypes.map((type) => (
-                  <option key={type.service_id} value={type.service_id}>
-                    {type.service_name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Ngày & giờ hẹn (ISO 8601)
-              <input
-                type="datetime-local"
-                name="appointmentDate"
-                value={form.appointmentDate}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label>
-              Giờ lấy mẫu (collectionTime)
-              <input
-                type="time"
-                name="collectionTime"
-                value={form.collectionTime}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label>
-              File vân tay
-              <input
-                type="file"
-                name="fingerprintFile"
-                accept="image/*,.pdf"
-                onChange={handleFileChange}
-              />
             </label>
             <label>
               Tỉnh/Thành phố
@@ -562,6 +649,160 @@ function Booking() {
                   </option>
                 ))}
               </select>
+            </label>
+          </div>
+
+          {/* Cột phải: Thông tin xét nghiệm */}
+          <div className="booking-col booking-col-test">
+            <h3>Thông tin xét nghiệm</h3>
+            {/* Thanh thông báo mục đích xét nghiệm */}
+            {form.serviceType && availablePurposes.length > 0 && (
+              <div
+                className="purpose-info-bar"
+                style={{
+                  margin: "10px 0",
+                  padding: "10px",
+                  background: "#e3f0ff",
+                  border: "1.5px solid #1976d2",
+                  borderRadius: 8,
+                }}
+              >
+                <b>Dịch vụ này hỗ trợ mục đích xét nghiệm:</b>{" "}
+                {availablePurposes.join(", ")}
+              </div>
+            )}
+            {/* Nếu có fixedPurpose thì hiện input disabled */}
+            {location.state && location.state.fixedPurpose && (
+              <label>
+                Mục đích xét nghiệm
+                <input
+                  type="text"
+                  value={location.state.fixedPurpose}
+                  disabled
+                  style={{ background: "#f7eaea", color: "#b9b9b9" }}
+                />
+              </label>
+            )}
+            {/* Nếu có nhiều hơn 1 mục đích thì hiện dropdown */}
+            {!location.state?.fixedPurpose && availablePurposes.length > 1 && (
+              <label>
+                Mục đích xét nghiệm
+                <select
+                  name="testPurpose"
+                  value={form.testPurpose}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Chọn mục đích</option>
+                  {availablePurposes.map((purpose) => (
+                    <option key={purpose} value={purpose}>
+                      {purpose}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            {/* Nếu chỉ có 1 mục đích và không có fixedPurpose thì hiện input disabled */}
+            {!location.state?.fixedPurpose &&
+              availablePurposes.length === 1 && (
+                <label>
+                  Mục đích xét nghiệm
+                  <input
+                    type="text"
+                    value={availablePurposes[0]}
+                    disabled
+                    style={{ background: "#f7eaea", color: "#b9b9b9" }}
+                  />
+                </label>
+              )}
+            <label>
+              Loại dịch vụ
+              <select
+                name="serviceType"
+                value={form.serviceType}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Chọn loại dịch vụ</option>
+                {serviceTypes.map((type) => (
+                  <option key={type.service_id} value={type.service_id}>
+                    {type.service_name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {/* Hiển thị thông tin mô tả và bộ kit sử dụng của loại dịch vụ */}
+            {form.serviceType &&
+              (() => {
+                const selected = serviceTypes.find(
+                  (s) => String(s.service_id) === String(form.serviceType)
+                );
+                if (!selected) return null;
+                return (
+                  <div
+                    className="service-info-box"
+                    style={{
+                      margin: "10px 0",
+                      padding: "10px",
+                      background: "#f6fafd",
+                      border: "1.5px solid #90caf9",
+                      borderRadius: 8,
+                    }}
+                  >
+                    <div>
+                      <b>Mô tả dịch vụ:</b> {selected.description}
+                    </div>
+                    <div style={{ marginTop: 4 }}>
+                      <b>Bộ kit sử dụng:</b>
+                      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+                        {selected.kits && selected.kits.length > 0 ? (
+                          selected.kits.map((kitName) => {
+                            const kit = kitComponentNames.find(
+                              (k) => k.name === kitName
+                            );
+                            return (
+                              <li key={kitName} style={{ marginBottom: 2 }}>
+                                <b>{kitName}</b>
+                                {kit && kit.intro ? `: ${kit.intro}` : ""}
+                              </li>
+                            );
+                          })
+                        ) : (
+                          <li>Không xác định</li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                );
+              })()}
+            <label>
+              Ngày & giờ hẹn (ISO 8601)
+              <input
+                type="datetime-local"
+                name="appointmentDate"
+                value={form.appointmentDate}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <label>
+              Giờ lấy mẫu (collectionTime)
+              <input
+                type="time"
+                name="collectionTime"
+                value={form.collectionTime}
+                onChange={handleChange}
+                required
+              />
+            </label>
+            <label>
+              File vân tay
+              <input
+                type="file"
+                name="fingerprintFile"
+                accept="image/*,.pdf"
+                onChange={handleFileChange}
+              />
             </label>
             <label>
               Loại xét nghiệm
@@ -604,7 +845,7 @@ function Booking() {
                 required
               >
                 <option value="">Chọn bộ kit</option>
-                {kitComponentNames.map((kit) => (
+                {filteredKits.map((kit) => (
                   <option key={kit.id} value={kit.name}>
                     {kit.name} - {kit.intro}
                   </option>
@@ -621,7 +862,7 @@ function Booking() {
                 onChange={(values) =>
                   setForm((prev) => ({ ...prev, sampleTypes: values }))
                 }
-                options={sampleTypeOptions}
+                options={dynamicSampleTypeOptions}
                 required
               />
             </label>

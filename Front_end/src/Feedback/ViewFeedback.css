@@ -1,0 +1,241 @@
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e0e7ff 0%, #f0f6ff 40%, #e0ecff 100%);
+}
+
+.view-feedback-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding-top: 40px;
+  /* Không cần background ở đây, để bảng nổi bật trên nền gradient */
+}
+
+.feedback-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #23272f;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.view-feedback-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.view-feedback-table th,
+.view-feedback-table td {
+  padding: 16px 14px;
+  text-align: left;
+  font-size: 1rem;
+}
+.view-feedback-table th {
+  background-color: #f3f6fa;
+  color: #23408e;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e3f0ff;
+}
+.view-feedback-table td {
+  color: #23408e;
+  background: #fff;
+  border-bottom: 1px solid #f3f6fa;
+}
+.view-feedback-table tr:nth-child(even) td {
+  background-color: #f7faff;
+}
+.view-feedback-table tr {
+  transition: background 0.18s;
+}
+.view-feedback-table tr:hover td {
+  background: #eaf1ff;
+}
+.status {
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-size: 0.98em;
+  font-weight: 700;
+  box-shadow: none;
+  margin-left: 6px;
+  letter-spacing: 0.5px;
+  background: #ffeeba;
+  color: #bfa100;
+}
+.button {
+  background: #23408e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.18s;
+}
+.button:hover {
+  background: #3b5cb8;
+}
+@media (max-width: 700px) {
+  .view-feedback-container {
+    padding: 8px;
+  }
+  .view-feedback-table th,
+  .view-feedback-table td {
+    padding: 6px 2px;
+    font-size: 0.95rem;
+  }
+  .view-feedback-container h1 {
+    font-size: 1.1rem;
+  }
+}
+.dark-theme .view-feedback-container {
+  background: #23272f;
+  color: #eee;
+  box-shadow: 0 4px 24px rgba(44, 62, 80, 0.1);
+}
+.dark-theme .view-feedback-container h1 {
+  color: #ffeeba;
+  text-shadow: none;
+}
+.dark-theme .view-feedback-table {
+  background: #23272f;
+  box-shadow: 0 1px 3px rgba(255, 224, 102, 0.08);
+}
+.dark-theme .view-feedback-table th,
+.dark-theme .view-feedback-table td {
+  border-bottom: 1px solid #3b5cb8;
+  color: #ffeeba;
+  background: #23272f;
+}
+.dark-theme .view-feedback-table th {
+  background-color: #2c3550;
+  color: #ffeeba;
+}
+.dark-theme .view-feedback-table tr:hover td {
+  background: #2c3550;
+}
+.dark-theme .status {
+  background-color: #3b5cb8;
+  color: #ffeeba;
+}
+.dark-theme .button {
+  background: #ffeeba;
+  color: #23272f;
+}
+.dark-theme .button:hover {
+  background: #fff3cd;
+  color: #23272f;
+}
+
+.feedback-table {
+  width: 90%;
+  max-width: 1100px;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+  overflow: hidden;
+  margin-top: 24px;
+  margin-bottom: 32px;
+  transition: box-shadow 0.2s;
+}
+
+.feedback-table th, .feedback-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 17px;
+}
+
+.feedback-table th {
+  background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.feedback-table tr:hover {
+  background: #f0f6ff;
+  transition: background 0.2s;
+}
+
+.btn-edit, .btn-delete {
+  border: none;
+  outline: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  margin-right: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+
+.btn-edit {
+  background: #e0f2fe;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.btn-edit:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.btn-delete:hover {
+  background: #dc2626;
+  color: #fff;
+}
+
+.star-rating {
+  color: #fbbf24;
+  font-size: 20px;
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+/* Canh giữa select và tiêu đề */
+.select-service {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.select-service label {
+  margin-right: 10px;
+  font-size: 16px;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.select-service select {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #2563eb;
+  font-size: 16px;
+  color: #23272f;
+  background: #f0f6ff;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.select-service select:focus {
+  border: 2px solid #2563eb;
+}

@@ -98,53 +98,28 @@ export default function Profile() {
         userLocal.username
       )}`;
 
-      let response;
-      if (
-        isEditing &&
-        avatarOption === "file" &&
-        form.avatar &&
-        form.avatar.startsWith("data:")
-      ) {
-        // Nếu chọn file từ thiết bị, gửi multipart/form-data
-        const formData = new FormData();
-        formData.append("email", email);
-        formData.append("phone", phone);
-        formData.append("full_name", full_name);
-        formData.append("address", address);
-        formData.append("date_of_birth", date_of_birth);
-        formData.append("gender", gender);
-        // Chuyển base64 về file object
-        const arr = form.avatar.split(",");
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-          u8arr[n] = bstr.charCodeAt(n);
-        }
-        const file = new File([u8arr], "avatar.jpg", { type: mime });
-        formData.append("avatar", file);
-        response = await axios.post(url, formData, {
-          headers: {
-            Authorization: `Bearer ${userLocal.token}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
+      // Luôn gửi form-data
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("phoneNumber", phone);
+      formData.append("fullName", full_name);
+      formData.append("address", address);
+      formData.append("dateOfBirth", date_of_birth);
+      formData.append("gender", gender);
+      // Chỉ append avatar nếu là base64 string
+      if (avatar && avatar.startsWith("data:image")) {
+        formData.append("avatar", avatar);
       } else {
-        // Nếu là link ảnh hoặc không đổi avatar, gửi JSON như cũ
-        const updateData = {
-          email,
-          phone,
-          full_name,
-          address,
-          date_of_birth,
-          gender,
-          avatar,
-        };
-        response = await axios.post(url, updateData, {
-          headers: { Authorization: `Bearer ${userLocal.token}` },
-        });
+        formData.append("avatar", "");
       }
+      console.log("Avatar gửi lên:", avatar);
+
+      const response = await axios.post(url, formData, {
+        headers: {
+          Authorization: `Bearer ${userLocal.token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.data) {
         const updatedUser = { ...user, ...form };
@@ -260,15 +235,26 @@ export default function Profile() {
           <option value="other">Khác</option>
         </select>
         <label className="profile-form-label">Avatar</label>
-        <input
-          className="profile-form-input"
-          name="avatar"
-          value={form.avatar || ""}
-          onChange={handleChange}
-          disabled={!isEditing}
-          placeholder="Dán link ảnh"
-          style={{ marginBottom: 8 }}
-        />
+        {isEditing && (
+          <input
+            type="file"
+            accept="image/*"
+            className="profile-form-input"
+            style={{ marginBottom: 8 }}
+            onChange={async (e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  // Chỉ lưu base64 string vào form.avatar
+                  setForm((prev) => ({ ...prev, avatar: reader.result }));
+                  console.log("Avatar base64:", reader.result);
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+          />
+        )}
         {!isEditing ? (
           <button
             type="button"

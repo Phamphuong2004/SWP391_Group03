@@ -1,9 +1,11 @@
 import React from "react";
 import "./ServiceDetail.css";
+import { useNavigate } from "react-router-dom";
 
 const tags = ["#HợpĐồngDânSự", "#HướngDẫn", "#PhápLý"];
 
 const CivilContractGuide = () => {
+  const navigate = useNavigate();
   return (
     <div className="service-detail-container">
       <div className="service-detail-content">
@@ -14,7 +16,11 @@ const CivilContractGuide = () => {
         <div className="service-info">
           <h2>Giới thiệu</h2>
           <p>
-            Hợp đồng dân sự là sự thỏa thuận giữa các bên về việc xác lập, thay đổi hoặc chấm dứt quyền, nghĩa vụ dân sự. Việc lập hợp đồng đúng quy định giúp bảo vệ quyền lợi và hạn chế rủi ro pháp lý cho các bên tham gia. Bài viết này sẽ hướng dẫn bạn các bước cơ bản để thực hiện thủ tục hợp đồng dân sự tại Việt Nam.
+            Hợp đồng dân sự là sự thỏa thuận giữa các bên về việc xác lập, thay
+            đổi hoặc chấm dứt quyền, nghĩa vụ dân sự. Việc lập hợp đồng đúng quy
+            định giúp bảo vệ quyền lợi và hạn chế rủi ro pháp lý cho các bên
+            tham gia. Bài viết này sẽ hướng dẫn bạn các bước cơ bản để thực hiện
+            thủ tục hợp đồng dân sự tại Việt Nam.
           </p>
 
           <h2>1. Các loại hợp đồng dân sự phổ biến</h2>
@@ -39,22 +45,65 @@ const CivilContractGuide = () => {
           <ol>
             <li>Các bên thỏa thuận, soạn thảo nội dung hợp đồng</li>
             <li>Kiểm tra tính pháp lý và các điều khoản hợp đồng</li>
-            <li>Ký kết hợp đồng (có thể công chứng hoặc chứng thực nếu pháp luật yêu cầu)</li>
+            <li>
+              Ký kết hợp đồng (có thể công chứng hoặc chứng thực nếu pháp luật
+              yêu cầu)
+            </li>
             <li>Lưu giữ hợp đồng và thực hiện các nghĩa vụ đã cam kết</li>
           </ol>
 
           <h2>4. Lưu ý khi thực hiện hợp đồng dân sự</h2>
           <ul>
-            <li>Đọc kỹ các điều khoản, quyền và nghĩa vụ của các bên trước khi ký kết</li>
-            <li>Nên tham khảo ý kiến tư vấn pháp lý nếu hợp đồng có giá trị lớn hoặc phức tạp</li>
-            <li>Giữ lại bản hợp đồng và các giấy tờ liên quan để làm bằng chứng khi cần thiết</li>
+            <li>
+              Đọc kỹ các điều khoản, quyền và nghĩa vụ của các bên trước khi ký
+              kết
+            </li>
+            <li>
+              Nên tham khảo ý kiến tư vấn pháp lý nếu hợp đồng có giá trị lớn
+              hoặc phức tạp
+            </li>
+            <li>
+              Giữ lại bản hợp đồng và các giấy tờ liên quan để làm bằng chứng
+              khi cần thiết
+            </li>
           </ul>
 
-          <div className="blog-tags" style={{marginTop: '24px'}}>
+          <div className="blog-tags" style={{ marginTop: "24px" }}>
             {tags.map((tag, idx) => (
-              <span key={idx} className="blog-tag" style={{marginRight: '8px', background: '#e3f2fd', padding: '4px 12px', borderRadius: '12px', fontSize: '14px'}}>{tag}</span>
+              <span
+                key={tag || idx}
+                className="blog-tag"
+                style={{
+                  marginRight: "8px",
+                  background: "#e3f2fd",
+                  padding: "4px 12px",
+                  borderRadius: "12px",
+                  fontSize: "14px",
+                }}
+              >
+                {tag}
+              </span>
             ))}
           </div>
+         <div style={{ textAlign: 'center', marginTop: 32 }}>
+           <button
+             onClick={() => navigate('/booking', { state: { fixedPurpose: 'Dân sự' } })}
+             style={{
+               background: '#1976d2',
+               color: '#fff',
+               border: 'none',
+               borderRadius: 8,
+               padding: '12px 36px',
+               fontWeight: 700,
+               fontSize: 20,
+               cursor: 'pointer',
+               boxShadow: '0 2px 8px #1976d233',
+               transition: 'background 0.2s',
+             }}
+           >
+             Đặt lịch
+           </button>
+         </div>
         </div>
       </div>
     </div>
