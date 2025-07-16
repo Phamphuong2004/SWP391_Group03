@@ -40,7 +40,7 @@ public class Users {
     private String role;
 
     @Lob
-    private byte[] avatar;
+    private String avatar;
 
     // Default constructor
     public Users() {}
@@ -128,11 +128,10 @@ public class Users {
         this.role = role;
     }
 
-    public byte[] getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(byte[] avatar) {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+    public String getAvatar() {
+        return avatar;
     }
 }

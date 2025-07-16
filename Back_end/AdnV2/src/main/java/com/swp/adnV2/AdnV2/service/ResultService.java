@@ -37,9 +37,8 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        CollectedSample collectedSample = sampleRepository.findById(request.getSampleId())
-                .orElseThrow(() -> new RuntimeException("Sample not found with id: " + request.getSampleId()));
-        result.setCollectedSample(collectedSample);
+        List<CollectedSample> collectedSamples = sampleRepository.findAllById(request.getSampleId());
+        result.setCollectedSample(collectedSamples);
 
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
@@ -58,26 +57,17 @@ public class ResultService {
         if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
             throw new RuntimeException("Result file cannot be null or empty");
         }
-        String fileName = request.getResultFile().getOriginalFilename();
 
-        if (!request.getResultFile().getOriginalFilename().matches("^[a-zA-Z0-9._-]+$")) {
+
+        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
             throw new RuntimeException("Result file name contains invalid characters");
         }
-        if (!request.getResultFile().getOriginalFilename().endsWith(".pdf") && !request.getResultFile().getOriginalFilename().endsWith(".docx")
-                && !request.getResultFile().getOriginalFilename().endsWith(".doc")) {
+        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
+                && !request.getResultFile().endsWith(".doc")) {
             throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
         }
 
-        // Save file to disk
-        String uploadDir = "path/to/result/files";
-        Path filePath = Paths.get(uploadDir, fileName);
-        try {
-            Files.copy(request.getResultFile().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save result file", e);
-        }
-
-        result.setResultFile(fileName);
+        result.setResultFile(request.getResultFile());
         resultRepository.save(result);
         ResultReponse response = new ResultReponse();
         response.setResultId(result.getResultId());
@@ -85,7 +75,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setSampleId(collectedSamples.stream().map(CollectedSample::getSampleIdId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(request.getAppointmentId());
         response.setResultFile(result.getResultFile());// Save the uploaded file to a directory
@@ -99,9 +89,8 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        CollectedSample collectedSample = sampleRepository.findById(request.getSampleId())
-                .orElseThrow(() -> new RuntimeException("Sample not found with id: " + request.getSampleId()));
-        result.setCollectedSample(collectedSample);
+        List<CollectedSample> collectedSamples = sampleRepository.findAllById(request.getSampleId());
+        result.setCollectedSample(collectedSamples);
 
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
@@ -120,27 +109,17 @@ public class ResultService {
         if (request.getResultFile() == null || request.getResultFile().isEmpty()) {
             throw new RuntimeException("Result file cannot be null or empty");
         }
-        String fileName = request.getResultFile().getOriginalFilename();
+        String fileName = request.getResultFile();
 
-        if (!request.getResultFile().getOriginalFilename().matches("^[a-zA-Z0-9._-]+$")) {
+        if (!request.getResultFile().matches("^[a-zA-Z0-9._-]+$")) {
             throw new RuntimeException("Result file name contains invalid characters");
         }
-        if (!request.getResultFile().getOriginalFilename().endsWith(".pdf") && !request.getResultFile().getOriginalFilename().endsWith(".docx")
-                && !request.getResultFile().getOriginalFilename().endsWith(".doc")) {
+        if (!request.getResultFile().endsWith(".pdf") && !request.getResultFile().endsWith(".docx")
+                && !request.getResultFile().endsWith(".doc")) {
             throw new RuntimeException("Result file must be a PDF or DOCX or DOC file");
         }
 
-
-        // Save file to disk
-        String uploadDir = "path/to/result/files";
-        Path filePath = Paths.get(uploadDir, fileName);
-        try {
-            Files.copy(request.getResultFile().getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save result file", e);
-        }
-
-        result.setResultFile(request.getResultFile().getOriginalFilename());
+        result.setResultFile(request.getResultFile());
         resultRepository.save(result);
         ResultReponse response = new ResultReponse();
         response.setResultId(result.getResultId());
@@ -148,7 +127,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setSampleId(collectedSamples.stream().map(CollectedSample::getSampleIdId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
@@ -173,7 +152,7 @@ public class ResultService {
             response.setResultData(result.getResultData());
             response.setInterpretation(result.getInterpretation());
             response.setStatus(result.getStatus());
-            response.setSampleId(result.getCollectedSample().getSampleId());
+            response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleIdId).toList());
             response.setUsername(result.getUser().getUsername());
             response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
             response.setResultFile(result.getResultFile());
@@ -193,7 +172,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleIdId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
@@ -210,7 +189,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleIdId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());

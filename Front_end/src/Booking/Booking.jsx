@@ -9,173 +9,31 @@ import { toast } from "react-toastify";
 import serviceTypes from "../serviceTypes";
 import { Select } from "antd";
 // XÓA: import { Steps } from "antd";
-// import { getKitByServiceId } from "../Kit/KitApi";
+import { getKitByServiceId } from "../Kit/KitApi";
+import { getSampleTypesByComponentName } from "../SampleManagement/SampleApi";
+import { getActiveTestCategoriesByService } from "../TestCategory/TestCategoryAPI";
+import { getTestPurposesByServiceName } from "../servicetestpurpose/servicetestpurpose";
 
-const testCategories = [
-  "Cha - Con",
-  "Mẹ - Con",
-  "Anh - Em",
-  "Chị - Em",
-  "Ông - Cháu",
-  "Bà - Cháu",
-  "Song sinh",
-  "Họ hàng",
-  "Khác",
-  "Chú - Cháu",
-  "Cô - Cháu",
-  "Dì - Cháu",
-  "Bác - Cháu",
-  "Cháu nội",
-  "Cháu ngoại",
-];
+const genders = ["Nam", "Nữ", "Khác"];
 
 // Dropdown options for collectionLocation
 const collectionLocations = ["Tại nhà", "Tại cơ sở y tế"];
 // Danh sách kit component chuẩn hóa từ bảng DB
-const kitComponentNames = [
-  {
-    id: 1,
-    name: "Buccal Swab",
-    intro: "Dùng để thu mẫu tế bào niêm mạc miệng.",
-  },
-  {
-    id: 2,
-    name: "Sample Storage Bag",
-    intro: "Bảo quản mẫu khô và sạch sau khi thu.",
-  },
-  {
-    id: 3,
-    name: "User Manual",
-    intro: "Tài liệu hướng dẫn dán lấy và gửi mẫu xét nghiệm.",
-  },
-  {
-    id: 4,
-    name: "Bone Collection Tube",
-    intro: "Dùng để chứa mẫu máu cốt hoặc xương.",
-  },
-  {
-    id: 5,
-    name: "Shockproof Box",
-    intro: "Bảo vệ mẫu xương trong quá trình vận chuyển.",
-  },
-  {
-    id: 6,
-    name: "Personal DNA Test Kit",
-    intro: "Dùng để kiểm tra cấu trúc ADN cá nhân.",
-  },
-  { id: 7, name: "Sample Envelope", intro: "Dùng để đựng mẫu thu thập." },
-  {
-    id: 8,
-    name: "Legal Confirmation Form",
-    intro: "Dùng trong hồ sơ pháp lý.",
-  },
-  {
-    id: 9,
-    name: "Prenatal DNA Test Kit",
-    intro: "Dùng để thu mẫu thai nhi không xâm lấn.",
-  },
-  {
-    id: 10,
-    name: "Pregnancy Safety Guide",
-    intro: "Tài liệu về an toàn lấy mẫu khi mang thai.",
-  },
-  {
-    id: 11,
-    name: "Custom DNA Kit",
-    intro: "Dùng cho xét nghiệm đặc thù khác theo yêu cầu.",
-  },
-  { id: 12, name: "EDTA Tube", intro: "Ống thu mẫu máu nhiễm." },
-  {
-    id: 13,
-    name: "Safety Instruction",
-    intro: "Hướng dẫn sử dụng khi xét nghiệm thai nhi.",
-  },
-  {
-    id: 14,
-    name: "Genetic History Form",
-    intro: "Mẫu tờ khai về bệnh lý gia đình.",
-  },
-  {
-    id: 15,
-    name: "Gene Report Guide",
-    intro: "Mô tả cách đọc kết quả di truyền.",
-  },
-  {
-    id: 16,
-    name: "Administrative Form",
-    intro: "Các giấy tờ cần thiết cho thủ tục.",
-  },
-  { id: 17, name: "Legal File Cover", intro: "Lưu trữ hồ sơ hành chính." },
-  {
-    id: 18,
-    name: "Civil Dispute Form",
-    intro: "Sử dụng trong tranh chấp dân sự.",
-  },
-  {
-    id: 19,
-    name: "Judicial File",
-    intro: "Tài liệu bổ sung cho hồ sơ xét xử.",
-  },
-];
+// XÓA: const kitComponentNames = [...];
 
-const genders = ["Nam", "Nữ", "Khác"];
-
-const sampleTypeOptions = [
-  { value: "Máu", label: "Máu" },
-  { value: "Tóc", label: "Tóc" },
-  { value: "Móng", label: "Móng" },
-  { value: "Nước bọt", label: "Nước bọt" },
-  { value: "Da", label: "Da" },
-  { value: "Nước tiểu", label: "Nước tiểu" },
-  { value: "Dịch mũi", label: "Dịch mũi" },
-  { value: "Dịch họng", label: "Dịch họng" },
-  { value: "Sữa mẹ", label: "Sữa mẹ" },
-  { value: "Tinh dịch", label: "Tinh dịch" },
-];
-
-// Ánh xạ bộ kit với loại mẫu tương ứng
-const kitSampleTypeMap = {
-  "Buccal Swab": ["Nước bọt"],
-  "Sample Storage Bag": ["Tóc", "Móng", "Da"],
-  "Bone Collection Tube": ["Xương"],
-  "EDTA Tube": ["Máu"],
-  "Personal DNA Test Kit": ["Máu", "Tóc", "Móng", "Nước bọt", "Da"],
-  "Prenatal DNA Test Kit": ["Tinh dịch", "Sữa mẹ"],
-  "Shockproof Box": ["Xương"],
-  "Sample Envelope": ["Tóc", "Móng", "Da", "Nước bọt"],
-  "Legal Confirmation Form": ["Tinh dịch", "Sữa mẹ"],
-  "Pregnancy Safety Guide": ["Sữa mẹ"],
-  "Custom DNA Kit": [
-    "Máu",
-    "Tóc",
-    "Móng",
-    "Nước bọt",
-    "Da",
-    "Dịch mũi",
-    "Dịch họng",
-  ],
-  "Safety Instruction": ["Sữa mẹ"],
-  "Genetic History Form": ["Máu", "Da"],
-  "Gene Report Guide": ["Máu", "Tóc"],
-  "Administrative Form": ["Máu", "Da"],
-  "Legal File Cover": ["Máu", "Da"],
-  "Civil Dispute Form": ["Máu", "Da"],
-  "Judicial File": ["Máu", "Da"],
-};
-
-// Mapping dịch vụ sang mục đích xét nghiệm
-const servicePurposeMap = {
-  1: ["Hành chính"],
-  2: ["Hành chính"],
-  3: ["Hành chính"],
-  4: ["Hành chính", "Dân sự"], // Ví dụ: dịch vụ này có cả hai
-  5: ["Hành chính"],
-  6: ["Dân sự"],
-  7: ["Dân sự"],
-  8: ["Dân sự"],
-  9: ["Hành chính"],
-  10: ["Dân sự"],
-};
+// XÓA: Mapping dịch vụ sang mục đích xét nghiệm
+// const servicePurposeMap = {
+//   1: ["Hành chính"],
+//   2: ["Hành chính"],
+//   3: ["Hành chính"],
+//   4: ["Hành chính", "Dân sự"], // Ví dụ: dịch vụ này có cả hai
+//   5: ["Hành chính"],
+//   6: ["Dân sự"],
+//   7: ["Dân sự"],
+//   8: ["Dân sự"],
+//   9: ["Hành chính"],
+//   10: ["Dân sự"],
+// };
 
 function Booking() {
   const [form, setForm] = useState({
@@ -203,10 +61,10 @@ function Booking() {
   const [guestSuccess, setGuestSuccess] = useState(false);
   const [guestInfo, setGuestInfo] = useState({});
 
-  const [dynamicSampleTypeOptions, setDynamicSampleTypeOptions] =
-    useState(sampleTypeOptions);
+  const [dynamicSampleTypeOptions, setDynamicSampleTypeOptions] = useState([]);
+  const [testCategories, setTestCategories] = useState([]);
   const [availablePurposes, setAvailablePurposes] = useState([]);
-  const [filteredKits, setFilteredKits] = useState(kitComponentNames);
+  const [filteredKits, setFilteredKits] = useState([]);
 
   const location = useLocation();
 
@@ -230,6 +88,22 @@ function Booking() {
       setForm((prev) => ({ ...prev, testPurpose: availablePurposes[0] }));
     }
   }, [availablePurposes, form.testPurpose]);
+
+  useEffect(() => {
+    if (form.serviceType) {
+      const selectedService = serviceTypes.find(
+        (s) => String(s.service_id) === String(form.serviceType)
+      );
+      if (selectedService) {
+        getActiveTestCategoriesByService(selectedService.service_name)
+          .then((res) => setTestCategories(res.data))
+          .catch(() => setTestCategories([]));
+      }
+    } else {
+      setTestCategories([]);
+    }
+    // eslint-disable-next-line
+  }, [form.serviceType]);
 
   // Validate bước 1
   // const validateStep1 = () => {
@@ -269,7 +143,7 @@ function Booking() {
   //   return true;
   // };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     console.log("Thay đổi:", name, value);
     if (name === "province") {
@@ -277,25 +151,30 @@ function Booking() {
       setDistricts(selected ? selected.districts : []);
       setForm((prev) => ({ ...prev, province: value, district: "" }));
     } else if (name === "serviceType") {
-      // Xác định mục đích xét nghiệm hỗ trợ
-      const purposes = servicePurposeMap[value] || [];
-      setAvailablePurposes(purposes);
-      // Lọc bộ kit phù hợp với dịch vụ
-      const selectedService = serviceTypes.find(
-        (s) => String(s.service_id) === String(value)
-      );
-      if (
-        selectedService &&
-        selectedService.kits &&
-        selectedService.kits.length > 0
-      ) {
-        setFilteredKits(
-          kitComponentNames.filter((kit) =>
-            selectedService.kits.includes(kit.name)
-          )
+      // Gọi API lấy mục đích xét nghiệm động từ backend
+      try {
+        const selectedService = serviceTypes.find(
+          (s) => String(s.service_id) === String(value)
         );
-      } else {
-        setFilteredKits(kitComponentNames); // fallback: hiển thị tất cả nếu không có mapping
+        if (selectedService) {
+          const res = await getTestPurposesByServiceName(
+            selectedService.service_name
+          );
+          setAvailablePurposes(res.data || []);
+        } else {
+          setAvailablePurposes([]);
+        }
+      } catch (err) {
+        setAvailablePurposes([]);
+        toast.error("Không lấy được mục đích xét nghiệm!");
+      }
+      // Gọi API lấy kit động
+      try {
+        const res = await getKitByServiceId(value);
+        setFilteredKits(res.data); // res.data là mảng kit trả về từ API
+      } catch (err) {
+        setFilteredKits([]);
+        toast.error("Không lấy được danh sách kit!");
       }
       // Reset testPurpose và kitComponentName về rỗng mỗi khi đổi dịch vụ
       setForm((prev) => ({
@@ -305,17 +184,21 @@ function Booking() {
         kitComponentName: "",
       }));
     } else if (name === "kitComponentName") {
-      // Lấy loại mẫu tương ứng với bộ kit
-      const mappedTypes =
-        kitSampleTypeMap[value] || sampleTypeOptions.map((opt) => opt.value);
       setForm((prev) => ({
         ...prev,
         kitComponentName: value,
-        sampleTypes: [], // reset lựa chọn mẫu khi đổi bộ kit
+        sampleTypes: [],
       }));
-      setDynamicSampleTypeOptions(
-        sampleTypeOptions.filter((opt) => mappedTypes.includes(opt.value))
-      );
+      try {
+        const token = JSON.parse(localStorage.getItem("user") || "null")?.token;
+        const res = await getSampleTypesByComponentName(value, token);
+        setDynamicSampleTypeOptions(
+          (res || []).map((item) => ({ value: item.name, label: item.name }))
+        );
+      } catch (err) {
+        setDynamicSampleTypeOptions([]);
+        toast.error("Không lấy được loại mẫu!");
+      }
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
@@ -339,28 +222,51 @@ function Booking() {
       let timePart = form.collectionTime;
       if (timePart && timePart.length === 5) timePart += ":00";
       const collectionTimeStr =
-        datePart && timePart ? `${datePart}T${timePart}` : null;
+        datePart && timePart ? `${datePart}T${timePart}` : "";
 
       const selectedService = serviceTypes.find(
         (s) => s.service_id.toString() === form.serviceType
       );
       const data = {
-        fullName: form.fullName,
-        dob: form.dob,
-        phone: form.phone,
-        email: form.email,
-        gender: form.gender,
-        testPurpose: form.testPurpose,
-        serviceType: selectedService ? selectedService.service_name : "",
-        appointmentDate: form.appointmentDate,
+        fullName: typeof form.fullName === "string" ? form.fullName : "",
+        dob: typeof form.dob === "string" ? form.dob : "",
+        phone: typeof form.phone === "string" ? form.phone : "",
+        email: typeof form.email === "string" ? form.email : "",
+        gender: typeof form.gender === "string" ? form.gender : "",
+        // testPurpose: ép về string nếu là object
+        testPurpose:
+          typeof form.testPurpose === "string"
+            ? form.testPurpose
+            : form.testPurpose?.testPurposeName || "",
+        serviceType:
+          typeof form.serviceType === "string"
+            ? form.serviceType
+            : form.serviceType?.value || "",
+        appointmentDate:
+          typeof form.appointmentDate === "string" ? form.appointmentDate : "",
         collectionTime: collectionTimeStr,
-        fingerprintFile: form.fingerprintFile,
-        district: form.district,
-        province: form.province,
-        testCategory: form.testCategory,
-        collectionLocation: form.collectionLocation,
-        kitComponentName: form.kitComponentName,
-        sampleTypes: form.sampleTypes,
+        fingerprintFile:
+          typeof form.fingerprintFile === "string" ? form.fingerprintFile : "",
+        district: typeof form.district === "string" ? form.district : "",
+        province: typeof form.province === "string" ? form.province : "",
+        // Sửa testCategory thành string nếu là object
+        testCategory:
+          typeof form.testCategory === "string"
+            ? form.testCategory
+            : form.testCategory?.value || "",
+        collectionLocation:
+          typeof form.collectionLocation === "string"
+            ? form.collectionLocation
+            : "",
+        // Sửa kitComponentName thành string nếu là object
+        kitComponentName:
+          typeof form.kitComponentName === "string"
+            ? form.kitComponentName
+            : form.kitComponentName?.value || "",
+        // Sửa sampleTypes thành mảng chuỗi
+        sampleTypes: (form.sampleTypes || []).map((item) =>
+          typeof item === "string" ? item : item.value
+        ),
       };
 
       // Kiểm tra dữ liệu bắt buộc
@@ -668,7 +574,7 @@ function Booking() {
                 }}
               >
                 <b>Dịch vụ này hỗ trợ mục đích xét nghiệm:</b>{" "}
-                {availablePurposes.join(", ")}
+                {availablePurposes.map((p) => p.testPurposeName).join(", ")}
               </div>
             )}
             {/* Nếu có fixedPurpose thì hiện input disabled */}
@@ -695,8 +601,11 @@ function Booking() {
                 >
                   <option value="">Chọn mục đích</option>
                   {availablePurposes.map((purpose) => (
-                    <option key={purpose} value={purpose}>
-                      {purpose}
+                    <option
+                      key={purpose.testPurposeId || purpose.id}
+                      value={purpose.testPurposeName}
+                    >
+                      {purpose.testPurposeName}
                     </option>
                   ))}
                 </select>
@@ -709,7 +618,7 @@ function Booking() {
                   Mục đích xét nghiệm
                   <input
                     type="text"
-                    value={availablePurposes[0]}
+                    value={availablePurposes[0].testPurposeName}
                     disabled
                     style={{ background: "#f7eaea", color: "#b9b9b9" }}
                   />
@@ -755,18 +664,13 @@ function Booking() {
                     <div style={{ marginTop: 4 }}>
                       <b>Bộ kit sử dụng:</b>
                       <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
-                        {selected.kits && selected.kits.length > 0 ? (
-                          selected.kits.map((kitName) => {
-                            const kit = kitComponentNames.find(
-                              (k) => k.name === kitName
-                            );
-                            return (
-                              <li key={kitName} style={{ marginBottom: 2 }}>
-                                <b>{kitName}</b>
-                                {kit && kit.intro ? `: ${kit.intro}` : ""}
-                              </li>
-                            );
-                          })
+                        {filteredKits.length > 0 ? (
+                          filteredKits.map((kit, idx) => (
+                            <li key={idx} style={{ marginBottom: 2 }}>
+                              <b>{kit.kitComponentName}</b>
+                              {kit.introduction ? `: ${kit.introduction}` : ""}
+                            </li>
+                          ))
                         ) : (
                           <li>Không xác định</li>
                         )}
@@ -814,8 +718,8 @@ function Booking() {
               >
                 <option value="">Chọn loại xét nghiệm</option>
                 {testCategories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
+                  <option key={cat.id} value={cat.testCategoryName}>
+                    {cat.testCategoryName}
                   </option>
                 ))}
               </select>
@@ -845,9 +749,9 @@ function Booking() {
                 required
               >
                 <option value="">Chọn bộ kit</option>
-                {filteredKits.map((kit) => (
-                  <option key={kit.id} value={kit.name}>
-                    {kit.name} - {kit.intro}
+                {filteredKits.map((kit, idx) => (
+                  <option key={idx} value={kit.kitComponentName}>
+                    {kit.kitComponentName} - {kit.introduction}
                   </option>
                 ))}
               </select>

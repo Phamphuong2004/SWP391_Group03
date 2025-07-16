@@ -228,9 +228,8 @@ public class UserService {
             profileResponse.setDateOfBirth(null);
         }
         profileResponse.setGender(users.getGender());
-        if (users.getAvatar() != null && users.getAvatar().length > 0) {
-            String avatarBase64 = Base64.getEncoder().encodeToString(users.getAvatar());
-            profileResponse.setAvatar(avatarBase64);
+        if (users.getAvatar() != null && !users.getAvatar().isEmpty()) {
+            profileResponse.setAvatar(users.getAvatar());
         } else {
             profileResponse.setAvatar(null);
         }
@@ -286,11 +285,7 @@ public class UserService {
         }
 
         if (avatar != null && !avatar.isEmpty()) {
-            try {
-                users.setAvatar(avatar.getBytes());
-            } catch (IOException e) {
-                return ResponseEntity.badRequest().body("Upload avatar failed");
-            }
+            users.setAvatar(users.getAvatar());
         }
 
         userRepository.save(users);

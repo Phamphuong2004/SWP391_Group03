@@ -28,7 +28,7 @@ const Payment = () => {
             setEditForm({
               fullName: data.fullName,
               appointmentDate: data.appointmentDate,
-              collectionTime: data.collectionTime,
+              collectionTime: data.collectionTime, // lấy từ đơn đặt lịch
               serviceType: data.serviceType,
             });
           })
@@ -41,7 +41,7 @@ const Payment = () => {
       setEditForm({
         fullName: appointment.fullName,
         appointmentDate: appointment.appointmentDate,
-        collectionTime: appointment.collectionTime,
+        collectionTime: appointment.collectionTime, // lấy từ đơn đặt lịch
         serviceType: appointment.serviceType,
       });
     }
@@ -200,20 +200,10 @@ const Payment = () => {
             <label>
               <span className="label-title">Giờ lấy mẫu:</span>
               <input
-                type="time"
-                name="collectionTime"
-                value={getTime(editForm.collectionTime)}
-                onChange={(e) => {
-                  const date = editForm.appointmentDate?.slice(0, 10) || "";
-                  setEditForm((prev) => ({
-                    ...prev,
-                    collectionTime:
-                      date && e.target.value
-                        ? `${date}T${e.target.value}:00`
-                        : "",
-                  }));
-                }}
-                className="input-field"
+                type="text"
+                value={editForm?.collectionTime || ""}
+                readOnly
+                disabled
               />
             </label>
             <label>

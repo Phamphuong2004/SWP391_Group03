@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AppointmentHistory.css"; // We will create this CSS file later
+import serviceTypes from "../serviceTypes";
 
 const AppointmentHistory = () => {
   const [appointments, setAppointments] = useState([]);
@@ -317,7 +318,12 @@ const AppointmentHistory = () => {
                   guestAppointments.map((app) => (
                     <div key={app.appointmentId} className="appointment-card">
                       <div className="card-header">
-                        <span className="service-type">{app.serviceType}</span>
+                        <span className="service-type">
+                          {serviceTypes.find(
+                            (s) =>
+                              String(s.service_id) === String(app.serviceType)
+                          )?.service_name || app.serviceType}
+                        </span>
                         <span
                           className={`status status-${app.status?.toLowerCase()}`}
                         >
@@ -354,7 +360,12 @@ const AppointmentHistory = () => {
                   appointments.map((app) => (
                     <div key={app.appointmentId} className="appointment-card">
                       <div className="card-header">
-                        <span className="service-type">{app.serviceType}</span>
+                        <span className="service-type">
+                          {serviceTypes.find(
+                            (s) =>
+                              String(s.service_id) === String(app.serviceType)
+                          )?.service_name || app.serviceType}
+                        </span>
                         <span
                           className={`status status-${app.status?.toLowerCase()}`}
                         >

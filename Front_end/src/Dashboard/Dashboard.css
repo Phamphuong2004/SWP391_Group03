@@ -18,12 +18,13 @@
   letter-spacing: 1.5px;
   font-size: 2.4rem;
   text-align: center;
-  background: linear-gradient(90deg, #2563eb 60%, #4f5bd5 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-  text-shadow: 0 4px 24px #2563eb22, 0 2px 0 #fff;
+  /* Bỏ gradient và hiệu ứng mờ */
+  /* background: linear-gradient(90deg, #2563eb 60%, #4f5bd5 100%); */
+  /* -webkit-background-clip: text; */
+  /* -webkit-text-fill-color: transparent; */
+  /* background-clip: text; */
+  /* text-fill-color: transparent; */
+  /* text-shadow: 0 4px 24px #2563eb22, 0 2px 0 #fff; */
 }
 
 /* Card effect cho các stat-card */
