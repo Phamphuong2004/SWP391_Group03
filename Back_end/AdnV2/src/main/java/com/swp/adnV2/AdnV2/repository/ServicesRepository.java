@@ -8,4 +8,8 @@ import java.util.List;
 @Repository
 public interface ServicesRepository extends JpaRepository<Services, Long> {
     List<Services> findServicesByServiceNameContainingIgnoreCase(String serviceName);
+
+    Services findServicesByServiceId(Long serviceId);
+
+    Services findByServiceName(String serviceName);
 }

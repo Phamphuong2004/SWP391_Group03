@@ -125,13 +125,13 @@ public class PaymentService {
             response.setNote("Payment not found for appointment id: " + appointmentId);
             return response; // or throw an exception if preferred
         }
-        if (!"Completed".equalsIgnoreCase(payment.getStatus()) && !"PAID".equalsIgnoreCase(payment.getStatus())) {
+        if (!"Completed".equalsIgnoreCase(payment.getStatus())) {
             response.setNote("Payment is not completed, cannot process refund.");
             return response; // or throw an exception if preferred
         }
 
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElse(null);
+                .orElse(null);;
         if (appointment == null) {
             response.setNote("Appointment not found with id: " + appointmentId);
             return response; // or throw an exception if preferred
@@ -182,7 +182,7 @@ public class PaymentService {
         if (payment == null) {
             return "Payment not found for appointment id: " + appointmentId;
         }
-        if (!"Completed".equalsIgnoreCase(payment.getStatus()) && !"PAID".equalsIgnoreCase(payment.getStatus())) {
+        if (!"Completed".equalsIgnoreCase(payment.getStatus())) {
             return "Payment is not completed, cannot process refund.";
         }
         payment.setStatus("Refunded");

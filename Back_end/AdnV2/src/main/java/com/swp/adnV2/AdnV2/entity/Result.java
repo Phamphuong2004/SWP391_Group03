@@ -3,6 +3,7 @@ package com.swp.adnV2.AdnV2.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "Result")
@@ -27,9 +28,9 @@ public class Result {
     @Column(name = "result_file", columnDefinition = "NVARCHAR(255)")
     private String resultFile;
 
-    @ManyToOne
+    @OneToMany
     @JoinColumn(name = "sample_id")
-    private CollectedSample collectedSample;
+    private List<CollectedSample> collectedSample;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -76,11 +77,11 @@ public class Result {
         this.interpretation = interpretation;
     }
 
-    public CollectedSample getCollectedSample() {
+    public List<CollectedSample> getCollectedSample() {
         return collectedSample;
     }
 
-    public void setCollectedSample(CollectedSample collectedSample) {
+    public void setCollectedSample(List<CollectedSample> collectedSample) {
         this.collectedSample = collectedSample;
     }
 

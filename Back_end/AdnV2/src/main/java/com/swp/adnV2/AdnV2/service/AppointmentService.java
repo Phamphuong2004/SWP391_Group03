@@ -26,7 +26,7 @@ public class AppointmentService {
     private UserRepository userRepository;
 
     @Autowired
-    private ServiceRepository serviceRepository;
+    private ServicesRepository servicesRepository;
 
     @Autowired
     private KitRepository kitRepository;
@@ -88,26 +88,41 @@ public class AppointmentService {
         if (request.getGender() == null || request.getGender().isEmpty()) {
             errors.add("Gender is required");
         }
-        if (request.getServiceType() == null || request.getServiceType().isEmpty()) {
-            errors.add("Service type is required");
-        }
 
-        TestPurpose testPurpose = TestPurpose.fromDisplayName(request.getTestPurpose());
-        if(testPurpose == TestPurpose.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
+        TestPurposeV1 testPurposeV1 = TestPurposeV1.fromDisplayName(request.getTestPurpose());
+        if(testPurposeV1 == TestPurposeV1.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
             errors.add("Test purpose must be one of :Hành chính, Dân sự, Khác");
         }
 
-        if(testPurpose == TestPurpose.HANH_CHINH){
+        if(testPurposeV1 == TestPurposeV1.HANH_CHINH){
             String fingerprintFile = request.getFingerprintFile();
             if(fingerprintFile == null || fingerprintFile.isEmpty()) {
                 errors.add("Fingerprint file is required for test purpose 'Hành chính'");
             }
         }
+        if (request.getServiceType() == null || request.getServiceType().isEmpty()) errors.add("Service type is required");
 
-        Services services = serviceRepository.findServicesByServiceId(serviceId);
+        Services services = servicesRepository.findServicesByServiceId(serviceId);
         if (services == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Service not found with ID: " + serviceId);
+        }
+
+        if(request.getTestCategory() != null && !request.getTestCategory().isEmpty()){
+            boolean testCategorySupported = false;
+            List<TestCategory> supportedCategories = services.getTestCategories();
+            if (supportedCategories != null) {
+                for (TestCategory category : supportedCategories) {
+                    // Kiểm tra theo tên, có thể đổi sang id nếu cần
+                    if (category.getName().equalsIgnoreCase(request.getTestCategory())) {
+                        testCategorySupported = true;
+                        break;
+                    }
+                }
+            }
+            if (!testCategorySupported) {
+                errors.add("Dịch vụ hiện tại không hỗ trợ loại xét nghiệm: " + request.getTestCategory());
+            }
         }
 
 
@@ -270,7 +285,7 @@ public class AppointmentService {
             // mapping SampleInfo list mới
             List<AppointmentResponse.SampleInfo> sampleInfos = collectedSamples.stream().map(sample -> {
                 AppointmentResponse.SampleInfo info = new AppointmentResponse.SampleInfo();
-                info.setSampleId(sample.getSampleId());
+                info.setSampleId(sample.getSampleIdId());
                 info.setSampleType(sample.getSampleType() != null ? sample.getSampleType().getName() : null);
                 if (sample.getParticipant() != null) {
                     info.setParticipantFullName(sample.getParticipant().getFullName());
@@ -337,20 +352,37 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
     if (request.getGender() == null || request.getGender().isEmpty()) errors.add("Gender is required");
     if (request.getServiceType() == null || request.getServiceType().isEmpty()) errors.add("Service type is required");
 
-    TestPurpose testPurpose = TestPurpose.fromDisplayName(request.getTestPurpose());
-    if(testPurpose == TestPurpose.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
+    TestPurposeV1 testPurposeV1 = TestPurposeV1.fromDisplayName(request.getTestPurpose());
+    if(testPurposeV1 == TestPurposeV1.OTHER && !("Khác".equalsIgnoreCase(request.getTestPurpose()))) {
         errors.add("Test purpose must be one of :Hành chính, Dân sự, Khác");
     }
 
-    if(testPurpose == TestPurpose.HANH_CHINH){
+    if(testPurposeV1 == TestPurposeV1.HANH_CHINH){
         String fingerprintFile = request.getFingerprintFile();
         if(fingerprintFile == null || fingerprintFile.isEmpty()) {
             errors.add("Fingerprint file is required for test purpose 'Hành chính'");
         }
     }
 
-        Services services = serviceRepository.findById(serviceId)
+        Services services = servicesRepository.findById(serviceId)
                 .orElseThrow(() -> new IllegalArgumentException("Service not found with ID: " + serviceId));
+
+        if(request.getTestCategory() != null && !request.getTestCategory().isEmpty()){
+            boolean testCategorySupported = false;
+            List<TestCategory> supportedCategories = services.getTestCategories();
+            if (supportedCategories != null) {
+                for (TestCategory category : supportedCategories) {
+                    // Kiểm tra theo tên, có thể đổi sang id nếu cần
+                    if (category.getName().equalsIgnoreCase(request.getTestCategory())) {
+                        testCategorySupported = true;
+                        break;
+                    }
+                }
+            }
+            if (!testCategorySupported) {
+                errors.add("Dịch vụ hiện tại không hỗ trợ loại xét nghiệm: " + request.getTestCategory());
+            }
+        }
 
     KitComponent kitComponent = null;
     List<String> sampleTypes = request.getSampleTypes();
@@ -573,7 +605,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                             .body("No sample found for the appointment ID " + appointmentId);
                 }
                 for (CollectedSample collectedSample : collectedSamples) {
-                    Result result = resultRepository.findByCollectedSample_SampleId(collectedSample.getSampleId());
+                    Result result = resultRepository.findByCollectedSample_SampleId(collectedSample.getSampleIdId());
                     if (result != null) {
                         result.setResultData(updateRequest.getResultFile());
                         resultRepository.save(result);
