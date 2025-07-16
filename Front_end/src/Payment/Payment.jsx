@@ -28,7 +28,7 @@ const Payment = () => {
             setEditForm({
               fullName: data.fullName,
               appointmentDate: data.appointmentDate,
-              collectionTime: data.collectionTime, // lấy từ đơn đặt lịch
+              collectionTime: data.collectionSampleTime, // lấy đúng trường giờ lấy mẫu
               serviceType: data.serviceType,
             });
           })
@@ -41,7 +41,7 @@ const Payment = () => {
       setEditForm({
         fullName: appointment.fullName,
         appointmentDate: appointment.appointmentDate,
-        collectionTime: appointment.collectionTime, // lấy từ đơn đặt lịch
+        collectionTime: appointment.collectionSampleTime, // lấy đúng trường giờ lấy mẫu
         serviceType: appointment.serviceType,
       });
     }
