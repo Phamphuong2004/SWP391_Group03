@@ -18,10 +18,15 @@ export const getAllTestCategoriesByService = () =>
     headers: getAuthHeader(),
   });
 
-export const getActiveTestCategoriesByService = () =>
-  axios.get(`${API_BASE}test-category/by-service/active`, {
-    headers: getAuthHeader(),
-  });
+export const getActiveTestCategoriesByService = (serviceName) =>
+  axios.get(
+    `${API_BASE}test-category/by-service/active?serviceName=${encodeURIComponent(
+      serviceName
+    )}`,
+    {
+      headers: getAuthHeader(),
+    }
+  );
 
 export const createTestCategory = (data) =>
   axios.post(`${API_BASE}test-category/create`, data, {
