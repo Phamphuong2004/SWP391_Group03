@@ -74,13 +74,8 @@ public class CollectedSample {
         this.appointment = appointment;
     }
 
-    public Long getSampleId() {
-        return sampleId;
-    }
-
-    public void setSampleId(Long sampleId) {
-        this.sampleId = sampleId;
-    }
+    public Long getSampleIdId() { return sampleId; }
+    public void setSampleIdId(Long id) { this.sampleId = id; }
 
 
     public Users getUser() {

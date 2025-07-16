@@ -285,7 +285,7 @@ public class AppointmentService {
             // mapping SampleInfo list mới
             List<AppointmentResponse.SampleInfo> sampleInfos = collectedSamples.stream().map(sample -> {
                 AppointmentResponse.SampleInfo info = new AppointmentResponse.SampleInfo();
-                info.setSampleId(sample.getSampleId());
+                info.setSampleId(sample.getSampleIdId());
                 info.setSampleType(sample.getSampleType() != null ? sample.getSampleType().getName() : null);
                 if (sample.getParticipant() != null) {
                     info.setParticipantFullName(sample.getParticipant().getFullName());
@@ -605,7 +605,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                             .body("No sample found for the appointment ID " + appointmentId);
                 }
                 for (CollectedSample collectedSample : collectedSamples) {
-                    Result result = resultRepository.findByCollectedSample_SampleId(collectedSample.getSampleId());
+                    Result result = resultRepository.findByCollectedSample_SampleId(collectedSample.getSampleIdId());
                     if (result != null) {
                         result.setResultData(updateRequest.getResultFile());
                         resultRepository.save(result);

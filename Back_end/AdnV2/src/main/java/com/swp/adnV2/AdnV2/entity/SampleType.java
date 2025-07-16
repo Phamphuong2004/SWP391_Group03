@@ -9,7 +9,7 @@ import java.util.List;
 public class SampleType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sample_type_id")
+    @Column(name = "id") // <-- Đúng với tên cột trong DB
     private Long id;
 
     @Column(name = "name", columnDefinition = "NVARCHAR(255)", unique = true)

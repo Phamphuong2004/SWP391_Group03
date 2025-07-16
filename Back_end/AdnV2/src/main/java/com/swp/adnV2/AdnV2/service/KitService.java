@@ -1,6 +1,7 @@
 package com.swp.adnV2.AdnV2.service;
 
 import com.swp.adnV2.AdnV2.dto.KitComponentRequest;
+import com.swp.adnV2.AdnV2.dto.KitComponentResponse;
 import com.swp.adnV2.AdnV2.entity.KitComponent;
 import com.swp.adnV2.AdnV2.entity.Services;
 import com.swp.adnV2.AdnV2.repository.KitRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class KitService {
@@ -20,6 +22,17 @@ public class KitService {
 
     @Autowired
     private ServicesRepository servicesRepository;
+
+    public KitComponentResponse convertToResponse(KitComponent kitComponent) {
+        KitComponentResponse response = new KitComponentResponse();
+        Services service = kitComponent.getService();
+        response.setServiceName(service.getServiceName());
+        response.setKitComponentId(kitComponent.getKitComponentId());
+        response.setKitComponentName(kitComponent.getComponentName());
+        response.setIntroduction(kitComponent.getIntroduction());
+        response.setQuantity(kitComponent.getQuantity());
+        return response;
+    }
 
     public ResponseEntity<?> getKitByServiceId(Long serviceId) {
         try {
@@ -35,7 +48,11 @@ public class KitService {
             List<KitComponent> kitComponents = kitRepository.findByService(service);
 
             if (!kitComponents.isEmpty()) {
-                return ResponseEntity.ok(kitComponents);
+                // Chuyển đổi sang response
+                List<KitComponentResponse> responseList = kitComponents.stream()
+                        .map(this::convertToResponse)
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok(responseList);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("No kit components found for service ID: " + serviceId);

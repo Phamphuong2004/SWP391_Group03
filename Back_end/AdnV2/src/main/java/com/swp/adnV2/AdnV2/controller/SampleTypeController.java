@@ -49,7 +49,7 @@ public class SampleTypeController {
     }
 
     @GetMapping("/get-by-component-name/{componentName}")
-    public List<SampleTypeResponse> getSampleTypeByComponentName (@RequestParam String componentName) {
+    public List<SampleTypeResponse> getSampleTypeByComponentName(@PathVariable String componentName) {
         return sampleTypeService.getSampleTypeByComponentName(componentName);
     }
 }
