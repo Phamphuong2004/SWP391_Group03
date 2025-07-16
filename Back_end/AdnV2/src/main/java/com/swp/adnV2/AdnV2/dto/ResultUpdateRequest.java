@@ -3,13 +3,14 @@ package com.swp.adnV2.AdnV2.dto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class ResultUpdateRequest {
     private LocalDate resultDate;
     private String resultData;
     private String interpretation;
     private String status = "Pending";
-    private Long sampleId;
+    private List<Long> sampleId;
     private String username;
     private Long appointmentId;
     private String resultFile;
@@ -48,10 +49,10 @@ public class ResultUpdateRequest {
         this.status = status;
     }
 
-    public Long getSampleId() {
+    public List<Long> getSampleId() {
         return sampleId;
     }
-    public void setSampleId(Long sampleId) {
+    public void setSampleId(List<Long> sampleId) {
         this.sampleId = sampleId;
     }
 

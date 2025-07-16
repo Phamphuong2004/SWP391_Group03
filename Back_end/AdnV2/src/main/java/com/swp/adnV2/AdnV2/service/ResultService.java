@@ -37,9 +37,8 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        CollectedSample collectedSample = sampleRepository.findById(request.getSampleId())
-                .orElseThrow(() -> new RuntimeException("Sample not found with id: " + request.getSampleId()));
-        result.setCollectedSample(collectedSample);
+        List<CollectedSample> collectedSamples = sampleRepository.findAllById(request.getSampleId());
+        result.setCollectedSample(collectedSamples);
 
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
@@ -76,7 +75,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setSampleId(collectedSamples.stream().map(CollectedSample::getSampleId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(request.getAppointmentId());
         response.setResultFile(result.getResultFile());// Save the uploaded file to a directory
@@ -90,9 +89,8 @@ public class ResultService {
         result.setResultDate(request.getResultDate());
         result.setResultData(request.getResultData());
         result.setInterpretation(request.getInterpretation());
-        CollectedSample collectedSample = sampleRepository.findById(request.getSampleId())
-                .orElseThrow(() -> new RuntimeException("Sample not found with id: " + request.getSampleId()));
-        result.setCollectedSample(collectedSample);
+        List<CollectedSample> collectedSamples = sampleRepository.findAllById(request.getSampleId());
+        result.setCollectedSample(collectedSamples);
 
         result.setStatus(request.getStatus());
         Users user = userRepository.findByUsername(request.getUsername());
@@ -129,7 +127,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setSampleId(collectedSamples.stream().map(CollectedSample::getSampleId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
@@ -154,7 +152,7 @@ public class ResultService {
             response.setResultData(result.getResultData());
             response.setInterpretation(result.getInterpretation());
             response.setStatus(result.getStatus());
-            response.setSampleId(result.getCollectedSample().getSampleId());
+            response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleId).toList());
             response.setUsername(result.getUser().getUsername());
             response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
             response.setResultFile(result.getResultFile());
@@ -174,7 +172,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
@@ -191,7 +189,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().getSampleId());
+        response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
