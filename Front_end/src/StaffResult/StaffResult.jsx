@@ -65,10 +65,14 @@ const StaffResult = () => {
   };
 
   const handleDelete = async (id) => {
+    if (!id || isNaN(id)) {
+      message.error("ID không hợp lệ!");
+      return;
+    }
     try {
       const userString = localStorage.getItem("user");
       const token = userString ? JSON.parse(userString).token : null;
-      await deleteResult(id, token);
+      await deleteResult(Number(id), token);
       message.success("Xóa kết quả thành công");
       fetchResults();
     } catch {
@@ -84,28 +88,29 @@ const StaffResult = () => {
       const username = user ? user.username : null;
       const token = user ? user.token : null;
 
-      // Kiểm tra đã chọn file thực chưa
-      if (!selectedFile) {
-        message.error("Vui lòng chọn file kết quả!");
-        return;
-      }
+      // Chỉ gửi tên file, không gửi file object
+      const resultData = {
+        resultDate: values.resultDate,
+        resultData: values.resultData,
+        interpretation: values.interpretation,
+        status: values.status,
+        // Đảm bảo sampleId luôn là mảng số
+        sampleId: values.sampleId
+          ? Array.isArray(values.sampleId)
+            ? values.sampleId.map((v) => Number(v))
+            : [Number(values.sampleId)]
+          : [],
+        username: username,
+        appointmentId: values.appointmentId,
+        resultFile: values.resultFile, // chỉ là tên file
+      };
+      console.log("resultData gửi lên:", resultData);
 
-      // Tạo FormData
-      const formData = new FormData();
-      formData.append("resultDate", values.resultDate);
-      formData.append("resultData", values.resultData);
-      formData.append("interpretation", values.interpretation);
-      formData.append("status", values.status);
-      formData.append("sampleId", values.sampleId);
-      formData.append("username", username);
-      formData.append("appointmentId", values.appointmentId);
-      formData.append("resultFile", selectedFile); // file object thực
-
-      if (editingResult && editingResult.id) {
-        await updateResult(editingResult.id, formData, token);
+      if (editingResult && editingResult.resultId) {
+        await updateResult(editingResult.resultId, resultData, token);
         message.success("Cập nhật kết quả thành công");
       } else {
-        await createResult(formData, token);
+        await createResult(resultData, token);
         message.success("Thêm kết quả thành công");
       }
       setIsModalVisible(false);
@@ -118,11 +123,9 @@ const StaffResult = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedFile(file); // Lưu object file thực
       setSelectedFileName(file.name);
-      form.setFieldsValue({ resultFile: file.name }); // Vẫn set tên để validate
+      form.setFieldsValue({ resultFile: file.name }); // chỉ lưu tên file
     } else {
-      setSelectedFile(null);
       setSelectedFileName("");
       form.setFieldsValue({ resultFile: "" });
     }
@@ -132,7 +135,7 @@ const StaffResult = () => {
     try {
       const userString = localStorage.getItem("user");
       const token = userString ? JSON.parse(userString).token : null;
-      const { data } = await getResultById(id, token);
+      const { data } = await getResultById(Number(id), token);
       setDetailResult(data);
       setDetailModalVisible(true);
     } catch {
@@ -170,7 +173,7 @@ const StaffResult = () => {
   };
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "ID", dataIndex: "resultId", key: "resultId" },
     { title: "Ngày trả kết quả", dataIndex: "resultDate", key: "resultDate" },
     { title: "Kết quả", dataIndex: "resultData", key: "resultData" },
     { title: "Nhận định", dataIndex: "interpretation", key: "interpretation" },
@@ -191,7 +194,7 @@ const StaffResult = () => {
         <>
           <Button
             className="button"
-            onClick={() => handleViewDetail(record.id)}
+            onClick={() => handleViewDetail(record.resultId)}
             style={{ marginRight: 8 }}
           >
             Xem chi tiết
@@ -205,7 +208,7 @@ const StaffResult = () => {
           </Button>
           <Popconfirm
             title="Bạn chắc chắn muốn xóa?"
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={() => handleDelete(record.resultId)}
           >
             <Button danger className="button">
               Xóa
@@ -252,7 +255,7 @@ const StaffResult = () => {
         columns={columns}
         dataSource={results}
         loading={loading}
-        rowKey={(record) => record.id}
+        rowKey={(record) => record.resultId}
         pagination={false}
       />
       <Modal

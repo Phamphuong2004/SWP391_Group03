@@ -51,9 +51,11 @@ export const createSampleByAppointmentId = async (
 
 // Cập nhật sample
 export const updateSample = async (sampleId, sampleData, token) => {
+  // Loại bỏ sampleId nếu có trong sampleData
+  const { sampleId: _removed, ...dataWithoutSampleId } = sampleData;
   const res = await axios.put(
     `/api/collected-sample/update/${sampleId}`,
-    sampleData,
+    dataWithoutSampleId,
     {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     }
