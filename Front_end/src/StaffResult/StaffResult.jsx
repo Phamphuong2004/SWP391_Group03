@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Input, message, Popconfirm } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+} from "antd";
 import "./StaffResult.css";
 import {
   getResultList,
@@ -20,6 +29,7 @@ const StaffResult = () => {
   const [detailResult, setDetailResult] = useState(null);
   const [filterAppointmentId, setFilterAppointmentId] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [availableSamples, setAvailableSamples] = useState([]);
 
   const fetchResults = async () => {
     setLoading(true);
@@ -54,7 +64,9 @@ const StaffResult = () => {
       resultData: record.resultData,
       interpretation: record.interpretation,
       status: record.status,
-      sampleId: record.sampleId,
+      sampleId: Array.isArray(record.sampleId)
+        ? record.sampleId
+        : [record.sampleId],
       username: record.username,
       appointmentId: record.appointmentId,
       resultFile: record.resultFile,
@@ -88,21 +100,15 @@ const StaffResult = () => {
       const username = user ? user.username : null;
       const token = user ? user.token : null;
 
-      // Chỉ gửi tên file, không gửi file object
       const resultData = {
         resultDate: values.resultDate,
         resultData: values.resultData,
         interpretation: values.interpretation,
         status: values.status,
-        // Đảm bảo sampleId luôn là mảng số
-        sampleId: values.sampleId
-          ? Array.isArray(values.sampleId)
-            ? values.sampleId.map((v) => Number(v))
-            : [Number(values.sampleId)]
-          : [],
+        sampleId: values.sampleId || [],
         username: username,
         appointmentId: values.appointmentId,
-        resultFile: values.resultFile, // chỉ là tên file
+        resultFile: values.resultFile,
       };
       console.log("resultData gửi lên:", resultData);
 
@@ -172,6 +178,36 @@ const StaffResult = () => {
     }
   };
 
+  // Tạo danh sách mẫu có sẵn (có thể lấy từ API)
+  useEffect(() => {
+    // Giả sử có API để lấy danh sách mẫu
+    // setAvailableSamples([{ value: 1, label: 'Mẫu 1' }, { value: 2, label: 'Mẫu 2' }]);
+    setAvailableSamples([
+      { value: 1, label: "Mẫu 1" },
+      { value: 2, label: "Mẫu 2" },
+      { value: 3, label: "Mẫu 3" },
+      { value: 4, label: "Mẫu 4" },
+      { value: 5, label: "Mẫu 5" },
+      { value: 6, label: "Mẫu 6" },
+      { value: 7, label: "Mẫu 7" },
+      { value: 8, label: "Mẫu 8" },
+      { value: 9, label: "Mẫu 9" },
+      { value: 10, label: "Mẫu 10" },
+      { value: 11, label: "Mẫu 11" },
+      { value: 12, label: "Mẫu 12" },
+      { value: 13, label: "Mẫu 13" },
+      { value: 14, label: "Mẫu 14" },
+      { value: 15, label: "Mẫu 15" },
+      { value: 16, label: "Mẫu 16" },
+      { value: 17, label: "Mẫu 17" },
+      { value: 18, label: "Mẫu 18" },
+      { value: 19, label: "Mẫu 19" },
+      { value: 20, label: "Mẫu 20" },
+      { value: 21, label: "Mẫu 21" },
+      { value: 22, label: "Mẫu 22" },
+    ]);
+  }, []);
+
   const columns = [
     { title: "ID", dataIndex: "resultId", key: "resultId" },
     { title: "Ngày trả kết quả", dataIndex: "resultDate", key: "resultDate" },
@@ -183,7 +219,19 @@ const StaffResult = () => {
       key: "status",
       render: (text) => <span className="status">{text}</span>,
     },
-    { title: "ID mẫu", dataIndex: "sampleId", key: "sampleId" },
+    {
+      title: "ID mẫu",
+      dataIndex: "sampleId",
+      key: "sampleId",
+      render: (sampleIds) => {
+        if (Array.isArray(sampleIds)) {
+          return sampleIds.join(", ");
+        } else if (sampleIds) {
+          return String(sampleIds);
+        }
+        return "";
+      },
+    },
     { title: "Người nhập", dataIndex: "username", key: "username" },
     { title: "Mã lịch hẹn", dataIndex: "appointmentId", key: "appointmentId" },
     { title: "File kết quả", dataIndex: "resultFile", key: "resultFile" },
@@ -298,9 +346,19 @@ const StaffResult = () => {
           <Form.Item
             name="sampleId"
             label="ID mẫu"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Vui lòng chọn ít nhất một mẫu" },
+            ]}
           >
-            <Input type="number" />
+            <Select
+              mode="multiple"
+              placeholder="Chọn các mẫu"
+              options={availableSamples}
+              showSearch
+              filterOption={(input, option) =>
+                option?.label?.toLowerCase().includes(input.toLowerCase())
+              }
+            />
           </Form.Item>
           <Form.Item
             name="username"
