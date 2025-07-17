@@ -15,7 +15,11 @@ const ResultList = () => {
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem("token");
+      const rawToken = localStorage.getItem("token");
+      const token =
+        rawToken && rawToken !== "null" && rawToken !== "undefined"
+          ? rawToken
+          : null;
       if (!appointmentId) {
         setResults([]);
         setError("Vui lòng nhập mã lịch hẹn để tra cứu!");
@@ -41,7 +45,11 @@ const ResultList = () => {
     // Lấy sample types
     const fetchSampleTypes = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const rawToken = localStorage.getItem("token");
+        const token =
+          rawToken && rawToken !== "null" && rawToken !== "undefined"
+            ? rawToken
+            : null;
         const res = await getAllSampleTypes(token);
         setSampleTypes(res);
       } catch {
@@ -115,7 +123,11 @@ const ResultList = () => {
                 <td>{result.resultDate}</td>
                 <td>{result.status}</td>
                 <td>{result.interpretation}</td>
-                <td>{result.sampleId}</td>
+                <td>
+                  {Array.isArray(result.sampleId)
+                    ? result.sampleId.join(", ")
+                    : result.sampleId}
+                </td>
                 <td>{getSampleName(result.sampleId)}</td>
                 <td>{result.username}</td>
                 <td>{result.appointmentId}</td>
