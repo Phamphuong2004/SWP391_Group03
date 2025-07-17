@@ -82,6 +82,17 @@ export default function ViewFeedback() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    // Validation
+    if (!editContent || editContent.trim() === "") {
+      setError("Nội dung phản hồi không được để trống.");
+      setLoading(false);
+      return;
+    }
+    if (isNaN(editRating) || editRating < 1 || editRating > 5) {
+      setError("Đánh giá phải là số từ 1 đến 5.");
+      setLoading(false);
+      return;
+    }
     try {
       await axios.put(
         `/api/feedback/update/${editingId}`,
@@ -167,10 +178,13 @@ export default function ViewFeedback() {
                 <td>{fb.username || fb.fullName || "Ẩn danh"}</td>
                 <td>
                   {editingId === (fb.feedbackId || fb.id) ? (
-                    <form onSubmit={handleEditSubmit} style={{ display: "flex", gap: 8 }}>
+                    <form
+                      onSubmit={handleEditSubmit}
+                      style={{ display: "flex", gap: 8 }}
+                    >
                       <input
                         value={editContent}
-                        onChange={e => setEditContent(e.target.value)}
+                        onChange={(e) => setEditContent(e.target.value)}
                         required
                         style={{ flex: 1 }}
                       />
@@ -179,37 +193,50 @@ export default function ViewFeedback() {
                         min={1}
                         max={5}
                         value={editRating}
-                        onChange={e => setEditRating(Number(e.target.value))}
+                        onChange={(e) => setEditRating(Number(e.target.value))}
                         style={{ width: 50 }}
                       />
                       <button type="submit">Lưu</button>
-                      <button type="button" onClick={handleCancelEdit}>Hủy</button>
+                      <button type="button" onClick={handleCancelEdit}>
+                        Hủy
+                      </button>
                     </form>
                   ) : (
                     fb.content
                   )}
                 </td>
                 <td>
-                  {[1,2,3,4,5].map((star) => (
+                  {[1, 2, 3, 4, 5].map((star) => (
                     <span
                       key={star}
                       style={{
                         color: star <= (fb.rating || 0) ? "#FFD700" : "#ccc",
-                        fontSize: 18
+                        fontSize: 18,
                       }}
                     >
                       ★
                     </span>
                   ))}
                 </td>
-                <td>{fb.feedback_date || fb.feedbackDate || fb.feedbackDateTime || ""}</td>
+                <td>
+                  {fb.feedback_date ||
+                    fb.feedbackDate ||
+                    fb.feedbackDateTime ||
+                    ""}
+                </td>
                 {isStaff && (
                   <td>
-                    <button className="btn-delete" onClick={() => handleDelete(fb.feedbackId || fb.id)}>
+                    <button
+                      className="btn-delete"
+                      onClick={() => handleDelete(fb.feedbackId || fb.id)}
+                    >
                       Xóa
                     </button>
                     {editingId !== (fb.feedbackId || fb.id) && (
-                      <button className="btn-edit" onClick={() => handleEdit(fb)}>
+                      <button
+                        className="btn-edit"
+                        onClick={() => handleEdit(fb)}
+                      >
                         Sửa
                       </button>
                     )}

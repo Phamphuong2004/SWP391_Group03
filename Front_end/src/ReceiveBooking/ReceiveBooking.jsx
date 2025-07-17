@@ -260,8 +260,50 @@ const ReceiveBooking = () => {
     }
   };
 
+  // Hàm lấy lịch hẹn guest
+  const fetchGuestAppointments = async () => {
+    if (!guestIdentifier || guestIdentifier.trim() === "") {
+      message.error("Vui lòng nhập số điện thoại guest!");
+      return;
+    }
+    if (!/^[0-9]{10,15}$/.test(guestIdentifier)) {
+      message.error("Số điện thoại guest không đúng định dạng!");
+      return;
+    }
+    try {
+      setLoading(true);
+      // Ví dụ: dùng phone làm định danh guest, có thể thay đổi theo backend
+      const response = await axios.get(
+        `/api/view-appointment-guest?phone=${guestIdentifier}`
+      );
+      setGuestBookings(Array.isArray(response.data) ? response.data : []);
+      setGuestModalVisible(true);
+    } catch (error) {
+      message.error("Không thể lấy lịch hẹn guest");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Handle form submission for update
   const handleSubmit = async (values) => {
+    // Validation
+    if (!values.fullName || values.fullName.trim() === "") {
+      message.error("Tên khách hàng không được để trống!");
+      return;
+    }
+    if (!values.phone || !/^[0-9]{10,15}$/.test(values.phone)) {
+      message.error("Số điện thoại không hợp lệ!");
+      return;
+    }
+    if (!values.appointmentDate || values.appointmentDate === "") {
+      message.error("Ngày hẹn không được để trống!");
+      return;
+    }
+    if (!values.status || values.status.trim() === "") {
+      message.error("Trạng thái không được để trống!");
+      return;
+    }
     // Map lại trường cho backend camelCase
     const submitValues = {
       ...values,
@@ -294,23 +336,6 @@ const ReceiveBooking = () => {
       fetchBookings();
     } catch (error) {
       message.error("Không thể tiếp nhận đơn");
-    }
-  };
-
-  // Hàm lấy lịch hẹn guest
-  const fetchGuestAppointments = async () => {
-    try {
-      setLoading(true);
-      // Ví dụ: dùng phone làm định danh guest, có thể thay đổi theo backend
-      const response = await axios.get(
-        `/api/view-appointment-guest?phone=${guestIdentifier}`
-      );
-      setGuestBookings(Array.isArray(response.data) ? response.data : []);
-      setGuestModalVisible(true);
-    } catch (error) {
-      message.error("Không thể lấy lịch hẹn guest");
-    } finally {
-      setLoading(false);
     }
   };
 

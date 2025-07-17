@@ -72,13 +72,30 @@ export default function ServiceManagement() {
     setLoading(true);
     setError("");
     // Validate
-    if (
-      !formData.name.trim() ||
-      !formData.description.trim() ||
-      !formData.type.trim() ||
-      formData.price === ""
-    ) {
-      setError("Vui lòng nhập đầy đủ thông tin.");
+    if (!formData.name.trim()) {
+      setError("Tên dịch vụ không được để trống.");
+      setLoading(false);
+      return;
+    }
+    if (!formData.description.trim()) {
+      setError("Mô tả không được để trống.");
+      setLoading(false);
+      return;
+    }
+    if (!formData.type.trim()) {
+      setError("Loại dịch vụ không được để trống.");
+      setLoading(false);
+      return;
+    }
+    // Nếu có danh sách loại hợp lệ, kiểm tra ở đây (ví dụ: ['ADN', 'Y học', ...])
+    // const validTypes = ["ADN", "Y học", "Khác"];
+    // if (!validTypes.includes(formData.type.trim())) {
+    //   setError("Loại dịch vụ không hợp lệ.");
+    //   setLoading(false);
+    //   return;
+    // }
+    if (formData.price === "") {
+      setError("Giá không được để trống.");
       setLoading(false);
       return;
     }

@@ -36,10 +36,19 @@ export default function TestCategoryManager() {
   const [serviceName, setServiceName] = useState("");
   const [categories, setCategories] = useState([]);
   const [message, setMessage] = useState("");
+  const [formError, setFormError] = useState("");
+  const [updateError, setUpdateError] = useState("");
+  const [idError, setIdError] = useState("");
+  const [serviceNameError, setServiceNameError] = useState("");
 
   // Lấy chi tiết theo id
   const handleGetById = async () => {
     setMessage("");
+    setIdError("");
+    if (!categoryId || isNaN(categoryId) || Number(categoryId) <= 0) {
+      setIdError("ID phải là số dương");
+      return;
+    }
     setCategory(null);
     try {
       const res = await getTestCategoryById(categoryId);
@@ -53,6 +62,15 @@ export default function TestCategoryManager() {
   const handleCreate = async (e) => {
     e.preventDefault();
     setMessage("");
+    setFormError("");
+    if (!form.testCategoryName.trim() || !form.serviceName.trim()) {
+      setFormError("Không được để trống tên test category hoặc service name");
+      return;
+    }
+    if (/[^\w\s]/.test(form.serviceName)) {
+      setFormError("Service name không được chứa ký tự đặc biệt");
+      return;
+    }
     try {
       await createTestCategory(form);
       setMessage("Tạo thành công!");
@@ -64,6 +82,11 @@ export default function TestCategoryManager() {
   // Xóa theo id
   const handleDelete = async () => {
     setMessage("");
+    setIdError("");
+    if (!categoryId || isNaN(categoryId) || Number(categoryId) <= 0) {
+      setIdError("ID phải là số dương");
+      return;
+    }
     try {
       await deleteTestCategory(categoryId);
       setMessage("Đã xóa thành công!");
@@ -77,11 +100,26 @@ export default function TestCategoryManager() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     setMessage("");
+    setUpdateError("");
+    if (!updateId || isNaN(updateId) || Number(updateId) <= 0) {
+      setUpdateError("ID phải là số dương");
+      return;
+    }
+    if (!updateForm.testCategoryName.trim() || !updateForm.serviceName.trim()) {
+      setUpdateError("Không được để trống tên test category hoặc service name");
+      return;
+    }
+    if (/[^\w\s]/.test(updateForm.serviceName)) {
+      setUpdateError("Service name không được chứa ký tự đặc biệt");
+      return;
+    }
     try {
       await updateTestCategory(updateId, updateForm);
       setMessage("Cập nhật thành công!");
     } catch (err) {
-      setMessage(err.response?.data?.message || "Cập nhật thất bại hoặc lỗi API");
+      setMessage(
+        err.response?.data?.message || "Cập nhật thất bại hoặc lỗi API"
+      );
     }
   };
 
@@ -89,6 +127,15 @@ export default function TestCategoryManager() {
   const handleGetAllByService = async () => {
     setMessage("");
     setCategories([]);
+    setServiceNameError("");
+    if (!serviceName.trim()) {
+      setServiceNameError("Vui lòng nhập service name");
+      return;
+    }
+    if (/[^\w\s]/.test(serviceName)) {
+      setServiceNameError("Service name không được chứa ký tự đặc biệt");
+      return;
+    }
     try {
       const res = await getAllTestCategoriesByService(serviceName);
       setCategories(res.data);
@@ -101,6 +148,15 @@ export default function TestCategoryManager() {
   const handleGetActiveByService = async () => {
     setMessage("");
     setCategories([]);
+    setServiceNameError("");
+    if (!serviceName.trim()) {
+      setServiceNameError("Vui lòng nhập service name");
+      return;
+    }
+    if (/[^\w\s]/.test(serviceName)) {
+      setServiceNameError("Service name không được chứa ký tự đặc biệt");
+      return;
+    }
     try {
       const res = await getActiveTestCategoriesByService(serviceName);
       setCategories(res.data);
@@ -147,6 +203,11 @@ export default function TestCategoryManager() {
             fullWidth
             sx={{ bgcolor: "#fff", borderRadius: 2 }}
           />
+          {idError && (
+            <div style={{ color: "red", fontWeight: 600, marginTop: 4 }}>
+              {idError}
+            </div>
+          )}
           <Button
             variant="contained"
             color="primary"
@@ -213,6 +274,11 @@ export default function TestCategoryManager() {
               fullWidth
               sx={{ bgcolor: "#fff", borderRadius: 2 }}
             />
+            {formError && (
+              <div style={{ color: "red", fontWeight: 600, marginTop: 4 }}>
+                {formError}
+              </div>
+            )}
             <FormControlLabel
               control={
                 <Checkbox
@@ -278,6 +344,11 @@ export default function TestCategoryManager() {
               fullWidth
               sx={{ bgcolor: "#fff", borderRadius: 2 }}
             />
+            {updateError && (
+              <div style={{ color: "red", fontWeight: 600, marginTop: 4 }}>
+                {updateError}
+              </div>
+            )}
             <FormControlLabel
               control={
                 <Checkbox
@@ -318,6 +389,11 @@ export default function TestCategoryManager() {
             fullWidth
             sx={{ bgcolor: "#fff", borderRadius: 2 }}
           />
+          {serviceNameError && (
+            <div style={{ color: "red", fontWeight: 600, marginTop: 4 }}>
+              {serviceNameError}
+            </div>
+          )}
           <Button
             variant="contained"
             color="primary"

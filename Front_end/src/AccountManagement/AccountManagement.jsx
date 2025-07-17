@@ -70,8 +70,42 @@ export default function AccountManagement() {
     setShowRole(true);
   };
 
+  const validateEditData = () => {
+    if (!editData.username || editData.username.trim() === "") {
+      setError("Tên đăng nhập không được để trống.");
+      return false;
+    }
+    if (!editData.email || editData.email.trim() === "") {
+      setError("Email không được để trống.");
+      return false;
+    }
+    // Đơn giản: kiểm tra email có @
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(editData.email)) {
+      setError("Email không đúng định dạng.");
+      return false;
+    }
+    if (!editData.role || editData.role.trim() === "") {
+      setError("Role không được để trống.");
+      return false;
+    }
+    return true;
+  };
+
+  const validateRoleData = () => {
+    if (!roleData.username || roleData.username.trim() === "") {
+      setError("Tên đăng nhập không được để trống.");
+      return false;
+    }
+    if (!roleData.newRole || roleData.newRole.trim() === "") {
+      setError("Role không được để trống.");
+      return false;
+    }
+    return true;
+  };
+
   const handleRoleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateRoleData()) return;
     try {
       await updateRole({
         username: roleData.username,
@@ -80,6 +114,7 @@ export default function AccountManagement() {
       setShowRole(false);
       setRoleData(null);
       setSuccessMsg("Cập nhật role thành công!");
+      setError("");
       reload();
     } catch {
       setError("Lỗi khi cập nhật role.");
@@ -88,11 +123,13 @@ export default function AccountManagement() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    if (!validateEditData()) return;
     try {
       await updateAccount(editData.userId, editData);
       setShowEdit(false);
       setEditData(null);
       setSuccessMsg("Cập nhật tài khoản thành công!");
+      setError("");
       reload();
     } catch {
       setError("Lỗi khi cập nhật tài khoản.");
