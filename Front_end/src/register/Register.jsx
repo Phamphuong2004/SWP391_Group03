@@ -28,8 +28,44 @@ export default function Register() {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    // Validation
+    if (!form.fullName || form.fullName.trim() === "") {
+      setError("Họ tên không được để trống!");
+      setIsLoading(false);
+      return;
+    }
+    if (!form.username || form.username.trim() === "") {
+      setError("Tên tài khoản không được để trống!");
+      setIsLoading(false);
+      return;
+    }
+    if (!form.email || form.email.trim() === "") {
+      setError("Email không được để trống!");
+      setIsLoading(false);
+      return;
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) {
+      setError("Email không đúng định dạng!");
+      setIsLoading(false);
+      return;
+    }
+    if (!form.password || form.password.length < 6) {
+      setError("Mật khẩu phải có ít nhất 6 ký tự!");
+      setIsLoading(false);
+      return;
+    }
     if (form.password !== form.confirmPassword) {
       setError("Mật khẩu xác nhận không khớp!");
+      setIsLoading(false);
+      return;
+    }
+    if (!form.phone || !/^[0-9]{10,15}$/.test(form.phone)) {
+      setError("Số điện thoại không đúng định dạng!");
+      setIsLoading(false);
+      return;
+    }
+    if (!form.address || form.address.trim() === "") {
+      setError("Địa chỉ không được để trống!");
       setIsLoading(false);
       return;
     }

@@ -14,22 +14,30 @@ const ResultList = () => {
   const handleSearch = async () => {
     setLoading(true);
     setError(null);
+    // Validation
+    if (!appointmentId || appointmentId.trim() === "") {
+      setResults([]);
+      setError("Vui lòng nhập mã lịch hẹn để tra cứu!");
+      setLoading(false);
+      return;
+    }
+    if (!/^[0-9]+$/.test(appointmentId) || Number(appointmentId) <= 0) {
+      setResults([]);
+      setError("Mã lịch hẹn phải là số dương!");
+      setLoading(false);
+      return;
+    }
     try {
       const rawToken = localStorage.getItem("token");
       const token =
         rawToken && rawToken !== "null" && rawToken !== "undefined"
           ? rawToken
           : null;
-      if (!appointmentId) {
-        setResults([]);
-        setError("Vui lòng nhập mã lịch hẹn để tra cứu!");
+      const res = await getResultByAppointmentId(appointmentId, token);
+      if (res.data) {
+        setResults(Array.isArray(res.data) ? res.data : [res.data]);
       } else {
-        const res = await getResultByAppointmentId(appointmentId, token);
-        if (res.data) {
-          setResults(Array.isArray(res.data) ? res.data : [res.data]);
-        } else {
-          setResults([]);
-        }
+        setResults([]);
       }
     } catch {
       setError("Lỗi khi lấy danh sách kết quả!");

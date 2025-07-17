@@ -68,7 +68,21 @@ const SampleManagement = () => {
       setIsModalVisible(false);
       fetchSamples(searchId);
     } catch (err) {
-      message.error("Lưu mẫu thất bại");
+      // Nếu là lỗi validation của form
+      if (err && err.errorFields) return;
+      // Nếu là lỗi từ server
+      if (
+        err &&
+        err.response &&
+        err.response.data &&
+        err.response.data.message
+      ) {
+        message.error(err.response.data.message);
+      } else if (err && err.message) {
+        message.error(err.message);
+      } else {
+        message.error("Lưu mẫu thất bại");
+      }
     }
   };
 
@@ -159,21 +173,41 @@ const SampleManagement = () => {
           <Form.Item
             name="sampleType"
             label="Loại mẫu"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập loại mẫu" },
+              { pattern: /^[A-Za-zÀ-ỹ\s]+$/, message: "Chỉ nhập chữ" },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="status"
             label="Trạng thái"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập trạng thái" },
+              {
+                pattern:
+                  /^(pending|completed|processing|đã lấy mẫu|chưa lấy mẫu)$/i,
+                message: "Trạng thái không hợp lệ",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="collectedDate"
             label="Ngày lấy mẫu"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Vui lòng chọn ngày lấy mẫu" },
+              {
+                validator: (_, value) =>
+                  !value || /^\d{4}-\d{2}-\d{2}$/.test(value)
+                    ? Promise.resolve()
+                    : Promise.reject(
+                        "Định dạng ngày không hợp lệ (YYYY-MM-DD)"
+                      ),
+              },
+            ]}
           >
             <Input type="date" />
           </Form.Item>

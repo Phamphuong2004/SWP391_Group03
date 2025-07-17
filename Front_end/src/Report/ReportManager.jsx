@@ -53,6 +53,16 @@ const ReportManager = () => {
 
   const handleFilter = (e) => {
     e.preventDefault();
+    // Validation
+    if (filterId && (!/^[0-9]+$/.test(filterId) || Number(filterId) <= 0)) {
+      setError("ID báo cáo phải là số dương!");
+      return;
+    }
+    if (filterUser && /[^a-zA-Z0-9_]/.test(filterUser)) {
+      setError("Username không được chứa ký tự đặc biệt!");
+      return;
+    }
+    setError("");
     fetchReports(filterUser, filterId);
   };
 
@@ -129,7 +139,12 @@ const ReportManager = () => {
                   <td>{report.createdAt}</td>
                   {isStaff && (
                     <td>
-                      <button className="report-delete-btn" onClick={() => handleDelete(report.id || report.reportId)}>
+                      <button
+                        className="report-delete-btn"
+                        onClick={() =>
+                          handleDelete(report.id || report.reportId)
+                        }
+                      >
                         Xóa
                       </button>
                     </td>

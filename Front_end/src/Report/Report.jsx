@@ -27,11 +27,27 @@ const Report = () => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+    // Validation
+    if (!reportTitle || reportTitle.trim() === "") {
+      setMessage("Tiêu đề báo cáo không được để trống!");
+      setLoading(false);
+      return;
+    }
+    if (!reportContent || reportContent.trim() === "") {
+      setMessage("Nội dung báo cáo không được để trống!");
+      setLoading(false);
+      return;
+    }
+    if (!username || username.trim() === "") {
+      setMessage("Tên người tạo báo cáo không được để trống!");
+      setLoading(false);
+      return;
+    }
     try {
       await createReport({
         reportTitle: reportTitle,
         reportContent: reportContent,
-        username: username
+        username: username,
       });
       setMessage("Tạo báo cáo thành công!");
       setReportTitle("");
@@ -87,7 +103,11 @@ const Report = () => {
         </button>
       </form>
       {message && (
-        <div className={`report-message ${message.includes("thành công") ? "success" : "error"}`}>
+        <div
+          className={`report-message ${
+            message.includes("thành công") ? "success" : "error"
+          }`}
+        >
           {message}
         </div>
       )}

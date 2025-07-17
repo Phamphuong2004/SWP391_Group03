@@ -37,6 +37,23 @@ const KitManagement = () => {
 
   const handleAddKit = async (values) => {
     setError(null);
+    // Validation
+    if (!serviceId || serviceId.trim() === "") {
+      setError("Vui lòng nhập mã dịch vụ.");
+      return;
+    }
+    if (!values.componentName || values.componentName.trim() === "") {
+      setError("Tên kit không được để trống.");
+      return;
+    }
+    if (values.quantity === undefined || values.quantity === "") {
+      setError("Số lượng không được để trống.");
+      return;
+    }
+    if (isNaN(Number(values.quantity)) || Number(values.quantity) < 0) {
+      setError("Số lượng phải là số dương.");
+      return;
+    }
     try {
       await createKitComponent(serviceId, values);
       form.resetFields();
@@ -58,6 +75,24 @@ const KitManagement = () => {
   };
 
   const handleUpdateKit = async (values) => {
+    // Validation
+    if (!editingKit) return;
+    if (!serviceId || serviceId.trim() === "") {
+      setError("Vui lòng nhập mã dịch vụ.");
+      return;
+    }
+    if (!values.componentName || values.componentName.trim() === "") {
+      setError("Tên kit không được để trống.");
+      return;
+    }
+    if (values.quantity === undefined || values.quantity === "") {
+      setError("Số lượng không được để trống.");
+      return;
+    }
+    if (isNaN(Number(values.quantity)) || Number(values.quantity) < 0) {
+      setError("Số lượng phải là số dương.");
+      return;
+    }
     try {
       await updateKitComponent(
         editingKit.kitComponentId || editingKit.id,

@@ -99,7 +99,32 @@ const InvoiceList = () => {
     }
   };
 
+  const validateInvoice = (data) => {
+    if (!data.appointmentId || data.appointmentId.toString().trim() === "") {
+      message.error("Mã lịch hẹn không được để trống!");
+      return false;
+    }
+    if (!data.amount || isNaN(Number(data.amount)) || Number(data.amount) < 0) {
+      message.error("Số tiền phải là số dương!");
+      return false;
+    }
+    if (!data.paymentMethod || data.paymentMethod.trim() === "") {
+      message.error("Phương thức thanh toán không được để trống!");
+      return false;
+    }
+    if (!["PENDING", "PAID"].includes(data.status)) {
+      message.error("Trạng thái không hợp lệ!");
+      return false;
+    }
+    if (!data.paymentDate || data.paymentDate.toString().trim() === "") {
+      message.error("Ngày tạo không được để trống!");
+      return false;
+    }
+    return true;
+  };
+
   const handleSaveEdit = async () => {
+    if (!validateInvoice(modalData)) return;
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const token = user?.token;
@@ -129,6 +154,7 @@ const InvoiceList = () => {
   };
 
   const handleSaveCreate = async () => {
+    if (!validateInvoice(modalData)) return;
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       const token = user?.token;

@@ -6,13 +6,13 @@ const formatDate = (isoString) => {
   if (!isoString) return "N/A";
   try {
     const date = new Date(isoString);
-    if (isNaN(date.getTime())) return "Invalid Date";
+    if (isNaN(date.getTime())) return "Ngày không hợp lệ";
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   } catch (e) {
-    return "Invalid Date";
+    return "Ngày không hợp lệ";
   }
 };
 
@@ -20,13 +20,13 @@ const formatTime = (isoString) => {
   if (!isoString) return "N/A";
   try {
     const date = new Date(isoString);
-    if (isNaN(date.getTime())) return "Invalid Time";
+    if (isNaN(date.getTime())) return "Giờ không hợp lệ";
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${hours}:${minutes}:${seconds}`;
   } catch (e) {
-    return "Invalid Time";
+    return "Giờ không hợp lệ";
   }
 };
 
@@ -100,12 +100,35 @@ export default function GuestServiceTracking() {
   const [guestError, setGuestError] = useState(null);
   const [appointment, setAppointment] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [inputError, setInputError] = useState("");
+
+  const validateEmail = (email) => {
+    // Đơn giản, có thể thay bằng regex mạnh hơn nếu cần
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+  const validatePhone = (phone) => {
+    // Chỉ cho phép số, 9-11 ký tự
+    return /^\d{9,11}$/.test(phone);
+  };
 
   const handleGuestSearch = async () => {
-    setLoading(true);
+    setInputError("");
     setGuestError(null);
     setAppointment(null);
     setGuestList([]);
+    if (!guestEmail || !guestPhone) {
+      setInputError("Vui lòng nhập đầy đủ email và số điện thoại.");
+      return;
+    }
+    if (!validateEmail(guestEmail)) {
+      setInputError("Email không hợp lệ.");
+      return;
+    }
+    if (!validatePhone(guestPhone)) {
+      setInputError("Số điện thoại không hợp lệ (chỉ nhập số, 9-11 ký tự).");
+      return;
+    }
+    setLoading(true);
     try {
       const res = await axios.get(
         `/api/view-appointment-guest?email=${encodeURIComponent(
@@ -160,6 +183,11 @@ export default function GuestServiceTracking() {
         >
           {loading ? "Đang tra cứu..." : "Tra cứu"}
         </button>
+        {inputError && (
+          <div style={{ color: "#e74c3c", marginTop: 8, fontWeight: 600 }}>
+            {inputError}
+          </div>
+        )}
         {guestError && (
           <div style={{ color: "#e74c3c", marginTop: 12, fontWeight: 600 }}>
             {guestError}
@@ -297,7 +325,11 @@ export default function GuestServiceTracking() {
             <DetailItem
               icon="fa-map-marker-alt"
               label="Địa chỉ lấy mẫu"
-              value={`${appointment.district}, ${appointment.province}`}
+              value={
+                appointment.district && appointment.province
+                  ? `${appointment.district}, ${appointment.province}`
+                  : "N/A"
+              }
             />
             <DetailItem
               icon="fa-calendar-days"
@@ -322,22 +354,22 @@ export default function GuestServiceTracking() {
             <DetailItem
               icon="fa-dna"
               label="Loại dịch vụ"
-              value={appointment.serviceType}
+              value={appointment.serviceType || "N/A"}
             />
             <DetailItem
               icon="fa-bullseye"
               label="Mục đích"
-              value={appointment.testPurpose}
+              value={appointment.testPurpose || "N/A"}
             />
             <DetailItem
               icon="fa-tags"
               label="Phân loại"
-              value={appointment.testCategory}
+              value={appointment.testCategory || "N/A"}
             />
             <DetailItem
               icon="fa-sticky-note"
               label="Ghi chú"
-              value={appointment.note}
+              value={appointment.note || "N/A"}
             />
           </div>
         </div>
