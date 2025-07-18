@@ -55,6 +55,7 @@ function Booking() {
     sampleTypes: [],
   });
 
+  const [errors, setErrors] = useState({});
   const [districts, setDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -67,6 +68,129 @@ function Booking() {
   const [filteredKits, setFilteredKits] = useState([]);
 
   const location = useLocation();
+
+  // Validation functions
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^[0-9]{10,11}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ""));
+  };
+
+  const validateFullName = (name) => {
+    return name.trim().length >= 2 && /^[a-zA-ZÀ-ỹ\s]+$/.test(name);
+  };
+
+  const validateDateOfBirth = (dob) => {
+    if (!dob) return false;
+    const today = new Date();
+    const birthDate = new Date(dob);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    return age >= 0 && age <= 120;
+  };
+
+  const validateAppointmentDate = (appointmentDate) => {
+    if (!appointmentDate) return false;
+    const appointment = new Date(appointmentDate);
+    const now = new Date();
+    return appointment > now;
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate fullName
+    if (!form.fullName.trim()) {
+      newErrors.fullName = "Họ và tên không được để trống";
+    } else if (!validateFullName(form.fullName)) {
+      newErrors.fullName =
+        "Họ và tên phải có ít nhất 2 ký tự và chỉ chứa chữ cái";
+    }
+
+    // Validate dob
+    if (!form.dob) {
+      newErrors.dob = "Ngày sinh không được để trống";
+    } else if (!validateDateOfBirth(form.dob)) {
+      newErrors.dob = "Ngày sinh không hợp lệ";
+    }
+
+    // Validate phone
+    if (!form.phone.trim()) {
+      newErrors.phone = "Số điện thoại không được để trống";
+    } else if (!validatePhone(form.phone)) {
+      newErrors.phone = "Số điện thoại phải có 10-11 số";
+    }
+
+    // Validate email
+    if (!form.email.trim()) {
+      newErrors.email = "Email không được để trống";
+    } else if (!validateEmail(form.email)) {
+      newErrors.email = "Email không đúng định dạng";
+    }
+
+    // Validate gender
+    if (!form.gender) {
+      newErrors.gender = "Vui lòng chọn giới tính";
+    }
+
+    // Validate province
+    if (!form.province) {
+      newErrors.province = "Vui lòng chọn tỉnh/thành phố";
+    }
+
+    // Validate district
+    if (!form.district) {
+      newErrors.district = "Vui lòng chọn quận/huyện";
+    }
+
+    // Validate testPurpose
+    if (!form.testPurpose) {
+      newErrors.testPurpose = "Vui lòng chọn mục đích xét nghiệm";
+    }
+
+    // Validate serviceType
+    if (!form.serviceType) {
+      newErrors.serviceType = "Vui lòng chọn loại dịch vụ";
+    }
+
+    // Validate appointmentDate
+    if (!form.appointmentDate) {
+      newErrors.appointmentDate = "Vui lòng chọn ngày hẹn";
+    } else if (!validateAppointmentDate(form.appointmentDate)) {
+      newErrors.appointmentDate = "Ngày hẹn phải là ngày trong tương lai";
+    }
+
+    // Validate collectionTime
+    if (!form.collectionTime) {
+      newErrors.collectionTime = "Vui lòng chọn giờ lấy mẫu";
+    }
+
+    // Validate testCategory
+    if (!form.testCategory) {
+      newErrors.testCategory = "Vui lòng chọn loại xét nghiệm";
+    }
+
+    // Validate collectionLocation
+    if (!form.collectionLocation) {
+      newErrors.collectionLocation = "Vui lòng chọn địa điểm lấy mẫu";
+    }
+
+    // Validate kitComponentName
+    if (!form.kitComponentName) {
+      newErrors.kitComponentName = "Vui lòng chọn bộ kit";
+    }
+
+    // Validate sampleTypes
+    if (!form.sampleTypes || form.sampleTypes.length === 0) {
+      newErrors.sampleTypes = "Vui lòng chọn ít nhất một loại mẫu";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Khi vào trang booking, nếu có state truyền từ trang hướng dẫn dịch vụ thì set cứng mục đích xét nghiệm
   React.useEffect(() => {
@@ -105,51 +229,18 @@ function Booking() {
     // eslint-disable-next-line
   }, [form.serviceType]);
 
-  // Validate bước 1
-  // const validateStep1 = () => {
-  //   const requiredFields = [
-  //     "fullName",
-  //     "dob",
-  //     "phone",
-  //     "gender",
-  //     "province",
-  //     "district",
-  //     "email",
-  //   ];
-  //   for (const field of requiredFields) {
-  //     if (!form[field]) return false;
-  //   }
-  //   return true;
-  // };
-  // Validate bước 2
-  // const validateStep2 = () => {
-  //   const requiredFields = [
-  //     "testPurpose",
-  //     "serviceType",
-  //     "appointmentDate",
-  //     "collectionTime",
-  //     "testCategory",
-  //     "collectionLocation",
-  //     "kitComponentName",
-  //     "sampleTypes",
-  //   ];
-  //   for (const field of requiredFields) {
-  //     if (
-  //       !form[field] ||
-  //       (Array.isArray(form[field]) && form[field].length === 0)
-  //     )
-  //       return false;
-  //   }
-  //   return true;
-  // };
-
   const handleChange = async (e) => {
     const { name, value } = e.target;
-    console.log("Thay đổi:", name, value);
+
+    // Update form first
     if (name === "province") {
       const selected = provinces.find((p) => p.name === value);
       setDistricts(selected ? selected.districts : []);
       setForm((prev) => ({ ...prev, province: value, district: "" }));
+      // Clear district error when province changes
+      if (errors.district) {
+        setErrors((prev) => ({ ...prev, district: "" }));
+      }
     } else if (name === "serviceType") {
       // Gọi API lấy mục đích xét nghiệm động từ backend
       try {
@@ -183,6 +274,13 @@ function Booking() {
         testPurpose: "",
         kitComponentName: "",
       }));
+      // Clear related errors
+      setErrors((prev) => ({
+        ...prev,
+        testPurpose: "",
+        kitComponentName: "",
+        sampleTypes: [],
+      }));
     } else if (name === "kitComponentName") {
       setForm((prev) => ({
         ...prev,
@@ -199,9 +297,138 @@ function Booking() {
         setDynamicSampleTypeOptions([]);
         toast.error("Không lấy được loại mẫu!");
       }
+      // Clear sampleTypes error
+      setErrors((prev) => ({ ...prev, sampleTypes: "" }));
     } else {
       setForm((prev) => ({ ...prev, [name]: value }));
     }
+
+    // Validate the specific field after updating form
+    setTimeout(() => {
+      validateField(name, value);
+    }, 100);
+  };
+
+  // Validate individual field
+  const validateField = (fieldName, value) => {
+    let errorMessage = "";
+    switch (fieldName) {
+      case "fullName":
+        if (!value.trim()) {
+          errorMessage = "Họ và tên không được để trống";
+        } else if (!validateFullName(value)) {
+          errorMessage =
+            "Họ và tên phải có ít nhất 2 ký tự và chỉ chứa chữ cái";
+        }
+        break;
+
+      case "dob":
+        if (!value) {
+          errorMessage = "Ngày sinh không được để trống";
+        } else if (!validateDateOfBirth(value)) {
+          errorMessage = "Ngày sinh không hợp lệ";
+        }
+        break;
+
+      case "phone":
+        if (!value.trim()) {
+          errorMessage = "Số điện thoại không được để trống";
+        } else if (!validatePhone(value)) {
+          errorMessage =
+            "Số điện thoại phải có 10-11 số và số điện thoại không phải là chữ";
+        }
+        break;
+
+      case "email":
+        if (!value.trim()) {
+          errorMessage = "Email không được để trống";
+        } else if (!validateEmail(value)) {
+          errorMessage = "Email không đúng định dạng";
+        }
+        break;
+
+      case "gender":
+        if (!value) {
+          errorMessage = "Vui lòng chọn giới tính";
+        }
+        break;
+
+      case "province":
+        if (!value) {
+          errorMessage = "Vui lòng chọn tỉnh/thành phố";
+        }
+        break;
+
+      case "district":
+        if (!value) {
+          errorMessage = "Vui lòng chọn quận/huyện";
+        }
+        break;
+
+      case "testPurpose":
+        if (!value) {
+          errorMessage = "Vui lòng chọn mục đích xét nghiệm";
+        }
+        break;
+
+      case "serviceType":
+        if (!value) {
+          errorMessage = "Vui lòng chọn loại dịch vụ";
+        }
+        break;
+
+      case "appointmentDate":
+        if (!value) {
+          errorMessage = "Vui lòng chọn ngày hẹn";
+        } else if (!validateAppointmentDate(value)) {
+          errorMessage = "Ngày hẹn phải là ngày trong tương lai";
+        }
+        break;
+
+      case "collectionTime":
+        if (!value) {
+          errorMessage = "Vui lòng chọn giờ lấy mẫu";
+        }
+        break;
+
+      case "testCategory":
+        if (!value) {
+          errorMessage = "Vui lòng chọn loại xét nghiệm";
+        }
+        break;
+
+      case "collectionLocation":
+        if (!value) {
+          errorMessage = "Vui lòng chọn địa điểm lấy mẫu";
+        }
+        break;
+
+      case "kitComponentName":
+        if (!value) {
+          errorMessage = "Vui lòng chọn bộ kit";
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    setErrors((prev) => ({
+      ...prev,
+      [fieldName]: errorMessage,
+    }));
+  };
+
+  const handleSampleTypesChange = (values) => {
+    setForm((prev) => ({ ...prev, sampleTypes: values }));
+
+    // Validate sampleTypes
+    let errorMessage = "";
+    if (!values || values.length === 0) {
+      errorMessage = "Vui lòng chọn ít nhất một loại mẫu";
+    }
+
+    setErrors((prev) => ({ ...prev, sampleTypes: errorMessage }));
   };
 
   const handleFileChange = (e) => {
@@ -213,6 +440,13 @@ function Booking() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate form before submission
+    if (!validateForm()) {
+      toast.error("Vui lòng kiểm tra lại thông tin!");
+      return;
+    }
+
     console.log("Giá trị gửi lên:", form);
     setIsLoading(true);
     try {
@@ -269,30 +503,6 @@ function Booking() {
         ),
       };
 
-      // Kiểm tra dữ liệu bắt buộc
-      const requiredFields = [
-        "fullName",
-        "dob",
-        "phone",
-        "gender",
-        "testPurpose",
-        "serviceType",
-        "appointmentDate",
-        "collectionTime",
-        "district",
-        "province",
-        "testCategory",
-        "collectionLocation",
-        "kitComponentName",
-        "sampleTypes",
-      ];
-      for (const field of requiredFields) {
-        if (!form[field]) {
-          toast.error(`Vui lòng nhập đầy đủ thông tin: ${field}`);
-          setIsLoading(false);
-          return;
-        }
-      }
       // Log dữ liệu gửi lên để debug
       console.log("Dữ liệu gửi lên:", data);
 
@@ -432,8 +642,12 @@ function Booking() {
                 value={form.fullName}
                 onChange={handleChange}
                 placeholder="Nhập họ và tên"
+                className={errors.fullName ? "error" : ""}
                 required
               />
+              {errors.fullName && (
+                <p className="error-message">{errors.fullName}</p>
+              )}
             </label>
             <label>
               Ngày sinh
@@ -445,10 +659,19 @@ function Booking() {
                       ...prev,
                       dob: date ? date.toISOString().slice(0, 10) : "",
                     }));
+                    // Validate after date change
+                    setTimeout(() => {
+                      validateField(
+                        "dob",
+                        date ? date.toISOString().slice(0, 10) : ""
+                      );
+                    }, 100);
                   }}
                   dateFormat="dd/MM/yyyy"
                   placeholderText="Chọn ngày sinh"
-                  className="booking-datepicker-input"
+                  className={`booking-datepicker-input ${
+                    errors.dob ? "error" : ""
+                  }`}
                   maxDate={new Date()}
                   showMonthDropdown
                   showYearDropdown
@@ -465,7 +688,9 @@ function Booking() {
                         readOnly
                         placeholder="Chọn ngày sinh"
                         style={{ width: "100%", paddingRight: 32 }}
-                        className="booking-datepicker-input"
+                        className={`booking-datepicker-input ${
+                          errors.dob ? "error" : ""
+                        }`}
                       />
                       <span
                         style={{
@@ -484,6 +709,7 @@ function Booking() {
                   }
                 />
               </div>
+              {errors.dob && <p className="error-message">{errors.dob}</p>}
             </label>
             <label>
               Số điện thoại
@@ -493,8 +719,10 @@ function Booking() {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="Nhập số điện thoại"
+                className={errors.phone ? "error" : ""}
                 required
               />
+              {errors.phone && <p className="error-message">{errors.phone}</p>}
             </label>
             <label>
               Email
@@ -504,8 +732,10 @@ function Booking() {
                 value={form.email}
                 onChange={handleChange}
                 placeholder="Nhập email"
+                className={errors.email ? "error" : ""}
                 required
               />
+              {errors.email && <p className="error-message">{errors.email}</p>}
             </label>
             <label>
               Giới tính
@@ -513,6 +743,7 @@ function Booking() {
                 name="gender"
                 value={form.gender}
                 onChange={handleChange}
+                className={errors.gender ? "error" : ""}
                 required
               >
                 <option value="">Chọn giới tính</option>
@@ -522,6 +753,9 @@ function Booking() {
                   </option>
                 ))}
               </select>
+              {errors.gender && (
+                <p className="error-message">{errors.gender}</p>
+              )}
             </label>
             <label>
               Tỉnh/Thành phố
@@ -529,6 +763,7 @@ function Booking() {
                 name="province"
                 value={form.province}
                 onChange={handleChange}
+                className={errors.province ? "error" : ""}
                 required
               >
                 <option value="">Chọn tỉnh/thành phố</option>
@@ -538,6 +773,9 @@ function Booking() {
                   </option>
                 ))}
               </select>
+              {errors.province && (
+                <p className="error-message">{errors.province}</p>
+              )}
             </label>
             <label>
               Quận/Huyện
@@ -545,6 +783,7 @@ function Booking() {
                 name="district"
                 value={form.district}
                 onChange={handleChange}
+                className={errors.district ? "error" : ""}
                 required
                 disabled={!form.province}
               >
@@ -555,6 +794,9 @@ function Booking() {
                   </option>
                 ))}
               </select>
+              {errors.district && (
+                <p className="error-message">{errors.district}</p>
+              )}
             </label>
           </div>
 
@@ -630,6 +872,7 @@ function Booking() {
                 name="serviceType"
                 value={form.serviceType}
                 onChange={handleChange}
+                className={errors.serviceType ? "error" : ""}
                 required
               >
                 <option value="">Chọn loại dịch vụ</option>
@@ -639,6 +882,9 @@ function Booking() {
                   </option>
                 ))}
               </select>
+              {errors.serviceType && (
+                <p className="error-message">{errors.serviceType}</p>
+              )}
             </label>
             {/* Hiển thị thông tin mô tả và bộ kit sử dụng của loại dịch vụ */}
             {form.serviceType &&
@@ -686,8 +932,12 @@ function Booking() {
                 name="appointmentDate"
                 value={form.appointmentDate}
                 onChange={handleChange}
+                className={errors.appointmentDate ? "error" : ""}
                 required
               />
+              {errors.appointmentDate && (
+                <p className="error-message">{errors.appointmentDate}</p>
+              )}
             </label>
             <label>
               Giờ lấy mẫu (collectionTime)
@@ -696,8 +946,12 @@ function Booking() {
                 name="collectionTime"
                 value={form.collectionTime}
                 onChange={handleChange}
+                className={errors.collectionTime ? "error" : ""}
                 required
               />
+              {errors.collectionTime && (
+                <p className="error-message">{errors.collectionTime}</p>
+              )}
             </label>
             <label>
               File vân tay
@@ -714,6 +968,7 @@ function Booking() {
                 name="testCategory"
                 value={form.testCategory}
                 onChange={handleChange}
+                className={errors.testCategory ? "error" : ""}
                 required
               >
                 <option value="">Chọn loại xét nghiệm</option>
@@ -723,6 +978,9 @@ function Booking() {
                   </option>
                 ))}
               </select>
+              {errors.testCategory && (
+                <p className="error-message">{errors.testCategory}</p>
+              )}
             </label>
             <label>
               Địa điểm lấy mẫu (collectionLocation)
@@ -730,6 +988,7 @@ function Booking() {
                 name="collectionLocation"
                 value={form.collectionLocation}
                 onChange={handleChange}
+                className={errors.collectionLocation ? "error" : ""}
                 required
               >
                 <option value="">Chọn địa điểm lấy mẫu</option>
@@ -739,6 +998,9 @@ function Booking() {
                   </option>
                 ))}
               </select>
+              {errors.collectionLocation && (
+                <p className="error-message">{errors.collectionLocation}</p>
+              )}
             </label>
             <label>
               Bộ kit sử dụng (kitComponentName)
@@ -746,6 +1008,7 @@ function Booking() {
                 name="kitComponentName"
                 value={form.kitComponentName}
                 onChange={handleChange}
+                className={errors.kitComponentName ? "error" : ""}
                 required
               >
                 <option value="">Chọn bộ kit</option>
@@ -755,6 +1018,9 @@ function Booking() {
                   </option>
                 ))}
               </select>
+              {errors.kitComponentName && (
+                <p className="error-message">{errors.kitComponentName}</p>
+              )}
             </label>
             <label>
               Loại mẫu (sampleTypes)
@@ -763,12 +1029,14 @@ function Booking() {
                 style={{ width: "100%" }}
                 placeholder="Chọn loại mẫu"
                 value={form.sampleTypes || []}
-                onChange={(values) =>
-                  setForm((prev) => ({ ...prev, sampleTypes: values }))
-                }
+                onChange={handleSampleTypesChange}
                 options={dynamicSampleTypeOptions}
+                className={errors.sampleTypes ? "error" : ""}
                 required
               />
+              {errors.sampleTypes && (
+                <p className="error-message">{errors.sampleTypes}</p>
+              )}
             </label>
           </div>
         </div>

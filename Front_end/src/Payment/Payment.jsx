@@ -28,7 +28,7 @@ const Payment = () => {
             setEditForm({
               fullName: data.fullName,
               appointmentDate: data.appointmentDate,
-              collectionTime: data.collectionTime, // lấy từ đơn đặt lịch
+              collectionTime: data.collectionSampleTime, // lấy đúng trường giờ lấy mẫu
               serviceType: data.serviceType,
             });
           })
@@ -41,7 +41,7 @@ const Payment = () => {
       setEditForm({
         fullName: appointment.fullName,
         appointmentDate: appointment.appointmentDate,
-        collectionTime: appointment.collectionTime, // lấy từ đơn đặt lịch
+        collectionTime: appointment.collectionSampleTime, // lấy đúng trường giờ lấy mẫu
         serviceType: appointment.serviceType,
       });
     }
@@ -92,17 +92,16 @@ const Payment = () => {
     try {
       const userString = localStorage.getItem("user");
       const token = userString ? JSON.parse(userString).token : null;
-      if (!token) throw new Error("Bạn cần đăng nhập!");
       let status = "PENDING";
       if (paymentMethod.toLowerCase() === "online") status = "PAID";
       const paymentData = {
         appointmentId: appointment.appointmentId,
         amount: serviceDetails?.price || 1,
-        paymentMethod: paymentMethod.toUpperCase(), // Sửa key này
+        paymentMethod: paymentMethod.toUpperCase(),
         status,
         paymentDate: new Date().toISOString(),
       };
-      await createPayment(paymentData, token);
+      await createPayment(paymentData, token); // truyền token nếu có, không có thì truyền null
       toast.success(
         "Thanh toán thành công! Lịch hẹn của bạn đã được xác nhận."
       );

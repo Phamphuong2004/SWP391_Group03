@@ -14,6 +14,19 @@ function ForgotPassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validation
+    if (!phoneNumber || phoneNumber.trim() === "") {
+      toast.error("Số điện thoại không được để trống!");
+      return;
+    }
+    if (!/^[0-9]{10,15}$/.test(phoneNumber)) {
+      toast.error("Số điện thoại không đúng định dạng!");
+      return;
+    }
+    if (!newPassword || newPassword.length < 6) {
+      toast.error("Mật khẩu mới phải có ít nhất 6 ký tự!");
+      return;
+    }
     if (newPassword !== confirmPassword) {
       toast.error("Mật khẩu xác nhận không khớp!");
       return;

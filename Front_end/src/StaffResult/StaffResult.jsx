@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Input, message, Popconfirm } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Popconfirm,
+  Select,
+} from "antd";
 import "./StaffResult.css";
 import {
   getResultList,
@@ -20,6 +29,7 @@ const StaffResult = () => {
   const [detailResult, setDetailResult] = useState(null);
   const [filterAppointmentId, setFilterAppointmentId] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [availableSamples, setAvailableSamples] = useState([]);
 
   const fetchResults = async () => {
     setLoading(true);
@@ -54,7 +64,9 @@ const StaffResult = () => {
       resultData: record.resultData,
       interpretation: record.interpretation,
       status: record.status,
-      sampleId: record.sampleId,
+      sampleId: Array.isArray(record.sampleId)
+        ? record.sampleId
+        : [record.sampleId],
       username: record.username,
       appointmentId: record.appointmentId,
       resultFile: record.resultFile,
@@ -65,10 +77,14 @@ const StaffResult = () => {
   };
 
   const handleDelete = async (id) => {
+    if (!id || isNaN(id)) {
+      message.error("ID không hợp lệ!");
+      return;
+    }
     try {
       const userString = localStorage.getItem("user");
       const token = userString ? JSON.parse(userString).token : null;
-      await deleteResult(id, token);
+      await deleteResult(Number(id), token);
       message.success("Xóa kết quả thành công");
       fetchResults();
     } catch {
@@ -84,28 +100,23 @@ const StaffResult = () => {
       const username = user ? user.username : null;
       const token = user ? user.token : null;
 
-      // Kiểm tra đã chọn file thực chưa
-      if (!selectedFile) {
-        message.error("Vui lòng chọn file kết quả!");
-        return;
-      }
+      const resultData = {
+        resultDate: values.resultDate,
+        resultData: values.resultData,
+        interpretation: values.interpretation,
+        status: values.status,
+        sampleId: values.sampleId || [],
+        username: username,
+        appointmentId: values.appointmentId,
+        resultFile: values.resultFile,
+      };
+      console.log("resultData gửi lên:", resultData);
 
-      // Tạo FormData
-      const formData = new FormData();
-      formData.append("resultDate", values.resultDate);
-      formData.append("resultData", values.resultData);
-      formData.append("interpretation", values.interpretation);
-      formData.append("status", values.status);
-      formData.append("sampleId", values.sampleId);
-      formData.append("username", username);
-      formData.append("appointmentId", values.appointmentId);
-      formData.append("resultFile", selectedFile); // file object thực
-
-      if (editingResult && editingResult.id) {
-        await updateResult(editingResult.id, formData, token);
+      if (editingResult && editingResult.resultId) {
+        await updateResult(editingResult.resultId, resultData, token);
         message.success("Cập nhật kết quả thành công");
       } else {
-        await createResult(formData, token);
+        await createResult(resultData, token);
         message.success("Thêm kết quả thành công");
       }
       setIsModalVisible(false);
@@ -118,11 +129,9 @@ const StaffResult = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setSelectedFile(file); // Lưu object file thực
       setSelectedFileName(file.name);
-      form.setFieldsValue({ resultFile: file.name }); // Vẫn set tên để validate
+      form.setFieldsValue({ resultFile: file.name }); // chỉ lưu tên file
     } else {
-      setSelectedFile(null);
       setSelectedFileName("");
       form.setFieldsValue({ resultFile: "" });
     }
@@ -132,7 +141,7 @@ const StaffResult = () => {
     try {
       const userString = localStorage.getItem("user");
       const token = userString ? JSON.parse(userString).token : null;
-      const { data } = await getResultById(id, token);
+      const { data } = await getResultById(Number(id), token);
       setDetailResult(data);
       setDetailModalVisible(true);
     } catch {
@@ -169,8 +178,38 @@ const StaffResult = () => {
     }
   };
 
+  // Tạo danh sách mẫu có sẵn (có thể lấy từ API)
+  useEffect(() => {
+    // Giả sử có API để lấy danh sách mẫu
+    // setAvailableSamples([{ value: 1, label: 'Mẫu 1' }, { value: 2, label: 'Mẫu 2' }]);
+    setAvailableSamples([
+      { value: 1, label: "Mẫu 1" },
+      { value: 2, label: "Mẫu 2" },
+      { value: 3, label: "Mẫu 3" },
+      { value: 4, label: "Mẫu 4" },
+      { value: 5, label: "Mẫu 5" },
+      { value: 6, label: "Mẫu 6" },
+      { value: 7, label: "Mẫu 7" },
+      { value: 8, label: "Mẫu 8" },
+      { value: 9, label: "Mẫu 9" },
+      { value: 10, label: "Mẫu 10" },
+      { value: 11, label: "Mẫu 11" },
+      { value: 12, label: "Mẫu 12" },
+      { value: 13, label: "Mẫu 13" },
+      { value: 14, label: "Mẫu 14" },
+      { value: 15, label: "Mẫu 15" },
+      { value: 16, label: "Mẫu 16" },
+      { value: 17, label: "Mẫu 17" },
+      { value: 18, label: "Mẫu 18" },
+      { value: 19, label: "Mẫu 19" },
+      { value: 20, label: "Mẫu 20" },
+      { value: 21, label: "Mẫu 21" },
+      { value: 22, label: "Mẫu 22" },
+    ]);
+  }, []);
+
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
+    { title: "ID", dataIndex: "resultId", key: "resultId" },
     { title: "Ngày trả kết quả", dataIndex: "resultDate", key: "resultDate" },
     { title: "Kết quả", dataIndex: "resultData", key: "resultData" },
     { title: "Nhận định", dataIndex: "interpretation", key: "interpretation" },
@@ -180,7 +219,19 @@ const StaffResult = () => {
       key: "status",
       render: (text) => <span className="status">{text}</span>,
     },
-    { title: "ID mẫu", dataIndex: "sampleId", key: "sampleId" },
+    {
+      title: "ID mẫu",
+      dataIndex: "sampleId",
+      key: "sampleId",
+      render: (sampleIds) => {
+        if (Array.isArray(sampleIds)) {
+          return sampleIds.join(", ");
+        } else if (sampleIds) {
+          return String(sampleIds);
+        }
+        return "";
+      },
+    },
     { title: "Người nhập", dataIndex: "username", key: "username" },
     { title: "Mã lịch hẹn", dataIndex: "appointmentId", key: "appointmentId" },
     { title: "File kết quả", dataIndex: "resultFile", key: "resultFile" },
@@ -191,7 +242,7 @@ const StaffResult = () => {
         <>
           <Button
             className="button"
-            onClick={() => handleViewDetail(record.id)}
+            onClick={() => handleViewDetail(record.resultId)}
             style={{ marginRight: 8 }}
           >
             Xem chi tiết
@@ -205,7 +256,7 @@ const StaffResult = () => {
           </Button>
           <Popconfirm
             title="Bạn chắc chắn muốn xóa?"
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={() => handleDelete(record.resultId)}
           >
             <Button danger className="button">
               Xóa
@@ -252,7 +303,7 @@ const StaffResult = () => {
         columns={columns}
         dataSource={results}
         loading={loading}
-        rowKey={(record) => record.id}
+        rowKey={(record) => record.resultId}
         pagination={false}
       />
       <Modal
@@ -295,9 +346,19 @@ const StaffResult = () => {
           <Form.Item
             name="sampleId"
             label="ID mẫu"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Vui lòng chọn ít nhất một mẫu" },
+            ]}
           >
-            <Input type="number" />
+            <Select
+              mode="multiple"
+              placeholder="Chọn các mẫu"
+              options={availableSamples}
+              showSearch
+              filterOption={(input, option) =>
+                option?.label?.toLowerCase().includes(input.toLowerCase())
+              }
+            />
           </Form.Item>
           <Form.Item
             name="username"

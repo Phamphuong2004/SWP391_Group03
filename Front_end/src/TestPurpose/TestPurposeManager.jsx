@@ -25,10 +25,17 @@ export default function TestPurposeManager() {
     active: true,
   });
   const [message, setMessage] = useState("");
+  const [idError, setIdError] = useState("");
+  const [formError, setFormError] = useState("");
 
   // Lấy thông tin theo id
   const handleGetById = async () => {
     setMessage("");
+    setIdError("");
+    if (!testPurposeId || isNaN(testPurposeId) || Number(testPurposeId) <= 0) {
+      setIdError("ID phải là số dương");
+      return;
+    }
     setPurpose(null);
     try {
       const res = await getTestPurposeById(testPurposeId);
@@ -42,6 +49,11 @@ export default function TestPurposeManager() {
   const handleCreate = async (e) => {
     e.preventDefault();
     setMessage("");
+    setFormError("");
+    if (!form.testPurposeName.trim() || !form.testPurposeDescription.trim()) {
+      setFormError("Không được để trống tên hoặc mô tả");
+      return;
+    }
     try {
       const res = await createTestPurpose(form);
       setMessage("Tạo thành công! ID: " + res.data.id);
@@ -53,6 +65,11 @@ export default function TestPurposeManager() {
   // Xóa theo id
   const handleDelete = async () => {
     setMessage("");
+    setIdError("");
+    if (!testPurposeId || isNaN(testPurposeId) || Number(testPurposeId) <= 0) {
+      setIdError("ID phải là số dương");
+      return;
+    }
     try {
       await deleteTestPurpose(testPurposeId);
       setMessage("Đã xóa thành công!");
@@ -100,6 +117,11 @@ export default function TestPurposeManager() {
             fullWidth
             sx={{ bgcolor: "#fff", borderRadius: 2 }}
           />
+          {idError && (
+            <div style={{ color: "red", fontWeight: 600, marginTop: 4 }}>
+              {idError}
+            </div>
+          )}
           <Button
             variant="contained"
             color="primary"
@@ -166,6 +188,11 @@ export default function TestPurposeManager() {
               fullWidth
               sx={{ bgcolor: "#fff", borderRadius: 2 }}
             />
+            {formError && (
+              <div style={{ color: "red", fontWeight: 600, marginTop: 4 }}>
+                {formError}
+              </div>
+            )}
             <FormControlLabel
               control={
                 <Checkbox

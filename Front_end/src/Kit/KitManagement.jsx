@@ -13,13 +13,9 @@ const KitManagement = () => {
   const [kits, setKits] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [form, setForm] = useState({
-    componentName: "",
-    quantity: "",
-    introduction: "",
-  });
   const [refresh, setRefresh] = useState(false);
   const [editingKit, setEditingKit] = useState(null);
+  const [form] = Form.useForm();
 
   const fetchKits = async () => {
     setLoading(true);
@@ -35,15 +31,32 @@ const KitManagement = () => {
   };
 
   const handleInputChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    form.setFieldsValue({ [name]: value });
   };
 
-  const handleAddKit = async (e) => {
-    e.preventDefault();
+  const handleAddKit = async (values) => {
     setError(null);
+    // Validation
+    if (!serviceId || serviceId.trim() === "") {
+      setError("Vui lòng nhập mã dịch vụ.");
+      return;
+    }
+    if (!values.componentName || values.componentName.trim() === "") {
+      setError("Tên kit không được để trống.");
+      return;
+    }
+    if (values.quantity === undefined || values.quantity === "") {
+      setError("Số lượng không được để trống.");
+      return;
+    }
+    if (isNaN(Number(values.quantity)) || Number(values.quantity) < 0) {
+      setError("Số lượng phải là số dương.");
+      return;
+    }
     try {
-      await createKitComponent(serviceId, form);
-      setForm({ componentName: "", quantity: "", introduction: "" });
+      await createKitComponent(serviceId, values);
+      form.resetFields();
       setRefresh((r) => !r);
     } catch (err) {
       setError("Thêm kit thất bại!");
@@ -51,34 +64,52 @@ const KitManagement = () => {
   };
 
   const handleEdit = (kit) => {
+    console.log("Editing kit:", kit); // Debug log
     setEditingKit(kit);
-    setForm({
-      componentName: kit.componentName || "",
+    form.setFieldsValue({
+      componentName: kit.kitComponentName || kit.componentName || "",
       quantity:
         kit.quantity !== undefined && kit.quantity !== null ? kit.quantity : "",
       introduction: kit.introduction || "",
     });
   };
 
-  const handleUpdateKit = async (e) => {
-    e.preventDefault();
-    setError(null);
+  const handleUpdateKit = async (values) => {
+    // Validation
+    if (!editingKit) return;
+    if (!serviceId || serviceId.trim() === "") {
+      setError("Vui lòng nhập mã dịch vụ.");
+      return;
+    }
+    if (!values.componentName || values.componentName.trim() === "") {
+      setError("Tên kit không được để trống.");
+      return;
+    }
+    if (values.quantity === undefined || values.quantity === "") {
+      setError("Số lượng không được để trống.");
+      return;
+    }
+    if (isNaN(Number(values.quantity)) || Number(values.quantity) < 0) {
+      setError("Số lượng phải là số dương.");
+      return;
+    }
     try {
       await updateKitComponent(
         editingKit.kitComponentId || editingKit.id,
-        form
+        values
       );
       setEditingKit(null);
-      setForm({ componentName: "", quantity: "", introduction: "" });
+      form.resetFields();
       setRefresh((r) => !r);
     } catch (err) {
+      console.error("Error in handleUpdateKit:", err);
       setError("Cập nhật kit thất bại!");
     }
   };
 
   const handleCancelEdit = () => {
     setEditingKit(null);
-    setForm({ componentName: "", quantity: "", introduction: "" });
+    form.resetFields();
   };
 
   const handleDelete = async (kitComponentId) => {
@@ -175,19 +206,17 @@ const KitManagement = () => {
           {editingKit ? "Cập nhật kit" : "Thêm kit mới"}
         </h3>
         <Form
+          form={form}
           layout="vertical"
           onFinish={editingKit ? handleUpdateKit : handleAddKit}
-          initialValues={form}
         >
           <Form.Item
             label="Tên kit"
             name="componentName"
             rules={[{ required: true, message: "Vui lòng nhập tên kit" }]}
-            initialValue={form.componentName}
           >
             <Input
               placeholder="Tên kit"
-              value={form.componentName}
               onChange={handleInputChange}
               name="componentName"
             />
@@ -196,24 +225,17 @@ const KitManagement = () => {
             label="Số lượng"
             name="quantity"
             rules={[{ required: true, message: "Vui lòng nhập số lượng" }]}
-            initialValue={form.quantity}
           >
             <Input
               type="number"
               placeholder="Số lượng"
-              value={form.quantity}
               onChange={handleInputChange}
               name="quantity"
             />
           </Form.Item>
-          <Form.Item
-            label="Hướng dẫn"
-            name="introduction"
-            initialValue={form.introduction}
-          >
+          <Form.Item label="Hướng dẫn" name="introduction">
             <Input
               placeholder="Hướng dẫn"
-              value={form.introduction}
               onChange={handleInputChange}
               name="introduction"
             />

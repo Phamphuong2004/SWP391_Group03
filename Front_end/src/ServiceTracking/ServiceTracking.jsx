@@ -8,13 +8,13 @@ const formatDate = (isoString) => {
   if (!isoString) return "N/A";
   try {
     const date = new Date(isoString);
-    if (isNaN(date.getTime())) return "Invalid Date";
+    if (isNaN(date.getTime())) return "Ngày không hợp lệ";
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   } catch (e) {
-    return "Invalid Date";
+    return "Ngày không hợp lệ";
   }
 };
 
@@ -22,13 +22,13 @@ const formatTime = (isoString) => {
   if (!isoString) return "N/A";
   try {
     const date = new Date(isoString);
-    if (isNaN(date.getTime())) return "Invalid Time";
+    if (isNaN(date.getTime())) return "Giờ không hợp lệ";
     const hours = String(date.getHours()).padStart(2, "0");
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${hours}:${minutes}:${seconds}`;
   } catch (e) {
-    return "Invalid Time";
+    return "Giờ không hợp lệ";
   }
 };
 
@@ -40,6 +40,19 @@ const statusTranslations = {
   COMPLETED: "Hoàn thành",
 };
 
+function normalizeStatus(status) {
+  if (!status) return "";
+  const s = status.toLowerCase();
+  if (["pending", "chờ xác nhận"].includes(s)) return "PENDING";
+  if (["confirmed", "đã xác nhận"].includes(s)) return "CONFIRMED";
+  if (["sampling", "đang lấy mẫu", "received", "đã tiếp nhận"].includes(s))
+    return "SAMPLING";
+  if (["testing", "đang xét nghiệm"].includes(s)) return "TESTING";
+  if (["completed", "hoàn thành"].includes(s)) return "COMPLETED";
+  if (["cancelled", "đã hủy"].includes(s)) return "CANCELLED";
+  return status.toUpperCase();
+}
+
 const StatusTimeline = ({ status }) => {
   const mainStatuses = [
     "PENDING",
@@ -48,7 +61,7 @@ const StatusTimeline = ({ status }) => {
     "TESTING",
     "COMPLETED",
   ];
-  if (status === "CANCELLED") {
+  if (normalizeStatus(status) === "CANCELLED") {
     return (
       <div className="status-cancelled-container">
         <span className="cancelled-icon">✖</span>
@@ -56,7 +69,7 @@ const StatusTimeline = ({ status }) => {
       </div>
     );
   }
-  const currentStatusIndex = mainStatuses.indexOf(status);
+  const currentStatusIndex = mainStatuses.indexOf(normalizeStatus(status));
   return (
     <div className="status-timeline">
       <div className="status-line-bg"></div>
@@ -214,7 +227,11 @@ const ServiceTracking = () => {
               <DetailItem
                 icon="fa-map-marker-alt"
                 label="Địa chỉ lấy mẫu"
-                value={`${selected.district}, ${selected.province}`}
+                value={
+                  selected.district && selected.province
+                    ? `${selected.district}, ${selected.province}`
+                    : "N/A"
+                }
               />
               <DetailItem
                 icon="fa-calendar-days"
@@ -239,22 +256,22 @@ const ServiceTracking = () => {
               <DetailItem
                 icon="fa-dna"
                 label="Loại dịch vụ"
-                value={selected.serviceType}
+                value={selected.serviceType || "N/A"}
               />
               <DetailItem
                 icon="fa-bullseye"
                 label="Mục đích"
-                value={selected.testpurpose}
+                value={selected.testpurpose || "N/A"}
               />
               <DetailItem
                 icon="fa-tags"
                 label="Phân loại"
-                value={selected.testcategory}
+                value={selected.testcategory || "N/A"}
               />
               <DetailItem
                 icon="fa-sticky-note"
                 label="Ghi chú"
-                value={selected.note}
+                value={selected.note || "N/A"}
               />
             </div>
           </div>

@@ -14,18 +14,30 @@ const ResultList = () => {
   const handleSearch = async () => {
     setLoading(true);
     setError(null);
+    // Validation
+    if (!appointmentId || appointmentId.trim() === "") {
+      setResults([]);
+      setError("Vui lòng nhập mã lịch hẹn để tra cứu!");
+      setLoading(false);
+      return;
+    }
+    if (!/^[0-9]+$/.test(appointmentId) || Number(appointmentId) <= 0) {
+      setResults([]);
+      setError("Mã lịch hẹn phải là số dương!");
+      setLoading(false);
+      return;
+    }
     try {
-      const token = localStorage.getItem("token");
-      if (!appointmentId) {
-        setResults([]);
-        setError("Vui lòng nhập mã lịch hẹn để tra cứu!");
+      const rawToken = localStorage.getItem("token");
+      const token =
+        rawToken && rawToken !== "null" && rawToken !== "undefined"
+          ? rawToken
+          : null;
+      const res = await getResultByAppointmentId(appointmentId, token);
+      if (res.data) {
+        setResults(Array.isArray(res.data) ? res.data : [res.data]);
       } else {
-        const res = await getResultByAppointmentId(appointmentId, token);
-        if (res.data) {
-          setResults(Array.isArray(res.data) ? res.data : [res.data]);
-        } else {
-          setResults([]);
-        }
+        setResults([]);
       }
     } catch {
       setError("Lỗi khi lấy danh sách kết quả!");
@@ -41,7 +53,11 @@ const ResultList = () => {
     // Lấy sample types
     const fetchSampleTypes = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const rawToken = localStorage.getItem("token");
+        const token =
+          rawToken && rawToken !== "null" && rawToken !== "undefined"
+            ? rawToken
+            : null;
         const res = await getAllSampleTypes(token);
         setSampleTypes(res);
       } catch {
@@ -115,7 +131,11 @@ const ResultList = () => {
                 <td>{result.resultDate}</td>
                 <td>{result.status}</td>
                 <td>{result.interpretation}</td>
-                <td>{result.sampleId}</td>
+                <td>
+                  {Array.isArray(result.sampleId)
+                    ? result.sampleId.join(", ")
+                    : result.sampleId}
+                </td>
                 <td>{getSampleName(result.sampleId)}</td>
                 <td>{result.username}</td>
                 <td>{result.appointmentId}</td>

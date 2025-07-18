@@ -107,8 +107,22 @@ const SampleTypeManagement = () => {
       }
       setIsModalVisible(false);
       fetchSampleTypes();
-    } catch {
-      message.error("Lưu loại mẫu thất bại");
+    } catch (err) {
+      // Nếu là lỗi validation của form
+      if (err && err.errorFields) return;
+      // Nếu là lỗi từ server
+      if (
+        err &&
+        err.response &&
+        err.response.data &&
+        err.response.data.message
+      ) {
+        message.error(err.response.data.message);
+      } else if (err && err.message) {
+        message.error(err.message);
+      } else {
+        message.error("Lưu loại mẫu thất bại");
+      }
     }
   };
 
@@ -172,21 +186,44 @@ const SampleTypeManagement = () => {
           <Form.Item
             name="kit_component_id"
             label="ID bộ kit"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập ID bộ kit" },
+              {
+                type: "number",
+                transform: (value) => Number(value),
+                message: "ID phải là số",
+              },
+              {
+                validator: (_, value) =>
+                  value > 0
+                    ? Promise.resolve()
+                    : Promise.reject("ID phải lớn hơn 0"),
+              },
+            ]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
             name="name"
             label="Tên loại mẫu"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập tên loại mẫu" },
+              { min: 2, message: "Tên loại mẫu phải có ít nhất 2 ký tự" },
+              {
+                pattern: /^[A-Za-zÀ-ỹ0-9\s]+$/,
+                message: "Chỉ nhập chữ, số và khoảng trắng",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="description"
             label="Mô tả"
-            rules={[{ required: true }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập mô tả" },
+              { min: 5, message: "Mô tả phải có ít nhất 5 ký tự" },
+            ]}
           >
             <Input />
           </Form.Item>

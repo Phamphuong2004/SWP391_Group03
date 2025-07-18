@@ -260,8 +260,50 @@ const ReceiveBooking = () => {
     }
   };
 
+  // Hàm lấy lịch hẹn guest
+  const fetchGuestAppointments = async () => {
+    if (!guestIdentifier || guestIdentifier.trim() === "") {
+      message.error("Vui lòng nhập số điện thoại guest!");
+      return;
+    }
+    if (!/^[0-9]{10,15}$/.test(guestIdentifier)) {
+      message.error("Số điện thoại guest không đúng định dạng!");
+      return;
+    }
+    try {
+      setLoading(true);
+      // Ví dụ: dùng phone làm định danh guest, có thể thay đổi theo backend
+      const response = await axios.get(
+        `/api/view-appointment-guest?phone=${guestIdentifier}`
+      );
+      setGuestBookings(Array.isArray(response.data) ? response.data : []);
+      setGuestModalVisible(true);
+    } catch (error) {
+      message.error("Không thể lấy lịch hẹn guest");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Handle form submission for update
   const handleSubmit = async (values) => {
+    // Validation
+    if (!values.fullName || values.fullName.trim() === "") {
+      message.error("Tên khách hàng không được để trống!");
+      return;
+    }
+    if (!values.phone || !/^[0-9]{10,15}$/.test(values.phone)) {
+      message.error("Số điện thoại không hợp lệ!");
+      return;
+    }
+    if (!values.appointmentDate || values.appointmentDate === "") {
+      message.error("Ngày hẹn không được để trống!");
+      return;
+    }
+    if (!values.status || values.status.trim() === "") {
+      message.error("Trạng thái không được để trống!");
+      return;
+    }
     // Map lại trường cho backend camelCase
     const submitValues = {
       ...values,
@@ -297,20 +339,18 @@ const ReceiveBooking = () => {
     }
   };
 
-  // Hàm lấy lịch hẹn guest
-  const fetchGuestAppointments = async () => {
+  // Thêm hàm hoàn thành đơn
+  const handleComplete = async (bookingId) => {
     try {
-      setLoading(true);
-      // Ví dụ: dùng phone làm định danh guest, có thể thay đổi theo backend
-      const response = await axios.get(
-        `/api/view-appointment-guest?phone=${guestIdentifier}`
+      await axios.put(
+        `/api/update/staff/${bookingId}`,
+        { status: "COMPLETED" },
+        { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      setGuestBookings(Array.isArray(response.data) ? response.data : []);
-      setGuestModalVisible(true);
+      message.success("Đơn đã chuyển sang trạng thái hoàn thành!");
+      fetchBookings();
     } catch (error) {
-      message.error("Không thể lấy lịch hẹn guest");
-    } finally {
-      setLoading(false);
+      message.error("Không thể cập nhật trạng thái hoàn thành!");
     }
   };
 
@@ -319,10 +359,23 @@ const ReceiveBooking = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `/api/get/appointment-by-status?status=${status}`,
+        `/api/appointments/by-status?status=${status}`,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      setBookings(Array.isArray(response.data) ? response.data : []);
+      // Nếu response.data có trường body, lấy response.data.body
+      if (response.data && response.data.body) {
+        if (Array.isArray(response.data.body)) {
+          setBookings(response.data.body);
+        } else {
+          setBookings([response.data.body]);
+        }
+      } else if (Array.isArray(response.data)) {
+        setBookings(response.data);
+      } else if (response.data) {
+        setBookings([response.data]);
+      } else {
+        setBookings([]);
+      }
     } catch (error) {
       message.error("Không thể lọc theo trạng thái");
     } finally {
@@ -420,8 +473,15 @@ const ReceiveBooking = () => {
               <Button
                 type="dashed"
                 onClick={() => handleAssign(record.appointmentId)}
+                style={{ marginRight: 8 }}
               >
                 Tiếp nhận
+              </Button>
+              <Button
+                style={{ background: "#4caf50", color: "#fff" }}
+                onClick={() => handleComplete(record.appointmentId)}
+              >
+                Hoàn thành
               </Button>
             </>
           )}
@@ -480,6 +540,7 @@ const ReceiveBooking = () => {
           >
             <Option value="PENDING">Pending</Option>
             <Option value="CONFIRMED">Confirmed</Option>
+            <Option value="RECEIVED">Received</Option>
             <Option value="CANCELLED">Cancelled</Option>
             <Option value="COMPLETED">Completed</Option>
           </Select>

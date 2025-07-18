@@ -2,9 +2,9 @@ import React, { useState } from "react";
 
 // Dữ liệu ánh xạ giữa service và mục đích
 const serviceTestPurposes = {
-  "xacnhan_quanhegiadinh": ["Hành chính", "Dân sự"],
-  "dichvu_A": ["Hành chính"],
-  "dichvu_B": ["Dân sự"],
+  xacnhan_quanhegiadinh: ["Hành chính", "Dân sự"],
+  dichvu_A: ["Hành chính"],
+  dichvu_B: ["Dân sự"],
 };
 
 // Hàm kiểm tra
@@ -29,10 +29,14 @@ export default function ServiceTestPurposeCustomer() {
     }
     const hasHanhChinh = hasPurpose(selectedService, "Hành chính");
     const hasDanSu = hasPurpose(selectedService, "Dân sự");
-    let msg = `Dịch vụ này hỗ trợ: `;
-    if (hasHanhChinh) msg += "Hành chính ";
-    if (hasDanSu) msg += "Dân sự ";
-    if (!hasHanhChinh && !hasDanSu) msg = "Dịch vụ này không hỗ trợ Hành chính hoặc Dân sự.";
+    let msg = "";
+    if (!hasHanhChinh && !hasDanSu) {
+      msg = "Dịch vụ này không hỗ trợ Hành chính hoặc Dân sự.";
+    } else {
+      msg = `Dịch vụ này hỗ trợ: ${hasHanhChinh ? "Hành chính " : ""}${
+        hasDanSu ? "Dân sự" : ""
+      }`.trim();
+    }
     setResult(msg);
   };
 
@@ -43,16 +47,35 @@ export default function ServiceTestPurposeCustomer() {
         Chọn dịch vụ:
         <select
           value={selectedService}
-          onChange={e => setSelectedService(e.target.value)}
+          onChange={(e) => setSelectedService(e.target.value)}
         >
           <option value="">-- Chọn dịch vụ --</option>
-          {allServices.map(s => (
-            <option key={s.id} value={s.id}>{s.name}</option>
+          {allServices.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
           ))}
         </select>
       </label>
-      <button style={{ marginLeft: 12 }} onClick={handleCheck}>Kiểm tra</button>
-      <div style={{ marginTop: 16, color: "blue" }}>{result}</div>
+      <button
+        style={{ marginLeft: 12 }}
+        onClick={handleCheck}
+        disabled={!selectedService}
+      >
+        Kiểm tra
+      </button>
+      <div
+        style={{
+          marginTop: 16,
+          color:
+            result.startsWith("Vui lòng") ||
+            result.startsWith("Dịch vụ này không hỗ trợ")
+              ? "red"
+              : "blue",
+        }}
+      >
+        {result}
+      </div>
     </div>
   );
 }
