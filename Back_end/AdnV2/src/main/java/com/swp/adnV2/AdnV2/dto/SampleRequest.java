@@ -18,7 +18,6 @@ public class SampleRequest {
     @Size(max = 20, message = "Status cannot exceed 20 characters")
     private String status;
 
-
     public Long getParticipantId() {
         return participantId;
     }

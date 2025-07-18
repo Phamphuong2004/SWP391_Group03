@@ -25,4 +25,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findAllByAppointmentDateBetweenAndIsActiveTrueAndUsers_Username(
             LocalDateTime startDate, LocalDateTime endDate, String username);
+
+    List<Appointment> findByStatus(String status);
 }

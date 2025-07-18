@@ -372,17 +372,34 @@ public class AppointmentService {
     }
 
 
-    public List<Appointment> getAppointmentByUsernameAndStatus(String username, String status) {
+    public ResponseEntity<?> getAppointmentByUsernameAndStatus(String username, String status) {
         if(status != null && !status.isEmpty()){
             try {
                 StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
-                return appointmentRepository.findByUsers_UsernameAndStatus(username, status);
+                List<Appointment> result = appointmentRepository.findByUsers_UsernameAndStatus(username, statusEnum.name());
+                List<AppointmentResponse> responseList = result.stream()
+                        .map(this::convertToAppointmentResponse)
+                        .collect(Collectors.toList());
+                return ResponseEntity.ok(responseList);
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Invalid status: " + status);
             }
         } else {
-            return appointmentRepository.findByUsers_UsernameAndIsActiveTrue(username);
+            List<Appointment> result = appointmentRepository.findByUsers_UsernameAndIsActiveTrue(username);
+            List<AppointmentResponse> responseList = result.stream()
+                    .map(this::convertToAppointmentResponse)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(responseList);
         }
+    }
+
+
+    public ResponseEntity<?> getAllAppointmentsByStatus(String status) {
+        List<Appointment> result = appointmentRepository.findByStatus(status);
+        List<AppointmentResponse> responseList = result.stream()
+                .map(this::convertToAppointmentResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responseList);
     }
 
     @Transactional
