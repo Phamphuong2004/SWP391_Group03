@@ -38,6 +38,20 @@ const statusTranslations = {
   COMPLETED: "Hoàn thành",
 };
 
+// Helper mapping status for timeline
+function normalizeStatus(status) {
+  if (!status) return "";
+  const s = status.toLowerCase();
+  if (["pending", "chờ xác nhận"].includes(s)) return "PENDING";
+  if (["confirmed", "đã xác nhận"].includes(s)) return "CONFIRMED";
+  if (["sampling", "đang lấy mẫu", "received", "đã tiếp nhận"].includes(s))
+    return "SAMPLING";
+  if (["testing", "đang xét nghiệm"].includes(s)) return "TESTING";
+  if (["completed", "hoàn thành"].includes(s)) return "COMPLETED";
+  if (["cancelled", "đã hủy"].includes(s)) return "CANCELLED";
+  return status.toUpperCase();
+}
+
 const StatusTimeline = ({ status }) => {
   const mainStatuses = [
     "PENDING",
@@ -46,7 +60,7 @@ const StatusTimeline = ({ status }) => {
     "TESTING",
     "COMPLETED",
   ];
-  if (status === "CANCELLED") {
+  if (normalizeStatus(status) === "CANCELLED") {
     return (
       <div className="status-cancelled-container">
         <span className="cancelled-icon">✖</span>
@@ -54,7 +68,7 @@ const StatusTimeline = ({ status }) => {
       </div>
     );
   }
-  const currentStatusIndex = mainStatuses.indexOf(status);
+  const currentStatusIndex = mainStatuses.indexOf(normalizeStatus(status));
   return (
     <div className="status-timeline">
       <div className="status-line-bg"></div>

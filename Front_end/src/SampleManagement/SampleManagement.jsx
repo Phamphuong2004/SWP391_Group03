@@ -55,6 +55,20 @@ const SampleManagement = () => {
     }
   };
 
+  const handleCompleteSample = async (sample) => {
+    try {
+      await updateSample(
+        sample.sampleId,
+        { ...sample, status: "completed" },
+        user?.token
+      );
+      message.success("Đã chuyển sang trạng thái hoàn thành!");
+      fetchSamples(searchId);
+    } catch (err) {
+      message.error("Không thể cập nhật trạng thái!");
+    }
+  };
+
   const handleModalOk = async () => {
     try {
       const values = await form.validateFields();
@@ -123,6 +137,13 @@ const SampleManagement = () => {
             >
               Xóa
             </Button>
+            <Button
+              className="button"
+              style={{ marginLeft: 8, background: "#4caf50", color: "#fff" }}
+              onClick={() => handleCompleteSample(record)}
+            >
+              Hoàn thành
+            </Button>
           </>
         ) : null,
     },
@@ -183,14 +204,7 @@ const SampleManagement = () => {
           <Form.Item
             name="status"
             label="Trạng thái"
-            rules={[
-              { required: true, message: "Vui lòng nhập trạng thái" },
-              {
-                pattern:
-                  /^(pending|completed|processing|đã lấy mẫu|chưa lấy mẫu)$/i,
-                message: "Trạng thái không hợp lệ",
-              },
-            ]}
+            rules={[{ required: true, message: "Vui lòng nhập trạng thái" }]}
           >
             <Input />
           </Form.Item>
