@@ -359,10 +359,17 @@ const ReceiveBooking = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `/api/get/appointment-by-status?status=${status}`,
+        `/api/appointments/by-status?status=${status}`,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      if (Array.isArray(response.data)) {
+      // Nếu response.data có trường body, lấy response.data.body
+      if (response.data && response.data.body) {
+        if (Array.isArray(response.data.body)) {
+          setBookings(response.data.body);
+        } else {
+          setBookings([response.data.body]);
+        }
+      } else if (Array.isArray(response.data)) {
         setBookings(response.data);
       } else if (response.data) {
         setBookings([response.data]);
