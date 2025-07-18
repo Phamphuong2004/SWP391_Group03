@@ -77,7 +77,8 @@ const SERVICES = [
 ];
 
 const ManagerDashboard = () => {
-  const [selectedMenu, setSelectedMenu] = useState("report");
+  const [selectedMenu, setSelectedMenu] = useState("dashboard");
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const navigate = useNavigate();
   const [isManager, setIsManager] = useState(true);
   const [serviceCount, setServiceCount] = useState(0);
@@ -100,7 +101,8 @@ const ManagerDashboard = () => {
     }
   }, [navigate]);
 
-  useEffect(() => {
+  // Hàm load dữ liệu dashboard
+  const loadDashboardData = () => {
     const token = localStorage.getItem("token");
     axios
       .get("/api/services/view-all-service", {
@@ -121,38 +123,24 @@ const ManagerDashboard = () => {
       })
       .then((res) => {
         setAppointmentCount(res.data.length);
-        // Lọc lịch hẹn trong tháng hiện tại và tháng sau
-        const now = new Date();
-        const currentMonth = now.getMonth();
-        const currentYear = now.getFullYear();
-        const nextMonth = (currentMonth + 1) % 12;
-        const nextMonthYear = nextMonth === 0 ? currentYear + 1 : currentYear;
-        const filtered = res.data.filter((a) => {
-          const date = new Date(a.appointmentDate);
-          const month = date.getMonth();
-          const year = date.getFullYear();
-          return (
-            (month === currentMonth && year === currentYear) ||
-            (month === nextMonth && year === nextMonthYear)
-          );
-        });
-        filtered.sort(
-          (a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate)
+        // Lấy 3 lịch hẹn mới nhất (không giới hạn theo tháng)
+        const sorted = [...res.data].sort(
+          (a, b) => new Date(b.appointmentDate) - new Date(a.appointmentDate)
         );
-        setRecentAppointments(filtered.slice(0, 3));
-        // Đếm số lượng từng loại dịch vụ
+        setRecentAppointments(sorted.slice(0, 3));
+        // Đếm số lượng từng loại dịch vụ, bỏ dịch vụ tên là số hoặc rỗng
         const serviceCountMap = {};
         res.data.forEach((a) => {
           const type = a.serviceType || a.serviceName;
-          if (type) {
+          if (type && isNaN(type) && type.trim() !== "") {
             serviceCountMap[type] = (serviceCountMap[type] || 0) + 1;
           }
         });
         // Sắp xếp giảm dần theo số lượng, lấy top 3
-        const sorted = Object.entries(serviceCountMap)
+        const sortedPopular = Object.entries(serviceCountMap)
           .sort((a, b) => b[1] - a[1])
           .slice(0, 3);
-        setPopularServices(sorted);
+        setPopularServices(sortedPopular);
       })
       .catch(() => {
         setAppointmentCount(0);
@@ -216,6 +204,13 @@ const ManagerDashboard = () => {
       setFeedbackCount(total);
     };
     fetchAllFeedbackCount();
+  };
+
+  // Gọi loadDashboardData lần đầu và polling mỗi 30s
+  useEffect(() => {
+    loadDashboardData();
+    const interval = setInterval(loadDashboardData, 30000); // 30s
+    return () => clearInterval(interval);
   }, []);
 
   // Mock data tổng quan
@@ -260,7 +255,7 @@ const ManagerDashboard = () => {
       case "results":
         return <ResultList />;
       case "receive-booking":
-        return <ReceiveBooking />;
+        return <ReceiveBooking selectedId={selectedAppointmentId} />;
       case "service-tracking":
         return <ServiceTracking />;
       case "song-song":
@@ -279,54 +274,176 @@ const ManagerDashboard = () => {
       case "report":
         return <ReportManager />;
       default:
+        // --- REDESIGN DASHBOARD UI ---
         return (
-          <div style={{ padding: 32 }}>
-            <h2 style={{ marginBottom: 24 }}>Bảng điều khiển xét nghiệm ADN</h2>
-            <div style={{ display: "flex", gap: 24, marginBottom: 32 }}>
-              <div className="stat-card">
-                <div className="dashboard-card">
-                  <div className="dashboard-card-title">Dịch vụ ADN</div>
-                  <div className="dashboard-card-value">
-                    {summaryData.serviceCount} dịch vụ
-                  </div>
+          <div style={{ padding: 0, width: "100%" }}>
+            <h2
+              style={{
+                marginBottom: 32,
+                fontWeight: 900,
+                color: "#2563eb",
+                fontSize: 32,
+                letterSpacing: 1,
+              }}
+            >
+              Bảng điều khiển xét nghiệm ADN
+            </h2>
+            {/* Stat cards */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                gap: 32,
+                marginBottom: 36,
+              }}
+            >
+              <div
+                className="stat-card"
+                style={{
+                  borderLeft: "6px solid #4f5bd5",
+                  background: "#f5f7fa",
+                  position: "relative",
+                }}
+              >
+                <FaListAlt
+                  className="stat-icon"
+                  style={{
+                    color: "#4f5bd5",
+                    position: "absolute",
+                    top: 18,
+                    right: 18,
+                    fontSize: 38,
+                    opacity: 0.18,
+                  }}
+                />
+                <div
+                  className="dashboard-card-title"
+                  style={{ fontWeight: 700, color: "#4f5bd5", fontSize: 18 }}
+                >
+                  Dịch vụ ADN
+                </div>
+                <div
+                  className="dashboard-card-value"
+                  style={{ fontWeight: 900, fontSize: 28 }}
+                >
+                  {summaryData.serviceCount} dịch vụ
                 </div>
               </div>
-              <div className="stat-card">
-                <div className="dashboard-card">
-                  <div className="dashboard-card-title">Lịch hẹn ADN</div>
-                  <div className="dashboard-card-value">
-                    {summaryData.appointmentCount} lịch hẹn
-                  </div>
+              <div
+                className="stat-card"
+                style={{
+                  borderLeft: "6px solid #4caf50",
+                  background: "#f5f7fa",
+                  position: "relative",
+                }}
+              >
+                <FaClipboardList
+                  className="stat-icon"
+                  style={{
+                    color: "#4caf50",
+                    position: "absolute",
+                    top: 18,
+                    right: 18,
+                    fontSize: 38,
+                    opacity: 0.18,
+                  }}
+                />
+                <div
+                  className="dashboard-card-title"
+                  style={{ fontWeight: 700, color: "#4caf50", fontSize: 18 }}
+                >
+                  Lịch hẹn ADN
+                </div>
+                <div
+                  className="dashboard-card-value"
+                  style={{ fontWeight: 900, fontSize: 28 }}
+                >
+                  {summaryData.appointmentCount} lịch hẹn
                 </div>
               </div>
-              <div className="stat-card">
-                <div className="dashboard-card">
-                  <div className="dashboard-card-title">Doanh thu</div>
-                  <div className="dashboard-card-value">
-                    {summaryData.totalRevenue.toLocaleString()} VNĐ
-                  </div>
+              <div
+                className="stat-card"
+                style={{
+                  borderLeft: "6px solid #f39c12",
+                  background: "#f5f7fa",
+                  position: "relative",
+                }}
+              >
+                <FaMoneyBillWave
+                  className="stat-icon"
+                  style={{
+                    color: "#f39c12",
+                    position: "absolute",
+                    top: 18,
+                    right: 18,
+                    fontSize: 38,
+                    opacity: 0.18,
+                  }}
+                />
+                <div
+                  className="dashboard-card-title"
+                  style={{ fontWeight: 700, color: "#f39c12", fontSize: 18 }}
+                >
+                  Doanh thu
+                </div>
+                <div
+                  className="dashboard-card-value"
+                  style={{ fontWeight: 900, fontSize: 28 }}
+                >
+                  {summaryData.totalRevenue.toLocaleString()} VNĐ
                 </div>
               </div>
-              <div className="stat-card">
-                <div className="dashboard-card">
-                  <div className="dashboard-card-title">Đánh giá</div>
-                  <div className="dashboard-card-value">
-                    {summaryData.feedbackCount} đánh giá
-                  </div>
+              <div
+                className="stat-card"
+                style={{
+                  borderLeft: "6px solid #e67e22",
+                  background: "#f5f7fa",
+                  position: "relative",
+                }}
+              >
+                <FaCommentDots
+                  className="stat-icon"
+                  style={{
+                    color: "#e67e22",
+                    position: "absolute",
+                    top: 18,
+                    right: 18,
+                    fontSize: 38,
+                    opacity: 0.18,
+                  }}
+                />
+                <div
+                  className="dashboard-card-title"
+                  style={{ fontWeight: 700, color: "#e67e22", fontSize: 18 }}
+                >
+                  Đánh giá
+                </div>
+                <div
+                  className="dashboard-card-value"
+                  style={{ fontWeight: 900, fontSize: 28 }}
+                >
+                  {summaryData.feedbackCount} đánh giá
                 </div>
               </div>
             </div>
-            {/* Phần Doanh thu theo tháng */}
+            {/* Biểu đồ doanh thu */}
             <div
               style={{
                 background: "#fff",
-                borderRadius: 16,
+                borderRadius: 18,
                 boxShadow: "0 4px 24px rgba(44,62,80,0.08)",
-                padding: 24,
-                marginBottom: 32,
+                padding: 32,
+                marginBottom: 36,
               }}
             >
-              <h3 style={{ color: "#2563eb", marginBottom: 16 }}>
+              <h3
+                style={{
+                  color: "#2563eb",
+                  marginBottom: 18,
+                  fontWeight: 800,
+                  fontSize: 20,
+                }}
+              >
                 Biểu đồ doanh thu theo tháng
               </h3>
               <ResponsiveContainer width="100%" height={300}>
@@ -363,7 +480,6 @@ const ManagerDashboard = () => {
                       dataKey="revenue"
                       position="top"
                       formatter={(v) => (v > 0 ? v.toLocaleString() : "")}
-                      style={{ fill: "#2563eb", fontWeight: 700, fontSize: 13 }}
                     />
                   </Bar>
                   <defs>
@@ -377,7 +493,7 @@ const ManagerDashboard = () => {
                       <stop offset="0%" stopColor="#2563eb" stopOpacity={0.9} />
                       <stop
                         offset="100%"
-                        stopColor="#90caf9"
+                        stopColor="#4f5bd5"
                         stopOpacity={0.7}
                       />
                     </linearGradient>
@@ -385,16 +501,33 @@ const ManagerDashboard = () => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div style={{ display: "flex", gap: 24 }}>
+            {/* Lịch hẹn gần đây & Dịch vụ phổ biến */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "2fr 1fr",
+                gap: 32,
+              }}
+            >
               <div
                 style={{
-                  flex: 2,
                   background: "#fff",
-                  borderRadius: 12,
-                  padding: 24,
+                  borderRadius: 16,
+                  padding: 28,
+                  boxShadow: "0 2px 12px #e0e7ef",
+                  minHeight: 220,
                 }}
               >
-                <h4>Lịch hẹn gần đây</h4>
+                <h4
+                  style={{
+                    color: "#2563eb",
+                    fontWeight: 800,
+                    fontSize: 18,
+                    marginBottom: 18,
+                  }}
+                >
+                  Lịch hẹn gần đây
+                </h4>
                 {recentAppointments.length === 0 ? (
                   <div style={{ marginTop: 16, color: "#aaa" }}>
                     Chưa có dữ liệu
@@ -402,10 +535,10 @@ const ManagerDashboard = () => {
                 ) : (
                   <div
                     style={{
-                      marginTop: 16,
+                      marginTop: 8,
                       display: "flex",
                       flexDirection: "column",
-                      gap: 16,
+                      gap: 18,
                     }}
                   >
                     {recentAppointments.map((a) => (
@@ -416,18 +549,24 @@ const ManagerDashboard = () => {
                           borderRadius: 10,
                           padding: 16,
                           boxShadow: "0 2px 8px #e0e7ef",
-                          marginBottom: 8,
+                          marginBottom: 4,
                         }}
                       >
-                        <div style={{ fontWeight: 600 }}>
+                        <div style={{ fontWeight: 600, color: "#2563eb" }}>
                           {a.serviceType || a.serviceName}
                         </div>
-                        <div>Mã đơn: {a.appointmentId}</div>
-                        <div>
-                          Ngày hẹn:{" "}
-                          {new Date(a.appointmentDate).toLocaleDateString()}
+                        <div style={{ fontSize: 15 }}>
+                          Mã đơn: <b>{a.appointmentId}</b>
                         </div>
-                        <div>Khách hàng: {a.fullName}</div>
+                        <div style={{ fontSize: 15 }}>
+                          Ngày hẹn:{" "}
+                          <b>
+                            {new Date(a.appointmentDate).toLocaleDateString()}
+                          </b>
+                        </div>
+                        <div style={{ fontSize: 15 }}>
+                          Khách hàng: <b>{a.fullName}</b>
+                        </div>
                         <div style={{ marginTop: 8 }}>
                           <button
                             style={{
@@ -438,6 +577,11 @@ const ManagerDashboard = () => {
                               padding: "6px 18px",
                               fontWeight: 500,
                               cursor: "pointer",
+                              fontSize: 15,
+                            }}
+                            onClick={() => {
+                              setSelectedAppointmentId(a.appointmentId);
+                              setSelectedMenu("receive-booking");
                             }}
                           >
                             Xem chi tiết
@@ -450,19 +594,29 @@ const ManagerDashboard = () => {
               </div>
               <div
                 style={{
-                  flex: 1,
                   background: "#fff",
-                  borderRadius: 12,
-                  padding: 24,
+                  borderRadius: 16,
+                  padding: 28,
+                  boxShadow: "0 2px 12px #e0e7ef",
+                  minHeight: 220,
                 }}
               >
-                <h4>Dịch vụ ADN phổ biến</h4>
+                <h4
+                  style={{
+                    color: "#4f5bd5",
+                    fontWeight: 800,
+                    fontSize: 18,
+                    marginBottom: 18,
+                  }}
+                >
+                  Dịch vụ ADN phổ biến
+                </h4>
                 {popularServices.length === 0 ? (
                   <div style={{ marginTop: 16, color: "#aaa" }}>
                     Chưa có dữ liệu
                   </div>
                 ) : (
-                  <div style={{ marginTop: 16 }}>
+                  <div style={{ marginTop: 8 }}>
                     {popularServices.map(([type, count]) => (
                       <div
                         key={type}
@@ -474,10 +628,13 @@ const ManagerDashboard = () => {
                           fontWeight: 500,
                           display: "flex",
                           justifyContent: "space-between",
+                          alignItems: "center",
                         }}
                       >
-                        <span>{type}</span>
-                        <span style={{ color: "#2563eb" }}>
+                        <span style={{ color: "#4f5bd5", fontWeight: 700 }}>
+                          {type}
+                        </span>
+                        <span style={{ color: "#2563eb", fontWeight: 800 }}>
                           {count} lượt đặt
                         </span>
                       </div>

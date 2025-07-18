@@ -339,6 +339,21 @@ const ReceiveBooking = () => {
     }
   };
 
+  // Thêm hàm hoàn thành đơn
+  const handleComplete = async (bookingId) => {
+    try {
+      await axios.put(
+        `/api/update/staff/${bookingId}`,
+        { status: "COMPLETED" },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      message.success("Đơn đã chuyển sang trạng thái hoàn thành!");
+      fetchBookings();
+    } catch (error) {
+      message.error("Không thể cập nhật trạng thái hoàn thành!");
+    }
+  };
+
   // Hàm lọc theo trạng thái
   const fetchByStatus = async (status) => {
     try {
@@ -347,7 +362,13 @@ const ReceiveBooking = () => {
         `/api/get/appointment-by-status?status=${status}`,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
-      setBookings(Array.isArray(response.data) ? response.data : []);
+      if (Array.isArray(response.data)) {
+        setBookings(response.data);
+      } else if (response.data) {
+        setBookings([response.data]);
+      } else {
+        setBookings([]);
+      }
     } catch (error) {
       message.error("Không thể lọc theo trạng thái");
     } finally {
@@ -445,8 +466,15 @@ const ReceiveBooking = () => {
               <Button
                 type="dashed"
                 onClick={() => handleAssign(record.appointmentId)}
+                style={{ marginRight: 8 }}
               >
                 Tiếp nhận
+              </Button>
+              <Button
+                style={{ background: "#4caf50", color: "#fff" }}
+                onClick={() => handleComplete(record.appointmentId)}
+              >
+                Hoàn thành
               </Button>
             </>
           )}
@@ -505,6 +533,7 @@ const ReceiveBooking = () => {
           >
             <Option value="PENDING">Pending</Option>
             <Option value="CONFIRMED">Confirmed</Option>
+            <Option value="RECEIVED">Received</Option>
             <Option value="CANCELLED">Cancelled</Option>
             <Option value="COMPLETED">Completed</Option>
           </Select>
