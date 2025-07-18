@@ -22,9 +22,9 @@ import java.util.List;
 
 @Service
 public class ResultService {
-   @Autowired
+    @Autowired
     private ResultRepository resultRepository;
-   @Autowired
+    @Autowired
     private SampleRepository sampleRepository;
     @Autowired
     private UserRepository userRepository;
@@ -75,7 +75,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(collectedSamples.stream().map(CollectedSample::getSampleIdId).toList());
+        response.setSampleId(collectedSamples.stream().map(CollectedSample::getSampleId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(request.getAppointmentId());
         response.setResultFile(result.getResultFile());// Save the uploaded file to a directory
@@ -127,7 +127,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(collectedSamples.stream().map(CollectedSample::getSampleIdId).toList());
+        response.setSampleId(collectedSamples.stream().map(CollectedSample::getSampleId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
@@ -152,7 +152,7 @@ public class ResultService {
             response.setResultData(result.getResultData());
             response.setInterpretation(result.getInterpretation());
             response.setStatus(result.getStatus());
-            response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleIdId).toList());
+            response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleId).toList());
             response.setUsername(result.getUser().getUsername());
             response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
             response.setResultFile(result.getResultFile());
@@ -172,7 +172,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleIdId).toList());
+        response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());
@@ -189,7 +189,7 @@ public class ResultService {
         response.setResultData(result.getResultData());
         response.setInterpretation(result.getInterpretation());
         response.setStatus(result.getStatus());
-        response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleIdId).toList());
+        response.setSampleId(result.getCollectedSample().stream().map(CollectedSample::getSampleId).toList());
         response.setUsername(result.getUser().getUsername());
         response.setAppointmentId(result.getAppointment() != null ? result.getAppointment().getAppointmentId() : null);
         response.setResultFile(result.getResultFile());

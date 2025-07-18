@@ -56,7 +56,6 @@ public class TestPurpose {
     public void setTestPurposeName(String testPurposeName) {
         this.testPurposeName = testPurposeName;
     }
-
     public List<ServiceTestPurpose> getServiceTestPurposes() {
         return serviceTestPurposes;
     }

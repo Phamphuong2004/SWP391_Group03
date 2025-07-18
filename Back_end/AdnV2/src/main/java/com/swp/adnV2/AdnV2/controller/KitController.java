@@ -14,7 +14,7 @@ public class KitController {
     private KitService kitService;
 
     @GetMapping("/get/{serviceId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER','MANAGER', 'STAFF')")
+//    @PreAuthorize("hasAnyRole('CUSTOMER','MANAGER', 'STAFF')")
     public ResponseEntity<?> getKitByServiceId(@PathVariable("serviceId") Long serviceId) {
         return kitService.getKitByServiceId(serviceId);
     }

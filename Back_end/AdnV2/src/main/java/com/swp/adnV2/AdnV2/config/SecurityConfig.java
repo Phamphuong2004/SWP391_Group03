@@ -75,7 +75,20 @@ public class SecurityConfig {
                         .requestMatchers("/api/user/profile/update").authenticated()
                         .requestMatchers("/api/user/reset-password").authenticated()
 
+                        .requestMatchers("/api/service-test-purpose/**").permitAll()
+                        .requestMatchers("/api/kit/get/**").permitAll()
+                        .requestMatchers("/api/test-category/by-service/**").permitAll()
+                        .requestMatchers("/api/sample-types/get-by-component-name/**").permitAll()
 
+
+                        // ... các permitAll khác ...
+                        .requestMatchers("/api/payments/create").permitAll() // Guest được phép tạo payment
+                        .requestMatchers("/api/payments/{paymentId}").permitAll() // (Tùy chọn, nếu muốn guest xem payment vừa tạo)
+                        // Các API còn lại chỉ cho user đã đăng nhập
+                        .requestMatchers("/api/payments/**").permitAll()
+
+                        .requestMatchers("/api/sample-types/**").permitAll()
+                        .requestMatchers("/api/results/appointment/**").permitAll()
 
                         // Mặc định, mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated()

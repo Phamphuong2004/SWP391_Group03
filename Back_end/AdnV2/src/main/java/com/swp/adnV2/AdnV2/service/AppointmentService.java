@@ -46,9 +46,6 @@ public class AppointmentService {
     @Autowired
     private SampleTypeRepository sampleTypeRepository;
 
-    @Autowired
-    private YourTrackService yourTrackService;
-
     public ResponseEntity<List<AppointmentResponse>> getAppointmentsByToDateCustomer(String username){
         LocalDate today = LocalDate.now();
         LocalDateTime startOfDay = today.atStartOfDay();
@@ -152,26 +149,7 @@ public class AppointmentService {
             }
         }
 
-//        if (!errors.isEmpty()) {
-//            return ResponseEntity.badRequest().body(errors);
-//        }
-
         if (!errors.isEmpty()) {
-            // Tạo nội dung mô tả lỗi
-            StringBuilder errorDesc = new StringBuilder();
-            errorDesc.append("Lỗi dữ liệu khi tạo cuộc hẹn:\n");
-            for (String err : errors) {
-                errorDesc.append("- ").append(err).append("\n");
-            }
-            errorDesc.append("Thông tin nhập vào:\n").append(request.toString());
-
-            // Gửi issue lỗi lên YouTrack
-            try {
-                yourTrackService.createIssue("Lỗi nhập liệu tạo appointment", errorDesc.toString());
-            } catch (Exception ex) {
-                // Có thể log lỗi gửi issue nếu muốn, không cần throw để không ảnh hưởng flow
-            }
-
             return ResponseEntity.badRequest().body(errors);
         }
         try {
@@ -233,17 +211,6 @@ public class AppointmentService {
             }
 
             AppointmentResponse appointmentResponse = convertToAppointmentResponse(appointment);
-
-            String summary = "Cuộc hẹn mới (Khách vãng lai): " + appointmentResponse.getFullName();
-            String description = "Dịch vụ: " + appointmentResponse.getServiceType()
-                    + "\nNgày hẹn: " + appointmentResponse.getAppointmentDate()
-                    + "\nSĐT: " + appointmentResponse.getPhone()
-                    + "\nEmail: " + appointmentResponse.getEmail()
-                    + "\nMục đích: " + appointmentResponse.getTestPurpose()
-                    + "\nĐịa điểm lấy mẫu: " + appointmentResponse.getCollectionLocation();
-
-            yourTrackService.createIssue(summary, description);
-
             return ResponseEntity.status(HttpStatus.CREATED).body(appointmentResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -270,16 +237,6 @@ public class AppointmentService {
             // Đánh dấu appointment là không hoạt động thay vì xóa
             appointment.setActive(false);
             appointmentRepository.save(appointment);
-
-            String summary = "Xóa cuộc hẹn (ID: " + appointmentId + ") - " + appointment.getFullName();
-            String description = "Cuộc hẹn với tên: " + appointment.getFullName()
-                    + "\nNgày hẹn: " + appointment.getAppointmentDate()
-                    + "\nSĐT: " + appointment.getPhone()
-                    + "\nEmail: " + appointment.getEmail()
-                    + "\nTrạng thái trước khi xóa: " + appointment.getStatus()
-                    + "\nĐã được đánh dấu là không hoạt động vào: " + java.time.LocalDateTime.now();
-
-            yourTrackService.createIssue(summary, description);
 
             return ResponseEntity.ok("Cuộc hẹn đã được đánh dấu là không hoạt động");
         } else {
@@ -328,7 +285,7 @@ public class AppointmentService {
             // mapping SampleInfo list mới
             List<AppointmentResponse.SampleInfo> sampleInfos = collectedSamples.stream().map(sample -> {
                 AppointmentResponse.SampleInfo info = new AppointmentResponse.SampleInfo();
-                info.setSampleId(sample.getSampleIdId());
+                info.setSampleId(sample.getSampleId());
                 info.setSampleType(sample.getSampleType() != null ? sample.getSampleType().getName() : null);
                 if (sample.getParticipant() != null) {
                     info.setParticipantFullName(sample.getParticipant().getFullName());
@@ -395,13 +352,12 @@ public class AppointmentService {
 
 
     public ResponseEntity<?> getAllAppointmentsByStatus(String status) {
-        List<Appointment> result = appointmentRepository.findByStatus(status);
+        List<Appointment> result = appointmentRepository.findByStatusIgnoreCase(status);
         List<AppointmentResponse> responseList = result.stream()
                 .map(this::convertToAppointmentResponse)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responseList);
     }
-
     @Transactional
 public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest request, String username) {
     List<String> errors = new ArrayList<>();
@@ -665,7 +621,7 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
                             .body("No sample found for the appointment ID " + appointmentId);
                 }
                 for (CollectedSample collectedSample : collectedSamples) {
-                    Result result = resultRepository.findByCollectedSample_SampleId(collectedSample.getSampleIdId());
+                    Result result = resultRepository.findByCollectedSample_SampleId(collectedSample.getSampleId());
                     if (result != null) {
                         result.setResultData(updateRequest.getResultFile());
                         resultRepository.save(result);

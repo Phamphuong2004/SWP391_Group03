@@ -29,7 +29,7 @@ public class ResultController {
     }
 
     @GetMapping("/{result_id}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    @PreAuthorize("permitAll()")
     public ResultReponse getResultById(@PathVariable("result_id") Long resultId) {
         return resultService.getResultById(resultId);
     }
@@ -47,8 +47,9 @@ public class ResultController {
         return "Result has been deleted successfully";
     }
 
+    // Cho phép guest tra cứu kết quả theo mã lịch hẹn
     @GetMapping("/appointment/{appointmentId}")
-    @PreAuthorize("hasAnyRole('CUSTOMER', 'STAFF', 'MANAGER')")
+    @PreAuthorize("permitAll()")
     public ResultReponse getResultByAppointmentId(@PathVariable Long appointmentId) {
         return resultService.getResultByAppointmentId(appointmentId);
     }

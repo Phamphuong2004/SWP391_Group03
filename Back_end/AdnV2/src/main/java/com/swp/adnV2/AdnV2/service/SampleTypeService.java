@@ -94,7 +94,7 @@ public class SampleTypeService {
         response.setComponentName(sampleType.getKitComponent().getComponentName());
         List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(sampleType.getId());
         List<Long> sampleIds = collectedSamples.stream()
-                .map(CollectedSample::getSampleIdId)
+                .map(CollectedSample::getSampleId)
                 .toList();
         response.setSampleId(sampleIds);
         return response;
@@ -111,7 +111,7 @@ public class SampleTypeService {
         response.setComponentName(sampleType.getKitComponent().getComponentName());
         List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(sampleType.getId());
         List<Long> sampleIds = collectedSamples.stream()
-                .map(CollectedSample::getSampleIdId)
+                .map(CollectedSample::getSampleId)
                 .toList();
         response.setSampleId(sampleIds);
         return response;
@@ -131,7 +131,7 @@ public class SampleTypeService {
             response.setComponentName(sampleType.getKitComponent().getComponentName());
             List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(sampleType.getId());
             List<Long> sampleIds = collectedSamples.stream()
-                    .map(CollectedSample::getSampleIdId)
+                    .map(CollectedSample::getSampleId)
                     .toList();
             response.setSampleId(sampleIds);
             return response;
@@ -169,7 +169,7 @@ public class SampleTypeService {
         response.setComponentName(existingSampleType.getKitComponent().getComponentName());
         List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(existingSampleType.getId());
         List<Long> sampleIds = collectedSamples.stream()
-                .map(CollectedSample::getSampleIdId)
+                .map(CollectedSample::getSampleId)
                 .toList();
         response.setSampleId(sampleIds);
         return response;
@@ -188,7 +188,7 @@ public class SampleTypeService {
                     sampleTypeResponse.setComponentName(type.getKitComponent().getComponentName());
                     List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(type.getId());
                     List<Long> sampleIds = collectedSamples.stream()
-                            .map(CollectedSample::getSampleIdId)
+                            .map(CollectedSample::getSampleId)
                             .toList();
                     sampleTypeResponse.setSampleId(sampleIds);
                     return sampleTypeResponse;

@@ -244,7 +244,7 @@ public class SampleService {
     private SampleResponse convertToSampleResponse(CollectedSample collectedSample) {
         SampleResponse response = new SampleResponse();
 
-        response.setSampleId(collectedSample.getSampleIdId());
+        response.setSampleId(collectedSample.getSampleId());
         response.setSampleType(
                 collectedSample.getSampleType() != null ? collectedSample.getSampleType().getName() : null
         );

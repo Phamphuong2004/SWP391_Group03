@@ -58,14 +58,6 @@ public class CollectedSample {
         this.participant = participant;
     }
 
-    public Users getUsers() {
-        return users;
-    }
-
-    public void setUsers(Users users) {
-        this.users = users;
-    }
-
     public Appointment getAppointment() {
         return appointment;
     }
@@ -74,17 +66,12 @@ public class CollectedSample {
         this.appointment = appointment;
     }
 
-    public Long getSampleIdId() { return sampleId; }
-    public void setSampleIdId(Long id) { this.sampleId = id; }
+    public Long getSampleId() { return sampleId; }
+    public void setSampleId(Long id) { this.sampleId = id; }
 
 
-    public Users getUser() {
-        return users;
-    }
-
-    public void setUser(Users users) {
-        this.users = users;
-    }
+    public Users getUsers() { return users; }
+    public void setUsers(Users users) { this.users = users; }
 
     public KitComponent getKitComponent() {
         return kitComponent;
