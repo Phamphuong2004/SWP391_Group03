@@ -46,6 +46,9 @@ public class AppointmentService {
     @Autowired
     private SampleTypeRepository sampleTypeRepository;
 
+    @Autowired
+    private YourTrackService yourTrackService;
+
     public ResponseEntity<List<AppointmentResponse>> getAppointmentsByToDateCustomer(String username){
         LocalDate today = LocalDate.now();
         LocalDateTime startOfDay = today.atStartOfDay();
@@ -141,6 +144,19 @@ public class AppointmentService {
             }
             // Kiểm tra số lượng kit đủ không
             if (kitComponent.getQuantity() < requestedSampleCount) {
+                try {
+                    String summary = "Kit không đủ số lượng - " + kitComponent.getComponentName();
+                    String description = "Kit: " + kitComponent.getComponentName()
+                            + "\nSố lượng có sẵn: " + kitComponent.getQuantity()
+                            + "\nSố lượng yêu cầu: " + requestedSampleCount
+                            + "\nService: " + kitComponent.getService().getServiceName()
+                            + "\nKhách hàng: " + request.getFullName()
+                            + "\nPhone: " + request.getPhone();
+                    yourTrackService.createIssue(summary, description);
+                } catch (Exception ex) {
+                    // Log error if needed
+                }
+
                 Map<String, Object> errorBody = new HashMap<>();
                 errorBody.put("message", "Số lượng kit không đủ cho số lượng mẫu đăng ký!");
                 errorBody.put("kitAvailable", kitComponent.getQuantity());
@@ -149,7 +165,25 @@ public class AppointmentService {
             }
         }
 
+//        if (!errors.isEmpty()) {
+//            return ResponseEntity.badRequest().body(errors);
+//        }
         if (!errors.isEmpty()) {
+            // Tạo nội dung mô tả lỗi
+            StringBuilder errorDesc = new StringBuilder();
+            errorDesc.append("Lỗi dữ liệu khi tạo cuộc hẹn:\n");
+            for (String err : errors) {
+                errorDesc.append("- ").append(err).append("\n");
+            }
+            errorDesc.append("Thông tin nhập vào:\n").append(request.toString());
+
+            // Gửi issue lỗi lên YouTrack
+            try {
+                yourTrackService.createIssue("Lỗi nhập liệu tạo appointment", errorDesc.toString());
+            } catch (Exception ex) {
+                // Có thể log lỗi gửi issue nếu muốn, không cần throw để không ảnh hưởng flow
+            }
+
             return ResponseEntity.badRequest().body(errors);
         }
         try {
@@ -199,7 +233,7 @@ public class AppointmentService {
                     CollectedSample collectedSample = new CollectedSample();
                     collectedSample.setAppointment(appointment);
                     collectedSample.setSampleType(sampleType);
-                    collectedSample.setKitComponent(kitComponent); // Luôn dùng kit của appointment
+                    collectedSample.setKitComponent(kitComponent);
                     sampleRepository.save(collectedSample);
                 }
             }
@@ -211,6 +245,16 @@ public class AppointmentService {
             }
 
             AppointmentResponse appointmentResponse = convertToAppointmentResponse(appointment);
+
+            String summary = "Cuộc hẹn mới (Khách vãng lai): " + appointmentResponse.getFullName();
+            String description = "Dịch vụ: " + appointmentResponse.getServiceType()
+                    + "\nNgày hẹn: " + appointmentResponse.getAppointmentDate()
+                    + "\nSĐT: " + appointmentResponse.getPhone()
+                    + "\nEmail: " + appointmentResponse.getEmail()
+                    + "\nMục đích: " + appointmentResponse.getTestPurpose()
+                    + "\nĐịa điểm lấy mẫu: " + appointmentResponse.getCollectionLocation();
+
+            yourTrackService.createIssue(summary, description);
             return ResponseEntity.status(HttpStatus.CREATED).body(appointmentResponse);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -238,6 +282,15 @@ public class AppointmentService {
             appointment.setActive(false);
             appointmentRepository.save(appointment);
 
+            String summary = "Xóa cuộc hẹn (ID: " + appointmentId + ") - " + appointment.getFullName();
+            String description = "Cuộc hẹn với tên: " + appointment.getFullName()
+                    + "\nNgày hẹn: " + appointment.getAppointmentDate()
+                    + "\nSĐT: " + appointment.getPhone()
+                    + "\nEmail: " + appointment.getEmail()
+                    + "\nTrạng thái trước khi xóa: " + appointment.getStatus()
+                    + "\nĐã được đánh dấu là không hoạt động vào: " + java.time.LocalDateTime.now();
+
+            yourTrackService.createIssue(summary, description);
             return ResponseEntity.ok("Cuộc hẹn đã được đánh dấu là không hoạt động");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -489,9 +542,38 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             kitRepository.save(kitComponent);
         }
 
+
+
         AppointmentResponse response = convertToAppointmentResponse(appointment);
+
+        String summary = "Cuộc hẹn mới (User): " + response.getFullName();
+        String description = "Dịch vụ: " + response.getServiceType()
+                + "\nNgày hẹn: " + response.getAppointmentDate()
+                + "\nSĐT: " + response.getPhone()
+                + "\nEmail: " + response.getEmail()
+                + "\nMục đích: " + response.getTestPurpose()
+                + "\nĐịa điểm lấy mẫu: " + response.getCollectionLocation();
+        try {
+            yourTrackService.createIssue(summary, description);
+        } catch (Exception ex) {
+            // Có thể log lỗi gửi issue nếu muốn, không cần throw để không ảnh hưởng flow
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     } catch (Exception e) {
+        try {
+            String summary = "Exception tạo appointment - " + request.getFullName();
+            String description = "Lỗi: " + e.getMessage()
+                    + "\nUsername: " + username
+                    + "\nServiceId: " + serviceId
+                    + "\nEmail: " + request.getEmail()
+                    + "\nPhone: " + request.getPhone()
+                    + "\nStackTrace: " + e.getClass().getSimpleName();
+            yourTrackService.createIssue(summary, description);
+        } catch (Exception ex) {
+            // Log error if needed
+        }
+
         Map<String, Object> errorBody = new HashMap<>();
         errorBody.put("message", "Failed to create appointment");
         errorBody.put("error", e.getMessage());
@@ -517,17 +599,8 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Internal server error: " + e.getMessage());
         }
-
-
     }
 
-
-
-    /**
-     * Xem thông tin chi tiết của một cuộc hẹn
-     * @param appointmentId ID của cuộc hẹn
-     * @return ResponseEntity chứa thông tin cuộc hẹn hoặc thông báo lỗi
-     */
     public ResponseEntity<?> getAppointmentById(Long appointmentId) {
         try {
             Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
@@ -546,96 +619,113 @@ public ResponseEntity<?> createAppointment(Long serviceId,AppointmentRequest req
 
 
     public ResponseEntity<?> updateAppointment(Long appointmentId, AppointmentUpdateRequest updateRequest) {
-        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
-        if (appointmentOpt.isPresent()) {
-            Appointment appointment = appointmentOpt.get();
-            String oldStatus = appointment.getStatus();
-            boolean kitRestored = false;
+        try {
+            Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+            if (appointmentOpt.isPresent()) {
+                Appointment appointment = appointmentOpt.get();
+                String oldStatus = appointment.getStatus();
+                boolean kitRestored = false;
 
-            if (updateRequest.getStatus() != null && !updateRequest.getStatus().isEmpty()) {
-                boolean isValid = Arrays.stream(StatusAppointment.values())
-                        .anyMatch(s -> s.name().equalsIgnoreCase(updateRequest.getStatus()));
-                if (!isValid) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("Invalid status: " + updateRequest.getStatus());
-                }
-                String newStatus = updateRequest.getStatus().toUpperCase();
-
-                // --- Kiểm tra nếu chuyển sang CANCELLED và trạng thái cũ là PENDING hoặc CONFIRMED ---
-                if ("CANCELLED".equalsIgnoreCase(newStatus)
-                        && ("PENDING".equalsIgnoreCase(oldStatus) || "CONFIRMED".equalsIgnoreCase(oldStatus))) {
-                    KitComponent kitComponent = appointment.getKitComponent();
-                    if (kitComponent != null) {
-                        int sampleCount = sampleRepository.findByAppointment_AppointmentId(appointmentId).size();
-                        kitComponent.setQuantity(kitComponent.getQuantity() + sampleCount);
-                        kitRepository.save(kitComponent);
-                        kitRestored = true;
+                if (updateRequest.getStatus() != null && !updateRequest.getStatus().isEmpty()) {
+                    boolean isValid = Arrays.stream(StatusAppointment.values())
+                            .anyMatch(s -> s.name().equalsIgnoreCase(updateRequest.getStatus()));
+                    if (!isValid) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("Invalid status: " + updateRequest.getStatus());
                     }
+                    String newStatus = updateRequest.getStatus().toUpperCase();
+
+                    // --- Kiểm tra nếu chuyển sang CANCELLED và trạng thái cũ là PENDING hoặc CONFIRMED ---
+                    if ("CANCELLED".equalsIgnoreCase(newStatus)
+                            && ("PENDING".equalsIgnoreCase(oldStatus) || "CONFIRMED".equalsIgnoreCase(oldStatus))) {
+                        KitComponent kitComponent = appointment.getKitComponent();
+                        if (kitComponent != null) {
+                            int sampleCount = sampleRepository.findByAppointment_AppointmentId(appointmentId).size();
+                            kitComponent.setQuantity(kitComponent.getQuantity() + sampleCount);
+                            kitRepository.save(kitComponent);
+                            kitRestored = true;
+                        }
+                    }
+                    appointment.setStatus(newStatus);
                 }
-                appointment.setStatus(newStatus);
-            }
-            boolean updatedSample = false;
+                boolean updatedSample = false;
 
-            if (updateRequest.getKitComponentName() != null && !updateRequest.getKitComponentName().isEmpty()) {
-                // Lấy service từ appointment
-                Services service = appointment.getService();
-                if (service == null) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("Appointment does not have an associated service");
+                if (updateRequest.getKitComponentName() != null && !updateRequest.getKitComponentName().isEmpty()) {
+                    // Lấy service từ appointment
+                    Services service = appointment.getService();
+                    if (service == null) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("Appointment does not have an associated service");
+                    }
+
+                    Long serviceId = service.getServiceId();
+
+                    // Tìm kiếm KitComponent trong service này với tên đã cho
+                    List<KitComponent> matchingComponents = kitRepository.findByService_ServiceIdAndComponentNameContainingIgnoreCase(
+                            serviceId, updateRequest.getKitComponentName());
+
+                    if (matchingComponents.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("No kit component with name '" + updateRequest.getKitComponentName() +
+                                        "' found for the service ID " + serviceId);
+                    }
+
+                    // Lấy KitComponent đầu tiên khớp (hoặc có thể thêm logic để chọn cái phù hợp nhất)
+                    KitComponent kitComponent = matchingComponents.get(0);
+
+                    List<CollectedSample> collectedSamples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+                    if (!collectedSamples.isEmpty()) {
+                        for (CollectedSample collectedSample : collectedSamples) {
+                            collectedSample.setKitComponent(kitComponent);
+                            sampleRepository.save(collectedSample);
+                        }
+                        updatedSample = true;
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("No sample found for the appointment ID " + appointmentId);
+                    }
+
                 }
 
-                Long serviceId = service.getServiceId();
-
-                // Tìm kiếm KitComponent trong service này với tên đã cho
-                List<KitComponent> matchingComponents = kitRepository.findByService_ServiceIdAndComponentNameContainingIgnoreCase(
-                        serviceId, updateRequest.getKitComponentName());
-
-                if (matchingComponents.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("No kit component with name '" + updateRequest.getKitComponentName() +
-                                    "' found for the service ID " + serviceId);
-                }
-
-                // Lấy KitComponent đầu tiên khớp (hoặc có thể thêm logic để chọn cái phù hợp nhất)
-                KitComponent kitComponent = matchingComponents.get(0);
-
-                List<CollectedSample> collectedSamples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
-                if (!collectedSamples.isEmpty()) {
+                // Cập nhật file kết quả nếu được cung cấp (giờ sẽ cập nhật vào Result)
+                if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
+                    List<CollectedSample> collectedSamples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
+                    if (collectedSamples == null || collectedSamples.isEmpty()) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("No sample found for the appointment ID " + appointmentId);
+                    }
                     for (CollectedSample collectedSample : collectedSamples) {
-                        collectedSample.setKitComponent(kitComponent);
-                        sampleRepository.save(collectedSample);
+                        Result result = resultRepository.findByCollectedSample_SampleId(collectedSample.getSampleId());
+                        if (result != null) {
+                            result.setResultData(updateRequest.getResultFile());
+                            resultRepository.save(result);
+                        }
+                        // Nếu chưa có result, bạn có thể tạo mới ở đây nếu nghiệp vụ yêu cầu
                     }
-                    updatedSample = true;
-                } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("No sample found for the appointment ID " + appointmentId);
                 }
 
+                appointmentRepository.save(appointment);
+                String msg = kitRestored ? "Appointment updated and kit quantity restored successfully" : "Appointment updated successfully";
+                return ResponseEntity.ok(msg);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Appointment with ID " + appointmentId + " not found");
             }
-
-            // Cập nhật file kết quả nếu được cung cấp (giờ sẽ cập nhật vào Result)
-            if (updateRequest.getResultFile() != null && !updateRequest.getResultFile().isEmpty()) {
-                List<CollectedSample> collectedSamples = sampleRepository.findByAppointment_AppointmentId(appointmentId);
-                if (collectedSamples == null || collectedSamples.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("No sample found for the appointment ID " + appointmentId);
-                }
-                for (CollectedSample collectedSample : collectedSamples) {
-                    Result result = resultRepository.findByCollectedSample_SampleId(collectedSample.getSampleId());
-                    if (result != null) {
-                        result.setResultData(updateRequest.getResultFile());
-                        resultRepository.save(result);
-                    }
-                    // Nếu chưa có result, bạn có thể tạo mới ở đây nếu nghiệp vụ yêu cầu
-                }
+        } catch (Exception e) {
+            try {
+                String summary = "Lỗi cập nhật appointment ID: " + appointmentId;
+                String description = "Lỗi: " + e.getMessage()
+                        + "\nAppointmentId: " + appointmentId
+                        + "\nUpdate Status: " + updateRequest.getStatus()
+                        + "\nUpdate KitComponent: " + updateRequest.getKitComponentName()
+                        + "\nUpdate ResultFile: " + (updateRequest.getResultFile() != null ? "Có" : "Không")
+                        + "\nStackTrace: " + e.getClass().getSimpleName();
+                yourTrackService.createIssue(summary, description);
+            } catch (Exception ex) {
+                // Log error if needed
             }
-
-            appointmentRepository.save(appointment);
-            String msg = kitRestored ? "Appointment updated and kit quantity restored successfully" : "Appointment updated successfully";
-            return ResponseEntity.ok(msg);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Appointment with ID " + appointmentId + " not found");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating appointment: " + e.getMessage());
         }
     }
 

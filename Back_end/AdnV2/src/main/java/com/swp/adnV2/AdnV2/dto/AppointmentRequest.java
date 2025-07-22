@@ -178,4 +178,26 @@ public class AppointmentRequest {
     public void setAppointmentDate(LocalDateTime appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
+
+    @Override
+    public String toString() {
+        return "AppointmentRequest{" +
+                "fullName='" + fullName + '\'' +
+                ", dob=" + dob +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", gender='" + gender + '\'' +
+                ", testPurpose='" + testPurpose + '\'' +
+                ", serviceType='" + serviceType + '\'' +
+                ", testCategory='" + testCategory + '\'' +
+                ", appointmentDate=" + appointmentDate +
+                ", collectionTime=" + collectionTime +
+                ", fingerprintFile='" + fingerprintFile + '\'' +
+                ", district='" + district + '\'' +
+                ", province='" + province + '\'' +
+                ", collectionLocation='" + collectionLocation + '\'' +
+                ", kitComponentName='" + kitComponentName + '\'' +
+                ", sampleTypes=" + sampleTypes +
+                '}';
+    }
 }

@@ -10,49 +10,12 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-//public class YourTrackService {
-//    private static final Logger logger = LoggerFactory.getLogger(YourTrackService.class);
-//
-//    private final String yourTrackUrl = "https://tainguyen.youtrack.cloud/api/issues";
-//    private final String yourTrackToken = "perm-YWRtaW4=.NDItMQ==.hjFlK9jLln011WJnDA0jeXRfusfheP";
-//    private final String projectShortName = "TAI"; // chính là mã project bạn tạo trong YouTrack
-//
-//    public void createIssue(String summary, String description) {
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        // Escape ký tự xuống dòng trong description
-//        String safeDescription = description.replace("\n", "\\n");
-//
-//        String jsonBody = "{"
-//                + "\"project\": {\"shortName\": \"" + projectShortName + "\"},"
-//                + "\"summary\": \"" + summary + "\","
-//                + "\"description\": \"" + safeDescription + "\""
-//                + "}";
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.setBearerAuth(yourTrackToken.replace("perm:", ""));
-//        headers.set("Authorization", "Bearer " + yourTrackToken);
-//
-//        HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
-//
-//        ResponseEntity<String> response = restTemplate.exchange(
-//                yourTrackUrl,
-//                HttpMethod.POST,
-//                entity,
-//                String.class
-//        );
-//
-//        System.out.println("YourTrack response: " + response.getBody());
-//    }
-//}
-
 public class YourTrackService {
     private static final Logger logger = LoggerFactory.getLogger(YourTrackService.class);
 
-    private final String yourTrackUrl = "https://tainguyen.youtrack.cloud/api/issues";
-    private final String yourTrackToken = "perm-YWRtaW4=.NDItMg==.Ppydo8b0hZtFPERVXowjhDOil8XSpF";
-    private final String projectShortName = "TAI";
+    private final String yourTrackUrl = "https://baoz.youtrack.cloud/api/issues";
+    private final String yourTrackToken = "perm-bmd1eWVucXVvY3RhaTIwMjJudA==.NDQtMg==.F0VoEzlrY7i47CX787GnXhOdCJXwcb";
+    private final String projectShortName = "DEM";
 
     public void createIssue(String summary, String description) {
         RestTemplate restTemplate = new RestTemplate();
