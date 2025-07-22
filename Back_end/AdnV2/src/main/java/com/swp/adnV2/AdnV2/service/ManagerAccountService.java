@@ -3,13 +3,22 @@ package com.swp.adnV2.AdnV2.service;
 import com.swp.adnV2.AdnV2.dto.RegisterRequest;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.AccountRepository;
+import com.swp.adnV2.AdnV2.repository.AppointmentRepository;
+import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 @Service
 public class ManagerAccountService {
+    @Autowired
+    private LoginHistoryRepository loginHistoryRepository;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     @Autowired
     private AccountRepository accountRepo;
@@ -172,13 +181,26 @@ public class ManagerAccountService {
         if (!acc.getGender().equals("male") && !acc.getGender().equals("female") && !acc.getGender().equals("other")) {
             throw new RuntimeException("Gender must be either '");
         }
-            acc.setAvatar(updated.getAvatar());
+        acc.setAvatar(updated.getAvatar());
 
 
         return accountRepo.save(acc);
     }
 
+    @Transactional
     public void deleteAccount(Long id) {
+        // Xóa login_history
+        loginHistoryRepository.deleteByUsers_UserId(id);
+
+        // Nếu muốn xóa luôn appointment, mở comment dòng dưới
+        appointmentRepository.deleteByUsers_UserId(id);
+
+        // Nếu vẫn muốn kiểm tra còn appointment không thì giữ lại kiểm tra này
+        if (appointmentRepository.existsByUsers_UserId(id)) {
+            throw new RuntimeException("Không thể xóa tài khoản vì còn lịch hẹn liên quan.");
+        }
+
+        // Xóa user
         accountRepo.deleteById(id);
     }
 }

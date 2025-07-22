@@ -35,9 +35,17 @@ public class AccountController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
-        accountService.deleteAccount(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteAccount(@PathVariable Long id) {
+        try {
+            accountService.deleteAccount(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            String msg = e.getMessage();
+            if (msg != null && msg.contains("liên quan")) {
+                return ResponseEntity.badRequest().body(msg);
+            }
+            return ResponseEntity.status(500).body("Lỗi hệ thống: " + msg);
+        }
     }
 
     @PostMapping("/create")

@@ -29,4 +29,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByUsers_UsernameAndStatusIgnoreCase(String username, String status);
 
     List<Appointment> findByStatusIgnoreCase(String status);
+
+    boolean existsByUsers_UserId(Long id);
+
+    void deleteByUsers_UserId(Long id);
 }
