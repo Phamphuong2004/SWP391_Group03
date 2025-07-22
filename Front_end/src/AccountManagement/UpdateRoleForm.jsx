@@ -68,6 +68,7 @@ export default function UpdateRoleForm() {
                 onChange={(e) => setNewRole(e.target.value)}
                 required
               >
+                <option value="/">Chọn vai trò</option>
                 <option value="manager">manager</option>
                 <option value="staff">staff</option>
                 <option value="customer">customer</option>

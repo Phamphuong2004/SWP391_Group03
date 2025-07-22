@@ -59,9 +59,15 @@ export default function AccountManagement() {
     try {
       await deleteAccount(id);
       setSuccessMsg("Xóa tài khoản thành công!");
+      setError("");
       reload();
-    } catch {
-      setError("Lỗi khi xóa tài khoản.");
+    } catch (err) {
+      // Lấy message chi tiết từ backend nếu có
+      const msg =
+        err.response?.data?.message ||
+        err.response?.data ||
+        "Lỗi khi xóa tài khoản.";
+      setError(msg);
     }
   };
 
