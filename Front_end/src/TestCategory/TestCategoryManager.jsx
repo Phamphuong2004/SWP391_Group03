@@ -67,7 +67,7 @@ export default function TestCategoryManager() {
       setFormError("Không được để trống tên test category hoặc service name");
       return;
     }
-    if (/[^\w\s]/.test(form.serviceName)) {
+    if (/[^\p{L}\p{N}\s]/u.test(form.serviceName)) {
       setFormError("Service name không được chứa ký tự đặc biệt");
       return;
     }
@@ -109,7 +109,7 @@ export default function TestCategoryManager() {
       setUpdateError("Không được để trống tên test category hoặc service name");
       return;
     }
-    if (/[^\w\s]/.test(updateForm.serviceName)) {
+    if (/[^\p{L}\p{N}\s]/u.test(updateForm.serviceName)) {
       setUpdateError("Service name không được chứa ký tự đặc biệt");
       return;
     }
@@ -132,7 +132,7 @@ export default function TestCategoryManager() {
       setServiceNameError("Vui lòng nhập service name");
       return;
     }
-    if (/[^\w\s]/.test(serviceName)) {
+    if (/[^\p{L}\p{N}\s]/u.test(serviceName)) {
       setServiceNameError("Service name không được chứa ký tự đặc biệt");
       return;
     }
@@ -153,7 +153,7 @@ export default function TestCategoryManager() {
       setServiceNameError("Vui lòng nhập service name");
       return;
     }
-    if (/[^\w\s]/.test(serviceName)) {
+    if (/[^\p{L}\p{N}\s]/u.test(serviceName)) {
       setServiceNameError("Service name không được chứa ký tự đặc biệt");
       return;
     }
