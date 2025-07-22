@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/Back_end/AdnV2/pom.xml" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-launcher.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-jsch.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-swing.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-apache-bsf.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-apache-log4j.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-junit4.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-apache-oro.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-apache-bcel.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-antlr.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-testutil.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-commons-net.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-parent.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-javamail.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-junit.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-apache-regexp.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-jai.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-jmf.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-commons-logging.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-jdepend.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-apache-resolver.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-apache-xalan2.pom" />
+        <option value="$PROJECT_DIR$/Front_end/node_modules/ant/ant/lib/ant-netrexx.pom" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_24" default="true" project-jdk-name="24" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
