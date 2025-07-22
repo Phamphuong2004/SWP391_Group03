@@ -72,8 +72,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("MANAGER")
 
                         // API dành cho người dùng đã xác thực (đã đăng nhập)
-                        .requestMatchers("/api/user/profile/update").authenticated()
-                        .requestMatchers("/api/user/reset-password").authenticated()
+                        .requestMatchers("/api/user/profile/update").permitAll()
+                        .requestMatchers("/api/user/reset-password").permitAll()
 
                         .requestMatchers("/api/service-test-purpose/**").permitAll()
                         .requestMatchers("/api/kit/get/**").permitAll()

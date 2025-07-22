@@ -10,4 +10,8 @@ import java.util.List;
 @Repository
 public interface LoginHistoryRepository extends JpaRepository<LoginHistory, Long> {
     List<LoginHistory> findByUsersOrderByLoginTimeDesc(Users users);
+
+    boolean existsByUsers_UserId(Long id);
+    // Thêm hàm này vào interface
+    void deleteByUsers_UserId(Long userId);
 }
