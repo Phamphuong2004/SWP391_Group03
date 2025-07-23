@@ -5,6 +5,11 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
+import HomePage from "../Home/HomePage";
+import ReceiveBooking from "../ReceiveBooking/ReceiveBooking";
+import Payment from "../Payment/Payment";
+import "../ServiceInfo/ServiceDetails/ServiceDetail.css";
+import ServiceDetail from "../ServiceInfo/ServiceDetails/ServiceDetail";
 import MyNavbar from "../component/Navbar";
 import Login from "../login/Login";
 import "../App.css";
@@ -24,20 +29,20 @@ import AppointmentHistory from "../History/AppointmentHistory";
 import History from "../History/History";
 import ForgotPassword from "../Password/ForgotPassword";
 import BookingNotification from "../Booking/BookingNotification";
-import ServiceDetail from "../ServiceInfo/ServiceDetails/ServiceDetail";
 import { administrativeServices } from "../ServiceInfo/servicesData";
-import BirthCertificate from "../ServiceInfo/ServiceDetails/birth-certificate";
-import HouseholdRegistration from "../ServiceInfo/ServiceDetails/household-registration";
-import Adoption from "../ServiceInfo/ServiceDetails/adoption";
-import ServiceTracking from "../ServiceTracking/ServiceTracking";
-import FamilyRelationship from "../ServiceInfo/ServiceDetails/family-relationship";
-import PropertyDispute from "../ServiceInfo/ServiceDetails/property-dispute";
-import Inheritance from "../ServiceInfo/ServiceDetails/inheritance";
-import CivilContract from "../ServiceInfo/ServiceDetails/civil-contract";
-import ViewDetails from "../ViewDetails/ViewDetails";
-import ReceiveBooking from "../ReceiveBooking/ReceiveBooking";
-import HomePage from "../Home/HomePage";
-import Payment from "../Payment/Payment";
+
+// DNA Testing Service Components - Sửa import paths
+import AdministrativeTestGuide from "../ServiceInfo/ServiceDetails/administrative-test";
+import CivilTestGuide from "../ServiceInfo/ServiceDetails/civil-test";
+import FetalTestGuide from "../ServiceInfo/ServiceDetails/fetal-test";
+import GeneticAnalysisGuide from "../ServiceInfo/ServiceDetails/genetic-analysis";
+import LegalAnalysisGuide from "../ServiceInfo/ServiceDetails/legal-analysis";
+import OtherTestGuide from "../ServiceInfo/ServiceDetails/other-test";
+import PaternityLegalGuide from "../ServiceInfo/ServiceDetails/paternity-legal";
+import PersonalTestGuide from "../ServiceInfo/ServiceDetails/personal-test";
+import PrenatalTestGuide from "../ServiceInfo/ServiceDetails/prenatal-test";
+import RemainsIdentificationGuide from "../ServiceInfo/ServiceDetails/remains-identification";
+
 import ServiceManagement from "../ServiceManagement/ServiceManagement";
 import AccountManagement from "../AccountManagement/AccountManagement";
 import UpdateRolePage from "../rolePage/UpdateRolePage";
@@ -105,26 +110,34 @@ function AppContent() {
           path="/service/:id"
           element={<ServiceDetail services={administrativeServices} />}
         />
+
+        {/* DNA Testing Service Routes - Chỉ những service có file jsx */}
         <Route
-          path="/service/birth-certificate"
-          element={<BirthCertificate />}
+          path="/service/administrative-test"
+          element={<AdministrativeTestGuide />}
+        />
+        <Route path="/service/civil-test" element={<CivilTestGuide />} />
+        <Route path="/service/fetal-test" element={<FetalTestGuide />} />
+        <Route
+          path="/service/genetic-analysis"
+          element={<GeneticAnalysisGuide />}
         />
         <Route
-          path="/service/household-registration"
-          element={<HouseholdRegistration />}
+          path="/service/legal-analysis"
+          element={<LegalAnalysisGuide />}
         />
-        <Route path="/service/adoption" element={<Adoption />} />
-        <Route path="/service-tracking/:id" element={<ServiceTracking />} />
-        <Route path="/service-tracking" element={<ServiceTracking />} />
+        <Route path="/service/other-test" element={<OtherTestGuide />} />
         <Route
-          path="/service/family-relationship"
-          element={<FamilyRelationship />}
+          path="/service/paternity-legal"
+          element={<PaternityLegalGuide />}
         />
-        <Route path="/service/property-dispute" element={<PropertyDispute />} />
-        <Route path="/service/inheritance" element={<Inheritance />} />
-        <Route path="/service/civil-contract" element={<CivilContract />} />
-        <Route path="/service-detail/:id" element={<ViewDetails />} />
-        {/* Route cho staff và manager tiếp nhận booking */}
+        <Route path="/service/personal-test" element={<PersonalTestGuide />} />
+        <Route path="/service/prenatal-test" element={<PrenatalTestGuide />} />
+        <Route
+          path="/service/remains-identification"
+          element={<RemainsIdentificationGuide />}
+        />
+
         <Route
           path="/receive-booking"
           element={

@@ -36,6 +36,9 @@ const collectionLocations = ["Tại nhà", "Tại cơ sở y tế"];
 // };
 
 function Booking() {
+  const location = useLocation();
+  const serviceFromNavigation = location.state?.service;
+
   const [form, setForm] = useState({
     fullName: "",
     dob: "",
@@ -55,6 +58,23 @@ function Booking() {
     sampleTypes: [],
   });
 
+  const [formData, setFormData] = useState({
+    customerName: "",
+    dateOfBirth: "",
+    phoneNumber: "",
+    email: "",
+    gender: "",
+    city: "",
+    district: "",
+    serviceType: serviceFromNavigation?.name || "",
+    serviceCategory: serviceFromNavigation?.type || "", // Sửa dòng này
+    appointmentDate: "",
+    appointmentTime: "",
+    documents: null,
+    testType: "",
+    collectionLocation: "",
+  });
+
   const [errors, setErrors] = useState({});
   const [districts, setDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -66,8 +86,6 @@ function Booking() {
   const [testCategories, setTestCategories] = useState([]);
   const [availablePurposes, setAvailablePurposes] = useState([]);
   const [filteredKits, setFilteredKits] = useState([]);
-
-  const location = useLocation();
 
   // Validation functions
   const validateEmail = (email) => {
