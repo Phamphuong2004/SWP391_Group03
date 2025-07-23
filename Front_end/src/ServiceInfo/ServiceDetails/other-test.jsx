@@ -1,0 +1,79 @@
+import React from "react";
+import "./ServiceDetail.css";
+import { useNavigate } from "react-router-dom";
+
+const tags = ["#XétNghiệmKhác", "#ADNĐặcThù", "#TheoYêuCầu"];
+
+const OtherTestGuide = () => {
+  const navigate = useNavigate();
+  return (
+    <div className="service-detail-container">
+      <div className="service-detail-content">
+        <div className="service-detail-header">
+          <h1>Xét nghiệm ADN khác</h1>
+          <div className="service-category">Dân sự</div>
+        </div>
+        <div className="service-info">
+          <h2>Giới thiệu</h2>
+          <p>
+            Dịch vụ xét nghiệm ADN đặc thù khác theo yêu cầu của khách hàng, đáp
+            ứng các trường hợp đặc biệt ngoài các dịch vụ tiêu chuẩn.
+          </p>
+          <h2>Đặc điểm</h2>
+          <ul>
+            <li>Xét nghiệm theo yêu cầu</li>
+            <li>Tư vấn di truyền</li>
+            <li>Bảo mật thông tin</li>
+          </ul>
+          <h2>Yêu cầu</h2>
+          <ul>
+            <li>CMND/CCCD các bên liên quan (nếu cần)</li>
+            <li>Mẫu sinh học phù hợp với yêu cầu</li>
+          </ul>
+          <h2>Quy trình</h2>
+          <ol>
+            <li>Tư vấn và tiếp nhận yêu cầu</li>
+            <li>Lấy mẫu sinh học</li>
+            <li>Phân tích ADN</li>
+            <li>Trả kết quả và tư vấn</li>
+          </ol>
+          <h2>Thông tin dịch vụ</h2>
+          <ul>
+            <li>Thời gian: 7-10 ngày làm việc</li>
+            <li>Giá: 6,000,000 VNĐ</li>
+          </ul>
+          <div className="blog-tags" style={{ marginTop: "24px" }}>
+            {tags.map((tag, idx) => (
+              <span key={tag || idx} className="blog-tag">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: 32 }}>
+            <button
+              onClick={() =>
+                navigate("/booking", { state: { fixedPurpose: "Dân sự" } })
+              }
+              style={{
+                background: "#1976d2",
+                color: "#fff",
+                border: "none",
+                borderRadius: 8,
+                padding: "12px 36px",
+                fontWeight: 700,
+                fontSize: 20,
+                cursor: "pointer",
+                boxShadow: "0 2px 8px #1976d233",
+                transition: "background 0.2s",
+              }}
+            >
+              Đặt lịch
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default OtherTestGuide;
