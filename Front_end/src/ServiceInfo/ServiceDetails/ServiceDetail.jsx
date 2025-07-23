@@ -1,7 +1,17 @@
 import React from "react";
+import { useParams } from "react-router-dom";
+import { allServices } from "../servicesData";
 import "./ServiceDetail.css";
 
 const ServiceDetail = ({ service }) => {
+  if (!service) {
+    return (
+      <div className="service-detail-container">
+        <p>Không tìm thấy thông tin dịch vụ.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="service-detail-container">
       <div className="service-detail-header">
@@ -50,4 +60,11 @@ const ServiceDetail = ({ service }) => {
   );
 };
 
-export default ServiceDetail;
+const ServiceDetailPage = () => {
+  const { id } = useParams();
+  const service = allServices.find((s) => s.id === id);
+
+  return <ServiceDetail service={service} />;
+};
+
+export default ServiceDetailPage;
