@@ -42,7 +42,7 @@ import PaternityLegalGuide from "../ServiceInfo/ServiceDetails/paternity-legal";
 import PersonalTestGuide from "../ServiceInfo/ServiceDetails/personal-test";
 import PrenatalTestGuide from "../ServiceInfo/ServiceDetails/prenatal-test";
 import RemainsIdentificationGuide from "../ServiceInfo/ServiceDetails/remains-identification";
-
+import ServiceTracking from "../ServiceTracking/ServiceTracking.jsx";
 import ServiceManagement from "../ServiceManagement/ServiceManagement";
 import AccountManagement from "../AccountManagement/AccountManagement";
 import UpdateRolePage from "../rolePage/UpdateRolePage";
@@ -260,6 +260,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        <Route path="/service-tracking" element={<ServiceTracking />} />
       </Routes>
     </>
   );

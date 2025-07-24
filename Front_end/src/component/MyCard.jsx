@@ -48,6 +48,13 @@ export default function MyCard({ service }) {
           >
             Xem chi tiết
           </Button>
+          <Button
+            variant="danger"
+            className="mt-2"
+            onClick={() => navigate('/booking', { state: { serviceId: service.id } })}
+          >
+            Đặt lịch
+          </Button>
         </Card.Body>
       </Card>
     </div>

@@ -55,6 +55,24 @@ export default function ViewDetails() {
       <p>
         <b>Mô tả:</b> {service.description}
       </p>
+      <button
+        style={{
+          marginTop: 24,
+          background: '#1976d2',
+          color: '#fff',
+          border: 'none',
+          borderRadius: 8,
+          padding: '12px 36px',
+          fontWeight: 700,
+          fontSize: 20,
+          cursor: 'pointer',
+          boxShadow: '0 2px 8px #1976d233',
+          transition: 'background 0.2s',
+        }}
+        onClick={() => navigate('/booking', { state: { serviceId: String(service.id) } })}
+      >
+        Đặt lịch
+      </button>
     </div>
   );
 }
