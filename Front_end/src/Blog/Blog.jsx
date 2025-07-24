@@ -20,6 +20,14 @@ export default function Blog() {
                   {post.author} - {post.date}
                 </div>
                 <div className="blog-summary">{post.summary}</div>
+                {/* Hiển thị một số điểm nổi bật nếu có */}
+                {post.keyPoints && post.keyPoints.length > 0 && (
+                  <ul className="blog-keypoints">
+                    {post.keyPoints.slice(0, 3).map((point, idx) => (
+                      <li key={idx}>{point}</li>
+                    ))}
+                  </ul>
+                )}
                 <div className="blog-tags">
                   {post.tags.map((tag) => (
                     <span className="blog-tag" key={tag}>

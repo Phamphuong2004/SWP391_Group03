@@ -1,0 +1,123 @@
+.customer-service-detail-container {
+  max-width: 1050px;
+  margin: 48px auto 32px auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 80, 255, 0.13);
+  padding: 38px 38px 32px 38px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.customer-service-detail-row {
+  display: flex;
+  gap: 38px;
+}
+
+.customer-service-detail-col-left,
+.customer-service-detail-col-right {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.customer-service-detail-title {
+  text-align: center;
+  color: #1a237e;
+  font-size: 2.3rem;
+  font-weight: 900;
+  margin-bottom: 22px;
+  letter-spacing: 0.5px;
+}
+
+.customer-service-detail-img {
+  display: block;
+  margin: 0 auto 18px auto;
+  max-width: 200px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.13);
+  object-fit: cover;
+}
+
+.customer-service-detail-section {
+  margin-bottom: 22px;
+}
+
+.customer-service-detail-section h4 {
+  color: #1976d2;
+  font-size: 1.18rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.customer-service-detail-section p {
+  margin-bottom: 0;
+  color: #333;
+  font-size: 1.07rem;
+  text-align: center;
+}
+
+.customer-service-detail-info-list {
+  margin-top: 10px;
+  margin-bottom: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.customer-service-detail-info-list li {
+  margin-bottom: 7px;
+  font-size: 1.06rem;
+}
+
+.customer-service-detail-info-list li b {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.customer-service-detail-col-right > .customer-service-detail-section {
+  margin-bottom: 0;
+}
+
+.customer-service-detail-box {
+  background: #f5faff;
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.06);
+}
+
+.customer-service-detail-box h3 {
+  color: #1565c0;
+  font-size: 1.09rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.customer-service-detail-box ul,
+.customer-service-detail-box ol {
+  padding-left: 20px;
+  margin-bottom: 0;
+}
+
+.customer-service-detail-box ul li,
+.customer-service-detail-box ol li {
+  margin-bottom: 4px;
+  font-size: 1.03rem;
+}
+
+@media (max-width: 900px) {
+  .customer-service-detail-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .customer-service-detail-container {
+    padding: 18px 6px 18px 6px;
+    max-width: 98vw;
+  }
+  .customer-service-detail-title {
+    font-size: 1.3rem;
+  }
+  .customer-service-detail-img {
+    max-width: 120px;
+  }
+}

@@ -58,6 +58,7 @@ import TestCategoryManager from "../TestCategory/TestCategoryManager";
 import TestPurposeManager from "../TestPurpose/TestPurposeManager";
 import ParallelManagement from "../TestPurposeAndCategoryManagement/ParallelManagement";
 import ServiceTestPurposeStaff from "../servicetestpurpose/servicetestpurposestafff";
+import CustomerServiceDetail from "../ServiceInfo/CustomerServiceDetail";
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -110,6 +111,7 @@ function AppContent() {
           path="/service/:id"
           element={<ServiceDetail services={administrativeServices} />}
         />
+        <Route path="/service-detail/:id" element={<CustomerServiceDetail />} />
 
         {/* DNA Testing Service Routes - Chỉ những service có file jsx */}
         <Route
