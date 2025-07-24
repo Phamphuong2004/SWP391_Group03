@@ -1,11 +1,13 @@
 import React from "react";
 import "./ServiceDetail.css";
 import { useNavigate } from "react-router-dom";
+import serviceTypes from "../../serviceTypes";
 
 const tags = ["#XétNghiệmPhápLý", "#ADNPhápLý", "#PhápLý"];
 
 const LegalAnalysisGuide = () => {
   const navigate = useNavigate();
+  const service = serviceTypes.find(s => s.service_name === "Xét nghiệm ADN pháp lý");
   return (
     <div className="service-detail-container">
       <div className="service-detail-content">
@@ -54,7 +56,7 @@ const LegalAnalysisGuide = () => {
           <div style={{ textAlign: "center", marginTop: 32 }}>
             <button
               onClick={() =>
-                navigate("/booking", { state: { fixedPurpose: "Cả hai" } })
+                navigate("/booking", { state: { serviceId: String(service?.service_id), fixedPurpose: "Cả hai" } })
               }
               style={{
                 background: "#1976d2",

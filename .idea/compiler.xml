@@ -9,6 +9,31 @@
         <module name="AdnV2" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ant" target="1.4" />
+      <module name="ant-antlr" target="1.4" />
+      <module name="ant-apache-bcel" target="1.4" />
+      <module name="ant-apache-bsf" target="1.4" />
+      <module name="ant-apache-log4j" target="1.4" />
+      <module name="ant-apache-oro" target="1.4" />
+      <module name="ant-apache-regexp" target="1.4" />
+      <module name="ant-apache-resolver" target="1.8" />
+      <module name="ant-apache-xalan2" target="1.4" />
+      <module name="ant-commons-logging" target="1.4" />
+      <module name="ant-commons-net" target="1.4" />
+      <module name="ant-jai" target="1.4" />
+      <module name="ant-javamail" target="1.4" />
+      <module name="ant-jdepend" target="1.4" />
+      <module name="ant-jmf" target="1.4" />
+      <module name="ant-jsch" target="1.4" />
+      <module name="ant-junit" target="1.4" />
+      <module name="ant-junit4" target="1.4" />
+      <module name="ant-launcher" target="1.4" />
+      <module name="ant-netrexx" target="1.4" />
+      <module name="ant-parent" target="1.5" />
+      <module name="ant-swing" target="1.4" />
+      <module name="ant-testutil" target="1.4" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

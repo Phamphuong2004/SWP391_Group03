@@ -1,11 +1,13 @@
 import React from "react";
 import "./ServiceDetail.css";
 import { useNavigate } from "react-router-dom";
+import serviceTypes from "../../serviceTypes";
 
 const tags = ["#DiTruyền", "#TầmSoátBệnh", "#ADN"];
 
 const GeneticAnalysisGuide = () => {
   const navigate = useNavigate();
+  const service = serviceTypes.find(s => s.service_name === "Xét nghiệm ADN di truyền");
   return (
     <div className="service-detail-container">
       <div className="service-detail-content">
@@ -53,7 +55,7 @@ const GeneticAnalysisGuide = () => {
           <div style={{ textAlign: "center", marginTop: 32 }}>
             <button
               onClick={() =>
-                navigate("/booking", { state: { fixedPurpose: "Dân sự" } })
+                navigate("/booking", { state: { serviceId: String(service?.service_id), fixedPurpose: "Dân sự" } })
               }
               style={{
                 background: "#1976d2",

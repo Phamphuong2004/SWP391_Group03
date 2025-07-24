@@ -210,8 +210,28 @@ function Booking() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Khi vào trang booking, nếu có state truyền từ trang hướng dẫn dịch vụ thì set cứng mục đích xét nghiệm
+  // Khi vào trang booking, nếu có serviceId truyền qua state thì tự động fill vào form và reset các trường liên quan
   React.useEffect(() => {
+    if (location.state && location.state.serviceId) {
+      setForm((prev) => ({
+        ...prev,
+        serviceType: String(location.state.serviceId),
+        testPurpose: "",
+        kitComponentName: "",
+      }));
+      localStorage.setItem("bookingServiceId", String(location.state.serviceId));
+    } else {
+      // Nếu không có state, thử lấy từ localStorage
+      const savedId = localStorage.getItem("bookingServiceId");
+      if (savedId) {
+        setForm((prev) => ({
+          ...prev,
+          serviceType: savedId,
+          testPurpose: "",
+          kitComponentName: "",
+        }));
+      }
+    }
     if (location.state && location.state.fixedPurpose) {
       setForm((prev) => ({
         ...prev,
@@ -462,6 +482,7 @@ function Booking() {
     // Validate form before submission
     if (!validateForm()) {
       toast.error("Vui lòng kiểm tra lại thông tin!");
+      localStorage.removeItem("bookingServiceId");
       return;
     }
 
@@ -529,6 +550,7 @@ function Booking() {
       if (!serviceId) {
         toast.error("Vui lòng chọn loại dịch vụ!");
         setIsLoading(false);
+        localStorage.removeItem("bookingServiceId");
         return;
       }
 
@@ -547,6 +569,7 @@ function Booking() {
             phone: form.phone,
           });
           localStorage.setItem("lastServiceId", response.data.appointmentId);
+          localStorage.removeItem("bookingServiceId");
           // Chuyển hướng sang trang thanh toán cho guest
           navigate("/payment", {
             state: {
@@ -563,6 +586,7 @@ function Booking() {
           toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
         }
         setIsLoading(false);
+        localStorage.removeItem("bookingServiceId");
         return;
       }
       // Đã đăng nhập, giữ nguyên logic cũ
@@ -581,6 +605,7 @@ function Booking() {
       if (response.status === 201 && response.data?.appointmentId) {
         toast.success("Đặt lịch hẹn thành công!");
         localStorage.setItem("lastServiceId", response.data.appointmentId);
+        localStorage.removeItem("bookingServiceId");
         const appointmentDataForState = {
           ...form,
           appointmentId: response.data.appointmentId,
@@ -595,6 +620,7 @@ function Booking() {
       } else {
         toast.error("Có lỗi xảy ra, không nhận được mã lịch hẹn.");
         navigate("/history");
+        localStorage.removeItem("bookingServiceId");
       }
     } catch (err) {
       console.error(
@@ -605,6 +631,7 @@ function Booking() {
         err.response?.data?.message ||
           "Đặt lịch hẹn thất bại. Vui lòng thử lại!"
       );
+      localStorage.removeItem("bookingServiceId");
     } finally {
       setIsLoading(false);
     }
@@ -642,6 +669,21 @@ function Booking() {
         </button>
       </div>
     );
+  }
+
+  // Xác định selectedServiceType và kitsToShow dùng chung cho cả mô tả và dropdown
+  const selectedServiceType = serviceTypes.find(
+    (s) => String(s.service_id) === String(form.serviceType)
+  );
+  let kitsToShow = [];
+  if (filteredKits.length > 0) {
+    kitsToShow = filteredKits;
+  } else if (Array.isArray(selectedServiceType?.kits)) {
+    if (selectedServiceType.kits.length > 0 && typeof selectedServiceType.kits[0] === "object") {
+      kitsToShow = selectedServiceType.kits;
+    } else {
+      kitsToShow = selectedServiceType.kits.map(name => ({ kitComponentName: name, introduction: "" }));
+    }
   }
 
   return (
@@ -892,10 +934,14 @@ function Booking() {
                 onChange={handleChange}
                 className={errors.serviceType ? "error" : ""}
                 required
+                disabled={
+                  !!(location.state && location.state.serviceId) ||
+                  !!localStorage.getItem("bookingServiceId")
+                }
               >
                 <option value="">Chọn loại dịch vụ</option>
                 {serviceTypes.map((type) => (
-                  <option key={type.service_id} value={type.service_id}>
+                  <option key={type.service_id} value={String(type.service_id)}>
                     {type.service_name}
                   </option>
                 ))}
@@ -905,44 +951,37 @@ function Booking() {
               )}
             </label>
             {/* Hiển thị thông tin mô tả và bộ kit sử dụng của loại dịch vụ */}
-            {form.serviceType &&
-              (() => {
-                const selected = serviceTypes.find(
-                  (s) => String(s.service_id) === String(form.serviceType)
-                );
-                if (!selected) return null;
-                return (
-                  <div
-                    className="service-info-box"
-                    style={{
-                      margin: "10px 0",
-                      padding: "10px",
-                      background: "#f6fafd",
-                      border: "1.5px solid #90caf9",
-                      borderRadius: 8,
-                    }}
-                  >
-                    <div>
-                      <b>Mô tả dịch vụ:</b> {selected.description}
-                    </div>
-                    <div style={{ marginTop: 4 }}>
-                      <b>Bộ kit sử dụng:</b>
-                      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
-                        {filteredKits.length > 0 ? (
-                          filteredKits.map((kit, idx) => (
-                            <li key={idx} style={{ marginBottom: 2 }}>
-                              <b>{kit.kitComponentName}</b>
-                              {kit.introduction ? `: ${kit.introduction}` : ""}
-                            </li>
-                          ))
-                        ) : (
-                          <li>Không xác định</li>
-                        )}
-                      </ul>
-                    </div>
-                  </div>
-                );
-              })()}
+            {form.serviceType && selectedServiceType && (
+              <div
+                className="service-info-box"
+                style={{
+                  margin: "10px 0",
+                  padding: "10px",
+                  background: "#f6fafd",
+                  border: "1.5px solid #90caf9",
+                  borderRadius: 8,
+                }}
+              >
+                <div>
+                  <b>Mô tả dịch vụ:</b> {selectedServiceType.description}
+                </div>
+                <div style={{ marginTop: 4 }}>
+                  <b>Bộ kit sử dụng:</b>
+                  <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+                    {kitsToShow.length > 0 ? (
+                      kitsToShow.map((kit, idx) => (
+                        <li key={idx} style={{ marginBottom: 2 }}>
+                          <b>{kit.kitComponentName}</b>
+                          {kit.introduction ? `: ${kit.introduction}` : ""}
+                        </li>
+                      ))
+                    ) : (
+                      <li>Không xác định</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            )}
             <label>
               Ngày & giờ hẹn (ISO 8601)
               <input
@@ -1030,9 +1069,9 @@ function Booking() {
                 required
               >
                 <option value="">Chọn bộ kit</option>
-                {filteredKits.map((kit, idx) => (
+                {kitsToShow.map((kit, idx) => (
                   <option key={idx} value={kit.kitComponentName}>
-                    {kit.kitComponentName} - {kit.introduction}
+                    {kit.kitComponentName}{kit.introduction ? ` - ${kit.introduction}` : ""}
                   </option>
                 ))}
               </select>

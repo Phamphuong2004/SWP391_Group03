@@ -1,11 +1,14 @@
 import React from "react";
 import "./ServiceDetail.css";
 import { useNavigate } from "react-router-dom";
+import serviceTypes from "../../serviceTypes";
 
 const tags = ["#XétNghiệmHàiCốt", "#NhậnDạng", "#PhápLý"];
 
 const RemainsIdentificationGuide = () => {
   const navigate = useNavigate();
+  // Lấy đúng serviceId của dịch vụ này
+  const service = serviceTypes.find(s => s.service_name === "Xét nghiệm hài cốt");
   return (
     <div className="service-detail-container">
       <div className="service-detail-content">
@@ -54,7 +57,7 @@ const RemainsIdentificationGuide = () => {
           <div style={{ textAlign: "center", marginTop: 32 }}>
             <button
               onClick={() =>
-                navigate("/booking", { state: { fixedPurpose: "Hành chính" } })
+                navigate("/booking", { state: { serviceId: String(service?.service_id), fixedPurpose: "Hành chính" } })
               }
               style={{
                 background: "#1976d2",

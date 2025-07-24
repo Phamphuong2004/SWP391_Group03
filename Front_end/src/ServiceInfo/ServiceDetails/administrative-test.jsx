@@ -1,11 +1,13 @@
 import React from "react";
 import "./ServiceDetail.css";
 import { useNavigate } from "react-router-dom";
+import serviceTypes from "../../serviceTypes";
 
 const tags = ["#XétNghiệmHànhChính", "#Visa", "#QuốcTịch"];
 
 const AdministrativeTestGuide = () => {
   const navigate = useNavigate();
+  const service = serviceTypes.find(s => s.service_name === "Xét nghiệm ADN hành chính");
   return (
     <div className="service-detail-container">
       <div className="service-detail-content">
@@ -53,7 +55,7 @@ const AdministrativeTestGuide = () => {
           <div style={{ textAlign: "center", marginTop: 32 }}>
             <button
               onClick={() =>
-                navigate("/booking", { state: { fixedPurpose: "Hành chính" } })
+                navigate("/booking", { state: { serviceId: String(service?.service_id), fixedPurpose: "Hành chính" } })
               }
               style={{
                 background: "#1976d2",

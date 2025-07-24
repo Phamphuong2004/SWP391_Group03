@@ -120,7 +120,7 @@ public class AppointmentController {
     }
 
     @GetMapping("/appointments/by-status")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('CUSTOMER','STAFF', 'MANAGER')")
     public ResponseEntity<?> getAllAppointmentsByStatus(@RequestParam String status) {
         try {
             StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
