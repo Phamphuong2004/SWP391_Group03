@@ -155,6 +155,11 @@ describe("StaffResult Component", () => {
 
     render(<StaffResult />);
 
+    // Wait for component to load completely
+    await waitFor(() => {
+      expect(screen.getByText("Test Result 1")).toBeInTheDocument();
+    });
+
     // Open add modal
     const addButton = screen.getByText("Thêm kết quả");
     fireEvent.click(addButton);
@@ -177,13 +182,16 @@ describe("StaffResult Component", () => {
     const dateInput = screen.getByLabelText("Ngày trả kết quả");
     fireEvent.change(dateInput, { target: { value: "2024-01-17" } });
 
-    // Select samples
+    // Select samples - wait for options to be available
     const sampleSelect = screen.getByLabelText("ID mẫu");
-    fireEvent.mouseDown(sampleSelect);
+    await user.click(sampleSelect);
+
+    // Wait for dropdown options to appear and then select one
     await waitFor(() => {
-      const option = screen.getByText("Mẫu 1");
-      fireEvent.click(option);
+      expect(screen.getByText("Mẫu 1")).toBeInTheDocument();
     });
+
+    await user.click(screen.getByText("Mẫu 1"));
 
     // Mock file upload - find by type since the label association is not proper
     const fileInput = document.querySelector('input[type="file"]');
