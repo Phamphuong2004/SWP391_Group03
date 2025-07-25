@@ -15,6 +15,10 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     setupFiles: ["./src/test-setup.js"],
+    reporters: ["verbose", "html"],
+    outputFile: {
+      html: "./test-results.html",
+    },
     coverage: {
       provider: "v8", // hoặc 'c8' nếu muốn sử dụng c8
       reporter: ["text", "json", "html"],
