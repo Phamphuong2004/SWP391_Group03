@@ -1,0 +1,334 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for Front_end/src/component/Footer.jsx</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">Front_end/src/component</a> Footer.jsx</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/83</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/83</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import React from "react";</span></span></span>
+<span class="cstat-no" title="statement not covered" >import "./Footer.css";</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export default function Footer() {</span>
+<span class="cstat-no" title="statement not covered" >  return (</span>
+<span class="cstat-no" title="statement not covered" >    &lt;div className="main-footer footer-animated"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;footer className="footer"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="footer-grid"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="footer-brand"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;img</span>
+<span class="cstat-no" title="statement not covered" >              src="data:image/png;base64,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"</span>
+<span class="cstat-no" title="statement not covered" >              alt="ADN Logo"</span>
+<span class="cstat-no" title="statement not covered" >              className="footer-logo"</span>
+<span class="cstat-no" title="statement not covered" >            /&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;h2&gt;Hệ Thống Xét Nghiệm ADN&lt;/h2&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;p&gt;</span>
+<span class="cstat-no" title="statement not covered" >              Dịch vụ xét nghiệm ADN uy tín cho gia đình, sức khỏe và pháp lý.</span>
+<span class="cstat-no" title="statement not covered" >              &lt;br /&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;span className="footer-highlight"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                Bảo mật và chính xác là ưu tiên hàng đầu của chúng tôi.</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/span&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/p&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="footer-links"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;h4&gt;Liên kết nhanh&lt;/h4&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;ul&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;a href="#"&gt;Trang chủ&lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;a href="#"&gt;Dịch vụ&lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;a href="#"&gt;Đăng ký&lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;a href="#"&gt;Liên hệ&lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/ul&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="footer-contact"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;h4&gt;Liên hệ&lt;/h4&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;ul&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;i className="fas fa-envelope"&gt;&lt;/i&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;a href="mailto:xetnghiemADN@gmail.com"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                  xetnghiemADN@gmail.com</span>
+<span class="cstat-no" title="statement not covered" >                &lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;i className="fas fa-phone"&gt;&lt;/i&gt;</span>
+<span class="cstat-no" title="statement not covered" >                0123 456 789</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;li&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;i className="fas fa-map-marker-alt"&gt;&lt;/i&gt;</span>
+<span class="cstat-no" title="statement not covered" >                123 Đường Y tế, Quận 1, TP. Hồ Chí Minh</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/li&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/ul&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;div className="footer-socials"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;a href="#" aria-label="Facebook"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;i className="fab fa-facebook-f"&gt;&lt;/i&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;a href="#" aria-label="Instagram"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;i className="fab fa-instagram"&gt;&lt;/i&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;a href="#" aria-label="Twitter"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;i className="fab fa-twitter"&gt;&lt;/i&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;a href="#" aria-label="GitHub"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;i className="fab fa-github"&gt;&lt;/i&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;/a&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="footer-divider"&gt;&lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="footer-bottom-alt"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          © {new Date().getFullYear()} Hệ Thống Xét Nghiệm ADN. Đã đăng ký bản</span>
+<span class="cstat-no" title="statement not covered" >          quyền.</span>
+<span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;/footer&gt;</span>
+<span class="cstat-no" title="statement not covered" >    &lt;/div&gt;</span>
+<span class="cstat-no" title="statement not covered" >  );</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-07-25T02:13:20.380Z
+            </div>
+        <script src="../../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../../sorter.js"></script>
+        <script src="../../../block-navigation.js"></script>
+    </body>
+</html>
+    
