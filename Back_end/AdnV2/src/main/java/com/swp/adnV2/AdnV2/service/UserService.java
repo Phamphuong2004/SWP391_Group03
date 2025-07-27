@@ -3,7 +3,6 @@ package com.swp.adnV2.AdnV2.service;
 import com.swp.adnV2.AdnV2.config.JwtUtil;
 import com.swp.adnV2.AdnV2.dto.*;
 import com.swp.adnV2.AdnV2.entity.LoginHistory;
-import com.swp.adnV2.AdnV2.entity.Role;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
@@ -168,7 +167,7 @@ public class UserService {
         users.setPassword(registerRequest.getPassword());
         users.setPhone(registerRequest.getPhone());
         users.setAddress(registerRequest.getAddress());
-        users.setRole(Role.CUSTOMER.name());
+        users.setRole("CUSTOMER"); // Default role for new users
         userRepository.save(users);
         response.put("Success", true);
         response.put("Message", "User registered successfully");

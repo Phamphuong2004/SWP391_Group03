@@ -35,7 +35,7 @@ public class SampleTypeService {
         // Finally, delete the sample type itself
         sampleTypeRepository.deleteById(sampleTypeId);
     }
-    public SampleTypeResponse createSampleType(SampleTypeCreateRequest sampleType) {
+    public SampleTypeResponse createSampleType(SampleTypeCreateRequest sampleType, long kitComponentId) {
         // Check if the sample type already exists by name
         if (sampleTypeRepository.existsByName(sampleType.getName())) {
             throw new RuntimeException("Sample type already exists with name: " + sampleType.getName());
@@ -44,11 +44,12 @@ public class SampleTypeService {
         SampleType newSampleType = new SampleType();
         newSampleType.setName(sampleType.getName());
         newSampleType.setDescription(sampleType.getDescription());
-        KitComponent kitComponent = kitRepository.findByComponentName(sampleType.getComponentName());
+        KitComponent kitComponent = kitRepository.findKitComponentByKitComponentId(kitComponentId);
         if (kitComponent == null) {
-            throw new RuntimeException("Kit component not found with name: " + sampleType.getComponentName());
+            throw new RuntimeException("Kit component not found with id: " + kitComponentId);
         }
         newSampleType.setKitComponent(kitComponent);
+
         List<CollectedSample> collectedSamples = sampleRepository.findBySampleTypeId(newSampleType.getId());
         if (collectedSamples != null && !collectedSamples.isEmpty()) {
             throw new RuntimeException("Sample type cannot be created as there are existing samples with this type.");

@@ -133,6 +133,7 @@ const KitManagement = () => {
       title: "Tên kit",
       dataIndex: "componentName",
       key: "componentName",
+      render: (_, kit) => kit.kitComponentName || kit.componentName || "Không có dữ liệu",
     },
     {
       title: "Số lượng",

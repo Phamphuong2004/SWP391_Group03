@@ -14,6 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./ReceiveBooking.css";
 import Swal from "sweetalert2";
+import { getSampleByAppointmentId, updateSample } from "../SampleManagement/SampleApi";
 
 const { Option } = Select;
 
@@ -179,6 +180,22 @@ const ReceiveBooking = () => {
         { status: newStatus },
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
+      // Nếu xác nhận đơn, tự động cập nhật sample sang Received
+      if (newStatus === "CONFIRMED") {
+        try {
+          const samples = await getSampleByAppointmentId(bookingId, user.token);
+          if (Array.isArray(samples)) {
+            for (const sample of samples) {
+              await updateSample(sample.sampleId, { ...sample, status: "Received" }, user.token);
+            }
+          } else if (samples && samples.sampleId) {
+            await updateSample(samples.sampleId, { ...samples, status: "Received" }, user.token);
+          }
+        } catch (err) {
+          // Không báo lỗi nếu sample chưa tồn tại
+          console.warn("Không thể cập nhật trạng thái sample:", err);
+        }
+      }
       message.success("Cập nhật trạng thái thành công");
       fetchBookings();
     } catch (error) {

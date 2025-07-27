@@ -4,7 +4,6 @@ import com.swp.adnV2.AdnV2.config.JwtUtil;
 import com.swp.adnV2.AdnV2.dto.AuthenticationRequest;
 import com.swp.adnV2.AdnV2.dto.AuthenticationResponse;
 import com.swp.adnV2.AdnV2.dto.GoogleSignInRequest;
-import com.swp.adnV2.AdnV2.entity.Role;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,7 @@ public class AuthenticationController {
             users.setFullName(googleSignInRequest.getFullName());
             users.setEmail(googleSignInRequest.getEmail());
             users.setUsername(googleSignInRequest.getEmail());
-            users.setRole(Role.CUSTOMER.name());
+            users.setRole("ROLE_CUSTOMER");
             userRepository.save(users);
             authenticationRequest.setUsername(users.getUsername());
             authenticationRequest.setPassword(""); // Use email as password for Google sign-in

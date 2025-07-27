@@ -19,4 +19,6 @@ public interface KitRepository extends JpaRepository<KitComponent, Long> {
     KitComponent findByComponentName(String componentName);
 
     Optional<KitComponent> findByComponentNameIgnoreCase(String componentName);
+
+    KitComponent findKitComponentByKitComponentId(Long id);
 }

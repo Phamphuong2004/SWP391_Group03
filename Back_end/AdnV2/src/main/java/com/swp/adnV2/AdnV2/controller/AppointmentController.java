@@ -4,7 +4,6 @@ import com.swp.adnV2.AdnV2.dto.AppointmentRequest;
 import com.swp.adnV2.AdnV2.dto.AppointmentResponse;
 import com.swp.adnV2.AdnV2.dto.AppointmentUpdateRequest;
 import com.swp.adnV2.AdnV2.entity.Appointment;
-import com.swp.adnV2.AdnV2.entity.StatusAppointment;
 import com.swp.adnV2.AdnV2.service.AppointmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,8 +122,9 @@ public class AppointmentController {
     @PreAuthorize("hasAnyRole('CUSTOMER','STAFF', 'MANAGER')")
     public ResponseEntity<?> getAllAppointmentsByStatus(@RequestParam String status) {
         try {
-            StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
-            return ResponseEntity.ok(appointmentService.getAllAppointmentsByStatus(statusEnum.name()));
+//            StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
+            String statusUpperCase = status.toUpperCase();
+            return ResponseEntity.ok(appointmentService.getAllAppointmentsByStatus(statusUpperCase));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("Invalid status: " + status);
         }

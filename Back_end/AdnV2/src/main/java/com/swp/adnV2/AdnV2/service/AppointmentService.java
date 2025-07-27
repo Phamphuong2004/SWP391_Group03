@@ -385,8 +385,9 @@ public class AppointmentService {
     public ResponseEntity<?> getAppointmentByUsernameAndStatus(String username, String status) {
         if(status != null && !status.isEmpty()){
             try {
-                StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
-                List<Appointment> result = appointmentRepository.findByUsers_UsernameAndStatus(username, statusEnum.name());
+//                StatusAppointment statusEnum = StatusAppointment.valueOf(status.toUpperCase());
+                String statusUpperCase = status.toUpperCase();
+                List<Appointment> result = appointmentRepository.findByUsers_UsernameAndStatus(username, statusUpperCase);
                 List<AppointmentResponse> responseList = result.stream()
                         .map(this::convertToAppointmentResponse)
                         .collect(Collectors.toList());

@@ -3,7 +3,7 @@ package com.swp.adnV2.AdnV2.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "KitComponents")
+@Table(name = "kit_components")
 public class KitComponent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

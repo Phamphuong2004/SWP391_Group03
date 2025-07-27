@@ -137,10 +137,14 @@ export const getSampleTypesByComponentName = async (componentName, token) => {
 };
 
 // Tạo mới loại mẫu
-export const createSampleType = async (sampleType, token) => {
-  const res = await axios.post("/api/sample-types/create", sampleType, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
+export const createSampleType = async (sampleType, token, kitComponentId) => {
+  const res = await axios.post(
+    `/api/sample-types/create?kitComponentId=${kitComponentId}`,
+    sampleType,
+    {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }
+  );
   return res.data;
 };
 

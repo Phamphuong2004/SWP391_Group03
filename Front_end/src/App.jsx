@@ -19,7 +19,7 @@ function LayoutWithNavbar() {
       {/* <Navbar /> */}
       <AppRoutes />
       <ToastContainer position="top-center" autoClose={2000} />
-      <Notification />
+      {/* <Notification /> */}
       <ChatBox />
     </>
   );

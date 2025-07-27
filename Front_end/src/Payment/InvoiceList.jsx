@@ -288,9 +288,9 @@ const InvoiceList = () => {
                     )}
                   </td>
                   <td>
-                    {inv.createdAt
-                      ? new Date(inv.createdAt).toLocaleString()
-                      : ""}
+                    {inv.paymentDate
+                      ? new Date(inv.paymentDate).toLocaleString()
+                      : (inv.createdAt ? new Date(inv.createdAt).toLocaleString() : "")}
                   </td>
                   <td>
                     <div className="action-buttons">

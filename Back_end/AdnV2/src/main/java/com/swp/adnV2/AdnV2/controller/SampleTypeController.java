@@ -17,8 +17,10 @@ public class SampleTypeController {
     // Define endpoints for SampleTypeController here
 
     @PostMapping("/create")
-    public SampleTypeResponse createSampleType(@RequestBody SampleTypeCreateRequest sampleType) {
-        return sampleTypeService.createSampleType(sampleType);
+    public SampleTypeResponse createSampleType(
+            @RequestBody SampleTypeCreateRequest sampleType,
+            @RequestParam long kitComponentId) {
+        return sampleTypeService.createSampleType(sampleType, kitComponentId);
     }
     // Add other endpoints as needed, such as update, delete, get by ID, etc.
     @GetMapping("/all")

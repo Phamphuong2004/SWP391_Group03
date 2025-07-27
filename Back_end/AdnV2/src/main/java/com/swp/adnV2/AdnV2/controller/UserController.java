@@ -2,7 +2,6 @@ package com.swp.adnV2.AdnV2.controller;
 
 import com.swp.adnV2.AdnV2.dto.*;
 import com.swp.adnV2.AdnV2.entity.LoginHistory;
-import com.swp.adnV2.AdnV2.entity.Role;
 import com.swp.adnV2.AdnV2.entity.Users;
 import com.swp.adnV2.AdnV2.repository.LoginHistoryRepository;
 import com.swp.adnV2.AdnV2.repository.UserRepository;
@@ -99,8 +98,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(response);
         }
         try {
-            Role role = Role.valueOf(newRole.toUpperCase());
-            user.setRole(role.name());
+            user.setRole(newRole);
             userRepository.save(user);
             response.put("Success", true);
             response.put("Message", "User role updated successfully");
