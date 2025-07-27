@@ -8,11 +8,144 @@
         <outputRelativeToContentRoot value="true" />
         <module name="AdnV2" />
       </profile>
+      <profile name="Annotation profile for Apache Ant + ANTLR" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-antlr/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-antlr/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-antlr" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + BCEL" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-apache-bcel/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-apache-bcel/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-apache-bcel" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + BSF" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-apache-bsf/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-apache-bsf/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-apache-bsf" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + Log4J" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-apache-log4j/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-apache-log4j/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-apache-log4j" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + Apache Oro" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-apache-oro/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-apache-oro/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-apache-oro" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + Apache Regexp" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-apache-regexp/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-apache-regexp/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-apache-regexp" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + Apache Resolver" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-apache-resolver/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-apache-resolver/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-apache-resolver" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + Xalan 2" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-apache-xalan2/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-apache-xalan2/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-apache-xalan2" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + Commons Logging" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-commons-logging/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-commons-logging/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-commons-logging" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + Commons Net" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-commons-net/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-commons-net/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-commons-net" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + JAI" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-jai/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-jai/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-jai" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + JavaMail" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-javamail/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-javamail/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-javamail" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + JDepend" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-jdepend/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-jdepend/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-jdepend" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + JMF" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-jmf/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-jmf/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-jmf" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + JSch" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-jsch/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-jsch/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-jsch" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + JUnit" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-junit/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-junit/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-junit" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + JUnit 4" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-junit4/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-junit4/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-junit4" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant Launcher" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-launcher/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-launcher/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-launcher" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + NetRexx" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-netrexx/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-netrexx/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-netrexx" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant + Swing" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-swing/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-swing/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-swing" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant Test Utilities" enabled="true">
+        <sourceOutputDir name="../../../../target/ant-testutil/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant-testutil/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant-testutil" />
+      </profile>
+      <profile name="Annotation profile for Apache Ant Core" enabled="true">
+        <sourceOutputDir name="../../../../target/ant/generated-sources/annotations" />
+        <sourceTestOutputDir name="../../../../target/ant/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ant" />
+      </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="AdnV2" options="-parameters" />
+      <module name="ant-netrexx" options="-extdirs E:\SWP391_Group03\Front_end\node_modules\ant\ant\lib/../../../../lib/optional" />
     </option>
   </component>
 </project>

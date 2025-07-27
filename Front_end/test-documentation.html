@@ -1,0 +1,578 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .test-file {
+            background: white;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .file-header {
+            background: #4f46e5;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .test-count {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .file-content {
+            padding: 1.5rem;
+        }
+        
+        .describe-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .describe-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .test-list {
+            list-style: none;
+        }
+        
+        .test-item {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            border-left: 3px solid #10b981;
+            margin-bottom: 0.3rem;
+            background: #f0fdf4;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .test-item::before {
+            content: "✓";
+            position: absolute;
+            left: 0.5rem;
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .file-path {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+        
+        .summary {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #6b7280;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 1rem;
+            }
+            
+            .file-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test Documentation</h1>
+            <p>Comprehensive overview of all unit tests in the project</p>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <span class="stat-number">7</span>
+                    <span>Test Files</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">106</span>
+                    <span>Total Tests</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">25/7/2025</span>
+                    <span>Generated</span>
+                </div>
+            </div>
+        </div>
+        
+        
+            <div class="test-file">
+                <div class="file-header">
+                    <div class="file-name">Booking.test.jsx</div>
+                    <div class="test-count">5 tests</div>
+                </div>
+                <div class="file-content">
+                    
+                        <div class="describe-section">
+                            <div class="describe-title">Booking Component</div>
+                            <ul class="test-list">
+                                
+                                    <li class="test-item">renders basic form fields</li>
+                                
+                                    <li class="test-item">shows validation errors when submitting empty form</li>
+                                
+                                    <li class="test-item">can fill basic form fields</li>
+                                
+                                    <li class="test-item">can select province and district</li>
+                                
+                                    <li class="test-item">renders basic component</li>
+                                
+                            </ul>
+                        </div>
+                    
+                        <div class="describe-section">
+                            <div class="describe-title">Booking</div>
+                            <ul class="test-list">
+                                
+                                    <li class="test-item">renders basic form fields</li>
+                                
+                                    <li class="test-item">shows validation errors when submitting empty form</li>
+                                
+                                    <li class="test-item">can fill basic form fields</li>
+                                
+                                    <li class="test-item">can select province and district</li>
+                                
+                                    <li class="test-item">renders basic component</li>
+                                
+                            </ul>
+                        </div>
+                    
+                    
+                    
+                    
+                    <div class="file-path">📁 e:\SWP391_Group03\Front_end\src\Booking\Booking.test.jsx</div>
+                </div>
+            </div>
+        
+            <div class="test-file">
+                <div class="file-header">
+                    <div class="file-name">BookingSimple.test.jsx</div>
+                    <div class="test-count">7 tests</div>
+                </div>
+                <div class="file-content">
+                    
+                        <div class="describe-section">
+                            <div class="describe-title">Booking Component</div>
+                            <ul class="test-list">
+                                
+                                    <li class="test-item">renders basic form fields</li>
+                                
+                                    <li class="test-item">shows validation errors when submitting empty form</li>
+                                
+                                    <li class="test-item">can fill basic form fields</li>
+                                
+                                    <li class="test-item">can select gender</li>
+                                
+                                    <li class="test-item">can select province and district</li>
+                                
+                                    <li class="test-item">can select service type</li>
+                                
+                                    <li class="test-item">submits form with basic validation</li>
+                                
+                            </ul>
+                        </div>
+                    
+                    
+                    
+                    
+                    <div class="file-path">📁 e:\SWP391_Group03\Front_end\src\Booking\BookingSimple.test.jsx</div>
+                </div>
+            </div>
+        
+            <div class="test-file">
+                <div class="file-header">
+                    <div class="file-name">InvoiceList.test.jsx</div>
+                    <div class="test-count">27 tests</div>
+                </div>
+                <div class="file-content">
+                    
+                        <div class="describe-section">
+                            <div class="describe-title">InvoiceList</div>
+                            <ul class="test-list">
+                                
+                                    <li class="test-item">renders without crashing</li>
+                                
+                                    <li class="test-item">displays loading state initially</li>
+                                
+                                    <li class="test-item">fetches and displays invoices on mount</li>
+                                
+                                    <li class="test-item">handles authentication error</li>
+                                
+                                    <li class="test-item">handles API fetch error</li>
+                                
+                                    <li class="test-item">displays </li>
+                                
+                                    <li class="test-item">filters invoices by status</li>
+                                
+                                    <li class="test-item">displays correct status labels</li>
+                                
+                                    <li class="test-item">opens create modal when </li>
+                                
+                                    <li class="test-item">handles view invoice</li>
+                                
+                                    <li class="test-item">handles edit invoice</li>
+                                
+                                    <li class="test-item">handles delete invoice with confirmation</li>
+                                
+                                    <li class="test-item">cancels delete when user does not confirm</li>
+                                
+                                    <li class="test-item">validates invoice data before saving</li>
+                                
+                                    <li class="test-item">creates new invoice successfully</li>
+                                
+                                    <li class="test-item">handles create invoice error</li>
+                                
+                                    <li class="test-item">updates invoice successfully</li>
+                                
+                                    <li class="test-item">shows refund buttons only for PAID invoices</li>
+                                
+                                    <li class="test-item">handles refund successfully</li>
+                                
+                                    <li class="test-item">handles refund with error response</li>
+                                
+                                    <li class="test-item">handles set refund status successfully</li>
+                                
+                                    <li class="test-item">closes modal when </li>
+                                
+                                    <li class="test-item">validates amount field correctly</li>
+                                
+                                    <li class="test-item">validates payment method field correctly</li>
+                                
+                                    <li class="test-item">displays formatted date correctly</li>
+                                
+                                    <li class="test-item">handles array data correctly when API returns non-array</li>
+                                
+                                    <li class="test-item">handles modal form editing</li>
+                                
+                            </ul>
+                        </div>
+                    
+                    
+                    
+                    
+                    <div class="file-path">📁 e:\SWP391_Group03\Front_end\src\Payment\InvoiceList.test.jsx</div>
+                </div>
+            </div>
+        
+            <div class="test-file">
+                <div class="file-header">
+                    <div class="file-name">Payment.test.jsx</div>
+                    <div class="test-count">24 tests</div>
+                </div>
+                <div class="file-content">
+                    
+                        <div class="describe-section">
+                            <div class="describe-title">Payment</div>
+                            <ul class="test-list">
+                                
+                                    <li class="test-item">renders without crashing</li>
+                                
+                                    <li class="test-item">displays loading state</li>
+                                
+                                    <li class="test-item">shows no appointment message when no appointment data</li>
+                                
+                                    <li class="test-item">navigates to booking when </li>
+                                
+                                    <li class="test-item">displays appointment details from state</li>
+                                
+                                    <li class="test-item">fetches appointment data from API when not in state</li>
+                                
+                                    <li class="test-item">handles API fetch error</li>
+                                
+                                    <li class="test-item">allows editing form fields</li>
+                                
+                                    <li class="test-item">displays service details when service is found</li>
+                                
+                                    <li class="test-item">allows selecting payment method</li>
+                                
+                                    <li class="test-item">shows QR section when online payment is selected</li>
+                                
+                                    <li class="test-item">warns when trying to pay without selecting payment method</li>
+                                
+                                    <li class="test-item">processes cash payment successfully</li>
+                                
+                                    <li class="test-item">processes online payment successfully</li>
+                                
+                                    <li class="test-item">handles payment failure</li>
+                                
+                                    <li class="test-item">handles payment failure without response message</li>
+                                
+                                    <li class="test-item">successfully processes payment flow</li>
+                                
+                                    <li class="test-item">displays success page after successful payment</li>
+                                
+                                    <li class="test-item">navigates to home from success page</li>
+                                
+                                    <li class="test-item">navigates to service tracking from success page</li>
+                                
+                                    <li class="test-item">handles getTime utility function correctly</li>
+                                
+                                    <li class="test-item">handles missing service details gracefully</li>
+                                
+                                    <li class="test-item">handles payment without token</li>
+                                
+                                    <li class="test-item">uses default amount when service price is not available</li>
+                                
+                            </ul>
+                        </div>
+                    
+                    
+                    
+                    
+                    <div class="file-path">📁 e:\SWP391_Group03\Front_end\src\Payment\Payment.test.jsx</div>
+                </div>
+            </div>
+        
+            <div class="test-file">
+                <div class="file-header">
+                    <div class="file-name">SampleManagement.test.jsx</div>
+                    <div class="test-count">19 tests</div>
+                </div>
+                <div class="file-content">
+                    
+                        <div class="describe-section">
+                            <div class="describe-title">SampleManagement</div>
+                            <ul class="test-list">
+                                
+                                    <li class="test-item">renders without crashing</li>
+                                
+                                    <li class="test-item">renders search input and search button</li>
+                                
+                                    <li class="test-item">shows Add Sample button for Staff role</li>
+                                
+                                    <li class="test-item">hides Add Sample button for Customer role</li>
+                                
+                                    <li class="test-item">calls API when search button is clicked</li>
+                                
+                                    <li class="test-item">displays samples in table after successful search</li>
+                                
+                                    <li class="test-item">shows error message when search fails</li>
+                                
+                                    <li class="test-item">opens add modal when Add Sample button is clicked</li>
+                                
+                                    <li class="test-item">opens edit modal when edit button is clicked</li>
+                                
+                                    <li class="test-item">creates sample successfully</li>
+                                
+                                    <li class="test-item">handles create sample error</li>
+                                
+                                    <li class="test-item">updates sample successfully</li>
+                                
+                                    <li class="test-item">handles update sample error</li>
+                                
+                                    <li class="test-item">closes modal when cancel is clicked</li>
+                                
+                                    <li class="test-item">requires appointment ID for search</li>
+                                
+                                    <li class="test-item">handles empty search results</li>
+                                
+                                    <li class="test-item">shows different buttons based on user role</li>
+                                
+                                    <li class="test-item">handles form validation in modal</li>
+                                
+                                    <li class="test-item">refreshes data after successful operations</li>
+                                
+                            </ul>
+                        </div>
+                    
+                    
+                    
+                    
+                    <div class="file-path">📁 e:\SWP391_Group03\Front_end\src\SampleManagement\SampleManagement.test.jsx</div>
+                </div>
+            </div>
+        
+            <div class="test-file">
+                <div class="file-header">
+                    <div class="file-name">ServiceManagement.test.jsx</div>
+                    <div class="test-count">9 tests</div>
+                </div>
+                <div class="file-content">
+                    
+                        <div class="describe-section">
+                            <div class="describe-title">ServiceManagement Component</div>
+                            <ul class="test-list">
+                                
+                                    <li class="test-item">renders the component title</li>
+                                
+                                    <li class="test-item">loads and displays services on mount</li>
+                                
+                                    <li class="test-item">shows loading state while fetching services</li>
+                                
+                                    <li class="test-item">handles error when loading services fails</li>
+                                
+                                    <li class="test-item">opens add service modal when clicking add button</li>
+                                
+                                    <li class="test-item">handles search functionality</li>
+                                
+                                    <li class="test-item">handles delete with confirmation</li>
+                                
+                                    <li class="test-item">shows modal correctly when opened</li>
+                                
+                                    <li class="test-item">handles empty services list</li>
+                                
+                            </ul>
+                        </div>
+                    
+                    
+                    
+                    
+                    <div class="file-path">📁 e:\SWP391_Group03\Front_end\src\ServiceManagement\ServiceManagement.test.jsx</div>
+                </div>
+            </div>
+        
+            <div class="test-file">
+                <div class="file-header">
+                    <div class="file-name">StaffResult.test.jsx</div>
+                    <div class="test-count">15 tests</div>
+                </div>
+                <div class="file-content">
+                    
+                        <div class="describe-section">
+                            <div class="describe-title">StaffResult Component</div>
+                            <ul class="test-list">
+                                
+                                    <li class="test-item">renders component and loads results on mount</li>
+                                
+                                    <li class="test-item">handles error when fetching results</li>
+                                
+                                    <li class="test-item">opens add modal when clicking add button</li>
+                                
+                                    <li class="test-item">opens edit modal when clicking edit button</li>
+                                
+                                    <li class="test-item">creates new result successfully</li>
+                                
+                                    <li class="test-item">updates existing result successfully</li>
+                                
+                                    <li class="test-item">deletes result successfully</li>
+                                
+                                    <li class="test-item">handles delete error</li>
+                                
+                                    <li class="test-item">views result detail successfully</li>
+                                
+                                    <li class="test-item">filters results by appointment ID</li>
+                                
+                                    <li class="test-item">handles invalid appointment ID filter</li>
+                                
+                                    <li class="test-item">clears filter and reloads all results</li>
+                                
+                                    <li class="test-item">handles file upload correctly</li>
+                                
+                                    <li class="test-item">validates required fields in form</li>
+                                
+                                    <li class="test-item">handles form submission error</li>
+                                
+                            </ul>
+                        </div>
+                    
+                    
+                    
+                    
+                    <div class="file-path">📁 e:\SWP391_Group03\Front_end\src\StaffResult\StaffResult.test.jsx</div>
+                </div>
+            </div>
+        
+        
+        <div class="summary">
+            <h2>📊 Summary</h2>
+            <p>This documentation was automatically generated from test files in the project.</p>
+            <ul style="margin-top: 1rem; padding-left: 2rem;">
+                <li><strong>Coverage:</strong> Run <code>npm run test:coverage</code> to see code coverage</li>
+                <li><strong>Run Tests:</strong> Use <code>npm test</code> to execute all tests</li>
+                <li><strong>Watch Mode:</strong> Use <code>npm run test:watch</code> for development</li>
+                <li><strong>UI Mode:</strong> Use <code>npm run test:ui</code> for interactive testing</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 21:42:31 25/7/2025 | SWP391 Group 03</p>
+        </div>
+    </div>
+</body>
+</html>

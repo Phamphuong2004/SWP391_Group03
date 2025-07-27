@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import provinces from "../Provinces";
@@ -38,6 +38,9 @@ const collectionLocations = ["Tại nhà", "Tại cơ sở y tế"];
 function Booking() {
   const location = useLocation();
   const serviceFromNavigation = location.state?.service;
+
+  // Ref to track timers for cleanup
+  const timersRef = useRef([]);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -219,7 +222,10 @@ function Booking() {
         testPurpose: "",
         kitComponentName: "",
       }));
-      localStorage.setItem("bookingServiceId", String(location.state.serviceId));
+      localStorage.setItem(
+        "bookingServiceId",
+        String(location.state.serviceId)
+      );
     } else {
       // Nếu không có state, thử lấy từ localStorage
       const savedId = localStorage.getItem("bookingServiceId");
@@ -266,6 +272,14 @@ function Booking() {
     }
     // eslint-disable-next-line
   }, [form.serviceType]);
+
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach((timer) => clearTimeout(timer));
+      timersRef.current = [];
+    };
+  }, []);
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -342,9 +356,10 @@ function Booking() {
     }
 
     // Validate the specific field after updating form
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       validateField(name, value);
     }, 100);
+    timersRef.current.push(timer);
   };
 
   // Validate individual field
@@ -679,10 +694,16 @@ function Booking() {
   if (filteredKits.length > 0) {
     kitsToShow = filteredKits;
   } else if (Array.isArray(selectedServiceType?.kits)) {
-    if (selectedServiceType.kits.length > 0 && typeof selectedServiceType.kits[0] === "object") {
+    if (
+      selectedServiceType.kits.length > 0 &&
+      typeof selectedServiceType.kits[0] === "object"
+    ) {
       kitsToShow = selectedServiceType.kits;
     } else {
-      kitsToShow = selectedServiceType.kits.map(name => ({ kitComponentName: name, introduction: "" }));
+      kitsToShow = selectedServiceType.kits.map((name) => ({
+        kitComponentName: name,
+        introduction: "",
+      }));
     }
   }
 
@@ -720,12 +741,13 @@ function Booking() {
                       dob: date ? date.toISOString().slice(0, 10) : "",
                     }));
                     // Validate after date change
-                    setTimeout(() => {
+                    const timer = setTimeout(() => {
                       validateField(
                         "dob",
                         date ? date.toISOString().slice(0, 10) : ""
                       );
                     }, 100);
+                    timersRef.current.push(timer);
                   }}
                   dateFormat="dd/MM/yyyy"
                   placeholderText="Chọn ngày sinh"
@@ -1071,7 +1093,8 @@ function Booking() {
                 <option value="">Chọn bộ kit</option>
                 {kitsToShow.map((kit, idx) => (
                   <option key={idx} value={kit.kitComponentName}>
-                    {kit.kitComponentName}{kit.introduction ? ` - ${kit.introduction}` : ""}
+                    {kit.kitComponentName}
+                    {kit.introduction ? ` - ${kit.introduction}` : ""}
                   </option>
                 ))}
               </select>
