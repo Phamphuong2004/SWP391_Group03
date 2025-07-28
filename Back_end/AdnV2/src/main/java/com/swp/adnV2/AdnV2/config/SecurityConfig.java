@@ -90,6 +90,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/sample-types/**").permitAll()
                         .requestMatchers("/api/results/appointment/**").permitAll()
 
+                        //API liên quan đến kết quả xét nghiệm
+                        .requestMatchers("/api/results/download/**").permitAll()
+                        .requestMatchers("/api/results/upload").hasAnyRole("STAFF", "MANAGER")
+
                         // Mặc định, mọi request khác đều yêu cầu xác thực
                         .anyRequest().authenticated()
                 )

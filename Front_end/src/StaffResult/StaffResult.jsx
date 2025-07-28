@@ -16,7 +16,9 @@ import {
   updateResult,
   deleteResult,
   getResultById,
+  uploadResultFile,
 } from "../result/ResultsApi";
+import { getSampleByAppointmentId } from "../SampleManagement/SampleApi";
 
 const StaffResult = () => {
   const [results, setResults] = useState([]);
@@ -30,6 +32,9 @@ const StaffResult = () => {
   const [filterAppointmentId, setFilterAppointmentId] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [availableSamples, setAvailableSamples] = useState([]);
+  const [sampleIds, setSampleIds] = useState([]);
+  const [appointmentId, setAppointmentId] = useState("");
+  const [username, setUsername] = useState("");
 
   const fetchResults = async () => {
     setLoading(true);
@@ -54,6 +59,16 @@ const StaffResult = () => {
     form.resetFields();
     setSelectedFile(null); // Reset file object
     setSelectedFileName(""); // Reset file name
+    // Ngày trả kết quả = hôm nay
+    const today = new Date().toISOString().slice(0, 10);
+    form.setFieldsValue({ resultDate: today });
+    // Lấy user hiện tại
+    const userString = localStorage.getItem("user");
+    const user = userString ? JSON.parse(userString) : null;
+    setUsername(user?.username || "");
+    form.setFieldsValue({ username: user?.username || "" });
+    setSampleIds([]);
+    setAppointmentId("");
     setIsModalVisible(true);
   };
 
@@ -99,18 +114,21 @@ const StaffResult = () => {
       const user = userString ? JSON.parse(userString) : null;
       const username = user ? user.username : null;
       const token = user ? user.token : null;
+      const today = new Date().toISOString().slice(0, 10);
+
+      // Không upload file nữa, chỉ lấy tên file từ input (nếu có)
+      let fileName = values.resultFile; // hoặc bỏ luôn nếu không cần
 
       const resultData = {
-        resultDate: values.resultDate,
+        resultDate: today,
         resultData: values.resultData,
         interpretation: values.interpretation,
-        status: values.status,
-        sampleId: values.sampleId || [],
+        status: "Pending",
+        sampleId: sampleIds,
         username: username,
-        appointmentId: values.appointmentId,
-        resultFile: values.resultFile,
+        appointmentId: appointmentId,
+        resultFile: fileName, // hoặc bỏ dòng này nếu không cần
       };
-      console.log("resultData gửi lên:", resultData);
 
       if (editingResult && editingResult.resultId) {
         await updateResult(editingResult.resultId, resultData, token);
@@ -129,9 +147,11 @@ const StaffResult = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setSelectedFile(file);
       setSelectedFileName(file.name);
       form.setFieldsValue({ resultFile: file.name }); // chỉ lưu tên file
     } else {
+      setSelectedFile(null);
       setSelectedFileName("");
       form.setFieldsValue({ resultFile: "" });
     }
@@ -207,6 +227,24 @@ const StaffResult = () => {
       { value: 22, label: "Mẫu 22" },
     ]);
   }, []);
+
+  const handleAppointmentIdChange = async (e) => {
+    const value = e.target.value;
+    setAppointmentId(value);
+    form.setFieldsValue({ appointmentId: value });
+    // Gọi API lấy sample theo appointmentId
+    const userString = localStorage.getItem("user");
+    const token = userString ? JSON.parse(userString).token : null;
+    try {
+      const samples = await getSampleByAppointmentId(value, token);
+      const ids = Array.isArray(samples) ? samples.map(s => s.sampleId) : (samples && samples.sampleId ? [samples.sampleId] : []);
+      setSampleIds(ids);
+      form.setFieldsValue({ sampleId: ids });
+    } catch {
+      setSampleIds([]);
+      form.setFieldsValue({ sampleId: [] });
+    }
+  };
 
   const columns = [
     { title: "ID", dataIndex: "resultId", key: "resultId" },
@@ -320,7 +358,7 @@ const StaffResult = () => {
             label="Ngày trả kết quả"
             rules={[{ required: true }]}
           >
-            <Input type="date" />
+            <Input type="date" disabled />
           </Form.Item>
           <Form.Item
             name="resultData"
@@ -353,11 +391,9 @@ const StaffResult = () => {
             <Select
               mode="multiple"
               placeholder="Chọn các mẫu"
-              options={availableSamples}
-              showSearch
-              filterOption={(input, option) =>
-                option?.label?.toLowerCase().includes(input.toLowerCase())
-              }
+              value={sampleIds}
+              disabled
+              options={sampleIds.map(id => ({ value: id, label: id }))}
             />
           </Form.Item>
           <Form.Item
@@ -365,14 +401,14 @@ const StaffResult = () => {
             label="Người nhập"
             rules={[{ required: true }]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
           <Form.Item
             name="appointmentId"
             label="Mã lịch hẹn"
             rules={[{ required: true }]}
           >
-            <Input type="number" />
+            <Input type="number" value={appointmentId} onChange={handleAppointmentIdChange} />
           </Form.Item>
           <Form.Item label="File kết quả" required>
             <Input

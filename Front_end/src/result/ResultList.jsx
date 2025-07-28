@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getResultList, getResultByAppointmentId } from "./ResultsApi";
+import { getResultList, getResultByAppointmentId, downloadResultFile } from "./ResultsApi";
 import { getAllSampleTypes } from "../SampleManagement/SampleApi";
 import "./ResultList.css";
 
@@ -142,8 +142,8 @@ const ResultList = () => {
                 <td>
                   {result.resultFile ? (
                     <a
-                      href={`http://localhost:8080/api/results/download/${result.resultFile}`}
-                      download
+                      href={downloadResultFile(result.resultFile)}
+                      download={result.resultFile}
                     >
                       {result.resultFile}
                     </a>

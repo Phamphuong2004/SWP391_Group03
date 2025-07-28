@@ -42,3 +42,21 @@ export const getResultByAppointmentId = (appointmentId, token) =>
   axios.get(`${API_BASE}/appointment/${appointmentId}`, {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
+
+// Download file kết quả
+export const downloadResultFile = (fileName) => {
+  // Trả về link trực tiếp, FE nên dùng window.open hoặc gán href cho <a>
+  return `${API_BASE}/download/${fileName}`;
+};
+
+// Upload file kết quả
+export const uploadResultFile = async (file, token) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await axios.post("/api/results/upload", formData, {
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  return res.data; // trả về tên file
+};

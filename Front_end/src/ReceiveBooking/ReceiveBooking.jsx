@@ -371,6 +371,34 @@ const ReceiveBooking = () => {
     }
   };
 
+  const handleCollectingSample = async (bookingId) => {
+    try {
+      await axios.put(
+        `/api/update/staff/${bookingId}`,
+        { status: "COLLECTING_SAMPLE" },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      message.success("Đơn đã chuyển sang trạng thái Đang lấy mẫu!");
+      fetchBookings();
+    } catch (error) {
+      message.error("Không thể cập nhật trạng thái Đang lấy mẫu!");
+    }
+  };
+
+  const handleTesting = async (bookingId) => {
+    try {
+      await axios.put(
+        `/api/update/staff/${bookingId}`,
+        { status: "TESTING" },
+        { headers: { Authorization: `Bearer ${user.token}` } }
+      );
+      message.success("Đơn đã chuyển sang trạng thái Đang xét nghiệm!");
+      fetchBookings();
+    } catch (error) {
+      message.error("Không thể cập nhật trạng thái Đang xét nghiệm!");
+    }
+  };
+
   // Hàm lọc theo trạng thái
   const fetchByStatus = async (status) => {
     try {
@@ -493,6 +521,18 @@ const ReceiveBooking = () => {
                 style={{ marginRight: 8 }}
               >
                 Tiếp nhận
+              </Button>
+              <Button
+                style={{ background: "#ff9800", color: "#fff", marginRight: 8 }}
+                onClick={() => handleCollectingSample(record.appointmentId)}
+              >
+                Đang lấy mẫu
+              </Button>
+              <Button
+                style={{ background: "#2196f3", color: "#fff", marginRight: 8 }}
+                onClick={() => handleTesting(record.appointmentId)}
+              >
+                Đang xét nghiệm
               </Button>
               <Button
                 style={{ background: "#4caf50", color: "#fff" }}

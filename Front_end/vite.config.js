@@ -7,7 +7,7 @@ export default defineConfig({
     port: 3000, // Đổi sang port bạn muốn, ví dụ 5173
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: "http://localhost:8080", // Đúng port backend của bạn
         changeOrigin: true,
       },
     },

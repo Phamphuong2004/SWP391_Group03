@@ -107,19 +107,21 @@ const AppointmentHistory = () => {
   const statusTranslations = {
     PENDING: "Chờ xác nhận",
     CONFIRMED: "Đã xác nhận",
-    SAMPLING: "Đang lấy mẫu",
+    COLLECTING_SAMPLE: "Đang lấy mẫu",
     TESTING: "Đang xét nghiệm",
     COMPLETED: "Hoàn thành",
+    CANCELLED: "Đã hủy"
   };
 
+  const mainStatuses = [
+    "PENDING",
+    "CONFIRMED",
+    "COLLECTING_SAMPLE",
+    "TESTING",
+    "COMPLETED"
+  ];
+
   const StatusTimeline = ({ status }) => {
-    const mainStatuses = [
-      "PENDING",
-      "CONFIRMED",
-      "SAMPLING",
-      "TESTING",
-      "COMPLETED",
-    ];
     if (status === "CANCELLED") {
       return (
         <div className="status-cancelled-container">
